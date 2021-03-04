@@ -11,13 +11,13 @@ export async function createActionCardTable(
   }
   const cardPack = game.packs.get(packName) as Compendium;
   const cardPackIndex = await cardPack.getIndex();
-  let cardTable = game.tables.getName(CONFIG.SWADE.init.cardTable);
+  let cardTable = game.tables.getName(SWADE.init.cardTable);
 
   //If the table doesn't exist, create it
   if (!cardTable) {
     const tableData = {
       img: 'systems/swade/assets/ui/wildcard.svg',
-      name: CONFIG.SWADE.init.cardTable,
+      name: SWADE.init.cardTable,
       replacement: false,
       displayRoll: false,
     };

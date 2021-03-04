@@ -1,6 +1,7 @@
 import SwadeActor from './entities/SwadeActor';
 import * as chat from './chat';
 import { ActorType } from './enums/ActorTypeEnum';
+import { SWADE } from './config';
 
 export default class Bennies {
   static async spendEvent(ev: MouseEvent) {
@@ -10,13 +11,10 @@ export default class Bennies {
     if (user.isGM) {
       const value = user.getFlag('swade', 'bennies');
       if (value == 0) return;
-      const message = await renderTemplate(
-        CONFIG.SWADE.bennies.templates.spend,
-        {
-          target: game.user,
-          speaker: game.user,
-        },
-      );
+      const message = await renderTemplate(SWADE.bennies.templates.spend, {
+        target: game.user,
+        speaker: game.user,
+      });
       const chatData = {
         content: message,
       };
@@ -51,10 +49,10 @@ export default class Bennies {
         game.settings.get('swade', 'gmBennies'),
       );
       if (game.settings.get('swade', 'notifyBennies') && displayToChat) {
-        const message = await renderTemplate(
-          CONFIG.SWADE.bennies.templates.refresh,
-          { target: user, speaker: game.user },
-        );
+        const message = await renderTemplate(SWADE.bennies.templates.refresh, {
+          target: user,
+          speaker: game.user,
+        });
         const chatData = {
           content: message,
         };
@@ -82,7 +80,7 @@ export default class Bennies {
 
     if (game.settings.get('swade', 'notifyBennies')) {
       const message = await renderTemplate(
-        CONFIG.SWADE.bennies.templates.refreshAll,
+        SWADE.bennies.templates.refreshAll,
         {},
       );
       const chatData = {

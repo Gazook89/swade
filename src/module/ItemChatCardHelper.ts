@@ -1,3 +1,4 @@
+import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 import { ActorType } from './enums/ActorTypeEnum';
@@ -21,7 +22,7 @@ export default class ItemChatCardHelper {
 
     //save the message ID if we're doing automated ammo management
     if (game.settings.get('swade', 'ammoManagement')) {
-      CONFIG.SWADE['itemCardMessageId'] = messageId;
+      SWADE['itemCardMessageId'] = messageId;
     }
 
     // Validate permission to proceed with the roll
@@ -364,8 +365,8 @@ export default class ItemChatCardHelper {
     if (messageId) {
       message = game.messages.get(messageId);
     } else {
-      message = game.messages.get(CONFIG.SWADE['itemCardMessageId']);
-      delete CONFIG.SWADE['itemCardMessageId'];
+      message = game.messages.get(SWADE['itemCardMessageId']);
+      delete SWADE['itemCardMessageId'];
     }
     if (!message) {
       return;

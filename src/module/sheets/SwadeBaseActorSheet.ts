@@ -3,6 +3,7 @@ import SwadeItem from '../entities/SwadeItem';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
 import * as chat from '../chat';
 import SwadeDice from '../dice';
+import { SWADE } from '../config';
 /**
  * @noInheritDoc
  */
@@ -187,7 +188,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
   getData() {
     const data: any = super.getData();
-    data.config = CONFIG.SWADE;
+    data.config = SWADE;
 
     data.itemsByType = {};
     for (const type of game.system.entityTypes.Item) {
@@ -442,11 +443,11 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
   /** @override */
   render(force?: boolean, options?: RenderOptions) {
-    if (!CONFIG.SWADE.templates.templatesPreloaded) {
+    if (!SWADE.templates.templatesPreloaded) {
       console.log('Templates not loaded yet, waiting');
-      CONFIG.SWADE.templates.preloadPromise.then(() => {
+      SWADE.templates.preloadPromise.then(() => {
         console.log('Templates loaded, rendering');
-        CONFIG.SWADE.templates.templatesPreloaded = true;
+        SWADE.templates.templatesPreloaded = true;
         super.render(force, options);
       });
     } else {

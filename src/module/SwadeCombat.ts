@@ -22,7 +22,7 @@ export default class SwadeCombat extends Combat {
     const initMessages = [];
     let isRedraw = false;
     let skipMessage = false;
-    const actionCardDeck = game.tables.getName(CONFIG.SWADE.init.cardTable);
+    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
     if (ids.length > actionCardDeck.results.filter((r) => !r.drawn).length) {
       ui.notifications.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return;
@@ -221,13 +221,13 @@ export default class SwadeCombat extends Combat {
       await game.settings.set(
         'swade',
         'cardDeck',
-        CONFIG.SWADE.init.defaultCardCompendium,
+        SWADE.init.defaultCardCompendium,
       );
       actionCardPack = game.packs.get(
         game.settings.get('swade', 'cardDeck'),
       ) as Compendium;
     }
-    const actionCardDeck = game.tables.getName(CONFIG.SWADE.init.cardTable);
+    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
     const packIndex = await actionCardPack.getIndex();
     const cards: JournalEntry[] = [];
 

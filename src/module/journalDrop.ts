@@ -1,3 +1,5 @@
+import { SWADE } from './config';
+
 export const listenJournalDrop = function () {
   // Grabbing the image url from the journal entry
   function _onDragStart(event: any) {
@@ -19,8 +21,8 @@ export const listenJournalDrop = function () {
 
       const tileData = {
         img: data.src,
-        width: (CONFIG.SWADE.imagedrop.height * tex.width) / tex.height,
-        height: CONFIG.SWADE.imagedrop.height,
+        width: (SWADE.imagedrop.height * tex.width) / tex.height,
+        height: SWADE.imagedrop.height,
         x: (event.clientX - t.tx) / canvas.stage.scale.x,
         y: (event.clientY - t.ty) / canvas.stage.scale.y,
         scale: 1,

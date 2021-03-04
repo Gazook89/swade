@@ -1,4 +1,5 @@
 import IDriverData from '../../interfaces/IDriverData';
+import { SWADE } from '../config';
 import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
@@ -150,7 +151,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   getData(): ActorSheetData {
     const data: any = super.getData();
 
-    data.config = CONFIG.SWADE;
+    data.config = SWADE;
     data.itemsByType = {};
     data.opSkills = this._buildOpSkillList();
     for (const item of data.items) {
@@ -309,7 +310,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
 
   private _buildOpSkillList(): any {
     const retVal = {};
-    const opSkills = CONFIG.SWADE.vehicles.opSkills as string[];
+    const opSkills = SWADE.vehicles.opSkills as string[];
     for (const skill of opSkills) {
       retVal[skill] = skill;
     }

@@ -1,15 +1,17 @@
+import { SWADE } from './config';
+
 export default class SettingConfigurator extends FormApplication {
   config: any;
   settingStats: any;
   constructor(object = {}, options = { parent: null }) {
     super(object, options);
-    this.config = CONFIG.SWADE.settingConfig;
+    this.config = SWADE.settingConfig;
   }
 
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
-      id: CONFIG.SWADE.settingConfig.id,
-      title: CONFIG.SWADE.settingConfig.title,
+      id: SWADE.settingConfig.id,
+      title: SWADE.settingConfig.title,
       template: 'systems/swade/templates/setting-config.html',
       classes: ['swade', 'setting-config'],
       width: 600,

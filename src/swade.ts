@@ -100,9 +100,9 @@ Hooks.once('init', () => {
   listenJournalDrop();
 
   // Preload Handlebars templates
-  CONFIG.SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  CONFIG.SWADE.templates.preloadPromise.then(() => {
-    CONFIG.SWADE.templates.templatesPreloaded = true;
+  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
+  SWADE.templates.preloadPromise.then(() => {
+    SWADE.templates.templatesPreloaded = true;
   });
 });
 

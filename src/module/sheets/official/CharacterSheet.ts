@@ -1,3 +1,4 @@
+import { SWADE } from '../../config';
 import SwadeActor from '../../entities/SwadeActor';
 import SwadeItem from '../../entities/SwadeItem';
 import { ItemType } from '../../enums/ItemTypeEnum';
@@ -390,7 +391,7 @@ export default class CharacterSheet extends ActorSheet {
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = CONFIG.SWADE.bennies.sheetImage;
+    data.bennyImageURL = SWADE.bennies.sheetImage;
     data.itemsByType = {};
     for (const type of game.system.entityTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
@@ -423,7 +424,7 @@ export default class CharacterSheet extends ActorSheet {
         }
 
         item.actor = data.actor;
-        item.config = CONFIG.SWADE;
+        item.config = SWADE;
         item.hasAmmoManagement =
           item.type === ItemType.Weapon &&
           !item.isMeleeWeapon &&
