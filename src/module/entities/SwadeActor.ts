@@ -465,6 +465,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   calcArmor(): number {
     let totalArmorVal = 0;
 
+    //get armor items and retieve their data
     const armors = this.itemTypes['armor'].map((i) =>
       i.data.type === 'armor' ? i.data : null,
     );
