@@ -2,6 +2,7 @@ import IRollOptions from '../../interfaces/IRollOptions';
 import { SysItemData } from '../../interfaces/item-data';
 import { SWADE } from '../config';
 import SwadeDice from '../dice';
+import SwadeActor from './SwadeActor';
 
 /**
  * Override and extend the basic :class:`Item` implementation
@@ -30,10 +31,10 @@ export default class SwadeItem extends Item<SysItemData> {
       this.type !== 'power' &&
       this.type !== 'shield'
     ) {
-      return;
+      return null;
     }
     const itemData = this.data.data;
-    const actor = this.actor;
+    const actor = (this.actor as unknown) as SwadeActor;
     const actorIsVehicle = actor.data.type === 'vehicle';
     const actorData = actor.data.data;
     const label = this.name;

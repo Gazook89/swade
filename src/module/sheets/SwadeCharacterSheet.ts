@@ -10,7 +10,7 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    const options = mergeObject(super.defaultOptions, {
       classes: ['swade', 'sheet', 'actor', 'character'],
       width: 630,
       height: 768,
@@ -26,8 +26,9 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
         '.quickaccess-list',
         '.inventory .inventory-categories',
       ],
-      activeArcane: 'All',
     });
+    options['activeArcane'] = 'All';
+    return options;
   }
 
   _createEditor(target, editorOptions, initialContent) {
@@ -124,7 +125,6 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
       const item: any = this.actor.getOwnedItem(li.data('itemId')).data;
       html.find('#edge-description')[0].innerHTML = TextEditor.enrichHTML(
         item.data.description,
-        { secrets: game.user.isGM || this.actor.owner }, //FIXME enrichHTML optionen optional sein?
       );
     });
 

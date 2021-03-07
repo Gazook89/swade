@@ -275,6 +275,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
     new SwadeEntityTweaks(this.actor, {
+      //TODO Check if even useful
       top: this.position.top + 40,
       left: this.position.left + ((this.position.height as number) - 400) / 2,
     }).render(true);

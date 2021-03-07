@@ -17,7 +17,7 @@
   "author": "FloRad",
   "license": "Apache License, Version 2.0",
   "devDependencies": {
-    "@league-of-foundry-developers/foundry-vtt-types": "^0.7.9-0",
+    "@league-of-foundry-developers/foundry-vtt-types": "^0.7.9-1",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.15.0",
     "archiver": "^3.1.1",

@@ -2,6 +2,9 @@ import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 
 export default class SwadeEntityTweaks extends FormApplication {
+  constructor(object, options = {}) {
+    super(object, options);
+  }
   object: SwadeActor | SwadeItem;
   static get defaultOptions() {
     const options = super.defaultOptions;
@@ -79,10 +82,9 @@ export default class SwadeEntityTweaks extends FormApplication {
       'data.additionalStats',
       this._handleAdditionalStats(expandedFormData),
     );
-    //flatten formdata
-    const flattenedFormData = flattenObject(expandedFormData);
+
     // Update the actor
-    await this.object.update(flattenedFormData);
+    await this.object.update(expandedFormData);
     this.object.sheet.render(true);
   }
 

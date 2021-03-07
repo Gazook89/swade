@@ -72,7 +72,7 @@ export default class SwadeItemSheet extends ItemSheet {
     if (!this.isEditable) return;
     if (
       this.item.type === 'ability' &&
-      this.item.data.data.subtype === 'race'
+      this.item.data.data['subtype'] === 'race'
     ) {
       this.form.ondrop = (ev) => this._onDrop(ev);
     }

@@ -40,6 +40,8 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * Extends data from base Actor class
    */
   prepareData() {
+    //FIXME Check this for 0.8.X
+    //@ts-ignore
     this.data = duplicate(this['_data']);
     if (!this.data.img) this.data.img = CONST.DEFAULT_TOKEN;
     if (!this.data.name) this.data.name = 'New ' + this.entity;
