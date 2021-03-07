@@ -26,14 +26,17 @@ export default class SwadeItem extends Item<SysItemData> {
   }
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
+    //TODO test after conversion
+    let itemData;
     if (
       this.type !== 'weapon' &&
       this.type !== 'power' &&
       this.type !== 'shield'
     ) {
       return null;
+    } else {
+      itemData = this.data.data;
     }
-    const itemData = this.data.data;
     const actor = (this.actor as unknown) as SwadeActor;
     const actorIsVehicle = actor.data.type === 'vehicle';
     const actorData = actor.data.data;
@@ -48,10 +51,10 @@ export default class SwadeItem extends Item<SysItemData> {
 
     let roll;
     let rollParts = [itemData.damage];
-    if (options.dmgOverride) {
+
+    if (this.type === 'shield' || options.dmgOverride) {
       rollParts = [options.dmgOverride];
     }
-
     //Additional Mods
     if (options.additionalMods) {
       rollParts = rollParts.concat(options.additionalMods);
