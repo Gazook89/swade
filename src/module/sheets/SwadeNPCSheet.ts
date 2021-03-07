@@ -35,7 +35,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   }
 
   // Override to set resizable initial size
-  async _renderInner(data: object, options?: Application.RenderOptions) {
+  async _renderInner(data, options) {
     const html = await super._renderInner(data, options);
     this.form = html[0];
 
@@ -167,7 +167,8 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         });
         ChatMessage.create({
           speaker: {
-            actor: this.actor,
+            token: this.actor.token.id,
+            actor: this.actor.id,
             alias: this.actor.name,
           },
           content: game.i18n.localize('SWADE.ConvictionActivate'),

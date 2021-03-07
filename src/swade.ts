@@ -54,6 +54,7 @@ Hooks.once('init', () => {
   registerCustomHelpers();
 
   //Overwrite method prototypes
+  //@ts-expect-error
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes

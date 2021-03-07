@@ -69,7 +69,7 @@ export default class SwadeEntityTweaks extends FormApplication {
    * @param formData {Object}   The object of validated form data with which to update the object
    * @private
    */
-  async _updateObject(event, formData: any) {
+  async _updateObject(event, formData) {
     event.preventDefault();
     const expandedFormData = expandObject(formData);
 

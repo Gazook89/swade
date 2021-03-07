@@ -544,61 +544,64 @@ export default class SwadeHooks {
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
       let item: SwadeItem;
       if ('pack' in data) {
-        const pack = game.packs.get(data.pack) as Compendium;
+        const pack = game.packs.get(data.pack);
         item = (await pack.getEntity(data.id)) as SwadeItem;
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data, {});
       } else {
-        item = game.items.get(data.id) as SwadeItem;
+        item = game.items.get(data.id);
       }
+      const isRightItemTypeAndSubtype =
+        item.type === 'ability' && item.data.data.subtype === 'race';
 
-      if (item.type !== 'ability' && item.data.data.subtype !== 'race') {
-        return false;
-      } else {
-        //set name
-        await actor.update({ 'data.details.species.name': item.name });
-        //process embedded entities
-        const map = new Map<string, any>(
-          (item.getFlag('swade', 'embeddedAbilities') as any[]) || [],
-        );
-        const creationData = [];
-        for (const entry of map.values()) {
-          //if the item isn't a skill, then push it to the new items
-          if (entry.type !== 'skill') {
-            creationData.push(entry);
+      if (!isRightItemTypeAndSubtype) return false;
+
+      //set name
+      await actor.update({ 'data.details.species.name': item.name });
+      //process embedded entities
+      const map = new Map<string, SysItemData>(
+        (item.getFlag('swade', 'embeddedAbilities') as [
+          string,
+          SysItemData,
+        ][]) || [],
+      );
+      const creationData = [];
+      for (const entry of map.values()) {
+        //if the item isn't a skill, then push it to the new items
+        if (entry.type !== 'skill') {
+          creationData.push(entry);
+        } else {
+          //else, check if there's already a skill like that that exists
+          const skill = actor.items.find(
+            (i) => i.type === 'skill' && i.name === entry.name,
+          );
+          if (skill) {
+            //if the skill exists, set it to the value of the skill from the item
+            const skillDie = getProperty(entry, 'data.die');
+            await actor.updateOwnedItem({
+              _id: skill.id,
+              'data.die': skillDie,
+            });
           } else {
-            //else, check if there's already a skill like that that exists
-            const skill = actor.items.find(
-              (i: Item) => i.type === 'skill' && i.name === entry.name,
-            ) as Item;
-            if (skill) {
-              //if the skill exists, set it to the value of the skill from the item
-              const skillDie = getProperty(entry, 'data.die');
-              await actor.updateOwnedItem({
-                _id: skill.id,
-                'data.die': skillDie,
-              });
-            } else {
-              //else, add it to the new items
-              creationData.push(entry);
-            }
+            //else, add it to the new items
+            creationData.push(entry);
           }
         }
-        if (creationData.length > 0) {
-          await actor.createOwnedItem(creationData, { renderSheet: null });
-        }
+      }
+      if (creationData.length > 0) {
+        await actor.createOwnedItem(creationData, { renderSheet: null });
+      }
 
-        //copy active effects
-        const effects = Array.from(item.effects.values()).map(
-          (ae: ActiveEffect) => {
-            const retVal = ae.data;
-            delete retVal._id;
-            return retVal;
-          },
-        );
-        if (!!effects && effects.length > 0) {
-          await actor.createEmbeddedEntity('ActiveEffect', effects);
-        }
+      //copy active effects
+      const effects = Array.from(item.effects.values()).map(
+        (ae: ActiveEffect) => {
+          const retVal = ae.data;
+          delete retVal._id;
+          return retVal;
+        },
+      );
+      if (!!effects && effects.length > 0) {
+        await actor.createEmbeddedEntity('ActiveEffect', effects);
       }
     }
   }

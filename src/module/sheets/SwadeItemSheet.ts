@@ -1,5 +1,6 @@
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 
 /**
@@ -87,8 +88,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.profile-img').on('contextmenu', () => {
       new ImagePopout(this.item.img, {
         title: this.item.name,
-        shareable: true, //FIXME shareable?
-        entity: { type: 'Item', id: this.item.id },
+        shareable: game.user.isGM,
       }).render(true);
     });
 
@@ -167,7 +167,7 @@ export default class SwadeItemSheet extends ItemSheet {
     const data: any = super.getData();
     data.data.isOwned = this.item.isOwned;
     data.config = SWADE;
-    const actor = this.item.actor;
+    const actor = this.item.actor as SwadeActor;
     const ownerIsWildcard = actor && actor.isWildcard;
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;

@@ -17,10 +17,6 @@ export default class SwadeItem extends Item<SysItemData> {
     );
   }
 
-  /* -------------------------------------------- */
-  /*	Data Preparation														*/
-  /* -------------------------------------------- */
-
   /**
    * Augment the basic Item data model with additional dynamic data.
    */
@@ -273,7 +269,6 @@ export default class SwadeItem extends Item<SysItemData> {
 
   private makeExplodable(expresion): string {
     // Make all dice of a roll able to explode
-    // Code from the SWADE system
     const diceRegExp = /\d*d\d+[^kdrxc]/g;
     expresion = expresion + ' '; // Just because of my poor reg_exp foo
     const diceStrings = expresion.match(diceRegExp);
@@ -292,8 +287,8 @@ export default class SwadeItem extends Item<SysItemData> {
     return expresion;
   }
 
-  private _getPowerPoints(): any {
-    if (this.type !== 'power') return {};
+  private _getPowerPoints(): { current: number; max: number } {
+    if (this.type !== 'power') return { current: null, max: null };
 
     const arcane = getProperty(this.data, 'data.arcane');
     let current = getProperty(this.actor.data, 'data.powerPoints.value');

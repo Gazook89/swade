@@ -152,11 +152,15 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
 
     //Input Synchronization
     html.find('.wound-input').on('keyup', (ev) => {
-      this.actor.update({ 'data.wounds.value': $(ev.currentTarget).val() });
+      this.actor.update({
+        'data.wounds.value': $(ev.currentTarget).val() as number,
+      });
     });
 
     html.find('.fatigue-input').on('keyup', (ev) => {
-      this.actor.update({ 'data.fatigue.value': $(ev.currentTarget).val() });
+      this.actor.update({
+        'data.fatigue.value': $(ev.currentTarget).val() as number,
+      });
     });
 
     // Roll Skill

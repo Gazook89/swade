@@ -13,20 +13,18 @@ export default class DiceSettings extends FormApplication {
   }
 
   static get defaultOptions() {
-    const defaultOptions = super.defaultOptions;
-    return mergeObject(defaultOptions, {
-      id: SWADE.diceConfig.id,
-      title: SWADE.diceConfig.title,
-      template: 'systems/swade/templates/dice-config.html',
-      classes: ['swade', 'dice-config', 'dice-so-nice'],
-      width: 500,
-      height: 'auto',
-      background: '#000',
-      resizable: false,
-      closeOnSubmit: false,
-      submitOnClose: true,
-      submitOnChange: true,
-    });
+    const options = super.defaultOptions;
+    options.id = SWADE.diceConfig.id;
+    options.title = SWADE.diceConfig.title;
+    options.template = 'systems/swade/templates/dice-config.html';
+    options.classes = ['swade', 'dice-config', 'dice-so-nice'];
+    options.width = 500;
+    options.height = 'auto';
+    options.resizable = false;
+    options.closeOnSubmit = false;
+    options.submitOnClose = true;
+    options.submitOnChange = true;
+    return options;
   }
 
   /**

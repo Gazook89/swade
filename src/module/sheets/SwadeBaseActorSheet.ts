@@ -93,7 +93,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         });
         ChatMessage.create({
           speaker: {
-            actor: this.actor,
+            actor: this.actor.id,
             alias: this.actor.name,
           },
           content: game.i18n.localize('SWADE.ConvictionActivate'),

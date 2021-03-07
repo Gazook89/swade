@@ -40,7 +40,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * Extends data from base Actor class
    */
   prepareData() {
-    this.data = duplicate<this['_data'], 'lenient'>(this['_data']);
+    this.data = duplicate(this['_data']);
     if (!this.data.img) this.data.img = CONST.DEFAULT_TOKEN;
     if (!this.data.name) this.data.name = 'New ' + this.entity;
     this.prepareEmbeddedEntities();
@@ -462,12 +462,13 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   calcArmor(): number {
     let totalArmorVal = 0;
 
-    const armorList = this.items.filter((i) => {
-      const isArmor = i.type === 'armor';
+    const armors = this.items.filter((i) => i.type === 'armor');
+
+    const armorList = armors.filter((i) => {
       const isEquipped = getProperty(i.data, 'equipped') as boolean;
       const coversTorso = getProperty(i.data, 'locations.torso') as boolean;
       const isNaturalArmor = getProperty(i.data, 'isNaturalArmor') as boolean;
-      return isArmor && isEquipped && !isNaturalArmor && coversTorso;
+      return isEquipped && !isNaturalArmor && coversTorso;
     });
 
     armorList.sort((a, b) => {
@@ -719,7 +720,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   private _buildTraitDie(
     sides: number,
     flavor: string,
-    modifiers: any[] = [],
+    modifiers: string[] = [],
   ): Die {
     return new Die({
       faces: sides,
@@ -731,7 +732,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
     const die = new Die({
       faces: sides,
-      number: 1, //FIXME Number ist eigentlich implizit 1
       modifiers: ['x', ...modifiers],
       options: {
         flavor: game.i18n
