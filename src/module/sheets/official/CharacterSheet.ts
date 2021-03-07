@@ -1,7 +1,6 @@
 import { SWADE } from '../../config';
 import SwadeActor from '../../entities/SwadeActor';
 import SwadeItem from '../../entities/SwadeItem';
-import { ItemType } from '../../enums/ItemTypeEnum';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {
@@ -197,7 +196,7 @@ export default class CharacterSheet extends ActorSheet {
       await Dialog.confirm({
         title: game.i18n.localize('Delete'),
         content: template,
-        yes: async () => {
+        yes: () => {
           li.slideUp(200, () => this.actor.deleteOwnedItem(ownedItem.id));
         },
         no: () => {},
@@ -405,7 +404,7 @@ export default class CharacterSheet extends ActorSheet {
         item.currentShots = getProperty(item, 'data.currentShots');
 
         item.isMeleeWeapon =
-          ItemType.Weapon &&
+          'weapon' &&
           ((!item.shots && !item.currentShots) ||
             (item.shots === '0' && item.currentShots === '0'));
 
@@ -426,13 +425,13 @@ export default class CharacterSheet extends ActorSheet {
         item.actor = data.actor;
         item.config = SWADE;
         item.hasAmmoManagement =
-          item.type === ItemType.Weapon &&
+          item.type === 'weapon' &&
           !item.isMeleeWeapon &&
           ammoManagement &&
           !getProperty(item, 'data.autoReload');
         item.hasReloadButton =
           ammoManagement &&
-          item.type === ItemType.Weapon &&
+          item.type === 'weapon' &&
           getProperty(item, 'data.shots') > 0 &&
           !getProperty(item, 'data.autoReload');
         item.hasDamage =
@@ -442,11 +441,8 @@ export default class CharacterSheet extends ActorSheet {
           getProperty(item, 'data.actions.skill') ||
           !!item.actions.find((action) => action.type === 'skill');
         item.hasSkillRoll =
-          [
-            ItemType.Weapon.toString(),
-            ItemType.Power.toString(),
-            ItemType.Shield.toString(),
-          ].includes(item.type) && !!getProperty(item, 'data.actions.skill');
+          ['weapon', 'power', 'shield'].includes(item.type) &&
+          !!getProperty(item, 'data.actions.skill');
         item.powerPoints = getPowerPoints(item);
       }
     }
@@ -648,7 +644,7 @@ export default class CharacterSheet extends ActorSheet {
 }
 
 function getPowerPoints(item) {
-  if (item.type !== ItemType.Power) return {};
+  if (item.type !== 'power') return {};
 
   const arcane = getProperty(item, 'data.arcane');
   let current = getProperty(item.actor, 'data.powerPoints.value');

@@ -120,7 +120,7 @@ export default class SwadeDice {
     allowGroup = false,
     flags,
   }: RollHandlerData): Roll {
-    let rollMode = game.settings.get('core', 'rollMode');
+    let rollMode = game.settings.get('core', 'rollMode') as Const.DiceRollMode;
     const groupRoll = actor && raise;
     // Optionally include a situational bonus
     if (form) data['bonus'] = form.find('#bonus').val();
@@ -132,6 +132,7 @@ export default class SwadeDice {
 
       tempRoll.terms.push(roll.terms[0]);
       const wildDie = new Die({
+        number: 1,
         faces: 6,
         modifiers: ['x'],
         options: { flavor: game.i18n.localize('SWADE.WildDie') },
@@ -171,7 +172,9 @@ export default class SwadeDice {
     }
     //End of Workaround
     // Convert the roll to a chat message and return the roll
-    rollMode = form ? form.find('#rollMode').val() : rollMode;
+    rollMode = form
+      ? (form.find('#rollMode').val() as Const.DiceRollMode)
+      : (rollMode as Const.DiceRollMode);
     retVal.toMessage(
       {
         speaker: speaker,

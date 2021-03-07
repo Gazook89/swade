@@ -35,8 +35,8 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   }
 
   // Override to set resizable initial size
-  async _renderInner(...args: any[]) {
-    const html = await super._renderInner(...args);
+  async _renderInner(data: object, options?: Application.RenderOptions) {
+    const html = await super._renderInner(data, options);
     this.form = html[0];
 
     // Resize resizable classes
@@ -48,9 +48,9 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     });
 
     // Filter power list
-    const arcane = !this.options.activeArcane
+    const arcane = !this.options['activeArcane']
       ? 'All'
-      : this.options.activeArcane;
+      : this.options['activeArcane'];
     (html as JQuery).find('.arcane-tabs .arcane').removeClass('active');
     (html as JQuery).find(`[data-arcane='${arcane}']`).addClass('active');
     this._filterPowers(html as JQuery, arcane);
@@ -181,7 +181,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     });
   }
 
-  getData(): ActorSheetData {
+  getData() {
     const data: any = super.getData();
 
     // Everything below here is only needed if user is not limited

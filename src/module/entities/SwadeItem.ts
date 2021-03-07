@@ -1,27 +1,18 @@
 import IRollOptions from '../../interfaces/IRollOptions';
+import { SysItemData } from '../../interfaces/item-data';
 import { SWADE } from '../config';
 import SwadeDice from '../dice';
-import { ActorType } from '../enums/ActorTypeEnum';
-import { ItemType } from '../enums/ItemTypeEnum';
-import SwadeActor from './SwadeActor';
 
 /**
  * Override and extend the basic :class:`Item` implementation
  * @noInheritDoc
  */
-export default class SwadeItem extends Item {
-  /**
-   * @override
-   */
-  get actor(): SwadeActor {
-    return (this.options.actor as SwadeActor) || null;
-  }
-
+export default class SwadeItem extends Item<SysItemData> {
   get isMeleeWeapon(): boolean {
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
     return (
-      this.type === ItemType.Weapon &&
+      this.type === 'weapon' &&
       ((!shots && !currentShots) || (shots === '0' && currentShots === '0'))
     );
   }
@@ -38,6 +29,13 @@ export default class SwadeItem extends Item {
   }
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
+    if (
+      this.type !== 'weapon' &&
+      this.type !== 'power' &&
+      this.type !== 'shield'
+    ) {
+      return;
+    }
     const itemData = this.data.data;
     const actor = this.actor;
     const actorIsVehicle = actor.data.type === 'vehicle';
@@ -64,7 +62,7 @@ export default class SwadeItem extends Item {
 
     roll = new Roll(rollParts.join(''), actor.getRollShortcuts());
 
-    const newParts = [];
+    const newParts: string[] = [];
     roll.terms.forEach((term) => {
       if (term instanceof Die) {
         newParts.push(`${term['number']}d${term.faces}x`);
@@ -110,7 +108,7 @@ export default class SwadeItem extends Item {
   }
 
   getChatData(htmlOptions) {
-    const data = duplicate(this.data.data);
+    const data = duplicate(this.data.data) as any;
 
     // Rich text description
     data.description = TextEditor.enrichHTML(data.description, htmlOptions);
@@ -220,23 +218,19 @@ export default class SwadeItem extends Item {
       data: this.getChatData({}),
       config: SWADE,
       hasAmmoManagement:
-        this.type === ItemType.Weapon &&
+        this.type === 'weapon' &&
         !this.isMeleeWeapon &&
         ammoManagement &&
         !getProperty(this.data, 'data.autoReload'),
       hasReloadButton:
         ammoManagement &&
-        this.type === ItemType.Weapon &&
+        this.type === 'weapon' &&
         getProperty(this.data, 'data.shots') > 0 &&
         !getProperty(this.data, 'data.autoReload'),
       hasDamage: !!getProperty(this.data, 'data.damage'),
       skill: getProperty(this.data, 'data.actions.skill'),
       hasSkillRoll:
-        [
-          ItemType.Weapon.toString(),
-          ItemType.Power.toString(),
-          ItemType.Shield.toString(),
-        ].includes(this.data.type) &&
+        ['weapon', 'power', 'shield'].includes(this.data.type) &&
         !!getProperty(this.data, 'data.actions.skill'),
       powerPoints: this._getPowerPoints(),
     };
@@ -247,19 +241,19 @@ export default class SwadeItem extends Item {
 
     // Basic chat message data
     const chatData = {
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       content: html,
       speaker: {
-        actor: this.actor._id,
-        token: this.actor.token,
+        actor: this.actor.id,
+        token: this.actor.token.id,
         alias: this.actor.name,
       },
-      flags: { 'core.canPopout': true },
+      flags: { 'core.canPopout': true } as Record<string, unknown>,
     };
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&
-      this.actor.data.type === ActorType.NPC
+      this.actor.data.type === 'npc'
     ) {
       chatData['whisper'] = game.users.filter((u: User) => u.isGM);
     }
@@ -277,7 +271,7 @@ export default class SwadeItem extends Item {
     return chatCard;
   }
 
-  private makeExplodable(expresion) {
+  private makeExplodable(expresion): string {
     // Make all dice of a roll able to explode
     // Code from the SWADE system
     const diceRegExp = /\d*d\d+[^kdrxc]/g;
@@ -298,12 +292,8 @@ export default class SwadeItem extends Item {
     return expresion;
   }
 
-  getRollData() {
-    return {};
-  }
-
   private _getPowerPoints(): any {
-    if (this.type !== ItemType.Power) return {};
+    if (this.type !== 'power') return {};
 
     const arcane = getProperty(this.data, 'data.arcane');
     let current = getProperty(this.actor.data, 'data.powerPoints.value');

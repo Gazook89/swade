@@ -217,7 +217,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       }
 
       // Display the current active arcane
-      data.activeArcane = this.options.activeArcane;
+      data.activeArcane = this.options['activeArcane'];
       data.arcanes = [];
       const powers = data.itemsByType['power'];
       if (powers) {
@@ -422,7 +422,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
   }
 
   protected _filterPowers(html: JQuery, arcane: string) {
-    this.options.activeArcane = arcane;
+    this.options['activeArcane'] = arcane;
     // Show, hide powers
     html.find('.power').each((id: number, pow: any) => {
       if (pow.dataset.arcane == arcane || arcane == 'All') {
@@ -442,7 +442,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
   }
 
   /** @override */
-  render(force?: boolean, options?: RenderOptions) {
+  render(force?: boolean, options?: Application.RenderOptions) {
     if (!SWADE.templates.templatesPreloaded) {
       console.log('Templates not loaded yet, waiting');
       SWADE.templates.preloadPromise.then(() => {

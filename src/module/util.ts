@@ -68,7 +68,7 @@ export async function createSwadeMacro(data: any, slot: number) {
       'You can only create macro buttons for owned Items',
     );
   const item = data.data;
-  let command: String;
+  let command: string;
   // Create the macro command
   switch (item.type) {
     case 'skill':
@@ -166,7 +166,7 @@ export function rollPowerMacro(powerName) {
 export function notificationExists(string: string, localize = false): boolean {
   let stringToFind = string;
   if (localize) stringToFind = game.i18n.localize(string);
-  return ui.notifications.active.find((n) => n.text() === stringToFind);
+  return ui.notifications.active.some((n) => n.text() === stringToFind);
 }
 
 export async function shouldShowBennyAnimation(): Promise<boolean> {
@@ -182,4 +182,11 @@ export async function shouldShowBennyAnimation(): Promise<boolean> {
   } else {
     return value;
   }
+}
+
+export function getCanvas(): Canvas {
+  if (canvas instanceof Canvas) {
+    return canvas;
+  }
+  throw new Error('No Canvas available');
 }

@@ -217,6 +217,7 @@ Item:
       - itemDescription
       - physicalItem
       - equipable
+      - actions
     minStr: ''
     parry: 0
     cover: 0

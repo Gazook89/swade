@@ -6,14 +6,15 @@ import { SWADE } from './config';
 export default class DiceSettings extends FormApplication {
   config: any;
   customWildDieDefaultColors: any;
-  constructor(object = {}, options = { parent: null }) {
+  constructor(object = {}, options = {}) {
     super(object, options);
     this.config = SWADE.diceConfig;
     this.customWildDieDefaultColors = this.config.flags.dsnCustomWildDieColors.default;
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    const defaultOptions = super.defaultOptions;
+    return mergeObject(defaultOptions, {
       id: SWADE.diceConfig.id,
       title: SWADE.diceConfig.title,
       template: 'systems/swade/templates/dice-config.html',

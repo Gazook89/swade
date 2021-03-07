@@ -78,6 +78,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       await Dialog.confirm({
         title: game.i18n.localize('SWADE.Del'),
         content: template,
+        render: () => {},
         yes: async () => {
           await this.actor.deleteOwnedItem(ownedItem.id);
           li.slideUp(200, () => this.render(false));
@@ -139,7 +140,9 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
 
     //Input Synchronization
     html.find('.wound-input').on('keyup', (ev) => {
-      this.actor.update({ 'data.wounds.value': $(ev.currentTarget).val() });
+      this.actor.update({
+        'data.wounds.value': $(ev.currentTarget).val() as number,
+      });
     });
 
     //Maneuver Check
@@ -148,8 +151,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       .on('click', (event) => this.actor.rollManeuverCheck(event));
   }
 
-  getData(): ActorSheetData {
-    const data: any = super.getData();
+  getData() {
+    const data = super.getData();
 
     data.config = SWADE;
     data.itemsByType = {};

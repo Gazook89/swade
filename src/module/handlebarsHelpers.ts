@@ -1,6 +1,5 @@
 import { SWADE } from './config';
 import SwadeItem from './entities/SwadeItem';
-import { ItemType } from './enums/ItemTypeEnum';
 
 export const registerCustomHelpers = function () {
   Handlebars.registerHelper('add', function (a, b) {
@@ -37,9 +36,7 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('enrich', (content) => {
-    return new Handlebars.SafeString(
-      TextEditor.enrichHTML(content, { secrets: true }),
-    );
+    return new Handlebars.SafeString(TextEditor.enrichHTML(content));
   });
 
   Handlebars.registerHelper('canBeEquipped', (item: SwadeItem) => {
@@ -55,12 +52,12 @@ export const registerCustomHelpers = function () {
     const entities: string[] = [];
     collection.forEach((val: any, key: string) => {
       const type =
-        val.type === ItemType.Ability
+        val.type === 'ability'
           ? game.i18n.localize('SWADE.SpecialAbility')
           : game.i18n.localize(`ITEM.Type${val.type.capitalize()}`);
 
       let majorMinor = '';
-      if (val.type === ItemType.Hindrance) {
+      if (val.type === 'hindrance') {
         if (val.data.major) {
           majorMinor = game.i18n.localize('SWADE.Major');
         } else {

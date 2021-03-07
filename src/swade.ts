@@ -29,6 +29,17 @@ import { rollPowerMacro, rollSkillMacro, rollWeaponMacro } from './module/util';
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
+
+export const swadeGame = {
+  SwadeActor,
+  SwadeItem,
+  SwadeEntityTweaks,
+  rollSkillMacro,
+  rollWeaponMacro,
+  rollPowerMacro,
+  sockets: new SwadeSocketHandler(),
+  itemChatCardHelper: ItemChatCardHelper,
+};
 Hooks.once('init', () => {
   console.log(
     `SWADE | Initializing Savage Worlds Adventure Edition\n${SWADE.ASCII}`,
@@ -38,17 +49,7 @@ Hooks.once('init', () => {
   // CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
-  game.swade = {
-    SwadeActor,
-    SwadeItem,
-    SwadeEntityTweaks,
-    rollSkillMacro,
-    rollWeaponMacro,
-    rollPowerMacro,
-    sockets: new SwadeSocketHandler(),
-    itemChatCardHelper: ItemChatCardHelper,
-  };
-
+  game.swade = swadeGame;
   //Register custom Handlebars helpers
   registerCustomHelpers();
 

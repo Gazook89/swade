@@ -1,8 +1,6 @@
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
 import SwadeItem from '../entities/SwadeItem';
-import { AbilitySubtype } from '../enums/AbilitySubtypeEnum';
-import { ItemType } from '../enums/ItemTypeEnum';
 
 /**
  * @noInheritDoc
@@ -72,8 +70,8 @@ export default class SwadeItemSheet extends ItemSheet {
 
     if (!this.isEditable) return;
     if (
-      this.item.type === ItemType.Ability &&
-      this.item.data.data.subtype === AbilitySubtype.Race
+      this.item.type === 'ability' &&
+      this.item.data.data.subtype === 'race'
     ) {
       this.form.ondrop = (ev) => this._onDrop(ev);
     }
@@ -89,7 +87,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.profile-img').on('contextmenu', () => {
       new ImagePopout(this.item.img, {
         title: this.item.name,
-        shareable: true,
+        shareable: true, //FIXME shareable?
         entity: { type: 'Item', id: this.item.id },
       }).render(true);
     });
@@ -153,7 +151,8 @@ export default class SwadeItemSheet extends ItemSheet {
       ev.preventDefault();
       const id = ev.currentTarget.dataset.id;
       const map = new Map(
-        this.item.getFlag('swade', 'embeddedAbilities') || [],
+        (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
+          [],
       );
       map.delete(id);
       this.item.setFlag('swade', 'embeddedAbilities', Array.from(map));
@@ -178,10 +177,7 @@ export default class SwadeItemSheet extends ItemSheet {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
     data.hasAdditionalStatsFields = Object.keys(additionalStats).length > 0;
-    data.displayNav = ![
-      ItemType.Skill.toString(),
-      ItemType.Ability.toString(),
-    ].includes(this.item.type);
+    data.displayNav = !['skill', 'ability'].includes(this.item.type);
 
     // Check for enabled optional rules
     data['settingrules'] = {
@@ -222,8 +218,8 @@ export default class SwadeItemSheet extends ItemSheet {
 
       if (
         data.type !== 'Item' ||
-        (item.type === ItemType.Ability &&
-          item.data.data.subtype === AbilitySubtype.Race)
+        (item.type === 'ability' &&
+          getProperty(item, 'data.data.subtype') === 'race')
       ) {
         console.log('SWADE | You cannot add a race to a race');
         return false;
@@ -239,7 +235,9 @@ export default class SwadeItemSheet extends ItemSheet {
     delete itemData['permission'];
 
     //pull the array from the flags, and push the new entry into it
-    const collection = this.item.getFlag('swade', 'embeddedAbilities') || [];
+    const collection =
+      (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
+      [];
     collection.push([randomID(), itemData]);
     //save array back into flag
     await this.item.setFlag('swade', 'embeddedAbilities', collection);

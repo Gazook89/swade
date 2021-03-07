@@ -1,6 +1,5 @@
 import SwadeActor from './entities/SwadeActor';
 import * as chat from './chat';
-import { ActorType } from './enums/ActorTypeEnum';
 import { SWADE } from './config';
 
 export default class Bennies {
@@ -9,7 +8,7 @@ export default class Bennies {
     const userId = (ev.target as HTMLElement).parentElement.dataset.userId;
     const user = game.users.find((user: User) => user.id == userId);
     if (user.isGM) {
-      const value = user.getFlag('swade', 'bennies');
+      const value = user.getFlag('swade', 'bennies') as number;
       if (value == 0) return;
       const message = await renderTemplate(SWADE.bennies.templates.spend, {
         target: game.user,
@@ -31,7 +30,8 @@ export default class Bennies {
         }
       });
     } else if (user.character) {
-      user.character.spendBenny();
+      const character = user.character as SwadeActor;
+      character.spendBenny();
     }
   }
 
@@ -72,7 +72,7 @@ export default class Bennies {
 
     const npcWildcardsToRefresh = game.actors.filter(
       (a: SwadeActor) =>
-        !a.hasPlayerOwner && a.data.type === ActorType.NPC && a.isWildcard,
+        !a.hasPlayerOwner && a.data.type === 'npc' && a.isWildcard,
     ) as SwadeActor[];
     for (const actor of npcWildcardsToRefresh) {
       await actor.refreshBennies(false);
@@ -98,14 +98,15 @@ export default class Bennies {
       await user.setFlag(
         'swade',
         'bennies',
-        user.getFlag('swade', 'bennies') + 1,
+        (user.getFlag('swade', 'bennies') as number) + 1,
       );
       if (game.settings.get('swade', 'notifyBennies')) {
         chat.createGmBennyAddMessage(user, true);
       }
       ui['players'].render(true);
     } else if (user.character) {
-      user.character.getBenny();
+      const character = user.character as SwadeActor;
+      character.getBenny();
     }
   }
 

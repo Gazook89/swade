@@ -2,7 +2,7 @@ import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 
 export default class SwadeEntityTweaks extends FormApplication {
-  object: Entity;
+  object: SwadeActor | SwadeItem;
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.id = 'sheet-tweaks';
@@ -28,7 +28,7 @@ export default class SwadeEntityTweaks extends FormApplication {
    * Construct and return the data object used to render the HTML template for this form application.
    * @return {Object}
    */
-  getData() {
+  getData(): any {
     const data = this.object.data;
     const settingFields = this._getAppropriateSettingFields();
 
@@ -82,9 +82,8 @@ export default class SwadeEntityTweaks extends FormApplication {
     //flatten formdata
     const flattenedFormData = flattenObject(expandedFormData);
     // Update the actor
-    this.object.update(flattenedFormData).then(() => {
-      this.object.sheet.render(true);
-    });
+    await this.object.update(flattenedFormData);
+    this.object.sheet.render(true);
   }
 
   private _getAppropriateSettingFields(): any {

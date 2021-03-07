@@ -3,7 +3,7 @@ import { SWADE } from './config';
 export default class SettingConfigurator extends FormApplication {
   config: any;
   settingStats: any;
-  constructor(object = {}, options = { parent: null }) {
+  constructor(object = {}, options?: Application.RenderOptions) {
     super(object, options);
     this.config = SWADE.settingConfig;
   }
@@ -29,7 +29,7 @@ export default class SettingConfigurator extends FormApplication {
   /**
    * @override
    */
-  getData() {
+  getData(): any {
     const data = {};
     const settingRules = {};
     for (const setting of this.config.settings) {

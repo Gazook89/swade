@@ -46,8 +46,8 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
   }
 
   // Override to set resizable initial size
-  async _renderInner(...args: any[]) {
-    const html = await super._renderInner(...args);
+  async _renderInner(data, options) {
+    const html = await super._renderInner(data, options);
     this.form = html[0];
 
     // Resize resizable classes
@@ -59,9 +59,9 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
     });
 
     // Filter power list
-    const arcane = !this.options.activeArcane
+    const arcane = !this.options['activeArcane']
       ? 'All'
-      : this.options.activeArcane;
+      : this.options['activeArcane'];
     (html as JQuery).find('.arcane-tabs .arcane').removeClass('active');
     (html as JQuery).find(`[data-arcane='${arcane}']`).addClass('active');
     this._filterPowers(html as JQuery, arcane);
@@ -124,7 +124,7 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
       const item: any = this.actor.getOwnedItem(li.data('itemId')).data;
       html.find('#edge-description')[0].innerHTML = TextEditor.enrichHTML(
         item.data.description,
-        {},
+        { secrets: game.user.isGM || this.actor.owner }, //FIXME enrichHTML optionen optional sein?
       );
     });
 
@@ -204,7 +204,7 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
     });
   }
 
-  getData(): ActorSheetData {
+  getData() {
     const data: any = super.getData();
 
     const shields = data.itemsByType['shield'];
