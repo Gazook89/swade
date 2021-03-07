@@ -461,21 +461,24 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   /**
    * Calculates the correct armor value based on SWADE v5.5 and returns that value
    */
+  //TODO Test after conversion
   calcArmor(): number {
     let totalArmorVal = 0;
 
-    const armors = this.items.filter((i) => i.type === 'armor');
+    const armors = this.itemTypes['armor'].map((i) =>
+      i.data.type === 'armor' ? i.data : null,
+    );
 
     const armorList = armors.filter((i) => {
-      const isEquipped = getProperty(i.data, 'equipped') as boolean;
-      const coversTorso = getProperty(i.data, 'locations.torso') as boolean;
-      const isNaturalArmor = getProperty(i.data, 'isNaturalArmor') as boolean;
+      const isEquipped = i.data.equipped;
+      const coversTorso = i.data.locations.torso;
+      const isNaturalArmor = i.data.isNaturalArmor;
       return isEquipped && !isNaturalArmor && coversTorso;
     });
 
     armorList.sort((a, b) => {
-      const aValue = parseInt(a.data.armor, 10);
-      const bValue = parseInt(b.data.armor, 10);
+      const aValue = parseInt(a.armor, 10);
+      const bValue = parseInt(b.armor, 10);
       if (aValue < bValue) {
         return 1;
       }
@@ -486,23 +489,22 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     });
 
     if (armorList.length === 1) {
-      totalArmorVal = parseInt(armorList[0].data.armor);
+      totalArmorVal = parseInt(armorList[0].armor, 10);
     } else if (armorList.length > 1) {
       totalArmorVal =
-        parseInt(armorList[0].data.armor, 10) +
-        Math.floor(parseInt(armorList[1].data.armor, 10) / 2);
+        parseInt(armorList[0].armor, 10) +
+        Math.floor(parseInt(armorList[1].armor, 10) / 2);
     }
 
-    const naturalArmors = this.data.items.filter((i) => {
-      const isArmor = i.type === 'armor';
-      const isNaturalArmor = getProperty(i.data, 'isNaturalArmor') as boolean;
-      const isEquipped = getProperty(i.data, 'equipped') as boolean;
-      const isTorso = getProperty(i.data, 'locations.torso') as boolean;
-      return isArmor && isNaturalArmor && isEquipped && isTorso;
+    const naturalArmors = armors.filter((i) => {
+      const isEquipped = i.data.equipped;
+      const coversTorso = i.data.locations.torso;
+      const isNaturalArmor = i.data.isNaturalArmor;
+      return isNaturalArmor && isEquipped && coversTorso;
     });
 
     for (const armor of naturalArmors) {
-      totalArmorVal += parseInt(armor.data.armor, 10);
+      totalArmorVal += parseInt(armor.armor, 10);
     }
 
     return totalArmorVal;

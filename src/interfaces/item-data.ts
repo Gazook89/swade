@@ -68,7 +68,7 @@ interface GearData extends ItemDescription, PhysicalItem, Equipable, Vehicular {
 
 interface ArmorData extends ItemDescription, PhysicalItem, Equipable {
   minStr: string;
-  armor: number;
+  armor: number | string;
   isNaturalArmor: boolean;
   locations: {
     head: boolean;
@@ -132,6 +132,7 @@ interface GearItemData extends Item.Data<GearData> {
 }
 
 interface ArmorItemData extends Item.Data<ArmorData> {
+  armor: string;
   type: 'armor';
 }
 
