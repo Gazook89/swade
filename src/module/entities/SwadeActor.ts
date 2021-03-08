@@ -25,30 +25,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   get hasArcaneBackground(): boolean {
     const abEdges = this.items.filter(
-      (i: SwadeItem) =>
-        i.type === 'edge' && i.data.data['isArcaneBackground'] === true,
+      (i) => i.type === 'edge' && i.data.data['isArcaneBackground'] === true,
     );
     const abAbilities = this.items.filter(
-      (i: SwadeItem) =>
-        i.type === 'ability' && i.data.data['grantsPowers'] === true,
+      (i) => i.type === 'ability' && i.data.data['grantsPowers'] === true,
     );
     return abEdges.length > 0 || abAbilities.length > 0;
-  }
-
-  /**
-   * @override
-   * Extends data from base Actor class
-   */
-  prepareData() {
-    //FIXME Check this for 0.8.X
-    //@ts-ignore
-    this.data = duplicate(this['_data']);
-    if (!this.data.img) this.data.img = CONST.DEFAULT_TOKEN;
-    if (!this.data.name) this.data.name = 'New ' + this.entity;
-    this.prepareEmbeddedEntities();
-    this.prepareBaseData();
-    this.applyActiveEffects();
-    this.prepareDerivedData();
   }
 
   /**
