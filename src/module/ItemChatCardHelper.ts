@@ -1,7 +1,6 @@
+import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
-import { ActorType } from './enums/ActorTypeEnum';
-import { ItemType } from './enums/ItemTypeEnum';
 import { notificationExists } from './util';
 
 /**
@@ -21,7 +20,7 @@ export default class ItemChatCardHelper {
 
     //save the message ID if we're doing automated ammo management
     if (game.settings.get('swade', 'ammoManagement')) {
-      CONFIG.SWADE['itemCardMessageId'] = messageId;
+      SWADE['itemCardMessageId'] = messageId;
     }
 
     // Validate permission to proceed with the roll
@@ -104,7 +103,7 @@ export default class ItemChatCardHelper {
       case 'formula':
         skill = actor.items.find(
           (i: Item) =>
-            i.type === ItemType.Skill &&
+            i.type === 'skill' &&
             i.name === getProperty(item.data, 'data.actions.skill'),
         );
         if (
@@ -170,13 +169,13 @@ export default class ItemChatCardHelper {
       // Do skill stuff
       let skill = actor.items.find(
         (i: SwadeItem) =>
-          i.type === ItemType.Skill &&
+          i.type === 'skill' &&
           i.name === getProperty(item.data, 'data.actions.skill'),
       );
 
       const altSkill = actor.items.find(
         (i: SwadeItem) =>
-          i.type === ItemType.Skill && i.name === actionToUse.skillOverride,
+          i.type === 'skill' && i.name === actionToUse.skillOverride,
       );
 
       //try to find the skill override. If the alternative skill is not available then trigger an unskilled attempt
@@ -288,13 +287,13 @@ export default class ItemChatCardHelper {
 
       await actor.updateOwnedItem({
         _id: ammo.id,
-        'data.quantity': newQuantity,
+        data: { quantity: newQuantity },
       });
       //handle normal shot consumption
     } else if (ammoManagement && !!shotsUsed && currentShots - shotsUsed >= 0) {
       await actor.updateOwnedItem({
         _id: itemId,
-        'data.currentShots': currentShots - shotsUsed,
+        data: { currentShots: currentShots - shotsUsed },
       });
     }
   }
@@ -342,14 +341,16 @@ export default class ItemChatCardHelper {
       //update the ammo item
       await actor.updateOwnedItem({
         _id: ammo.id,
-        'data.quantity': leftoverAmmoInInventory,
+        data: {
+          quantity: leftoverAmmoInInventory,
+        },
       });
     }
 
     //update the weapon
     await actor.updateOwnedItem({
       _id: weapon.id,
-      'data.currentShots': ammoInMagazine,
+      data: { currentShots: ammoInMagazine },
     });
 
     //check to see we're not posting the message twice
@@ -364,8 +365,8 @@ export default class ItemChatCardHelper {
     if (messageId) {
       message = game.messages.get(messageId);
     } else {
-      message = game.messages.get(CONFIG.SWADE['itemCardMessageId']);
-      delete CONFIG.SWADE['itemCardMessageId'];
+      message = game.messages.get(SWADE['itemCardMessageId']);
+      delete SWADE['itemCardMessageId'];
     }
     if (!message) {
       return;
@@ -382,7 +383,7 @@ export default class ItemChatCardHelper {
       .data();
 
     const item = actor.getOwnedItem(messageData.itemId);
-    if (item.type === ItemType.Weapon) {
+    if (item.type === 'weapon') {
       const currentShots = getProperty(item.data, 'data.currentShots');
       const maxShots = getProperty(item.data, 'data.shots');
 
@@ -394,7 +395,7 @@ export default class ItemChatCardHelper {
       $(messageContent).find('.ammo-counter .max-shots').first().text(maxShots);
     }
 
-    if (item.type === ItemType.Power) {
+    if (item.type === 'power') {
       const arcane = getProperty(item.data, 'data.arcane');
       let currentPP = getProperty(actor.data, 'data.powerPoints.value');
       let maxPP = getProperty(actor.data, 'data.powerPoints.max');
@@ -419,9 +420,9 @@ export default class ItemChatCardHelper {
   }
 
   static isReloadPossible(actor: SwadeActor): boolean {
-    const isPC = actor.data.type === ActorType.Character;
-    const isNPC = actor.data.type === ActorType.NPC;
-    const isVehicle = actor.data.type === ActorType.Vehicle;
+    const isPC = actor.data.type === 'character';
+    const isNPC = actor.data.type === 'npc';
+    const isVehicle = actor.data.type === 'vehicle';
     const npcAmmoFromInventory = game.settings.get(
       'swade',
       'npcAmmo',

@@ -1,22 +1,25 @@
+import { SWADE } from './config';
+
 export default class SettingConfigurator extends FormApplication {
   config: any;
   settingStats: any;
-  constructor(object = {}, options = { parent: null }) {
+  constructor(object = {}, options?: Application.RenderOptions) {
     super(object, options);
-    this.config = CONFIG.SWADE.settingConfig;
+    this.config = SWADE.settingConfig;
   }
 
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
-      id: CONFIG.SWADE.settingConfig.id,
-      title: CONFIG.SWADE.settingConfig.title,
+      id: SWADE.settingConfig.id,
+      title: SWADE.settingConfig.title,
       template: 'systems/swade/templates/setting-config.html',
       classes: ['swade', 'setting-config'],
       width: 600,
       height: 'auto',
       top: 200,
       left: 400,
-      background: '#000',
       resizable: false,
       closeOnSubmit: false,
       submitOnClose: true,
@@ -27,7 +30,7 @@ export default class SettingConfigurator extends FormApplication {
   /**
    * @override
    */
-  getData() {
+  getData(): any {
     const data = {};
     const settingRules = {};
     for (const setting of this.config.settings) {

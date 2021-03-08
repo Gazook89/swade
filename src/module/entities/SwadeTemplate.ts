@@ -1,4 +1,5 @@
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
+import { getCanvas } from '../util';
 
 /**
  * A helper class for building MeasuredTemplates for SWADE Burst Templates
@@ -69,7 +70,7 @@ export default class SwadeTemplate extends MeasuredTemplate {
    */
   drawPreview() {
     this.layer.preview.removeChildren();
-    this.initialLayer = canvas.activeLayer;
+    this.initialLayer = getCanvas().activeLayer;
     this.layer.preview.addChild(this);
     this.activatePreviewListeners();
     this.draw();
@@ -88,7 +89,11 @@ export default class SwadeTemplate extends MeasuredTemplate {
       const now = Date.now(); // Apply a 20ms throttle
       if (now - this.moveTime <= 20) return;
       const center = event.data.getLocalPosition(this.layer);
-      const snapped = canvas.grid.getSnappedPosition(center.x, center.y, 2);
+      const snapped = getCanvas().grid.getSnappedPosition(
+        center.x,
+        center.y,
+        2,
+      );
       this.data.x = snapped.x;
       this.data.y = snapped.y;
       this.refresh();
@@ -98,10 +103,10 @@ export default class SwadeTemplate extends MeasuredTemplate {
     // Cancel the workflow (right-click)
     this.handlers.rc = () => {
       this.layer.preview.removeChildren();
-      canvas.stage.off('mousemove', this.handlers.mm);
-      canvas.stage.off('mousedown', this.handlers.lc);
-      canvas.app.view.oncontextmenu = null;
-      canvas.app.view.onwheel = null;
+      getCanvas().stage.off('mousemove', this.handlers.mm);
+      getCanvas().stage.off('mousedown', this.handlers.lc);
+      getCanvas().app.view.oncontextmenu = null;
+      getCanvas().app.view.onwheel = null;
       this.initialLayer.activate();
     };
 
@@ -111,13 +116,17 @@ export default class SwadeTemplate extends MeasuredTemplate {
       this.handlers.rc(event);
 
       // Confirm final snapped position
-      const destination = canvas.grid.getSnappedPosition(this.x, this.y, 2);
+      const destination = getCanvas().grid.getSnappedPosition(
+        this.x,
+        this.y,
+        2,
+      );
       this.data.x = destination.x;
       this.data.y = destination.y;
 
       // Create the template
-      canvas.scene
-        .createEmbeddedEntity('MeasuredTemplate', this.data)
+      getCanvas()
+        .scene.createEmbeddedEntity('MeasuredTemplate', this.data)
         .then(() => this.destroy());
     };
 
@@ -125,17 +134,17 @@ export default class SwadeTemplate extends MeasuredTemplate {
     this.handlers.mw = (event) => {
       if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
       event.stopPropagation();
-      const delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+      const delta = getCanvas().grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
       const snap = event.shiftKey ? delta : 5;
       this.data.direction += snap * Math.sign(event.deltaY);
       this.refresh();
     };
 
     // Activate listeners
-    canvas.stage.on('mousemove', this.handlers.mm);
-    canvas.stage.on('mousedown', this.handlers.lc);
-    canvas.app.view.oncontextmenu = this.handlers.rc;
-    canvas.app.view.onwheel = this.handlers.mw;
+    getCanvas().stage.on('mousemove', this.handlers.mm);
+    getCanvas().stage.on('mousedown', this.handlers.lc);
+    getCanvas().app.view.oncontextmenu = this.handlers.rc;
+    getCanvas().app.view.onwheel = this.handlers.mw;
   }
 
   destroy(...args) {

@@ -1,8 +1,7 @@
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
-import { AbilitySubtype } from '../enums/AbilitySubtypeEnum';
-import { ItemType } from '../enums/ItemTypeEnum';
 
 /**
  * @noInheritDoc
@@ -13,6 +12,8 @@ export default class SwadeItemSheet extends ItemSheet {
   }
 
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       width: 560,
       height: 'auto',
@@ -61,10 +62,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.item as SwadeItem, {
-      top: this.position.top + 40,
-      left: this.position.left + ((this.position.height as number) - 400) / 2,
-    }).render(true);
+    new SwadeEntityTweaks(this.item).render(true);
   }
 
   activateListeners(html) {
@@ -72,8 +70,8 @@ export default class SwadeItemSheet extends ItemSheet {
 
     if (!this.isEditable) return;
     if (
-      this.item.type === ItemType.Ability &&
-      this.item.data.data.subtype === AbilitySubtype.Race
+      this.item.type === 'ability' &&
+      this.item.data.data['subtype'] === 'race'
     ) {
       this.form.ondrop = (ev) => this._onDrop(ev);
     }
@@ -89,8 +87,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.profile-img').on('contextmenu', () => {
       new ImagePopout(this.item.img, {
         title: this.item.name,
-        shareable: true,
-        entity: { type: 'Item', id: this.item.id },
+        shareable: game.user.isGM,
       }).render(true);
     });
 
@@ -153,7 +150,8 @@ export default class SwadeItemSheet extends ItemSheet {
       ev.preventDefault();
       const id = ev.currentTarget.dataset.id;
       const map = new Map(
-        this.item.getFlag('swade', 'embeddedAbilities') || [],
+        (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
+          [],
       );
       map.delete(id);
       this.item.setFlag('swade', 'embeddedAbilities', Array.from(map));
@@ -168,7 +166,7 @@ export default class SwadeItemSheet extends ItemSheet {
     const data: any = super.getData();
     data.data.isOwned = this.item.isOwned;
     data.config = SWADE;
-    const actor = this.item.actor;
+    const actor = this.item.actor as SwadeActor;
     const ownerIsWildcard = actor && actor.isWildcard;
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
@@ -178,10 +176,7 @@ export default class SwadeItemSheet extends ItemSheet {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
     data.hasAdditionalStatsFields = Object.keys(additionalStats).length > 0;
-    data.displayNav = ![
-      ItemType.Skill.toString(),
-      ItemType.Ability.toString(),
-    ].includes(this.item.type);
+    data.displayNav = !['skill', 'ability'].includes(this.item.type);
 
     // Check for enabled optional rules
     data['settingrules'] = {
@@ -222,8 +217,8 @@ export default class SwadeItemSheet extends ItemSheet {
 
       if (
         data.type !== 'Item' ||
-        (item.type === ItemType.Ability &&
-          item.data.data.subtype === AbilitySubtype.Race)
+        (item.type === 'ability' &&
+          getProperty(item, 'data.data.subtype') === 'race')
       ) {
         console.log('SWADE | You cannot add a race to a race');
         return false;
@@ -239,7 +234,9 @@ export default class SwadeItemSheet extends ItemSheet {
     delete itemData['permission'];
 
     //pull the array from the flags, and push the new entry into it
-    const collection = this.item.getFlag('swade', 'embeddedAbilities') || [];
+    const collection =
+      (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
+      [];
     collection.push([randomID(), itemData]);
     //save array back into flag
     await this.item.setFlag('swade', 'embeddedAbilities', collection);

@@ -1,3 +1,4 @@
+import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import ItemChatCardHelper from './ItemChatCardHelper';
 
@@ -144,8 +145,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
     }
 
     // Conviction
-
-    if (action === 'yes') {
+    if (action === 'yes' && actor.data.type !== 'vehicle') {
       const currentBennies = getProperty(
         actor.data,
         'data.bennies.value',
@@ -201,8 +201,9 @@ export function hideChatActionButtons(
 export function createConvictionEndMessage(actor: SwadeActor) {
   ChatMessage.create({
     speaker: {
-      actor: actor,
+      actor: actor.id,
       alias: actor.name,
+      token: actor.token.id,
     },
     content: game.i18n.localize('SWADE.ConvictionEnd'),
   });
@@ -215,13 +216,13 @@ export async function createGmBennyAddMessage(
   user: User = game.user,
   given?: boolean,
 ) {
-  let message = await renderTemplate(CONFIG.SWADE.bennies.templates.gmadd, {
+  let message = await renderTemplate(SWADE.bennies.templates.gmadd, {
     target: user,
     speaker: user,
   });
 
   if (given) {
-    message = await renderTemplate(CONFIG.SWADE.bennies.templates.add, {
+    message = await renderTemplate(SWADE.bennies.templates.add, {
       target: user,
       speaker: user,
     });

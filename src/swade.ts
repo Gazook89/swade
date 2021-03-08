@@ -29,6 +29,17 @@ import { rollPowerMacro, rollSkillMacro, rollWeaponMacro } from './module/util';
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
+
+export const swadeGame = {
+  SwadeActor,
+  SwadeItem,
+  SwadeEntityTweaks,
+  rollSkillMacro,
+  rollWeaponMacro,
+  rollPowerMacro,
+  sockets: null,
+  itemChatCardHelper: ItemChatCardHelper,
+};
 Hooks.once('init', () => {
   console.log(
     `SWADE | Initializing Savage Worlds Adventure Edition\n${SWADE.ASCII}`,
@@ -38,21 +49,13 @@ Hooks.once('init', () => {
   // CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
-  game.swade = {
-    SwadeActor,
-    SwadeItem,
-    SwadeEntityTweaks,
-    rollSkillMacro,
-    rollWeaponMacro,
-    rollPowerMacro,
-    sockets: new SwadeSocketHandler(),
-    itemChatCardHelper: ItemChatCardHelper,
-  };
-
+  game.swade = swadeGame;
+  game.swade.sockets = new SwadeSocketHandler();
   //Register custom Handlebars helpers
   registerCustomHelpers();
 
   //Overwrite method prototypes
+  //@ts-expect-error
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
@@ -100,9 +103,9 @@ Hooks.once('init', () => {
   listenJournalDrop();
 
   // Preload Handlebars templates
-  CONFIG.SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  CONFIG.SWADE.templates.preloadPromise.then(() => {
-    CONFIG.SWADE.templates.templatesPreloaded = true;
+  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
+  SWADE.templates.preloadPromise.then(() => {
+    SWADE.templates.templatesPreloaded = true;
   });
 });
 

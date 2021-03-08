@@ -11,13 +11,13 @@ export async function createActionCardTable(
   }
   const cardPack = game.packs.get(packName) as Compendium;
   const cardPackIndex = await cardPack.getIndex();
-  let cardTable = game.tables.getName(CONFIG.SWADE.init.cardTable);
+  let cardTable = game.tables.getName(SWADE.init.cardTable);
 
   //If the table doesn't exist, create it
   if (!cardTable) {
     const tableData = {
       img: 'systems/swade/assets/ui/wildcard.svg',
-      name: CONFIG.SWADE.init.cardTable,
+      name: SWADE.init.cardTable,
       replacement: false,
       displayRoll: false,
     };
@@ -68,7 +68,7 @@ export async function createSwadeMacro(data: any, slot: number) {
       'You can only create macro buttons for owned Items',
     );
   const item = data.data;
-  let command: String;
+  let command: string;
   // Create the macro command
   switch (item.type) {
     case 'skill':
@@ -166,7 +166,7 @@ export function rollPowerMacro(powerName) {
 export function notificationExists(string: string, localize = false): boolean {
   let stringToFind = string;
   if (localize) stringToFind = game.i18n.localize(string);
-  return ui.notifications.active.find((n) => n.text() === stringToFind);
+  return ui.notifications.active.some((n) => n.text() === stringToFind);
 }
 
 export async function shouldShowBennyAnimation(): Promise<boolean> {
@@ -182,4 +182,11 @@ export async function shouldShowBennyAnimation(): Promise<boolean> {
   } else {
     return value;
   }
+}
+
+export function getCanvas(): Canvas {
+  if (canvas instanceof Canvas) {
+    return canvas;
+  }
+  throw new Error('No Canvas available');
 }

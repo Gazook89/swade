@@ -1,4 +1,5 @@
 import IDriverData from '../../interfaces/IDriverData';
+import { SWADE } from '../config';
 import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
@@ -12,6 +13,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       classes: ['swade', 'sheet', 'actor', 'vehicle'],
       width: 600,
@@ -77,6 +80,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       await Dialog.confirm({
         title: game.i18n.localize('SWADE.Del'),
         content: template,
+        render: () => {},
         yes: async () => {
           await this.actor.deleteOwnedItem(ownedItem.id);
           li.slideUp(200, () => this.render(false));
@@ -138,7 +142,9 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
 
     //Input Synchronization
     html.find('.wound-input').on('keyup', (ev) => {
-      this.actor.update({ 'data.wounds.value': $(ev.currentTarget).val() });
+      this.actor.update({
+        'data.wounds.value': $(ev.currentTarget).val() as number,
+      });
     });
 
     //Maneuver Check
@@ -147,10 +153,10 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       .on('click', (event) => this.actor.rollManeuverCheck(event));
   }
 
-  getData(): ActorSheetData {
-    const data: any = super.getData();
+  getData() {
+    const data = super.getData();
 
-    data.config = CONFIG.SWADE;
+    data.config = SWADE;
     data.itemsByType = {};
     data.opSkills = this._buildOpSkillList();
     for (const item of data.items) {
@@ -309,7 +315,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
 
   private _buildOpSkillList(): any {
     const retVal = {};
-    const opSkills = CONFIG.SWADE.vehicles.opSkills as string[];
+    const opSkills = SWADE.vehicles.opSkills as string[];
     for (const skill of opSkills) {
       retVal[skill] = skill;
     }

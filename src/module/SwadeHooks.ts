@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { SysItemData } from '../interfaces/item-data';
 import Bennies from './bennies';
 import * as chat from './chat';
 import { formatRoll } from './chat';
@@ -7,9 +8,6 @@ import DiceSettings from './DiceSettings';
 import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 import SwadeTemplate from './entities/SwadeTemplate';
-import { AbilitySubtype } from './enums/AbilitySubtypeEnum';
-import { ActorType } from './enums/ActorTypeEnum';
-import { ItemType } from './enums/ItemTypeEnum';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import { SwadeSetup } from './setup/setupHandler';
 import CharacterSheet from './sheets/official/CharacterSheet';
@@ -48,7 +46,7 @@ export default class SwadeHooks {
       config: true,
       default: SWADE.init.defaultCardCompendium,
       choices: packChoices,
-      onChange: async (choice) => {
+      onChange: async (choice: string) => {
         console.log(
           `Repopulating action cards Table with cards from deck ${choice}`,
         );
@@ -119,14 +117,11 @@ export default class SwadeHooks {
     if (!createData.img) {
       createData.img = `systems/swade/assets/icons/${createData.type}.svg`;
     }
-    if (createData.type === ItemType.Skill && options.renderSheet !== null) {
+    if (createData.type === 'skill' && options.renderSheet !== null) {
       options.renderSheet = true;
     }
 
-    if (
-      createData.type === ItemType.Ability &&
-      createData.data.subtype === AbilitySubtype.Race
-    ) {
+    if (createData.type === 'ability' && createData.data.subtype === 'race') {
       return false;
     }
   }
@@ -151,7 +146,7 @@ export default class SwadeHooks {
     }
 
     // Return early if the actor is not a player character
-    if (actor.data.type !== ActorType.Character) {
+    if (actor.data.type !== 'character') {
       return;
     }
     const coreSkills = [
@@ -165,7 +160,7 @@ export default class SwadeHooks {
 
     //Get and map the existing skills on the actor to an array of names
     const existingSkills = actor.items
-      .filter((i: SwadeItem) => i.type === ItemType.Skill)
+      .filter((i: SwadeItem) => i.type === 'skill')
       .map((i: SwadeItem) => i.name);
 
     //Filter the expected
@@ -175,11 +170,12 @@ export default class SwadeHooks {
       .get('swade.skills')
       .getContent()) as SwadeItem[];
 
-    actor.createEmbeddedEntity(
-      'OwnedItem',
-      skillIndex.filter((i) => skillsToAdd.includes(i.data.name)),
-      { renderSheet: null },
-    );
+    // extract skill data
+    const skills = skillIndex
+      .filter((i) => skillsToAdd.includes(i.data.name))
+      .map((i) => i.data);
+
+    actor.createOwnedItem(skills, { renderSheet: null });
   }
 
   public static onRenderActorDirectory(
@@ -265,7 +261,7 @@ export default class SwadeHooks {
     options: any,
     userId: string,
   ) {
-    if (actor.data.type === ActorType.NPC) {
+    if (actor.data.type === 'npc') {
       ui.actors.render();
     }
     // Update the player list to display new bennies values
@@ -286,7 +282,11 @@ export default class SwadeHooks {
       const combatant = currentCombat.combatants.find((c) => c._id == combId);
       const initdiv = el.getElementsByClassName('token-initiative');
       if (combatant.initiative && combatant.initiative !== 0) {
-        initdiv[0].innerHTML = `<span class="initiative">${combatant.flags.swade.cardString}</span>`;
+        const cardString = getProperty(
+          combatant,
+          'flags.swade.cardString',
+        ) as string;
+        initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
       } else if (!game.user.isGM) {
         initdiv[0].innerHTML = '';
       }
@@ -317,7 +317,7 @@ export default class SwadeHooks {
 
     if (
       !getProperty(updateData, 'flags.swade') ||
-      combatant.actor.data.type !== ActorType.Character
+      combatant.actor.data.type !== 'character'
     )
       return;
     if (
@@ -327,12 +327,13 @@ export default class SwadeHooks {
       renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
       })
-        .then((template) =>
-          ChatMessage.create({ speaker: game.user, content: template }),
-        )
+        .then((template: string) => {
+          const createData = { user: game.user, content: template };
+          ChatMessage.create(createData);
+        })
         .then(() => {
           const combatants = combat.combatants.filter(
-            (c) => c.actor.data.type === ActorType.Character,
+            (c) => c.actor.data.type === 'character',
           );
           for (const combatant of combatants) {
             const actor = combatant.actor as SwadeActor;
@@ -436,7 +437,7 @@ export default class SwadeHooks {
             .setFlag(
               'swade',
               'bennies',
-              selectedUser.getFlag('swade', 'bennies') + 1,
+              (selectedUser.getFlag('swade', 'bennies') as number) + 1,
             )
             .then(async () => {
               ui['players'].render(true);
@@ -533,7 +534,7 @@ export default class SwadeHooks {
       | CharacterSheet,
     data: any,
   ) {
-    if (data.type === 'Actor' && actor.data.type === ActorType.Vehicle) {
+    if (data.type === 'Actor' && actor.data.type === 'vehicle') {
       const vehicleSheet = sheet as SwadeVehicleSheet;
       const activeTab = getProperty(vehicleSheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
@@ -544,65 +545,57 @@ export default class SwadeHooks {
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
       let item: SwadeItem;
       if ('pack' in data) {
-        const pack = game.packs.get(data.pack) as Compendium;
+        const pack = game.packs.get(data.pack);
         item = (await pack.getEntity(data.id)) as SwadeItem;
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data, {});
       } else {
-        item = game.items.get(data.id) as SwadeItem;
+        item = game.items.get(data.id);
       }
+      const isRightItemTypeAndSubtype =
+        item.data.type === 'ability' && item.data.data.subtype === 'race';
+      if (!isRightItemTypeAndSubtype) return false;
 
-      if (
-        item.type !== ItemType.Ability ||
-        item.data.data.subtype !== AbilitySubtype.Race
-      ) {
-        return false;
-      } else {
-        // TODO maybe do skill upgrade?
-        //set name
-        await actor.update({ 'data.details.species.name': item.name });
-        //process embedded entities
-        const map = new Map<string, any>(
-          item.getFlag('swade', 'embeddedAbilities') || [],
-        );
-        const creationData = [];
-        for (const entry of map.values()) {
-          //if the item isn't a skill, then push it to the new items
-          if (entry.type !== ItemType.Skill) {
-            creationData.push(entry);
+      //set name
+      await actor.update({ 'data.details.species.name': item.name });
+      //process embedded entities
+      const map = new Map<string, SysItemData>(
+        (item.getFlag('swade', 'embeddedAbilities') as [
+          string,
+          SysItemData,
+        ][]) || [],
+      );
+      const creationData = [];
+      for (const entry of map.values()) {
+        //if the item isn't a skill, then push it to the new items
+        if (entry.type !== 'skill') {
+          creationData.push(entry);
+        } else {
+          //else, check if there's already a skill like that that exists
+          const skill = actor.items.find(
+            (i) => i.type === 'skill' && i.name === entry.name,
+          );
+          if (skill) {
+            //if the skill exists, set it to the value of the skill from the item
+            const skillDie = getProperty(entry, 'data.die') as any;
+            await actor.updateOwnedItem({
+              _id: skill.id,
+              data: { die: skillDie },
+            });
           } else {
-            //else, check if there's already a skill like that that exists
-            const skill = actor.items.find(
-              (i: Item) => i.type === ItemType.Skill && i.name === entry.name,
-            ) as Item;
-            if (skill) {
-              //if the skill exists, set it to the value of the skill from the item
-              const skillDie = getProperty(entry, 'data.die');
-              await actor.updateOwnedItem({
-                _id: skill.id,
-                'data.die': skillDie,
-              });
-            } else {
-              //else, add it to the new items
-              creationData.push(entry);
-            }
+            //else, add it to the new items
+            creationData.push(entry);
           }
         }
-        if (creationData.length > 0) {
-          await actor.createOwnedItem(creationData, { renderSheet: null });
-        }
+      }
+      if (creationData.length > 0) {
+        await actor.createOwnedItem(creationData, { renderSheet: null });
+      }
 
-        //copy active effects
-        const effects = Array.from(item['effects'].values()).map(
-          (ae: ActiveEffect) => {
-            const retVal = ae.data;
-            delete retVal._id;
-            return retVal;
-          },
-        );
-        if (!!effects && effects.length > 0) {
-          await actor.createEmbeddedEntity('ActiveEffect', effects);
-        }
+      //copy active effects
+      const effects = item.effects.map((ae) => ae.data) as any;
+      if (!!effects && effects.length > 0) {
+        await actor.createEmbeddedEntity('ActiveEffect', effects);
       }
     }
   }
@@ -622,16 +615,18 @@ export default class SwadeHooks {
     const cardPack = game.packs.get(
       game.settings.get('swade', 'cardDeck'),
     ) as Compendium;
-    const cards = (await cardPack.getContent()).sort((a, b) => {
-      const cardA = a.getFlag('swade', 'cardValue');
-      const cardB = b.getFlag('swade', 'cardValue');
-      const card = cardA - cardB;
-      if (card !== 0) return card;
-      const suitA = a.getFlag('swade', 'suitValue');
-      const suitB = b.getFlag('swade', 'suitValue');
-      const suit = suitA - suitB;
-      return suit;
-    }) as JournalEntry[];
+    const cards = (await cardPack.getContent()).sort(
+      (a: JournalEntry, b: JournalEntry) => {
+        const cardA = a.getFlag('swade', 'cardValue') as number;
+        const cardB = b.getFlag('swade', 'cardValue') as number;
+        const card = cardA - cardB;
+        if (card !== 0) return card;
+        const suitA = a.getFlag('swade', 'suitValue') as number;
+        const suitB = b.getFlag('swade', 'suitValue') as number;
+        const suit = suitA - suitB;
+        return suit;
+      },
+    ) as JournalEntry[];
 
     //prep list of cards for selection
     const cardTable = game.tables.getName(SWADE.init.cardTable);

@@ -1,63 +1,48 @@
 import SwadeDice from '../dice';
 import IRollOptions from '../../interfaces/IRollOptions';
 import SwadeItem from './SwadeItem';
-import { ActorType } from '../enums/ActorTypeEnum';
-import { ItemType } from '../enums/ItemTypeEnum';
 import * as util from '../util';
 import { SWADE } from '../config';
+import { SysActorData } from '../../interfaces/actor-data';
 
 /**
  * @noInheritDoc
  */
-export default class SwadeActor extends Actor {
+export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   /* -------------------------------------------- */
   /*  Getters
   /* -------------------------------------------- */
   get isWildcard(): boolean {
-    if (this.data.type === ActorType.Vehicle) {
+    if (this.data.type === 'vehicle') {
       return false;
     } else {
       return (
         getProperty(this.data, 'data.wildcard') ||
-        this.data.type === ActorType.Character
+        this.data.type === 'character'
       );
     }
   }
 
   get hasArcaneBackground(): boolean {
     const abEdges = this.items.filter(
-      (i: SwadeItem) =>
-        i.type === ItemType.Edge && i.data.data['isArcaneBackground'] === true,
+      (i) => i.type === 'edge' && i.data.data['isArcaneBackground'] === true,
     );
     const abAbilities = this.items.filter(
-      (i: SwadeItem) =>
-        i.type === ItemType.Ability && i.data.data['grantsPowers'] === true,
+      (i) => i.type === 'ability' && i.data.data['grantsPowers'] === true,
     );
     return abEdges.length > 0 || abAbilities.length > 0;
   }
 
   /**
    * @override
-   * Extends data from base Actor class
-   */
-  prepareData() {
-    this.data = duplicate(this['_data']);
-    if (!this.data.img) this.data.img = CONST.DEFAULT_TOKEN;
-    if (!this.data.name) this.data.name = 'New ' + this.entity;
-    this.prepareEmbeddedEntities();
-    this.prepareBaseData();
-    this.applyActiveEffects();
-    this.prepareDerivedData();
-  }
-
-  /**
-   * @override
    */
   prepareBaseData() {
+    if (this.data.type === 'vehicle') return;
     //auto calculations
-    const shouldAutoCalcToughness =
-      getProperty(this.data, 'data.details.autoCalcToughness') &&
-      this.data.type !== ActorType.Vehicle;
+    const shouldAutoCalcToughness = getProperty(
+      this.data,
+      'data.details.autoCalcToughness',
+    ) as boolean;
 
     if (shouldAutoCalcToughness) {
       //if we calculate the toughness then we set the values to 0 beforehand so the active effects can be applies
@@ -67,9 +52,10 @@ export default class SwadeActor extends Actor {
       setProperty(this.data, armorKey, 0);
     }
 
-    const shouldAutoCalcParry =
-      getProperty(this.data, 'data.details.autoCalcParry') &&
-      this.data.type !== ActorType.Vehicle;
+    const shouldAutoCalcParry = getProperty(
+      this.data,
+      'data.details.autoCalcParry',
+    ) as boolean;
     if (shouldAutoCalcParry) {
       //same procedure as with Toughness
       setProperty(this.data, 'data.stats.parry.value', 0);
@@ -81,7 +67,7 @@ export default class SwadeActor extends Actor {
    */
   prepareDerivedData() {
     //return early for Vehicles
-    if (this.data.type === ActorType.Vehicle) return;
+    if (this.data.type === 'vehicle') return;
 
     //modify pace with wounds
     if (game.settings.get('swade', 'enableWoundPace')) {
@@ -111,9 +97,10 @@ export default class SwadeActor extends Actor {
     }
 
     // Toughness calculation
-    const shouldAutoCalcToughness =
-      getProperty(this.data, 'data.details.autoCalcToughness') &&
-      this.data.type !== ActorType.Vehicle;
+    const shouldAutoCalcToughness = getProperty(
+      this.data,
+      'data.details.autoCalcToughness',
+    );
 
     if (shouldAutoCalcToughness) {
       const toughKey = 'data.stats.toughness.value';
@@ -132,9 +119,10 @@ export default class SwadeActor extends Actor {
       setProperty(this.data, armorKey, completeArmor);
     }
 
-    const shouldAutoCalcParry =
-      getProperty(this.data, 'data.details.autoCalcParry') &&
-      this.data.type !== ActorType.Vehicle;
+    const shouldAutoCalcParry = getProperty(
+      this.data,
+      'data.details.autoCalcParry',
+    );
 
     if (shouldAutoCalcParry) {
       const parryKey = 'data.stats.parry.value';
@@ -153,7 +141,7 @@ export default class SwadeActor extends Actor {
   static async create(data, options = {}) {
     let link = false;
 
-    if (data.type === ActorType.Character) {
+    if (data.type === 'character') {
       link = true;
     }
     data.token = data.token || {};
@@ -367,8 +355,8 @@ export default class SwadeActor extends Actor {
       };
       ChatMessage.create(chatData);
     }
-    const actorData = this.data as any;
-    await this.update({ 'data.bennies.value': actorData.data.bennies.max });
+    if (this.data.type === 'vehicle') return;
+    await this.update({ 'data.bennies.value': this.data.data.bennies.max });
   }
 
   /**
@@ -422,7 +410,7 @@ export default class SwadeActor extends Actor {
   getRollShortcuts() {
     const out = {};
     //return early if the actor is a vehicle
-    if (this.data.type === ActorType.Vehicle) return out;
+    if (this.data.type === 'vehicle') return out;
 
     // Attributes
     const attributes = this.data.data.attributes;
@@ -439,7 +427,7 @@ export default class SwadeActor extends Actor {
   /**
    * @override
    */
-  getRollData() {
+  getRollData(): any {
     const retVal = this.getRollShortcuts();
     const skills = this.items.filter((i: Item) => i.type === 'skill') as Item[];
     for (const skill of skills) {
@@ -459,22 +447,25 @@ export default class SwadeActor extends Actor {
    * Calculates the correct armor value based on SWADE v5.5 and returns that value
    */
   calcArmor(): number {
-    let totalArmorVal = 0;
-    const armorList = this.data['items'].filter((i: SwadeItem) => {
-      const isEquipped = getProperty(i.data, 'equipped');
-      const coversTorso = getProperty(i.data, 'locations.torso');
-      const isNaturalArmor = getProperty(i.data, 'isNaturalArmor');
-      return (
-        i.type === ItemType.Armor &&
-        isEquipped &&
-        !isNaturalArmor &&
-        coversTorso
-      );
-    });
+    const getArmorValue = (value: string | number): number => {
+      return typeof value === 'number' ? value : parseInt(value, 10);
+    };
 
+    let totalArmorVal = 0;
+
+    //get armor items and retieve their data
+    const armors = this.itemTypes['armor'].map((i) =>
+      i.data.type === 'armor' ? i.data : null,
+    );
+    const armorList = armors.filter((i) => {
+      const isEquipped = i.data.equipped;
+      const coversTorso = i.data.locations.torso;
+      const isNaturalArmor = i.data.isNaturalArmor;
+      return isEquipped && !isNaturalArmor && coversTorso;
+    });
     armorList.sort((a, b) => {
-      const aValue = parseInt(a.data.armor, 10);
-      const bValue = parseInt(b.data.armor, 10);
+      const aValue = getArmorValue(a.data.armor);
+      const bValue = getArmorValue(b.data.armor);
       if (aValue < bValue) {
         return 1;
       }
@@ -485,23 +476,22 @@ export default class SwadeActor extends Actor {
     });
 
     if (armorList.length === 1) {
-      totalArmorVal = parseInt(armorList[0].data.armor);
+      totalArmorVal = getArmorValue(armorList[0].data.armor);
     } else if (armorList.length > 1) {
       totalArmorVal =
-        parseInt(armorList[0].data.armor, 10) +
-        Math.floor(parseInt(armorList[1].data.armor, 10) / 2);
+        getArmorValue(armorList[0].data.armor) +
+        Math.floor(getArmorValue(armorList[1].data.armor) / 2);
     }
 
-    const naturalArmors = this.data['items'].filter((i: SwadeItem) => {
-      const isArmor = i.type === ItemType.Armor;
-      const isNaturalArmor = getProperty(i.data, 'isNaturalArmor');
-      const isEquipped = getProperty(i.data, 'equipped');
-      const isTorso = getProperty(i.data, 'locations.torso');
-      return isArmor && isNaturalArmor && isEquipped && isTorso;
+    const naturalArmors = armors.filter((i) => {
+      const isEquipped = i.data.equipped;
+      const coversTorso = i.data.locations.torso;
+      const isNaturalArmor = i.data.isNaturalArmor;
+      return isNaturalArmor && isEquipped && coversTorso;
     });
 
     for (const armor of naturalArmors) {
-      totalArmorVal += parseInt(armor.data.armor, 10);
+      totalArmorVal += getArmorValue(armor.data.armor);
     }
 
     return totalArmorVal;
@@ -565,7 +555,7 @@ export default class SwadeActor extends Actor {
     let parryTotal = 0;
     const parryBase = game.settings.get('swade', 'parryBaseSkill') as string;
     const parryBaseSkill = this.items.find(
-      (i: Item) => i.type === ItemType.Skill && i.name === parryBase,
+      (i: Item) => i.type === 'skill' && i.name === parryBase,
     ) as Item;
 
     const skillDie: number =
@@ -583,7 +573,7 @@ export default class SwadeActor extends Actor {
 
     //add shields
     const shields = this.items.filter(
-      (i: Item) => i.type === ItemType.Shield,
+      (i: Item) => i.type === 'shield',
     ) as Item[];
 
     for (const shield of shields) {
@@ -686,6 +676,8 @@ export default class SwadeActor extends Actor {
 
     const dicePool = new DicePool({
       rolls: rolls,
+      //@ts-ignore
+      //TODO is known bug in types config
       modifiers: [kh],
     });
 
@@ -703,8 +695,12 @@ export default class SwadeActor extends Actor {
       getProperty(this.data, 'data.details.conviction.active')
     ) {
       for (const r of dicePool.rolls) {
-        r.terms.push('+');
-        r.terms.push(this._buildTraitDie(6, game.i18n.localize('SWADE.Conv')));
+        if (r instanceof Roll) {
+          r.terms.push('+');
+          r.terms.push(
+            this._buildTraitDie(6, game.i18n.localize('SWADE.Conv')),
+          );
+        }
       }
     }
 
@@ -717,7 +713,7 @@ export default class SwadeActor extends Actor {
   private _buildTraitDie(
     sides: number,
     flavor: string,
-    modifiers: any[] = [],
+    modifiers: string[] = [],
   ): Die {
     return new Die({
       faces: sides,
@@ -726,7 +722,7 @@ export default class SwadeActor extends Actor {
     });
   }
 
-  private _buildWildDie(sides = 6, modifiers: any[] = []): Die {
+  private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
     const die = new Die({
       faces: sides,
       modifiers: ['x', ...modifiers],

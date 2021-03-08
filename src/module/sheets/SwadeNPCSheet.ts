@@ -6,6 +6,8 @@ import SwadeBaseActorSheet from './SwadeBaseActorSheet';
  */
 export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       classes: ['swade', 'sheet', 'actor', 'npc'],
       width: 660,
@@ -35,8 +37,8 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   }
 
   // Override to set resizable initial size
-  async _renderInner(...args: any[]) {
-    const html = await super._renderInner(...args);
+  async _renderInner(data, options) {
+    const html = await super._renderInner(data, options);
     this.form = html[0];
 
     // Resize resizable classes
@@ -48,9 +50,9 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     });
 
     // Filter power list
-    const arcane = !this.options.activeArcane
+    const arcane = !this.options['activeArcane']
       ? 'All'
-      : this.options.activeArcane;
+      : this.options['activeArcane'];
     (html as JQuery).find('.arcane-tabs .arcane').removeClass('active');
     (html as JQuery).find(`[data-arcane='${arcane}']`).addClass('active');
     this._filterPowers(html as JQuery, arcane);
@@ -167,7 +169,8 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         });
         ChatMessage.create({
           speaker: {
-            actor: this.actor,
+            token: this.actor.token.id,
+            actor: this.actor.id,
             alias: this.actor.name,
           },
           content: game.i18n.localize('SWADE.ConvictionActivate'),
@@ -181,7 +184,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     });
   }
 
-  getData(): ActorSheetData {
+  getData() {
     const data: any = super.getData();
 
     // Everything below here is only needed if user is not limited

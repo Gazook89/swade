@@ -1,4 +1,5 @@
 import { SWADE } from './config';
+import { getCanvas } from './util';
 
 export default class SwadeCombat extends Combat {
   /**
@@ -11,10 +12,14 @@ export default class SwadeCombat extends Combat {
    */
   async rollInitiative(
     ids: string[] | string,
-    formula: string | null = null,
-    messageOptions: any = {},
-  ): Promise<Combat> {
-    if (formula) console.log('Wait, why is there a formula');
+    {
+      messageOptions = {},
+    }: {
+      formula?: string | null;
+      messageOptions?: any;
+      updateTurn?: boolean;
+    } = {},
+  ): Promise<this> {
     // Structure input data
     ids = typeof ids === 'string' ? [ids] : ids;
 
@@ -22,7 +27,7 @@ export default class SwadeCombat extends Combat {
     const initMessages = [];
     let isRedraw = false;
     let skipMessage = false;
-    const actionCardDeck = game.tables.getName(CONFIG.SWADE.init.cardTable);
+    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
     if (ids.length > actionCardDeck.results.filter((r) => !r.drawn).length) {
       ui.notifications.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return;
@@ -50,8 +55,8 @@ export default class SwadeCombat extends Combat {
       let card;
       if (isRedraw) {
         const oldCard = await this.findCard(
-          c.flags.swade.cardValue,
-          c.flags.swade.suitValue,
+          getProperty(c, 'flags.swade.cardValue') as number,
+          getProperty(c, 'flags.swade.suitValue') as number,
         );
         const cards = await this.drawCard();
         cards.push(oldCard);
@@ -66,14 +71,14 @@ export default class SwadeCombat extends Combat {
           if (cards.filter((c) => c.getFlag('swade', 'isJoker')).length > 0) {
             card = await this.pickACard(cards, c.name);
           } else {
-            cards.sort((a, b) => {
+            cards.sort((a: JournalEntry, b: JournalEntry) => {
               //sort cards to pick the lower one
-              const cardA = a.getFlag('swade', 'cardValue');
-              const cardB = b.getFlag('swade', 'cardValue');
+              const cardA = a.getFlag('swade', 'cardValue') as number;
+              const cardB = b.getFlag('swade', 'cardValue') as number;
               const card = cardA - cardB;
               if (card !== 0) return card;
-              const suitA = a.getFlag('swade', 'suitValue');
-              const suitB = b.getFlag('swade', 'suitValue');
+              const suitA = a.getFlag('swade', 'suitValue') as number;
+              const suitB = b.getFlag('swade', 'suitValue') as number;
               const suit = suitA - suitB;
               return suit;
             });
@@ -120,7 +125,7 @@ export default class SwadeCombat extends Combat {
       const messageData = mergeObject(
         {
           speaker: {
-            scene: canvas.scene._id,
+            scene: getCanvas().scene._id,
             actor: c.actor ? c.actor._id : null,
             token: c.token._id,
             alias: c.token.name,
@@ -221,13 +226,13 @@ export default class SwadeCombat extends Combat {
       await game.settings.set(
         'swade',
         'cardDeck',
-        CONFIG.SWADE.init.defaultCardCompendium,
+        SWADE.init.defaultCardCompendium,
       );
       actionCardPack = game.packs.get(
         game.settings.get('swade', 'cardDeck'),
       ) as Compendium;
     }
-    const actionCardDeck = game.tables.getName(CONFIG.SWADE.init.cardTable);
+    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
     const packIndex = await actionCardPack.getIndex();
     const cards: JournalEntry[] = [];
 
@@ -307,6 +312,7 @@ export default class SwadeCombat extends Combat {
         title: `${game.i18n.localize('SWADE.PickACard')} ${combatantName}`,
         content: html,
         buttons: buttons,
+        default: 'ok',
         close: async () => {
           if (immedeateRedraw) {
             const newCard = await this.drawCard();
@@ -360,9 +366,8 @@ export default class SwadeCombat extends Combat {
         await game.tables.getName(SWADE.init.cardTable).reset();
         ui.notifications.info('Card Deck automatically reset');
       }
-      const resetComs = this.combatants.map((c) => {
+      const resetComs = this.data.combatants.map((c) => {
         c.initiative = null;
-        c.hasRolled = false;
         c.flags = {
           swade: {
             cardValue: null,
@@ -381,6 +386,5 @@ export default class SwadeCombat extends Combat {
         await this.rollInitiative(combatantIds);
       }
     }
-    return this as Combat;
   }
 }

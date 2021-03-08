@@ -1,29 +1,31 @@
+import { SWADE } from './config';
+
 /**
  * This class defines a submenu for the system settings which will handle the DSN Settings
  */
 export default class DiceSettings extends FormApplication {
   config: any;
   customWildDieDefaultColors: any;
-  constructor(object = {}, options = { parent: null }) {
+  constructor(object = {}, options = {}) {
     super(object, options);
-    this.config = CONFIG.SWADE.diceConfig;
+    this.config = SWADE.diceConfig;
     this.customWildDieDefaultColors = this.config.flags.dsnCustomWildDieColors.default;
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      id: CONFIG.SWADE.diceConfig.id,
-      title: CONFIG.SWADE.diceConfig.title,
+    return {
+      ...super.defaultOptions,
+      id: SWADE.diceConfig.id,
+      title: SWADE.diceConfig.title,
       template: 'systems/swade/templates/dice-config.html',
       classes: ['swade', 'dice-config', 'dice-so-nice'],
       width: 500,
-      height: 'auto',
-      background: '#000',
+      height: 'auto' as const,
       resizable: false,
       closeOnSubmit: false,
       submitOnClose: true,
       submitOnChange: true,
-    });
+    };
   }
 
   /**
@@ -108,7 +110,7 @@ export default class DiceSettings extends FormApplication {
   }
 
   private _prepareColorsetList() {
-    const sets = this._deepCopyColorsets(CONFIG.SWADE.dsnColorSets);
+    const sets = this._deepCopyColorsets(SWADE.dsnColorSets);
     sets.none = {
       name: 'none',
       category: 'DICESONICE.Colors',
@@ -142,8 +144,8 @@ export default class DiceSettings extends FormApplication {
   }
 
   private _prepareTextureList() {
-    return Object.keys(CONFIG.SWADE.dsnTextureList).reduce((i18nCfg, key) => {
-      i18nCfg[key] = CONFIG.SWADE.dsnTextureList[key].name;
+    return Object.keys(SWADE.dsnTextureList).reduce((i18nCfg, key) => {
+      i18nCfg[key] = SWADE.dsnTextureList[key].name;
       return i18nCfg;
     }, {});
   }
