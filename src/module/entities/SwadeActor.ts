@@ -55,10 +55,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * @override
    */
   prepareBaseData() {
+    if (this.data.type === 'vehicle') return;
     //auto calculations
-    const shouldAutoCalcToughness =
-      getProperty(this.data, 'data.details.autoCalcToughness') &&
-      this.data.type !== 'vehicle';
+    const shouldAutoCalcToughness = getProperty(
+      this.data,
+      'data.details.autoCalcToughness',
+    ) as boolean;
 
     if (shouldAutoCalcToughness) {
       //if we calculate the toughness then we set the values to 0 beforehand so the active effects can be applies
@@ -68,9 +70,10 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       setProperty(this.data, armorKey, 0);
     }
 
-    const shouldAutoCalcParry =
-      getProperty(this.data, 'data.details.autoCalcParry') &&
-      this.data.type !== 'vehicle';
+    const shouldAutoCalcParry = getProperty(
+      this.data,
+      'data.details.autoCalcParry',
+    ) as boolean;
     if (shouldAutoCalcParry) {
       //same procedure as with Toughness
       setProperty(this.data, 'data.stats.parry.value', 0);
@@ -461,25 +464,26 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   /**
    * Calculates the correct armor value based on SWADE v5.5 and returns that value
    */
-  //TODO Test after conversion
   calcArmor(): number {
+    const getArmorValue = (value: string | number): number => {
+      return typeof value === 'number' ? value : parseInt(value, 10);
+    };
+
     let totalArmorVal = 0;
 
     //get armor items and retieve their data
     const armors = this.itemTypes['armor'].map((i) =>
       i.data.type === 'armor' ? i.data : null,
     );
-
     const armorList = armors.filter((i) => {
       const isEquipped = i.data.equipped;
       const coversTorso = i.data.locations.torso;
       const isNaturalArmor = i.data.isNaturalArmor;
       return isEquipped && !isNaturalArmor && coversTorso;
     });
-
     armorList.sort((a, b) => {
-      const aValue = parseInt(a.armor, 10);
-      const bValue = parseInt(b.armor, 10);
+      const aValue = getArmorValue(a.data.armor);
+      const bValue = getArmorValue(b.data.armor);
       if (aValue < bValue) {
         return 1;
       }
@@ -490,11 +494,11 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     });
 
     if (armorList.length === 1) {
-      totalArmorVal = parseInt(armorList[0].armor, 10);
+      totalArmorVal = getArmorValue(armorList[0].data.armor);
     } else if (armorList.length > 1) {
       totalArmorVal =
-        parseInt(armorList[0].armor, 10) +
-        Math.floor(parseInt(armorList[1].armor, 10) / 2);
+        getArmorValue(armorList[0].data.armor) +
+        Math.floor(getArmorValue(armorList[1].data.armor) / 2);
     }
 
     const naturalArmors = armors.filter((i) => {
@@ -505,7 +509,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     });
 
     for (const armor of naturalArmors) {
-      totalArmorVal += parseInt(armor.armor, 10);
+      totalArmorVal += getArmorValue(armor.data.armor);
     }
 
     return totalArmorVal;
@@ -690,6 +694,8 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     const dicePool = new DicePool({
       rolls: rolls,
+      //@ts-ignore
+      //TODO is known bug in types config
       modifiers: [kh],
     });
 

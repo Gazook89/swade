@@ -1,3 +1,5 @@
+import { SysActorData } from '../../interfaces/actor-data';
+import { SysItemData } from '../../interfaces/item-data';
 import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 
@@ -9,8 +11,6 @@ export default class SwadeEntityTweaks extends FormApplication {
   static get defaultOptions() {
     const options = super.defaultOptions;
     options.id = 'sheet-tweaks';
-    options.template =
-      'systems/swade/templates/actors/dialogs/tweaks-dialog.html';
     options.width = 380;
     return options;
   }
@@ -25,6 +25,13 @@ export default class SwadeEntityTweaks extends FormApplication {
     return `${this.object.name}: SWADE Tweaks`;
   }
 
+  /**
+   * @override
+   */
+  get template() {
+    return 'systems/swade/templates/actors/dialogs/tweaks-dialog.html';
+  }
+
   /* -------------------------------------------- */
 
   /**
@@ -35,7 +42,7 @@ export default class SwadeEntityTweaks extends FormApplication {
     const data = this.object.data;
     const settingFields = this._getAppropriateSettingFields();
 
-    for (const [key] of Object.entries(settingFields)) {
+    for (const key of Object.keys(settingFields)) {
       const fieldExists = getProperty(
         this.object.data,
         `data.additionalStats.${key}`,
@@ -74,7 +81,9 @@ export default class SwadeEntityTweaks extends FormApplication {
    */
   async _updateObject(event, formData) {
     event.preventDefault();
-    const expandedFormData = expandObject(formData);
+    const expandedFormData = expandObject(formData) as
+      | DeepPartial<SysItemData>
+      | DeepPartial<SysActorData>;
 
     //recombine the formdata
     setProperty(
@@ -84,11 +93,13 @@ export default class SwadeEntityTweaks extends FormApplication {
     );
 
     // Update the actor
+    //FIXME revisit later
+    //@ts-ignore
     await this.object.update(expandedFormData);
     this.object.sheet.render(true);
   }
 
-  private _getAppropriateSettingFields(): any {
+  private _getAppropriateSettingFields() {
     const fields = game.settings.get('swade', 'settingFields');
     let settingFields = {};
     if (this.object instanceof SwadeActor) {
@@ -99,7 +110,7 @@ export default class SwadeEntityTweaks extends FormApplication {
     return settingFields;
   }
 
-  private _handleAdditionalStats(expandedFormData: any): any {
+  private _handleAdditionalStats(expandedFormData) {
     const formFields =
       getProperty(expandedFormData, 'data.additionalStats') || {};
     const prototypeFields = this._getAppropriateSettingFields();
@@ -112,7 +123,7 @@ export default class SwadeEntityTweaks extends FormApplication {
         this.object.data,
         `data.additionalStats.${key}`,
       );
-      if (value['useField'] && fieldExistsOnEntity) {
+      if (value['useField'] && !!fieldExistsOnEntity) {
         //update exisiting field;
         newFields[key]['hasMaxValue'] = prototypeFields[key]['hasMaxValue'];
         newFields[key]['dtype'] = prototypeFields[key]['dtype'];

@@ -1,11 +1,5 @@
+import { AdditionalStat } from './additional-stat';
 import { SysItemData } from './item-data';
-
-interface AdditionalStat {
-  dType: string;
-  hasMaxValue: boolean;
-  label: string;
-  useField?: boolean;
-}
 
 interface CharacterCommon {
   attributes: {

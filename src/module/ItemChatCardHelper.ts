@@ -287,13 +287,13 @@ export default class ItemChatCardHelper {
 
       await actor.updateOwnedItem({
         _id: ammo.id,
-        'data.quantity': newQuantity,
+        data: { quantity: newQuantity },
       });
       //handle normal shot consumption
     } else if (ammoManagement && !!shotsUsed && currentShots - shotsUsed >= 0) {
       await actor.updateOwnedItem({
         _id: itemId,
-        'data.currentShots': currentShots - shotsUsed,
+        data: { currentShots: currentShots - shotsUsed },
       });
     }
   }
@@ -341,14 +341,16 @@ export default class ItemChatCardHelper {
       //update the ammo item
       await actor.updateOwnedItem({
         _id: ammo.id,
-        'data.quantity': leftoverAmmoInInventory,
+        data: {
+          quantity: leftoverAmmoInInventory,
+        },
       });
     }
 
     //update the weapon
     await actor.updateOwnedItem({
       _id: weapon.id,
-      'data.currentShots': ammoInMagazine,
+      data: { currentShots: ammoInMagazine },
     });
 
     //check to see we're not posting the message twice

@@ -1,9 +1,4 @@
-interface AdditionalStat {
-  dType: string;
-  hasMaxValue: boolean;
-  label: string;
-  useField?: boolean;
-}
+import { AdditionalStat } from './additional-stat';
 
 interface PhysicalItem {
   weight: number;

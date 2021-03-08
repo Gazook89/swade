@@ -170,11 +170,12 @@ export default class SwadeHooks {
       .get('swade.skills')
       .getContent()) as SwadeItem[];
 
-    actor.createEmbeddedEntity(
-      'OwnedItem',
-      skillIndex.filter((i) => skillsToAdd.includes(i.data.name)),
-      { renderSheet: null },
-    );
+    // extract skill data
+    const skills = skillIndex
+      .filter((i) => skillsToAdd.includes(i.data.name))
+      .map((i) => i.data);
+
+    actor.createOwnedItem(skills, { renderSheet: null });
   }
 
   public static onRenderActorDirectory(
@@ -552,8 +553,7 @@ export default class SwadeHooks {
         item = game.items.get(data.id);
       }
       const isRightItemTypeAndSubtype =
-        item.type === 'ability' && item.data.data.subtype === 'race';
-
+        item.data.type === 'ability' && item.data.data.subtype === 'race';
       if (!isRightItemTypeAndSubtype) return false;
 
       //set name
@@ -577,10 +577,10 @@ export default class SwadeHooks {
           );
           if (skill) {
             //if the skill exists, set it to the value of the skill from the item
-            const skillDie = getProperty(entry, 'data.die');
+            const skillDie = getProperty(entry, 'data.die') as any;
             await actor.updateOwnedItem({
               _id: skill.id,
-              'data.die': skillDie,
+              data: { die: skillDie },
             });
           } else {
             //else, add it to the new items
@@ -593,13 +593,7 @@ export default class SwadeHooks {
       }
 
       //copy active effects
-      const effects = Array.from(item.effects.values()).map(
-        (ae: ActiveEffect) => {
-          const retVal = ae.data;
-          delete retVal._id;
-          return retVal;
-        },
-      );
+      const effects = item.effects.map((ae) => ae.data) as any;
       if (!!effects && effects.length > 0) {
         await actor.createEmbeddedEntity('ActiveEffect', effects);
       }

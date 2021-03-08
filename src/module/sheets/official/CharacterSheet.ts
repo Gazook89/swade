@@ -5,6 +5,8 @@ import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       classes: ['swade-official', 'sheet', 'actor'],
       width: 630,
@@ -558,11 +560,7 @@ export default class CharacterSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new game.swade.SwadeEntityTweaks(this.actor, {
-      //TODO Check if even useful
-      top: this.position.top + 40,
-      left: this.position.left + ((this.position.height as number) - 400) / 2,
-    }).render(true);
+    new game.swade.SwadeEntityTweaks(this.actor).render(true);
   }
 
   protected _calcInventoryWeight(items): number {

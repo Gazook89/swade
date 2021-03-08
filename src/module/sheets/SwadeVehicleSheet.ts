@@ -13,6 +13,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       classes: ['swade', 'sheet', 'actor', 'vehicle'],
       width: 600,

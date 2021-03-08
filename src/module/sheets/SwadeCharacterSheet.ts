@@ -10,6 +10,8 @@ export default class SwadeCharacterSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     const options = mergeObject(super.defaultOptions, {
       classes: ['swade', 'sheet', 'actor', 'character'],
       width: 630,

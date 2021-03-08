@@ -26,7 +26,6 @@ export default class SwadeItem extends Item<SysItemData> {
   }
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
-    //TODO test after conversion
     let itemData;
     if (
       this.type !== 'weapon' &&
@@ -210,10 +209,11 @@ export default class SwadeItem extends Item<SysItemData> {
   async show() {
     // Basic template rendering data
     const token = this.actor.token;
+    const tokenId = token ? `${token.scene._id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const templateData = {
       actor: this.actor,
-      tokenId: token ? `${token.scene._id}.${token.id}` : null,
+      tokenId: tokenId,
       item: this.data,
       data: this.getChatData({}),
       config: SWADE,
@@ -246,7 +246,7 @@ export default class SwadeItem extends Item<SysItemData> {
       content: html,
       speaker: {
         actor: this.actor.id,
-        token: this.actor.token.id,
+        token: tokenId,
         alias: this.actor.name,
       },
       flags: { 'core.canPopout': true } as Record<string, unknown>,

@@ -9,6 +9,8 @@ export default class SettingConfigurator extends FormApplication {
   }
 
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,
@@ -18,7 +20,6 @@ export default class SettingConfigurator extends FormApplication {
       height: 'auto',
       top: 200,
       left: 400,
-      background: '#000',
       resizable: false,
       closeOnSubmit: false,
       submitOnClose: true,

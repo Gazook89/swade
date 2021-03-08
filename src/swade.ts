@@ -37,7 +37,7 @@ export const swadeGame = {
   rollSkillMacro,
   rollWeaponMacro,
   rollPowerMacro,
-  sockets: new SwadeSocketHandler(),
+  sockets: null,
   itemChatCardHelper: ItemChatCardHelper,
 };
 Hooks.once('init', () => {
@@ -50,6 +50,7 @@ Hooks.once('init', () => {
   CONFIG.SWADE = SWADE;
 
   game.swade = swadeGame;
+  game.swade.sockets = new SwadeSocketHandler();
   //Register custom Handlebars helpers
   registerCustomHelpers();
 

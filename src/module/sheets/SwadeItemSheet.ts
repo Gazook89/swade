@@ -12,6 +12,8 @@ export default class SwadeItemSheet extends ItemSheet {
   }
 
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       width: 560,
       height: 'auto',
@@ -60,10 +62,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.item as SwadeItem, {
-      top: this.position.top + 40,
-      left: this.position.left + ((this.position.height as number) - 400) / 2,
-    }).render(true);
+    new SwadeEntityTweaks(this.item).render(true);
   }
 
   activateListeners(html) {

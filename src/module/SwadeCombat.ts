@@ -366,7 +366,7 @@ export default class SwadeCombat extends Combat {
         await game.tables.getName(SWADE.init.cardTable).reset();
         ui.notifications.info('Card Deck automatically reset');
       }
-      const resetComs = this.combatants.map((c) => {
+      const resetComs = this.data.combatants.map((c) => {
         c.initiative = null;
         c.flags = {
           swade: {
