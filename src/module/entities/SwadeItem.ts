@@ -27,14 +27,10 @@ export default class SwadeItem extends Item<SysItemData> {
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
     let itemData;
-    if (
-      this.type !== 'weapon' &&
-      this.type !== 'power' &&
-      this.type !== 'shield'
-    ) {
-      return null;
-    } else {
+    if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;
+    } else {
+      return null;
     }
     const actor = (this.actor as unknown) as SwadeActor;
     const actorIsVehicle = actor.data.type === 'vehicle';
