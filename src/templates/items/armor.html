@@ -21,37 +21,17 @@
           </label>
         </div>
         <div class="form-group">
-          <label for="data.armor">{{localize "SWADE.Armor"}}</label>
-          <span class="form-fields">
+          <label class="check-container"
+            >{{localize "SWADE.NaturalArmor"}}
             <input
-              name="data.armor"
-              type="text"
-              value="{{item.data.armor}}"
-              placeholder="{{localize 'SWADE.Armor'}}"
-              data-dtype="Number"
-          /></span>
-        </div>
-        <div class="form-group">
-          <label for="data.price">{{localize "SWADE.Price"}}</label>
-          <span class="form-fields">
-            <input
-              name="data.price"
-              type="text"
-              value="{{item.data.price}}"
-              placeholder="{{localize 'SWADE.Price'}}"
-              data-dtype="Number"
-          /></span>
-        </div>
-        <div class="form-group">
-          <label for="data.weight">{{localize "SWADE.Weight"}}</label>
-          <span class="form-fields">
-            <input
-              name="data.weight"
-              type="text"
-              value="{{item.data.weight}}"
-              placeholder="{{localize 'SWADE.Weight'}}"
-              data-dtype="Number"
-          /></span>
+              type="checkbox"
+              name="data.isNaturalArmor"
+              {{checked
+              item.data.isNaturalArmor}}
+              data-dtype="Boolean"
+            />
+            <span class="checkmark"></span>
+          </label>
         </div>
         <div class="form-group">
           <label for="data.quantity">{{localize "SWADE.Quantity"}}</label>
@@ -61,6 +41,17 @@
               type="text"
               value="{{item.data.quantity}}"
               placeholder="{{localize 'SWADE.Quantity'}}"
+              data-dtype="Number"
+          /></span>
+        </div>
+        <div class="form-group">
+          <label for="data.armor">{{localize "SWADE.Armor"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.armor"
+              type="text"
+              value="{{item.data.armor}}"
+              placeholder="{{localize 'SWADE.Armor'}}"
               data-dtype="Number"
           /></span>
         </div>
@@ -76,6 +67,28 @@
           /></span>
         </div>
         <div class="form-group">
+          <label for="data.weight">{{localize "SWADE.Weight"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.weight"
+              type="text"
+              value="{{item.data.weight}}"
+              placeholder="{{localize 'SWADE.Weight'}}"
+              data-dtype="Number"
+          /></span>
+        </div>
+        <div class="form-group">
+          <label for="data.price">{{localize "SWADE.Price"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.price"
+              type="text"
+              value="{{item.data.price}}"
+              placeholder="{{localize 'SWADE.Price'}}"
+              data-dtype="Number"
+          /></span>
+        </div>
+        <div class="form-group">
           <label for="data.notes">{{localize "SWADE.Notes"}}</label>
           <span class="form-fields">
             <input
@@ -85,19 +98,6 @@
               placeholder="{{localize 'SWADE.Notes'}}"
               data-dtype="String"
           /></span>
-        </div>
-        <div class="form-group">
-          <label class="check-container"
-            >{{localize "SWADE.NaturalArmor"}}
-            <input
-              type="checkbox"
-              name="data.isNaturalArmor"
-              {{checked
-              item.data.isNaturalArmor}}
-              data-dtype="Boolean"
-            />
-            <span class="checkmark"></span>
-          </label>
         </div>
         <header class="header-field">
           {{localize "SWADE.HitLocations"}}
