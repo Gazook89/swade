@@ -172,7 +172,7 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants(a, b) {
-    if (a.flags.swade && b.flags.swade) {
+    if (hasProperty(a, 'flags.swade') && hasProperty(b, 'flags.swade')) {
       const cardA = a.flags.swade.cardValue;
       const cardB = b.flags.swade.cardValue;
       const card = cardB - cardA;
