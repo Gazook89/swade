@@ -28,6 +28,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added a convenience shortcut on the official sheet which opens the parent itemsheet of transfered Active Effects
 - Added Die type additional stat
 
+### Changed
+
+- NPCs now automatically equip equipable items
+
 ## [v0.17.2]
 
 ### Changed

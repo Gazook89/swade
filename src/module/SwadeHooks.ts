@@ -120,18 +120,15 @@ export default class SwadeHooks {
     if (createData.type === 'skill' && options.renderSheet !== null) {
       options.renderSheet = true;
     }
-
     if (createData.type === 'ability' && createData.data.subtype === 'race') {
       return false;
     }
-  }
-
-  public static onPreCreateActor(
-    createData: any,
-    options: any,
-    userId: string,
-  ) {
-    //NO-OP
+    if (
+      actor.data.type === 'npc' &&
+      getProperty(createData, 'data.equippable')
+    ) {
+      createData.data.equipped = true;
+    }
   }
 
   public static async onCreateActor(
@@ -291,15 +288,6 @@ export default class SwadeHooks {
         initdiv[0].innerHTML = '';
       }
     });
-  }
-
-  public static onUpdateCombat(
-    combat: Combat | any,
-    updateData,
-    options,
-    userId: string,
-  ) {
-    //NO-OP
   }
 
   public static onUpdateCombatant(
@@ -683,6 +671,24 @@ export default class SwadeHooks {
       });
     });
     return false;
+  }
+
+  public static onPreUpdateToken(
+    scene: Scene,
+    token: Token.Data,
+    updateData: any,
+    options: any,
+    userId: string,
+  ) {
+    const actor = game.actors.get(token.actorId);
+    if (!!actor && actor.data.type === 'npc') {
+      const items = getProperty(updateData, 'actorData.items') || [];
+      for (const item of items) {
+        if (getProperty(item, 'data.equippable')) {
+          item.data.equipped = true;
+        }
+      }
+    }
   }
 
   public static onDiceSoNiceInit(dice3d: any) {

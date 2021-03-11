@@ -46,7 +46,7 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  // CONFIG.debug.hooks = true;
+  CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
   game.swade = swadeGame;
@@ -130,12 +130,6 @@ Hooks.on(
 );
 
 Hooks.on(
-  'preCreateActor',
-  async (createData: any, options: any, userId: string) =>
-    SwadeHooks.onPreCreateActor(createData, options, userId),
-);
-
-Hooks.on(
   'createActor',
   async (actor: SwadeActor, options: any, userId: string) =>
     SwadeHooks.onCreateActor(actor, options, userId),
@@ -169,12 +163,6 @@ Hooks.on(
   'renderCombatTracker',
   (app: CombatTracker, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCombatTracker(app, html, data),
-);
-
-Hooks.on(
-  'updateCombat',
-  (combat: Combat, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onUpdateCombat(combat, updateData, options, userId),
 );
 
 Hooks.on(
@@ -253,4 +241,8 @@ Hooks.once('diceSoNiceReady', (dice3d: any) => {
 
 Hooks.on('preCreateScene', (createData: any, options: any, userId: string) =>
   SwadeHooks.onPreCreateScene(createData, options, userId),
+);
+
+Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
+  SwadeHooks.onPreUpdateToken(scene, token, updateData, options, userId),
 );
