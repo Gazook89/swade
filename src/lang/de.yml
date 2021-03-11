@@ -313,3 +313,6 @@ SWADE.EdgesHindrances: Talente & Handicaps
 SWADE.GrantsPowers: Gewährt Mächte
 SWADE.Passengers: Passagiere
 SWADE.Crew: Besatzung
+SWADE.String: Text
+SWADE.Number: Nummer
+SWADE.Checkbox: Checkbox

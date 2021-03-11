@@ -315,3 +315,7 @@ SWADE.EdgesHindrances: Edges & Hindrances
 SWADE.GrantsPowers: Grants Powers
 SWADE.Crew: Required Crew
 SWADE.Passengers: Optional Passengers
+SWADE.String: Text
+SWADE.Number: Number
+SWADE.Checkbox: Checkbox
+SWADE.Ace: Acing

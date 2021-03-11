@@ -31,17 +31,21 @@ export default class SettingConfigurator extends FormApplication {
    * @override
    */
   getData(): any {
-    const data = {};
-    const settingRules = {};
-    for (const setting of this.config.settings) {
-      settingRules[setting] = game.settings.get('swade', setting);
-    }
-    data['settingRules'] = settingRules;
-
     const settingFields = game.settings.get('swade', 'settingFields');
-    data['actorSettingStats'] = settingFields.actor;
-    data['itemSettingStats'] = settingFields.item;
-    data['dtypes'] = ['String', 'Number', 'Boolean'];
+    const data = {
+      settingRules: {},
+      actorSettingStats: settingFields.actor,
+      itemSettingStats: settingFields.item,
+      dtypes: {
+        String: 'SWADE.String',
+        Number: 'SWADE.Number',
+        Boolean: 'SWADE.Checkbox',
+        Die: 'SWADE.Die',
+      },
+    };
+    for (const setting of this.config.settings) {
+      data.settingRules[setting] = game.settings.get('swade', setting);
+    }
     return data;
   }
 

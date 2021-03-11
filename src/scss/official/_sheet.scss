@@ -414,6 +414,21 @@
   .additional-stats {
     padding-left: $large-spacing;
     max-width: 95%;
+    select {
+      background-color: transparent;
+      border: none;
+      border-bottom: $solid-line;
+      border-radius: 0;
+      option {
+        color: black;
+      }
+    }
+    button {
+      text-align: left;
+      text-decoration: underline;
+      text-decoration-style: dashed;
+      width: 80%;
+    }
   }
 
   .armor-display {

@@ -189,9 +189,8 @@
             class="attribute-dtype"
             name="actorSettingStats.{{key}}.dtype"
           >
-            {{#select attr.dtype}} {{#each ../dtypes as |t|}}
-            <option value="{{t}}">{{t}}</option>
-            {{/each}} {{/select}}
+            {{#select attr.dtype}} {{selectOptions ../dtypes selected=attr.dtype
+            localize=true}} {{/select}}
           </select>
           <input
             class="attribute-maxValue"
@@ -243,9 +242,8 @@
             value="{{attr.label}}"
           />
           <select class="attribute-dtype" name="itemSettingStats.{{key}}.dtype">
-            {{#select attr.dtype}} {{#each ../dtypes as |t|}}
-            <option value="{{t}}">{{t}}</option>
-            {{/each}} {{/select}}
+            {{#select attr.dtype}} {{selectOptions ../dtypes selected=attr.dtype
+            localize=true}} {{/select}}
           </select>
           <input
             class="attribute-maxValue"

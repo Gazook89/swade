@@ -4,6 +4,7 @@ import SwadeEntityTweaks from '../dialog/entity-tweaks';
 import * as chat from '../chat';
 import SwadeDice from '../dice';
 import { SWADE } from '../config';
+import { AdditionalStat } from '../../interfaces/additional-stat';
 /**
  * @noInheritDoc
  */
@@ -183,6 +184,24 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         })
       )._id;
       return new ActiveEffectConfig(this.actor['effects'].get(id)).render(true);
+    });
+
+    html.find('.additional-stats .roll').on('click', (ev) => {
+      const button = ev.currentTarget;
+      const stat = button.dataset.stat;
+      const statData = getProperty(
+        this.actor.data,
+        `data.additionalStats.${stat}`,
+      ) as AdditionalStat;
+      let modifier = statData.modifier || '';
+      if (!!modifier && !modifier.match(/^[+-]/)) {
+        modifier = '+' + modifier;
+      }
+      const dieSides = statData.value || 4;
+      new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: statData.label,
+      });
     });
   }
 

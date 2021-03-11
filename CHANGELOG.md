@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added missing translation keys for vehicles
 - Added a convenience shortcut on the official sheet which opens the parent itemsheet of transfered Active Effects
+- Added Die type additional stat
 
 ## [v0.17.2]
 

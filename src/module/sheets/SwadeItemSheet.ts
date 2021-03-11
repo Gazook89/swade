@@ -1,3 +1,4 @@
+import { AdditionalStat } from '../../interfaces/additional-stat';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
 import SwadeActor from '../entities/SwadeActor';
@@ -155,6 +156,24 @@ export default class SwadeItemSheet extends ItemSheet {
       );
       map.delete(id);
       this.item.setFlag('swade', 'embeddedAbilities', Array.from(map));
+    });
+
+    html.find('.additional-stats .roll').on('click', (ev) => {
+      const button = ev.currentTarget;
+      const stat = button.dataset.stat;
+      const statData = getProperty(
+        this.item.data,
+        `data.additionalStats.${stat}`,
+      ) as AdditionalStat;
+      let modifier = statData.modifier || '';
+      if (!!modifier && !modifier.match(/^[+-]/)) {
+        modifier = '+' + modifier;
+      }
+      const dieSides = statData.value || 4;
+      new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: `${this.item.name} - ${statData.label}`,
+      });
     });
   }
 
