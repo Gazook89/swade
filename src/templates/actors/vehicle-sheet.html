@@ -23,6 +23,28 @@
       </div>
       <section class="header-stats flexrow">
         <div class="form-group">
+          <label for="size">{{localize "SWADE.Size"}}</label>
+          <input
+            name="data.size"
+            id="size"
+            type="text"
+            value="{{data.size}}"
+            data-dtype="Number"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
+          <label for="scale">{{localize "SWADE.Scale"}}</label>
+          <input
+            name="data.scale"
+            id="scale"
+            type="text"
+            value="{{data.scale}}"
+            data-dtype="Number"
+            placeholder="0"
+          />
+        </div>
+        <div class="form-group">
           <label for="handling">{{localize "SWADE.Handling"}}</label>
           <input
             id="handling"
@@ -33,6 +55,8 @@
             placeholder="{{localize 'SWADE.Handling'}}"
           />
         </div>
+      </section>
+      <section class="header-stats flexrow">
         <div class="form-group">
           <label for="topspeed" style="white-space: nowrap;"
             >{{localize "SWADE.Topspeed"}}</label
@@ -46,19 +70,6 @@
             placeholder="0"
           />
         </div>
-        <div class="form-group">
-          <label for="size">{{localize "SWADE.Size"}}</label>
-          <input
-            name="data.size"
-            id="size"
-            type="text"
-            value="{{data.size}}"
-            data-dtype="Number"
-            placeholder="0"
-          />
-        </div>
-      </section>
-      <section class="header-stats flexrow">
         <div class="form-group">
           <label for="toughness">{{localize "SWADE.Tough"}}</label>
           <input
@@ -78,17 +89,6 @@
             type="text"
             value="{{data.toughness.armor}}"
             data-dtype="String"
-            placeholder="0"
-          />
-        </div>
-        <div class="form-group">
-          <label for="scale">{{localize "SWADE.Scale"}}</label>
-          <input
-            name="data.scale"
-            id="scale"
-            type="text"
-            value="{{data.scale}}"
-            data-dtype="Number"
             placeholder="0"
           />
         </div>
