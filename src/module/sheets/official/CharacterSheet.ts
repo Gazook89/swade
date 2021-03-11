@@ -1,3 +1,4 @@
+import { SysItemData } from '../../../interfaces/item-data';
 import { SWADE } from '../../config';
 import SwadeActor from '../../entities/SwadeActor';
 import SwadeItem from '../../entities/SwadeItem';
@@ -217,7 +218,7 @@ export default class CharacterSheet extends ActorSheet {
         const itemData = {
           name: name ? name : `New ${type.capitalize()}`,
           type: type,
-          data: duplicate(header.dataset),
+          data: header.dataset,
         };
         delete itemData.data['type'];
         return itemData;
@@ -229,7 +230,7 @@ export default class CharacterSheet extends ActorSheet {
               const itemData = createItem(dialogInput.type, dialogInput.name);
               await this.actor.createOwnedItem(itemData, { renderSheet: true });
             } else {
-              this._createActiveEffect();
+              this._createActiveEffect(dialogInput.name);
             }
           });
           break;
@@ -261,7 +262,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.actor['effects'].get(effectId) as any;
+      const effect = this.actor.effects.get(effectId);
       const action = a.dataset.action;
 
       switch (action) {
@@ -271,6 +272,14 @@ export default class CharacterSheet extends ActorSheet {
           return effect.delete();
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
+        case 'open-origin':
+          fromUuid(effect.data.origin).then((item: SysItemData) => {
+            if (item) this.actor.items.get(item._id).sheet.render(true);
+          });
+          break;
+        default:
+          console.warn(`The action ${action} is not currently supported`);
+          break;
       }
     });
 
@@ -629,12 +638,14 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
-  protected async _createActiveEffect() {
+  protected async _createActiveEffect(name?: string) {
+    let possibleName = game.i18n
+      .localize('ENTITY.New')
+      .replace('{entity}', game.i18n.localize('Active Effect'));
+    if (name) possibleName = name;
     const id = (
       await this.actor.createEmbeddedEntity('ActiveEffect', {
-        label: game.i18n
-          .localize('ENTITY.New')
-          .replace('{entity}', game.i18n.localize('Active Effect')),
+        label: possibleName,
         icon: '/icons/svg/mystery-man-black.svg',
       })
     )._id;

@@ -238,9 +238,13 @@
             <i class="fas fa-edit"></i>
           </button>
           {{#unless origin}}
-          <button type="button" class="effect-action" data-action="delete">
+          <a class="effect-action" data-action="delete">
             <i class="fas fa-trash"></i>
-          </button>
+          </a>
+          {{else}}
+          <a class="effect-action" data-action="open-origin">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
           {{/unless}}
         </span>
       </li>
