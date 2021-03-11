@@ -27,10 +27,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added missing translation keys for vehicles
 - Added a convenience shortcut on the official sheet which opens the parent itemsheet of transfered Active Effects
 - Added Die type additional stat
+- Added focus state to checkboxes
 
 ### Changed
 
 - NPCs now automatically equip equipable items
+- Changed order of the stats for Vehicles, armor, shields and weapons to properly reflect the order in the books
 
 ## [v0.17.2]
 
