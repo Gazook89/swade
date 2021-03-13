@@ -258,6 +258,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       // Check for enabled optional rules
       data.data.settingrules = {
         conviction: game.settings.get('swade', 'enableConviction'),
+        noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
       };
     }
 

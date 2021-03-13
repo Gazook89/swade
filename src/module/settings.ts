@@ -142,6 +142,15 @@ export function registerSettingRules() {
     config: false,
   });
 
+  game.settings.register('swade', 'noPowerPoints', {
+    name: game.i18n.localize('SWADE.NoPowerPoints'),
+    hint: game.i18n.localize('SWADE.NoPowerPointsDesc'),
+    default: false,
+    scope: 'world',
+    type: Boolean,
+    config: false,
+  });
+
   game.settings.register('swade', 'gmBennies', {
     name: game.i18n.localize('SWADE.GmBennies'),
     hint: game.i18n.localize('SWADE.GmBenniesDesc'),

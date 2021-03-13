@@ -319,3 +319,5 @@ SWADE.String: Text
 SWADE.Number: Number
 SWADE.Checkbox: Checkbox
 SWADE.Ace: Acing
+SWADE.NoPowerPoints: No Power Points
+SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions

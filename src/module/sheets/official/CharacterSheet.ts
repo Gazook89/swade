@@ -560,6 +560,7 @@ export default class CharacterSheet extends ActorSheet {
     // Check for enabled optional rules
     data.settingrules = {
       conviction: game.settings.get('swade', 'enableConviction'),
+      noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
     };
     return data;
   }
