@@ -72,6 +72,16 @@ export function registerSettings() {
   });
 }
 export function registerSettingRules() {
+  game.settings.register('swade', 'coreSkills', {
+    name: game.i18n.localize('SWADE.CoreSkills'),
+    hint: game.i18n.localize('SWADE.CoreSkillsDesc'),
+    default:
+      'Athletics, Common Knowledge, Notice, Persuasion, Stealth, Untrained',
+    scope: 'world',
+    type: String,
+    config: false,
+  });
+
   game.settings.register('swade', 'jokersWild', {
     name: game.i18n.localize('SWADE.JokersWild'),
     hint: game.i18n.localize('SWADE.JokersWildDesc'),
