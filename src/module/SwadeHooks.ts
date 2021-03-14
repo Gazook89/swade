@@ -146,14 +146,12 @@ export default class SwadeHooks {
     if (actor.data.type !== 'character') {
       return;
     }
-    const coreSkills = [
-      'Athletics',
-      'Common Knowledge',
-      'Notice',
-      'Persuasion',
-      'Stealth',
-      'Untrained',
-    ];
+
+    //Get list of core skills from settings
+    const coreSkills = [];
+    for (const skill of game.settings.get('swade', 'coreSkills').split(',')) {
+      coreSkills.push(skill.trim());
+    }
 
     //Get and map the existing skills on the actor to an array of names
     const existingSkills = actor.items
@@ -163,8 +161,9 @@ export default class SwadeHooks {
     //Filter the expected
     const skillsToAdd = coreSkills.filter((s) => !existingSkills.includes(s));
 
+    let compendiumSrc = 'swade.skills';
     const skillIndex = (await game.packs
-      .get('swade.skills')
+      .get(compendiumSrc)
       .getContent()) as SwadeItem[];
 
     // extract skill data
