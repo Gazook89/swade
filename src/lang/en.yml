@@ -51,6 +51,7 @@ SWADE.AttrStrShort: Str
 SWADE.AttrVigShort: Vig
 SWADE.Skills: Skills
 SWADE.Unskilled: Unskilled
+SWADE.CoreSkill: Core Skill
 SWADE.CoreSkills: Core Skills
 SWADE.CoreSkillsDesc: >-
   Enter a comma-separated list of skill names to be defined
