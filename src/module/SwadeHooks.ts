@@ -176,7 +176,11 @@ export default class SwadeHooks {
 
     //Set skills as core skills
     for (const item of actor.items) {
-      if (item.type === 'skill' && skillsToAdd.includes(item.name)) {
+      if (
+        item.type === 'skill' &&
+        skillsToAdd.includes(item.name) &&
+        item.name !== 'Untrained'
+      ) {
         await item.update({ 'data.coreSkill': true });
       }
     }
