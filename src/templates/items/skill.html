@@ -37,7 +37,21 @@
         </select>
       </span>
     </div>
-    {{/if}} {{> "systems/swade/templates/setting-fields.html"}} {{>
+    {{/if}}
+    <div class="form-group">
+      <label for="core-skill">{{localize "SWADE.CoreSkill"}}</label>
+      <span class="form-fields">
+        <input
+          type="checkbox"
+          name="data.coreSkill"
+          id="core-skill"
+          {{checked
+          item.data.coreSkill}}
+          data-dtype="boolean"
+        />
+      </span>
+    </div>
+    {{> "systems/swade/templates/setting-fields.html"}} {{>
     "systems/swade/templates/items/partials/description.html"}}
   </main>
 </form>
