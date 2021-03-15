@@ -161,6 +161,7 @@ export default class SwadeHooks {
     //Filter the expected
     const skillsToAdd = coreSkills.filter((s) => !existingSkills.includes(s));
 
+    //Set compendium source
     let compendiumSrc = 'swade.skills';
     const skillIndex = (await game.packs
       .get(compendiumSrc)
@@ -171,7 +172,14 @@ export default class SwadeHooks {
       .filter((i) => skillsToAdd.includes(i.data.name))
       .map((i) => i.data);
 
-    actor.createOwnedItem(skills, { renderSheet: null });
+    await actor.createOwnedItem(skills, { renderSheet: null });
+
+    //Set skills as core skills
+    for (const item of actor.items) {
+      if (item.type === 'skill' && skillsToAdd.includes(item.name)) {
+        await item.update({ 'data.coreSkill': true });
+      }
+    }
   }
 
   public static onRenderActorDirectory(
