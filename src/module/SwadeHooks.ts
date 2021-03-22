@@ -167,6 +167,8 @@ export default class SwadeHooks {
       .get(compendiumSrc)
       .getContent()) as SwadeItem[];
 
+    console.log(skillIndex);
+
     // extract skill data
     const skills = skillIndex
       .filter((i) => skillsToAdd.includes(i.data.name))
@@ -174,16 +176,65 @@ export default class SwadeHooks {
 
     await actor.createOwnedItem(skills, { renderSheet: null });
 
+    // Create core skills not in compendium (for custom skill names entered by the user)
+    for (const skillName of coreSkills) {
+      if (
+        typeof skillIndex.find(
+          (skillItem) => skillName === skillItem.data.name,
+        ) === 'undefined'
+      ) {
+        actor.createOwnedItem(
+          {
+            type: 'skill',
+            name: skillName,
+            data: {
+              description: '',
+              notes: '',
+              additionalStats: {},
+              attribute: '',
+              die: {
+                sides: 4,
+                modifier: null,
+              },
+              'wild-die': {
+                sides: 6,
+              },
+            },
+          },
+          { renderSheet: null },
+        );
+      }
+    }
+
     //Set skills as core skills
     for (const item of actor.items) {
-      if (
-        item.type === 'skill' &&
-        skillsToAdd.includes(item.name) &&
-        item.name !== 'Untrained'
-      ) {
+      if (item.type === 'skill' && coreSkills.includes(item.name)) {
         await item.update({ 'data.coreSkill': true });
       }
     }
+
+    // Create an Untrained skill that's not a core skill
+    actor.createOwnedItem(
+      {
+        type: 'skill',
+        name: 'Untrained',
+        data: {
+          description: '',
+          notes: '',
+          additionalStats: {},
+          attribute: '',
+          die: {
+            sides: 4,
+            modifier: -2,
+          },
+          'wild-die': {
+            sides: 6,
+          },
+          coreSkill: false,
+        },
+      },
+      { renderSheet: null },
+    );
   }
 
   public static onRenderActorDirectory(
