@@ -75,8 +75,7 @@ export function registerSettingRules() {
   game.settings.register('swade', 'coreSkills', {
     name: game.i18n.localize('SWADE.CoreSkills'),
     hint: game.i18n.localize('SWADE.CoreSkillsDesc'),
-    default:
-      'Athletics, Common Knowledge, Notice, Persuasion, Stealth, Untrained',
+    default: 'Athletics, Common Knowledge, Notice, Persuasion, Stealth',
     scope: 'world',
     type: String,
     config: false,
