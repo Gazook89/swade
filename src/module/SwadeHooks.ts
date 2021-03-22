@@ -148,10 +148,10 @@ export default class SwadeHooks {
     }
 
     //Get list of core skills from settings
-    const coreSkills = [];
-    for (const skill of game.settings.get('swade', 'coreSkills').split(',')) {
-      coreSkills.push(skill.trim());
-    }
+    const coreSkills = game.settings
+      .get('swade', 'coreSkills')
+      .split(',')
+      .map((s) => s.trim());
 
     //Get and map the existing skills on the actor to an array of names
     const existingSkills = actor.items
