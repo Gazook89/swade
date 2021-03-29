@@ -1,4 +1,4 @@
-import { AdditionalStat } from './additional-stat';
+import { AdditionalStat, ItemAction } from './additional';
 
 interface PhysicalItem {
   weight: number;
@@ -22,21 +22,12 @@ interface Vehicular {
   mods: number;
 }
 
-interface Action {
-  name: string;
-  type: 'skill' | 'damage';
-  rof?: number;
-  shotsUsed?: number;
-  skillMod?: string;
-  skillOverride: string;
-}
-
 interface Actions {
   actions: {
     skill: string;
     skillMod: string;
     dmgMod: string;
-    additional: Partial<Record<string, Action>>;
+    additional: Partial<Record<string, ItemAction>>;
   };
 }
 

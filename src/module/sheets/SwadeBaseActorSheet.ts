@@ -1,10 +1,10 @@
+import { AdditionalStat } from '../../interfaces/additional';
+import * as chat from '../chat';
+import { SWADE } from '../config';
+import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeDice from '../dice';
 import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
-import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import * as chat from '../chat';
-import SwadeDice from '../dice';
-import { SWADE } from '../config';
-import { AdditionalStat } from '../../interfaces/additional-stat';
 /**
  * @noInheritDoc
  */
@@ -256,7 +256,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       }
 
       // Check for enabled optional rules
-      data.data.settingrules = {
+      data.settingrules = {
         conviction: game.settings.get('swade', 'enableConviction'),
         noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
       };

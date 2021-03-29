@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added a convenience shortcut on the official sheet which opens the parent itemsheet of transfered Active Effects
 - Added Die type additional stat
 - Added focus state to checkboxes
+- Added support for the No Power Points rule, which can be activated via the Setting Configurator. When this setting rule is effect the recording of power points is disabled and the PP Cost input is instead used to calculate the penalty on the trait roll based on the total PP Cost entered. This works with the inline interaction on the character sheet as well as the chat cards
+- Added additional translation strings
 
 ### Changed
 

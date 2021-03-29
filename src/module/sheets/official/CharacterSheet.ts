@@ -1,4 +1,4 @@
-import { AdditionalStat } from '../../../interfaces/additional-stat';
+import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { SysItemData } from '../../../interfaces/item-data';
 import { SWADE } from '../../config';
 import SwadeActor from '../../entities/SwadeActor';
@@ -371,18 +371,37 @@ export default class CharacterSheet extends ActorSheet {
       const button = ev.currentTarget;
       const action = button.dataset['action'];
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      ItemChatCardHelper.handleAction(
-        this.actor.getOwnedItem(itemId) as SwadeItem,
-        this.actor,
-        action,
-      );
+      const item = this.actor.getOwnedItem(itemId);
+      const additionalMods = [];
+      const ppToAdjust = $(button)
+        .parents('.chat-card.item-card')
+        .find('input.pp-adjust')
+        .val() as string;
+
+      //if it's a power and the No Power Points rule is in effect
+      if (
+        item.type === 'power' &&
+        game.settings.get('swade', 'noPowerPoints')
+      ) {
+        let modifier = Math.ceil(parseInt(ppToAdjust, 10) / 2);
+        modifier = Math.min(modifier * -1, modifier);
+        const actionObj = getProperty(
+          item.data,
+          `data.actions.additional.${action}.skillOverride`,
+        ) as ItemAction;
+        //filter down further to make sure we only apply the penalty to a trait roll
+        if (
+          action === 'formula' ||
+          (!!actionObj && actionObj.type === 'skill')
+        ) {
+          additionalMods.push(modifier.signedString());
+        }
+      }
+
+      ItemChatCardHelper.handleAction(item, this.actor, action, additionalMods);
 
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
-        const ppToAdjust = $(button)
-          .closest('.flexcol')
-          .find('input.pp-adjust')
-          .val() as string;
         const adjustment = button.getAttribute('data-adjust') as string;
         const power = this.actor.getOwnedItem(itemId);
         let key = 'data.powerPoints.value';
