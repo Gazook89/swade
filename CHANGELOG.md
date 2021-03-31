@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added a convenience shortcut on the official sheet which opens the parent itemsheet of transfered Active Effects
 - Added Die type additional stat
 - Added focus state to checkboxes
+- Added the ability to define Core Skills in the Setting Configurator
 
 ### Changed
 
