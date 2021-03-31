@@ -95,6 +95,7 @@ interface PowerData extends ItemDescription, Equipable, Actions {
 
 interface SkillData extends ItemDescription {
   attribute: string;
+  isCoreSkill: boolean;
   die: {
     sides: number;
     modifier: number;

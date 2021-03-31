@@ -18,6 +18,19 @@
     <section id="characters">
       <h2 class="module-header">{{localize "SWADE.Actors"}}</h2>
       <div class="form-group">
+        <label>{{localize "SWADE.CoreSkills"}}</label>
+        <div class="form-fields">
+          <textarea
+            name="settingRules.coreSkills"
+            data-dtype="String"
+            placeholder="Example: Athletics, Common Knowledge, Notice, Persuasion, Stealth"
+          >
+{{settingRules.coreSkills}}</textarea
+          >
+        </div>
+        <p class="notes">{{localize "SWADE.CoreSkillsDesc"}}</p>
+      </div>
+      <div class="form-group">
         <label>{{localize "SWADE.EnableConv"}}</label>
         <div class="form-fields">
           <input
