@@ -199,10 +199,10 @@
       </button>
     </header>
     <ol class="skill-list">
-      {{#each sortedSkills as |skill|}} {{#if skill.data.coreSkill}} {{>
+      {{#each sortedSkills as |skill|}} {{#if skill.data.isCoreSkill}} {{>
       "systems/swade/templates/official/partials/skill-card.html"
       owner=../owner}} {{/if}} {{/each}} {{#each sortedSkills as |skill|}}
-      {{#unless skill.data.coreSkill}} {{>
+      {{#unless skill.data.isCoreSkill}} {{>
       "systems/swade/templates/official/partials/skill-card.html"
       owner=../owner}} {{/unless}} {{/each}}
     </ol>

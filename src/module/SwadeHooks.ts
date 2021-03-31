@@ -208,8 +208,8 @@ export default class SwadeHooks {
 
     //Set skills as core skills
     for (const item of actor.items) {
-      if (item.type === 'skill' && coreSkills.includes(item.name)) {
-        await item.update({ 'data.coreSkill': true });
+      if (item.type === 'skill' && coreSkills.includes(item.name) ) {
+        await item.update({ 'data.isCoreSkill': true });
       }
     }
 
@@ -230,7 +230,7 @@ export default class SwadeHooks {
           'wild-die': {
             sides: 6,
           },
-          coreSkill: false,
+          isCoreSkill: false,
         },
       },
       { renderSheet: null },

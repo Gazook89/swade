@@ -2,7 +2,7 @@
   <header class="card-header flexrow" data-item-id="{{_id}}">
     <img class="skill-icon" src="{{img}}" />
     <button type="button" class="skill-name item-name" title="{{name}}">
-      {{#if data.coreSkill}}★ {{/if}}{{name}}{{#if data.attribute}}
+      {{#if data.isCoreSkill}}★ {{/if}}{{name}}{{#if data.attribute}}
       ({{localizeSkillAttribute data.attribute}}){{/if}}
     </button>
     <button
