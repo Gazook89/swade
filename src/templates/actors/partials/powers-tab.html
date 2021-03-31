@@ -7,6 +7,7 @@
       {{/each}}
     </div>
     <!-- Global counter -->
+    {{#unless settingrules.noPowerPoints}}
     <div class="power-counter" data-arcane="All">
       <label for="data.powerPoints.value">{{localize "SWADE.PP"}}</label>
       <input
@@ -49,7 +50,7 @@
       />
       {{/with}}
     </div>
-    {{/each}}
+    {{/each}} {{/unless}}
     <div class="header-field-add">
       <a class="item-create" data-type="power"><i class="fa fa-plus"></i></a>
     </div>

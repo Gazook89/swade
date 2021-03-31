@@ -1,4 +1,4 @@
-import { AdditionalStat } from './additional-stat';
+import { AdditionalStat } from './additional';
 import { SysItemData } from './item-data';
 
 interface CharacterCommon {

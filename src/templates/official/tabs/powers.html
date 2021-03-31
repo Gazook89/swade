@@ -8,6 +8,7 @@
   {{#if powers.hasPowersWithoutArcane}}
   <header class="section-header">
     <span class="name">{{localize "SWADE.General"}}</span>
+    {{#unless settingrules.noPowerPoints}}
     <span class="pp-counter controls">
       PP:&nbsp;
       <label>
@@ -28,6 +29,7 @@
         />
       </label>
     </span>
+    {{/unless}}
   </header>
   <ul>
     {{#each itemsByType.power}} {{#unless data.arcane}}
@@ -77,6 +79,7 @@
   {{/if}} {{#each powers.arcanes as |arcane key|}}
   <header class="section-header">
     <span class="name">{{key}}</span>
+    {{#unless ../settingrules.noPowerPoints}}
     <span class="pp-counter controls">
       PP:&nbsp;
       <label>
@@ -93,6 +96,7 @@
         <input type="number" name="{{arcane.maxPath}}" value="{{arcane.max}}" />
       </label>
     </span>
+    {{/unless}}
   </header>
   <ul>
     {{#each arcane.powers}}

@@ -169,6 +169,7 @@ SWADE.Weight: Weight
 SWADE.Price: Cost
 SWADE.PP: Power Points
 SWADE.PPShort: P. Points
+SWADE.PPCost: PP Cost
 SWADE.CurPP: Current Power Points
 SWADE.MaxPP: Maximum Power Points
 SWADE.Dur: Duration
@@ -324,3 +325,5 @@ SWADE.String: Text
 SWADE.Number: Number
 SWADE.Checkbox: Checkbox
 SWADE.Ace: Acing
+SWADE.NoPowerPoints: No Power Points
+SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions

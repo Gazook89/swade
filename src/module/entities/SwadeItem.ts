@@ -229,6 +229,9 @@ export default class SwadeItem extends Item<SysItemData> {
         ['weapon', 'power', 'shield'].includes(this.data.type) &&
         !!getProperty(this.data, 'data.actions.skill'),
       powerPoints: this._getPowerPoints(),
+      settingrules: {
+        noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
+      },
     };
 
     // Render the chat card template

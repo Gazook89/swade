@@ -141,6 +141,7 @@ SWADE.Weight: Gewicht
 SWADE.Price: Kosten
 SWADE.PP: Machtpunkte
 SWADE.PPShort: Machtp.
+SWADE.PPCost: MP Kosten
 SWADE.CurPP: Aktuelle Machtpunkte
 SWADE.MaxPP: Maximum Machtpunkte
 SWADE.Dur: Dauer
@@ -316,3 +317,7 @@ SWADE.Crew: Besatzung
 SWADE.String: Text
 SWADE.Number: Nummer
 SWADE.Checkbox: Checkbox
+SWADE.NoPowerPoints: Keine Machtpunkte
+SWADE.NoPowerPointsDesc: >-
+  Wenn diese Option aktiviert ist, werden alle Machtpunkte-Interaktionen
+  ausgeblendet

@@ -7,3 +7,12 @@ export interface AdditionalStat {
   max?: string | number;
   modifier?: string;
 }
+
+export interface ItemAction {
+  name: string;
+  type: 'skill' | 'damage';
+  rof?: number;
+  shotsUsed?: number;
+  skillMod?: string;
+  skillOverride: string;
+}
