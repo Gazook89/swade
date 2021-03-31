@@ -162,12 +162,10 @@ export default class SwadeHooks {
     const skillsToAdd = coreSkills.filter((s) => !existingSkills.includes(s));
 
     //Set compendium source
-    let compendiumSrc = 'swade.skills';
+    const compendiumSrc = 'swade.skills';
     const skillIndex = (await game.packs
       .get(compendiumSrc)
       .getContent()) as SwadeItem[];
-
-    console.log(skillIndex);
 
     // extract skill data
     const skills = skillIndex
@@ -208,7 +206,7 @@ export default class SwadeHooks {
 
     //Set skills as core skills
     for (const item of actor.items) {
-      if (item.type === 'skill' && coreSkills.includes(item.name) ) {
+      if (item.type === 'skill' && coreSkills.includes(item.name)) {
         await item.update({ 'data.isCoreSkill': true });
       }
     }
