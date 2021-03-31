@@ -249,6 +249,7 @@ Item:
     templates:
       - itemDescription
     attribute: ''
+    isCoreSkill: false
     die:
       sides: 4
       modifier: 0
