@@ -14,5 +14,7 @@ export interface ItemAction {
   rof?: number;
   shotsUsed?: number;
   skillMod?: string;
-  skillOverride: string;
+  skillOverride?: string;
+  dmgMod?: string;
+  dmgOverride?: string;
 }
