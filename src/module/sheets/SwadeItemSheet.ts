@@ -26,6 +26,7 @@ export default class SwadeItemSheet extends ItemSheet {
           initial: 'summary',
         },
       ],
+      scrollY: ['.actions-list'],
       resizable: true,
     });
   }
