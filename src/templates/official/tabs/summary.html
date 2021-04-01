@@ -228,7 +228,7 @@
     <ul class="effects-list">
       {{#each entity.effects}}
       <li
-        class="flexrow{{#if disabled}} disabled-effect{{/if}}"
+        class="flexrow {{#unless origin}}active-effect{{/unless}} {{#if disabled}}disabled-effect{{/if}}"
         data-effect-id="{{_id}}"
       >
         <img src="{{icon}}" alt="{{label}}" class="effect-icon" />

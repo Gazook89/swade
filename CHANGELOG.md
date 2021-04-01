@@ -31,12 +31,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added support for the No Power Points rule, which can be activated via the Setting Configurator. When this setting rule is effect the recording of power points is disabled and the PP Cost input is instead used to calculate the penalty on the trait roll based on the total PP Cost entered. This works with the inline interaction on the character sheet as well as the chat cards
 - Added additional translation strings
 - Added the ability to define Core Skills in the Setting Configurator
+- Added the ability to drag&drop Active Effects between actors. Please keep in mind that is only possible for AE which are not transfered from an item
 
 ### Changed
 
 - NPCs now automatically equip equipable items
 - Changed order of the stats for Vehicles, armor, shields and weapons to properly reflect the order in the books
-- Overhauled the way currencies are handled. You can now select one of ~~three~~ options in the Setting Configurator
+- Overhauled the way currencies are handled. You can now select one of **three** options in the Setting Configurator
   1. **Currency**, the system as it has been until now. Selecting this option now also adds an additional input field that lets you name the currency yourself.
   1. **Wealth**, representing the Wealth setting rule, which replaces the currency field with dice controls.
   1. **None** / Other, which hides the currency field. This is ideal for the people that prefer tracking currency and wealth via inventory items.

@@ -23,6 +23,15 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
+    if (this.actor.owner) {
+      const handler = (ev) => this._onDragStart(ev);
+      html.find('li.active-effect').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
+    }
+
     // Update Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
