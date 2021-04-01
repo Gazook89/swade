@@ -87,7 +87,7 @@ export default class SwadeItem extends Item<SysItemData> {
     if (options.suppressChat) {
       return new Roll(newParts.join(''));
     }
-    console.log(roll);
+
     // Roll and return
     return SwadeDice.Roll({
       roll: roll,
