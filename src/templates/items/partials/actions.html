@@ -1,13 +1,10 @@
 <div class="form-group">
-  <label>{{localize "ITEM.TypeSkill"}}</label>
+  <label>{{localize "SWADE.Trait"}}</label>
   <span class="form-fields">
-    <input
-      name="data.actions.skill"
-      type="text"
-      value="{{item.data.actions.skill}}"
-      placeholder="{{localize 'ITEM.TypeSkill'}}"
-      data-dtype="String"
-  /></span>
+    <input name="data.actions.skill" type="text"
+    value="{{item.data.actions.skill}}" placeholder="{{localize "SWADE.Trait"}}"
+    data-dtype="String" /></span
+  >
 </div>
 <div class="form-group">
   <label>{{localize "SWADE.SkillModUni"}}</label>
@@ -71,7 +68,7 @@
       <span class="form-fields">
         <select name="data.actions.additional.{{key}}.type">
           {{#select attr.type}}
-          <option value="skill">{{localize "ITEM.TypeSkill"}}</option>
+          <option value="skill">{{localize "SWADE.Trait"}}</option>
           <option value="damage">{{localize "SWADE.Dmg"}}</option>
           {{/select}}
         </select>
@@ -96,7 +93,7 @@
       </span>
     </div>
     <div class="action-input-right form-group">
-      <label>{{localize "ITEM.TypeSkill"}} {{localize "SWADE.Mod"}}</label>
+      <label>{{localize "SWADE.Trait"}} {{localize "SWADE.Mod"}}</label>
       <span class="form-fields">
         <input
           type="text"
@@ -107,7 +104,7 @@
       </span>
     </div>
     <div class="action-input-left form-group">
-      <label> {{localize "SWADE.AltSkill"}}</label>
+      <label> {{localize "SWADE.AltTrait"}}</label>
       <span class="form-fields">
         <input
           type="text"

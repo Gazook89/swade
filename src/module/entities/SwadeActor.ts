@@ -1,9 +1,9 @@
-import SwadeDice from '../dice';
-import IRollOptions from '../../interfaces/IRollOptions';
-import SwadeItem from './SwadeItem';
-import * as util from '../util';
-import { SWADE } from '../config';
 import { SysActorData } from '../../interfaces/actor-data';
+import IRollOptions from '../../interfaces/IRollOptions';
+import { SWADE } from '../config';
+import SwadeDice from '../dice';
+import * as util from '../util';
+import SwadeItem from './SwadeItem';
 
 /**
  * @noInheritDoc
@@ -161,8 +161,14 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     abilityId: string,
     options: IRollOptions = { event: null },
   ): Promise<Roll> | Roll {
+    if (this.data.type === 'vehicle') return;
+    if (options.rof && options.rof > 1) {
+      ui.notifications.warn(
+        'Attribute Rolls with RoF greater than 1 are not currently supported',
+      );
+    }
     const label = SWADE.attributes[abilityId].long;
-    const actorData = this.data as any;
+    const actorData = this.data;
     const abl = actorData.data.attributes[abilityId];
     let finalRoll = new Roll('');
     const rollMods = this._buildTraitRollModifiers(abl, options);
@@ -233,7 +239,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     if (!skill) {
-      return;
+      return this.makeUnskilledAttempt(options);
     }
 
     const skillData = getProperty(skill, 'data.data');

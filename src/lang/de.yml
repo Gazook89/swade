@@ -96,7 +96,7 @@ SWADE.Notes: Notizen
 SWADE.ActionsEffects: Aktionen & Effekte
 SWADE.Actions: Aktionen
 SWADE.DmgModUni: Schadensmodifikator (universell)
-SWADE.SkillModUni: Fertigkeitsmodifikator (universell)
+SWADE.SkillModUni: Eigenschaftsmodifikator (universell)
 SWADE.ShotsUsed: Schuss verbraucht
 SWADE.NaturalArmor: Natürliche Rüstung
 SWADE.HitLocations: Trefferzonen
@@ -329,3 +329,6 @@ SWADE.WealthTypeDesc: >-
   sollen
 SWADE.CurrencyName: Währungsname
 SWADE.CurrencyNameDesc: Nennen Sie Ihre Währung
+SWADE.TraitRolls: Eigenschaftswürfe
+SWADE.Trait: Eigenschaft
+SWADE.AltTrait: Alternative Eigenschaft

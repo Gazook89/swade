@@ -124,7 +124,7 @@ SWADE.Notes: Notes
 SWADE.ActionsEffects: Actions & Effects
 SWADE.Actions: Actions
 SWADE.DmgModUni: Damage Modifier (universal)
-SWADE.SkillModUni: Skill Modifier (universal)
+SWADE.SkillModUni: Trait Modifier (universal)
 SWADE.ShotsUsed: Shots Used
 SWADE.NaturalArmor: Natural Armor
 SWADE.HitLocations: Hit Locations
@@ -333,3 +333,6 @@ SWADE.NoneOther: None / Other
 SWADE.WealthTypeDesc: Choose how to track character wealth and currency
 SWADE.CurrencyName: Currency Name
 SWADE.CurrencyNameDesc: Name your currency
+SWADE.TraitRolls: Trait Rolls
+SWADE.Trait: Trait
+SWADE.AltTrait: Alternative Trait
