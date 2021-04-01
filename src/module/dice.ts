@@ -1,5 +1,5 @@
-import SwadeItem from './entities/SwadeItem';
 import SwadeActor from './entities/SwadeActor';
+import SwadeItem from './entities/SwadeItem';
 
 interface RollHelperData {
   roll: Roll;
@@ -148,7 +148,7 @@ export default class SwadeDice {
       roll.terms.push('+');
       roll.terms.push(new Die({ modifiers: ['x'] }));
     }
-    const retVal = roll.roll();
+    const retVal = roll.evaluate();
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
     for (const v of roll.terms) {
       if (v instanceof Die) continue;

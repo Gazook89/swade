@@ -54,8 +54,8 @@ SWADE.Unskilled: Unskilled
 SWADE.CoreSkill: Core Skill
 SWADE.CoreSkills: Core Skills
 SWADE.CoreSkillsDesc: >-
-  Enter a comma-separated list of skill names to be defined
-  as core skills for all actors
+  Enter a comma-separated list of skill names to be defined as core skills for
+  all actors
 SWADE.LinkAttr: Linked Attribute
 SWADE.Die: Die
 SWADE.WildDie: Wild Die
@@ -327,3 +327,9 @@ SWADE.Checkbox: Checkbox
 SWADE.Ace: Acing
 SWADE.NoPowerPoints: No Power Points
 SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions
+SWADE.WealthType: Wealth Type
+SWADE.WealthDie: Wealth
+SWADE.NoneOther: None / Other
+SWADE.WealthTypeDesc: Choose how to track character wealth and currency
+SWADE.CurrencyName: Currency Name
+SWADE.CurrencyNameDesc: Name your currency

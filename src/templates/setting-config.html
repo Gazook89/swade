@@ -31,6 +31,32 @@
         <p class="notes">{{localize "SWADE.CoreSkillsDesc"}}</p>
       </div>
       <div class="form-group">
+        <label>{{localize "SWADE.WealthDie"}}</label>
+        <div class="form-fields">
+          <select name="settingRules.wealthType">
+            {{#select settingRules.wealthType}}
+            <option value="currency">{{localize 'SWADE.Currency'}}</option>
+            <option value="wealthDie">{{localize 'SWADE.WealthDie'}}</option>
+            <option value="none">{{localize 'SWADE.NoneOther'}}</option>
+            {{/select}}
+          </select>
+        </div>
+        <p class="notes">{{localize "SWADE.WealthTypeDesc"}}</p>
+      </div>
+      {{#if (eq settingRules.wealthType "currency")}}
+      <div class="form-group">
+        <label>{{localize "SWADE.CurrencyName"}}</label>
+        <div class="form-fields">
+          <input
+            type="text"
+            name="settingRules.currencyName"
+            value="{{settingRules.currencyName}}"
+          />
+        </div>
+        <p class="notes">{{localize "SWADE.CurrencyNameDesc"}}</p>
+      </div>
+      {{/if}}
+      <div class="form-group">
         <label>{{localize "SWADE.EnableConv"}}</label>
         <div class="form-fields">
           <input

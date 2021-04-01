@@ -4,7 +4,8 @@
     <strong>{{inventoryWeight}} / {{maxCarryCapacity}}</strong>
   </div>
   <div class="form-group currency">
-    <label>{{localize "SWADE.Currency"}}</label>
+    {{#if (eq settingrules.wealthType "currency")}}
+    <label>{{settingrules.currencyName}}</label>
     <span class="form-fields">
       <input
         name="data.details.currency"
@@ -13,6 +14,22 @@
         placeholder="{{localize 'SWADE.Currency'}}"
       />
     </span>
+    {{else if (eq settingrules.wealthType "wealthDie")}}
+    <label><button class="roll">{{localize "SWADE.WealthDie"}}</button></label>
+    <span class="form-fields">
+      <select data-dtype="Number" name="data.details.wealth.die">
+        {{#select data.details.wealth.die}} {{>
+        "systems/swade/templates/die-sides-options.html"}} {{/select}}
+      </select>
+      <input
+        type="text"
+        data-dtype="Number"
+        name="data.details.wealth.modifier"
+        value="{{signedString data.details.wealth.modifier}}"
+        placeholder="{{localize 'SWADE.Mod'}}"
+      />
+    </span>
+    {{/if}}
   </div>
 </section>
 <section class="inventory">

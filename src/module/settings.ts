@@ -81,6 +81,29 @@ export function registerSettingRules() {
     config: false,
   });
 
+  game.settings.register('swade', 'wealthType', {
+    name: game.i18n.localize('SWADE.WealthType'),
+    hint: game.i18n.localize('SWADE.WealthTypeDesc'),
+    scope: 'world',
+    type: String,
+    choices: {
+      currency: 'SWADE.Currency',
+      wealthDie: 'SWADE.WealthDie',
+      none: 'SWADE.NoneOther',
+    },
+    default: 'currency',
+    config: false,
+  });
+
+  game.settings.register('swade', 'currencyName', {
+    name: game.i18n.localize('SWADE.CurrencyName'),
+    hint: game.i18n.localize('SWADE.CurrencyNameDesc'),
+    scope: 'world',
+    type: String,
+    default: 'Currency',
+    config: false,
+  });
+
   game.settings.register('swade', 'jokersWild', {
     name: game.i18n.localize('SWADE.JokersWild'),
     hint: game.i18n.localize('SWADE.JokersWildDesc'),

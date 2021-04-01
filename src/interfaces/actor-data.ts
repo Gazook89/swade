@@ -71,6 +71,11 @@ interface CharacterCommon {
   };
   details: {
     currency: number;
+    wealth: {
+      die: number;
+      modifier: number;
+      'wild-die': number;
+    };
     autoCalcToughness: boolean;
     autoCalcParry: boolean;
     biography: {

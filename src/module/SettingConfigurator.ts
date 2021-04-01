@@ -9,22 +9,22 @@ export default class SettingConfigurator extends FormApplication {
   }
 
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,
       template: 'systems/swade/templates/setting-config.html',
       classes: ['swade', 'setting-config'],
+      scrollY: ['.sheet-body'],
       width: 600,
-      height: 'auto',
+      height: 'auto' as const,
       top: 200,
       left: 400,
       resizable: false,
       closeOnSubmit: false,
       submitOnClose: true,
       submitOnChange: true,
-    });
+    };
   }
 
   /**
@@ -93,6 +93,8 @@ export default class SettingConfigurator extends FormApplication {
       item: this._handleDeletableAttributes(itemAttributes, settingFields.item),
     };
     await game.settings.set('swade', 'settingFields', saveValue);
+
+    this.render(true);
   }
 
   async _resetSettings() {

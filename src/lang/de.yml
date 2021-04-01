@@ -321,3 +321,11 @@ SWADE.NoPowerPoints: Keine Machtpunkte
 SWADE.NoPowerPointsDesc: >-
   Wenn diese Option aktiviert ist, werden alle Machtpunkte-Interaktionen
   ausgeblendet
+SWADE.WealthType: Wohlstandstyp
+SWADE.WealthDie: Wohlstand
+SWADE.NoneOther: Keiner / Anderer
+SWADE.WealthTypeDesc: >-
+  Wählen Sie aus, wie der Charakterreichtum und die Währung verfolgt werden
+  sollen
+SWADE.CurrencyName: Währungsname
+SWADE.CurrencyNameDesc: Nennen Sie Ihre Währung

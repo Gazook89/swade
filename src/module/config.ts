@@ -79,6 +79,8 @@ export const SWADE = {
       'npcAmmo',
       'vehicleAmmo',
       'noPowerPoints',
+      'wealthType',
+      'currencyName',
     ],
   },
 

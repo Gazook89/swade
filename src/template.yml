@@ -59,6 +59,10 @@ Actor:
         species:
           name: ''
         currency: 500
+        wealth:
+          die: 6
+          modifier: 0
+          wild-die: 6
         conviction:
           value: 0
           active: false

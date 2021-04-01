@@ -1,6 +1,7 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { SysItemData } from '../../../interfaces/item-data';
 import { SWADE } from '../../config';
+import SwadeDice from '../../dice';
 import SwadeActor from '../../entities/SwadeActor';
 import SwadeItem from '../../entities/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
@@ -417,6 +418,7 @@ export default class CharacterSheet extends ActorSheet {
       }
     });
 
+    //Additional Stats roll
     html.find('.additional-stats .roll').on('click', (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
@@ -432,6 +434,30 @@ export default class CharacterSheet extends ActorSheet {
       new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
         speaker: ChatMessage.getSpeaker(),
         flavor: statData.label,
+      });
+    });
+
+    //Wealth Die Roll
+    html.find('.currency .roll').on('click', () => {
+      const die: number =
+        getProperty(this.actor.data, 'data.details.wealth.die') || 6;
+      const mod: number =
+        getProperty(this.actor.data, 'data.details.wealth.modifier') || 0;
+      const wildDie: number =
+        getProperty(this.actor.data, 'data.details.wealth.wild-die') || 6;
+
+      const dieLabel = game.i18n.localize('SWADE.WealthDie');
+      const wildDieLabel = game.i18n.localize('SWADE.WildDie');
+      const formula = `{1d${die}x[${dieLabel}]${mod.signedString()}, 1d${wildDie}x[${wildDieLabel}]${mod.signedString()}}kh`;
+
+      const roll = new Roll(formula);
+
+      SwadeDice.Roll({
+        roll: roll,
+        speaker: ChatMessage.getSpeaker(),
+        actor: this.actor,
+        flavor: game.i18n.localize('SWADE.WealthDie'),
+        title: game.i18n.localize('SWADE.WealthDie'),
       });
     });
   }
@@ -580,6 +606,8 @@ export default class CharacterSheet extends ActorSheet {
     data.settingrules = {
       conviction: game.settings.get('swade', 'enableConviction'),
       noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
+      wealthType: game.settings.get('swade', 'wealthType'),
+      currencyName: game.settings.get('swade', 'currencyName'),
     };
     return data;
   }
