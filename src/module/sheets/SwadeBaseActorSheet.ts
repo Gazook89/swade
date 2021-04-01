@@ -1,4 +1,5 @@
 import { AdditionalStat } from '../../interfaces/additional';
+import { SysItemData } from '../../interfaces/item-data';
 import * as chat from '../chat';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
@@ -169,6 +170,14 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           return effect.delete();
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
+        case 'open-origin':
+          fromUuid(effect.data.origin).then((item: SysItemData) => {
+            if (item) this.actor.items.get(item._id).sheet.render(true);
+          });
+          break;
+        default:
+          console.warn(`The action ${action} is not currently supported`);
+          break;
       }
     });
 
