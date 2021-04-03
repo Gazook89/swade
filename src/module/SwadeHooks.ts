@@ -148,8 +148,7 @@ export default class SwadeHooks {
     }
 
     //Get list of core skills from settings
-    const coreSkills = game.settings
-      .get('swade', 'coreSkills')
+    const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
       .split(',')
       .map((s) => s.trim());
 
@@ -384,7 +383,7 @@ export default class SwadeHooks {
             (c) => c.actor.data.type === 'character',
           );
           for (const combatant of combatants) {
-            const actor = combatant.actor as SwadeActor;
+            const actor = (combatant.actor as unknown) as SwadeActor;
             actor.getBenny();
           }
         });
@@ -661,7 +660,7 @@ export default class SwadeHooks {
 
     //grab cards and sort them
     const cardPack = game.packs.get(
-      game.settings.get('swade', 'cardDeck'),
+      game.settings.get('swade', 'cardDeck') as string,
     ) as Compendium;
     const cards = (await cardPack.getContent()).sort(
       (a: JournalEntry, b: JournalEntry) => {

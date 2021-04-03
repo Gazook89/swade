@@ -258,7 +258,7 @@ export default class SwadeItem extends Item<SysItemData> {
     }
 
     // Toggle default roll mode
-    const rollMode = game.settings.get('core', 'rollMode');
+    const rollMode = game.settings.get('core', 'rollMode') as string;
     if (['gmroll', 'blindroll'].includes(rollMode))
       chatData['whisper'] = ChatMessage.getWhisperRecipients('GM');
     if (rollMode === 'selfroll') chatData['whisper'] = [game.user._id];

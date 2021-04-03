@@ -100,7 +100,7 @@ export default class SwadeEntityTweaks extends FormApplication {
   }
 
   private _getAppropriateSettingFields() {
-    const fields = game.settings.get('swade', 'settingFields');
+    const fields = game.settings.get('swade', 'settingFields') as any;
     let settingFields = {};
     if (this.object instanceof SwadeActor) {
       settingFields = fields.actor;

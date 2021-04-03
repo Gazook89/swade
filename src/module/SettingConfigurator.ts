@@ -31,7 +31,7 @@ export default class SettingConfigurator extends FormApplication {
    * @override
    */
   getData(): any {
-    const settingFields = game.settings.get('swade', 'settingFields');
+    const settingFields = game.settings.get('swade', 'settingFields') as any;
     const data = {
       settingRules: {},
       actorSettingStats: settingFields.actor,
@@ -81,7 +81,7 @@ export default class SettingConfigurator extends FormApplication {
     }
 
     // Handle the free-form attributes list
-    const settingFields = game.settings.get('swade', 'settingFields');
+    const settingFields = game.settings.get('swade', 'settingFields') as any;
 
     const actorAttributes = this._handleKeyValidityCheck(formActorAttrs);
     const itemAttributes = this._handleKeyValidityCheck(formItemAttrs);
@@ -111,7 +111,7 @@ export default class SettingConfigurator extends FormApplication {
     event.preventDefault();
     const a = event.currentTarget;
     const action = a.dataset.action;
-    const settingFields = game.settings.get('swade', 'settingFields');
+    const settingFields = game.settings.get('swade', 'settingFields') as any;
     const form = this.form;
 
     // Add new attribute

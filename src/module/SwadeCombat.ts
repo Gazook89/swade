@@ -215,7 +215,9 @@ export default class SwadeCombat extends Combat {
    * @param count number of cards to draw
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
-    let actionCardPack = game.packs.get(game.settings.get('swade', 'cardDeck'));
+    let actionCardPack = game.packs.get(
+      game.settings.get('swade', 'cardDeck') as string,
+    );
     if (
       actionCardPack === null ||
       (await actionCardPack.getIndex()).length === 0
@@ -229,7 +231,7 @@ export default class SwadeCombat extends Combat {
         SWADE.init.defaultCardCompendium,
       );
       actionCardPack = game.packs.get(
-        game.settings.get('swade', 'cardDeck'),
+        game.settings.get('swade', 'cardDeck') as string,
       ) as Compendium;
     }
     const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
@@ -341,7 +343,7 @@ export default class SwadeCombat extends Combat {
    */
   async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
     const actionCardPack = game.packs.get(
-      game.settings.get('swade', 'cardDeck'),
+      game.settings.get('swade', 'cardDeck') as string,
     );
     const content = (await actionCardPack.getContent()) as JournalEntry[];
     return content.find(

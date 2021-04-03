@@ -5,7 +5,7 @@ export async function createActionCardTable(
   rebuild?: boolean,
   cardpack?: string,
 ): Promise<void> {
-  let packName = game.settings.get('swade', 'cardDeck');
+  let packName = game.settings.get('swade', 'cardDeck') as string;
   if (cardpack) {
     packName = cardpack;
   }
