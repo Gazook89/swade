@@ -32,7 +32,11 @@
     <div class="form-group" id="runningDie">
       <label>{{localize "SWADE.RunningDie"}}</label>
       <span class="form-fields">
-        <select class="running-die" name="data.stats.speed.runningDie">
+        <select
+          class="running-die"
+          name="data.stats.speed.runningDie"
+          data-dtype="Number"
+        >
           {{#select data.stats.speed.runningDie}}
           <option value="1">1</option>
           <option value="4">d4</option>
@@ -211,7 +215,7 @@
     </header>
     {{#each settingFields as |attr key|}}
     <div class="flexrow">
-      <div style="text-align: left;">
+      <div style="text-align: left">
         <label for="{{_id}}-{{key}}-useField">{{attr.label}}</label>
       </div>
       <div class="centered">
