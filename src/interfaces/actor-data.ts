@@ -121,6 +121,7 @@ interface CharacterCommon {
     hasHesitant: boolean;
     hasLevelHeaded: boolean;
     hasImpLevelHeaded: boolean;
+    hasQuick: boolean;
   };
   powerPoints: any; //FIXME Find better type
   additionalStats: Partial<Record<string, AdditionalStat>>;
@@ -170,6 +171,7 @@ interface VehicleCommon {
     hasHesitant: boolean;
     hasLevelHeaded: boolean;
     hasImpLevelHeaded: boolean;
+    hasQuick: boolean;
   };
 }
 

@@ -96,6 +96,7 @@ Actor:
         hasHesitant: false
         hasLevelHeaded: false
         hasImpLevelHeaded: false
+        hasQuick: false
       additionalStats: {}
     vehicle-common:
       size: 0
@@ -130,6 +131,7 @@ Actor:
         hasHesitant: false
         hasLevelHeaded: false
         hasImpLevelHeaded: false
+        hasQuick: false
       additionalStats: {}
       maxCargo: 0
       maxMods: 0

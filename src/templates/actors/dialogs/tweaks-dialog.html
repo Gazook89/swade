@@ -163,6 +163,18 @@
       </span>
     </div>
     <div class="form-group">
+      <label for="{{_id}}-hasHesitant">{{localize "SWADE.Quick"}}</label>
+      <span class="form-fields">
+        <input
+          type="checkbox"
+          name="data.initiative.hasQuick"
+          id="{{_id}}-hasQuick"
+          {{checked
+          data.initiative.hasQuick}}
+        />
+      </span>
+    </div>
+    <div class="form-group">
       <label for="{{_id}}-hasHesitant">{{localize "SWADE.Hesitant"}}</label>
       <span class="form-fields">
         <input
