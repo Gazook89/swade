@@ -209,13 +209,13 @@ SWADE.RollRaise: Steigerungswurf
 SWADE.GroupRoll: Gruppenprobe
 SWADE.Ok: OK
 SWADE.Cancel: Abbruch
-SWADE.Redraw: Neu ziehen
+SWADE.Redraw: Karte ziehen
 SWADE.Add: ' '
 SWADE.ConfigInit: Initiative konfigurieren
 SWADE.IgnWounds: Wunden ignorieren
 SWADE.Size: Größe
 SWADE.Scale: Größenkategorie
-SWADE.PickACard: Ziehe eine Karte
+SWADE.PickACard: Wähle eine Karte für
 SWADE.NoCardsLeft: Es sind nicht genug Karten im Deck!
 SWADE.OldCard: Alte Karte
 SWADE.ActionCard: Aktiionskarte

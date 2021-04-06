@@ -263,13 +263,13 @@ SWADE.RollRaise: Roll Raise
 SWADE.GroupRoll: Group Roll
 SWADE.Ok: Ok
 SWADE.Cancel: Cancel
-SWADE.Redraw: Redraw
+SWADE.Redraw: Draw Card
 SWADE.Add: Add
 SWADE.ConfigInit: Configure Initiative
 SWADE.IgnWounds: Ignore Wounds
 SWADE.Size: Size
 SWADE.Scale: Scale
-SWADE.PickACard: Pick a card
+SWADE.PickACard: Pick a card for
 SWADE.NoCardsLeft: There are not enough cards left in the deck!
 SWADE.OldCard: Old card
 SWADE.ActionCard: Action Card

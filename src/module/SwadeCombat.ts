@@ -5,8 +5,8 @@ interface IPickACard {
   cards: JournalEntry[];
   combatantName: string;
   oldCardId?: string;
-  maxCards?: number;
   enableRedraw?: boolean;
+  isQuickDraw?: boolean;
 }
 export default class SwadeCombat extends Combat {
   /**
@@ -106,6 +106,7 @@ export default class SwadeCombat extends Combat {
             cards: cards,
             combatantName: c.name,
             enableRedraw: hasQuick,
+            isQuickDraw: hasQuick,
           });
         } else if (hasQuick) {
           const cards = await this.drawCard();
@@ -116,8 +117,8 @@ export default class SwadeCombat extends Combat {
             card = await this.pickACard({
               cards: [card],
               combatantName: c.name,
-              maxCards: 2,
               enableRedraw: true,
+              isQuickDraw: true,
             });
           }
         } else {
@@ -284,28 +285,30 @@ export default class SwadeCombat extends Combat {
   }
 
   /**
-   * Asks the GM to pick a cards
+   * Asks the GM to pick a card
    * @param cards an array of cards
    * @param combatantName name of the combatant
    * @param oldCardId id of the old card, if you're picking cards for a redraw
    * @param maxCards maximum number of cards to be displayed
    * @param enableRedraw sets whether a redraw is allowed
+   * @param isQuickDraw sets whether this draw includes the Quick edge
    */
   async pickACard({
     cards,
     combatantName,
     oldCardId,
-    maxCards,
     enableRedraw,
+    isQuickDraw,
   }: IPickACard): Promise<JournalEntry> {
     // any card
 
     let immedeateRedraw = false;
-
-    //bound cards
-    if (maxCards && cards.length > maxCards) {
-      while (cards.length > maxCards) cards.shift();
+    if (isQuickDraw) {
+      enableRedraw = !cards.some(
+        (c) => (c.getFlag('swade', 'cardValue') as number) > 5,
+      );
     }
+
     let card: JournalEntry = null;
     const template = 'systems/swade/templates/initiative/choose-card.html';
     const html = await renderTemplate(template, {
@@ -353,8 +356,8 @@ export default class SwadeCombat extends Combat {
               cards: newCards,
               combatantName,
               oldCardId,
-              maxCards,
               enableRedraw,
+              isQuickDraw,
             });
           }
           //if no card has been chosen then choose first in array
