@@ -38,10 +38,17 @@
       type="text"
       name="data.ammo"
       value="{{item.data.ammo}}"
+      list="{{item.id}}-ammo"
       data-dtype="String"
+      title="{{localize 'SWADE.ClickSuggestions'}}"
     />
   </span>
 </div>
+<datalist id="{{item.id}}-ammo">
+  {{#each ammoList as |ammo|}}
+  <option value="{{ammo}}" />
+  {{/each}}
+</datalist>
 {{/if}}
 <header class="header-field flexrow">
   <div>

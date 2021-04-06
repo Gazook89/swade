@@ -206,6 +206,11 @@ export default class SwadeItemSheet extends ItemSheet {
     switch (this.item.type) {
       case 'weapon':
         data['isWeapon'] = true && game.settings.get('swade', 'ammoManagement');
+        if (this.item.isOwned) {
+          data['ammoList'] = this.actor.itemTypes['gear'].map(
+            (i) => i.data.name,
+          );
+        }
         break;
       default:
         break;
