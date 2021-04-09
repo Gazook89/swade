@@ -4,7 +4,6 @@ import SwadeItem from './entities/SwadeItem';
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
-  data?: any;
   speaker?: any;
   flavor?: string;
   title?: string;
@@ -32,7 +31,6 @@ interface RollHandlerData {
 export default class SwadeDice {
   static async Roll({
     roll,
-    data,
     speaker,
     flavor,
     title,
@@ -44,7 +42,6 @@ export default class SwadeDice {
     const template = 'systems/swade/templates/chat/roll-dialog.html';
     const dialogData = {
       formula: roll.formula,
-      data: data,
       rollMode: game.settings.get('core', 'rollMode'),
       rollModes: CONFIG.Dice.rollModes,
     };
