@@ -1,8 +1,9 @@
 import { ItemAction } from '../interfaces/additional';
+import IRollOptions from '../interfaces/IRollOptions';
 import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
-import { notificationExists } from './util';
+import { getTrait, notificationExists } from './util';
 
 /**
  * A helper class for Item chat card logic
@@ -90,7 +91,7 @@ export default class ItemChatCardHelper {
     item: SwadeItem,
     actor: SwadeActor,
     action: string,
-    additionalMods: string | number[] = [],
+    additionalMods: (string | number)[] = [],
   ) {
     const traitName = getProperty(item.data, 'data.actions.skill');
     let trait: SwadeItem | string = null;
@@ -119,17 +120,7 @@ export default class ItemChatCardHelper {
         break;
       case 'formula':
         //try to get the trait by either matching the attribute name or fetching the skill item
-        for (const attr of Object.keys(SWADE.attributes)) {
-          const attributeName = game.i18n.localize(SWADE.attributes[attr].long);
-          if (attributeName === traitName) {
-            trait = attr;
-          }
-        }
-        if (!trait) {
-          trait = actor.items.find(
-            (i) => i.type === 'skill' && i.name === traitName,
-          );
-        }
+        trait = getTrait(traitName, actor);
 
         //check if we have anough ammo available
         if (
@@ -141,7 +132,12 @@ export default class ItemChatCardHelper {
             ui.notifications.warn(game.i18n.localize('SWADE.NotEnoughAmmo'));
           }
         } else {
-          roll = await this.doTraitAction(trait, item, actor, additionalMods);
+          roll = await this.doTraitAction(trait, actor, {
+            additionalMods: [
+              getProperty(item.data, 'data.actions.skillMod'),
+              ...additionalMods,
+            ],
+          });
         }
         if (roll) await this.subtractShots(actor, item.id, 1);
         Hooks.call('swadeAction', actor, item, action, roll, game.user.id);
@@ -178,12 +174,13 @@ export default class ItemChatCardHelper {
    * @param item The item that this action is used on
    * @param actor The actor who has the item
    * @param action The action key
+   * @returns the evaluated roll
    */
   static async handleAdditionalActions(
     item: SwadeItem,
     actor: SwadeActor,
     action: string,
-    additionalMods: string | number[] = [],
+    additionalMods: (string | number)[] = [],
   ) {
     const availableActions = getProperty(item.data, 'data.actions.additional');
     const ammoManagement =
@@ -203,18 +200,7 @@ export default class ItemChatCardHelper {
       if (actionToUse.skillOverride) traitName = actionToUse.skillOverride;
 
       //find the trait and either get the skill item or the key of the attribute
-      let trait: SwadeItem | string = null;
-      for (const attr of Object.keys(SWADE.attributes)) {
-        const attributeName = game.i18n.localize(SWADE.attributes[attr].long);
-        if (attributeName === traitName) {
-          trait = attr;
-        }
-      }
-      if (!trait) {
-        trait = actor.items.find(
-          (i) => i.type === 'skill' && i.name === traitName,
-        );
-      }
+      const trait = getTrait(traitName, actor);
 
       let actionSkillMod = '';
       if (actionToUse.skillMod && parseInt(actionToUse.skillMod) !== 0) {
@@ -240,31 +226,19 @@ export default class ItemChatCardHelper {
         }
         return null;
       }
-      if (trait instanceof SwadeItem || trait === null) {
-        const id = trait ? trait['id'] : null;
-        roll = await actor.rollSkill(id, {
-          flavour: actionToUse.name,
-          rof: actionToUse.rof,
-          additionalMods: [
-            getProperty(item.data, 'data.actions.skillMod'),
-            actionSkillMod,
-            ...additionalMods,
-          ],
-        });
-      } else {
-        roll = await actor.rollAttribute(trait, {
-          flavour: actionToUse.name,
-          rof: actionToUse.rof,
-          additionalMods: [
-            getProperty(item.data, 'data.actions.skillMod'),
-            actionSkillMod,
-            ...additionalMods,
-          ],
-        });
-      }
+      roll = await this.doTraitAction(trait, actor, {
+        flavour: actionToUse.name,
+        rof: actionToUse.rof,
+        additionalMods: [
+          getProperty(item.data, 'data.actions.skillMod'),
+          actionSkillMod,
+          ...additionalMods,
+        ],
+      });
 
-      if (roll)
+      if (roll) {
         await this.subtractShots(actor, item.id, actionToUse.shotsUsed || 0);
+      }
     } else if (actionToUse.type === 'damage') {
       //Do Damage stuff
       roll = await item.rollDamage({
@@ -273,6 +247,7 @@ export default class ItemChatCardHelper {
         additionalMods: [
           getProperty(item.data, 'data.actions.dmgMod'),
           actionToUse.dmgMod,
+          ...additionalMods,
         ],
       });
     }
@@ -282,25 +257,14 @@ export default class ItemChatCardHelper {
 
   static doTraitAction(
     trait: string | SwadeItem,
-    item: SwadeItem,
     actor: SwadeActor,
-    additionalMods: string | number[] = [],
+    options: IRollOptions,
   ): Promise<Roll> {
     if (trait instanceof SwadeItem || trait === null) {
       const id = trait ? trait['id'] : null;
-      return actor.rollSkill(id, {
-        additionalMods: [
-          getProperty(item.data, 'data.actions.skillMod'),
-          ...additionalMods,
-        ],
-      }) as Promise<Roll>;
+      return actor.rollSkill(id, options) as Promise<Roll>;
     } else {
-      return actor.rollAttribute(trait, {
-        additionalMods: [
-          getProperty(item.data, 'data.actions.skillMod'),
-          ...additionalMods,
-        ],
-      }) as Promise<Roll>;
+      return actor.rollAttribute(trait, options) as Promise<Roll>;
     }
   }
 

@@ -1,4 +1,5 @@
 import { SWADE } from './config';
+import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 
 export async function createActionCardTable(
@@ -189,4 +190,27 @@ export function getCanvas(): Canvas {
     return canvas;
   }
   throw new Error('No Canvas available');
+}
+
+/**
+ *
+ * @param traitName The name of the trait to be found
+ * @param actor The actor to find it from
+ * @returns Returns a string of the trait name in the data model if it's an attribute or an Item if it is a skill. If it can find neither an attribute nor a skill then it returns null
+ */
+export function getTrait(
+  traitName: string,
+  actor: SwadeActor,
+): SwadeItem | string {
+  let trait: SwadeItem | string = null;
+  for (const attr of Object.keys(SWADE.attributes)) {
+    const attributeName = game.i18n.localize(SWADE.attributes[attr].long);
+    if (attributeName === traitName) {
+      trait = attr;
+    }
+  }
+  if (!trait) {
+    trait = actor.items.find((i) => i.type === 'skill' && i.name === traitName);
+  }
+  return trait;
 }
