@@ -226,7 +226,7 @@ export default class SwadeCombat extends Combat {
    * @override
    */
   async resetAll() {
-    const updates = this.data['combatants'].map((c) => {
+    const updates = this.data.combatants.map((c) => {
       return {
         _id: c._id,
         initiative: null,
@@ -330,16 +330,17 @@ export default class SwadeCombat extends Combat {
           }
         },
       },
-    };
-
-    if (oldCardId || enableRedraw) {
-      buttons['redraw'] = {
-        icon: '<i class="fas fa-redo"></i>',
+      redraw: {
+        icon: '<i class="fas fa-plus"></i>',
         label: game.i18n.localize('SWADE.Redraw'),
         callback: () => {
           immedeateRedraw = true;
         },
-      };
+      },
+    };
+
+    if (!oldCardId && !enableRedraw) {
+      delete buttons.redraw;
     }
 
     return new Promise((resolve) => {
