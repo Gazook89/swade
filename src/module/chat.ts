@@ -113,7 +113,6 @@ export async function formatRoll(
     .replace('+-', '-');
   try {
     if (modString.length > 2) {
-      console.log(modString, modifiers);
       mod = eval(modString) as number;
     }
   } catch (err) {
