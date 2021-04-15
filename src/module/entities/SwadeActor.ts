@@ -5,13 +5,15 @@ import SwadeDice from '../dice';
 import * as util from '../util';
 import SwadeItem from './SwadeItem';
 
+interface ITraitRollModifiers {
+  label: string;
+  value: string;
+}
+
 /**
  * @noInheritDoc
  */
 export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
-  /* -------------------------------------------- */
-  /*  Getters
-  /* -------------------------------------------- */
   get isWildcard(): boolean {
     if (this.data.type === 'vehicle') {
       return false;
@@ -133,10 +135,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
   }
 
-  /* -------------------------------------------- */
-  /*  Socket Listeners and Handlers
-  /* -------------------------------------------- */
-
   /** @override */
   static async create(data, options = {}) {
     let link = false;
@@ -159,7 +157,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   rollAttribute(
     abilityId: string,
-    options: IRollOptions = { event: null },
+    options: IRollOptions,
   ): Promise<Roll> | Roll {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
@@ -170,32 +168,40 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     const label = SWADE.attributes[abilityId].long;
     const actorData = this.data;
     const abl = actorData.data.attributes[abilityId];
-    let finalRoll = new Roll('');
-    const rollMods = this._buildTraitRollModifiers(abl, options);
 
     const attrRoll = new Roll('');
     attrRoll.terms.push(
       this._buildTraitDie(abl.die.sides, game.i18n.localize(label)),
     );
-    if (rollMods.length !== 0) {
-      rollMods.forEach((m) => attrRoll.terms.push(m.value));
-    }
+
+    const pool = new DicePool({
+      rolls: [attrRoll],
+      modifiers: ['kh'],
+    });
 
     //If the Actor is a wildcard the build a dicepool, otherwise build a Roll
     if (this.isWildcard) {
       const wildRoll = new Roll('');
       wildRoll.terms.push(this._buildWildDie(abl['wild-die'].sides));
-      const wildCardPool = new DicePool({
-        rolls: [attrRoll, wildRoll],
-        modifiers: ['kh'],
-      });
-      if (rollMods.length !== 0) {
-        rollMods.forEach((m) => wildRoll.terms.push(m.value));
-      }
-      finalRoll.terms.push(wildCardPool);
-    } else {
-      finalRoll = attrRoll;
+      pool.rolls.push(wildRoll);
     }
+    const finalRoll = new Roll('');
+    finalRoll.terms.push(pool);
+
+    //Conviction Modifier
+    const useConviction =
+      this.isWildcard &&
+      this.data.data.details.conviction.active &&
+      game.settings.get('swade', 'enableConviction');
+
+    if (useConviction) {
+      const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
+      finalRoll.terms.push('+');
+      finalRoll.terms.push(convDie);
+    }
+
+    const rollMods = this._buildTraitRollModifiers(abl, options);
+    rollMods.forEach((m) => finalRoll.terms.push(m.value));
 
     if (options.suppressChat) {
       return finalRoll;
@@ -212,7 +218,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     // Roll and return
     return SwadeDice.Roll({
       roll: finalRoll,
-      data: actorData,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
@@ -228,7 +233,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   rollSkill(
     skillId: string,
-    options: IRollOptions = { event: null },
+    options: IRollOptions,
     tempSkill?: SwadeItem,
   ): Promise<Roll> | Roll {
     if (!options.rof) options.rof = 1;
@@ -242,17 +247,11 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       return this.makeUnskilledAttempt(options);
     }
 
-    const skillData = getProperty(skill, 'data.data');
     let skillRoll = null;
     let rollMods = [];
 
-    if (options.rof && options.rof > 1) {
-      skillRoll = this._handleComplexSkill(skill, options);
-      rollMods = skillRoll[1];
-    } else {
-      skillRoll = this._handleSimpleSkill(skill, options);
-      rollMods = skillRoll[1];
-    }
+    skillRoll = this._handleComplexSkill(skill, options);
+    rollMods = skillRoll[1];
 
     //Build Flavour
     let flavour = '';
@@ -272,7 +271,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     // Roll and return
     return SwadeDice.Roll({
       roll: skillRoll[0],
-      data: skillData,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',
@@ -284,14 +282,11 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     });
   }
 
-  async makeUnskilledAttempt(
-    options: IRollOptions = { event: null },
-  ): Promise<Roll> {
+  async makeUnskilledAttempt(options: IRollOptions): Promise<Roll> {
     const tempSkill = new Item(
       {
         name: game.i18n.localize('SWADE.Unskilled'),
         type: 'skill',
-        flags: {},
         data: {
           die: {
             sides: 4,
@@ -642,24 +637,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
   }
 
-  protected _handleSimpleSkill(
-    skill: SwadeItem,
-    options: IRollOptions,
-  ): [Roll, any[]] {
-    const skillData = getProperty(skill, 'data.data');
-
-    const skillRoll = new Roll('');
-    skillRoll.terms.push(this._buildTraitDie(skillData.die.sides, skill.name));
-
-    if (this.isWildcard) {
-      return this._handleComplexSkill(skill, options);
-    } else {
-      const rollMods = this._buildTraitRollModifiers(skillData, options);
-      rollMods.forEach((m) => skillRoll.terms.push(m.value));
-      return [skillRoll, rollMods];
-    }
-  }
-
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
@@ -668,54 +645,58 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     const skillData = getProperty(skill, 'data.data');
 
     const rolls: Roll[] = [];
-    const rollMods = this._buildTraitRollModifiers(skillData, options);
+
+    //Add all necessary trait die
     for (let i = 0; i < options.rof; i++) {
       const skillRoll = new Roll('');
       const traitDie = this._buildTraitDie(skillData.die.sides, skill.name);
       skillRoll.terms.push(traitDie);
-
-      rollMods.forEach((m) => skillRoll.terms.push(m.value));
       rolls.push(skillRoll);
     }
 
-    const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
-
-    const dicePool = new DicePool({
-      rolls: rolls,
-      //@ts-ignore
-      //TODO is known bug in types config
-      modifiers: [kh],
-    });
-
+    //Add Wild Die
     if (this.isWildcard) {
       const wildRoll = new Roll('');
       wildRoll.terms.push(this._buildWildDie(skillData['wild-die'].sides));
-      rollMods.forEach((m) => wildRoll.terms.push(m.value));
-      dicePool.rolls.push(wildRoll);
+      rolls.push(wildRoll);
     }
 
+    const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
+    const dicePool = new DicePool({
+      rolls: rolls,
+      modifiers: [kh],
+    });
+
     //Conviction Modifier
-    if (
+    const useConviction =
+      this.data.type !== 'vehicle' &&
       this.isWildcard &&
-      game.settings.get('swade', 'enableConviction') &&
-      getProperty(this.data, 'data.details.conviction.active')
-    ) {
-      for (const r of dicePool.rolls) {
-        if (r instanceof Roll) {
-          r.terms.push('+');
-          r.terms.push(
-            this._buildTraitDie(6, game.i18n.localize('SWADE.Conv')),
-          );
-        }
-      }
-    }
+      this.data.data.details.conviction.active &&
+      game.settings.get('swade', 'enableConviction');
 
     const finalRoll = new Roll('');
     finalRoll.terms.push(dicePool);
 
+    const rollMods = this._buildTraitRollModifiers(skillData, options);
+    rollMods.forEach((v) => {
+      finalRoll.terms.push(v.value);
+    });
+
+    if (useConviction) {
+      const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
+      finalRoll.terms.push('+');
+      finalRoll.terms.push(convDie);
+    }
+
     return [finalRoll, rollMods];
   }
 
+  /**
+   * @param sides number of sides of the die
+   * @param flavor flavor of the die
+   * @param modifiers modifiers to the die
+   * @returns a Die instance that already has the exploding modifier by default
+   */
   private _buildTraitDie(
     sides: number,
     flavor: string,
@@ -753,10 +734,13 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     return die;
   }
 
-  private _buildTraitRollModifiers(data: any, options: IRollOptions) {
+  private _buildTraitRollModifiers(
+    data: any,
+    options: IRollOptions,
+  ): ITraitRollModifiers[] {
     const mods = [];
 
-    //Skill modifier
+    //Trait modifier
     const itemMod = parseInt(data.die.modifier);
     if (!isNaN(itemMod) && itemMod !== 0) {
       mods.push({

@@ -33,8 +33,6 @@ export default class SwadeItem extends Item<SysItemData> {
       return null;
     }
     const actor = (this.actor as unknown) as SwadeActor;
-    const actorIsVehicle = actor.data.type === 'vehicle';
-    const actorData = actor.data.data;
     const label = this.name;
     let ap = getProperty(this.data, 'data.ap');
 
@@ -70,11 +68,11 @@ export default class SwadeItem extends Item<SysItemData> {
 
     //Conviction Modifier
     if (
-      !actorIsVehicle &&
+      actor.data.type !== 'vehicle' &&
       game.settings.get('swade', 'enableConviction') &&
-      getProperty(actor.data, 'data.details.conviction.active')
+      actor.data.data.details.conviction.active
     ) {
-      newParts.push('+1d6x');
+      newParts.push(`+1d6x[${game.i18n.localize('SWADE.Conv')}]`);
     }
 
     roll = new Roll(newParts.join(''));
@@ -91,7 +89,6 @@ export default class SwadeItem extends Item<SysItemData> {
     // Roll and return
     return SwadeDice.Roll({
       roll: roll,
-      data: actorData,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.Dmg',
