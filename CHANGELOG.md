@@ -29,12 +29,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added Die type additional stat
 - Added focus state to checkboxes
 - Added support for the No Power Points rule, which can be activated via the Setting Configurator. When this setting rule is effect the recording of power points is disabled and the PP Cost input is instead used to calculate the penalty on the trait roll based on the total PP Cost entered. This works with the inline interaction on the character sheet as well as the chat cards
-- Added additional translation strings
 - Added the ability to define Core Skills in the Setting Configurator
 - Added the ability to drag&drop Active Effects between actors. Please keep in mind that is only possible for AE which are not transfered from an item.
 - Added the ability to use Attributes (such a Spirit or Agility) with actions instead of only skills. Adjusted UI of the _Actions & Effects_ tab accordingly. Please keep in mind that Attributes do not currently support actions with an RoF greater than 1 and will roll as if the RoF is 1
 - Added a suggestion list to the ammunition field of owned weapons
 - Added support for the quick edge
+- Added additional dice labels to damage rolls for Bonus damage and attribute shortcuts
+- Added additional translation strings
 
 ### Changed
 
