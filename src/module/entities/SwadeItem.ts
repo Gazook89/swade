@@ -42,7 +42,6 @@ export default class SwadeItem extends Item<SysItemData> {
       ap = ` - ${game.i18n.localize('SWADE.Ap')} 0`;
     }
 
-    let roll;
     let rollParts = [itemData.damage];
 
     if (this.type === 'shield' || options.dmgOverride) {
@@ -53,18 +52,18 @@ export default class SwadeItem extends Item<SysItemData> {
       rollParts = rollParts.concat(options.additionalMods);
     }
 
-    roll = new Roll(rollParts.join(''), actor.getRollShortcuts());
+    const roll = new Roll(rollParts.join(''), actor.getRollShortcuts());
 
     const newParts: string[] = [];
-    roll.terms.forEach((term) => {
+    for (const term of roll.terms) {
       if (term instanceof Die) {
-        newParts.push(`${term['number']}d${term.faces}x`);
+        newParts.push(`${term.number}d${term.faces}x`);
       } else if (term instanceof Roll) {
         newParts.push(term.formula);
-      } else {
-        newParts.push(this.makeExplodable(term));
+      } else if (typeof term === 'string') {
+        newParts.push(this._makeExplodable(term));
       }
-    });
+    }
 
     //Conviction Modifier
     if (
@@ -75,7 +74,7 @@ export default class SwadeItem extends Item<SysItemData> {
       newParts.push(`+1d6x[${game.i18n.localize('SWADE.Conv')}]`);
     }
 
-    roll = new Roll(newParts.join(''));
+    const newRoll = new Roll(newParts.join(''));
 
     let flavour = '';
     if (options.flavour) {
@@ -88,7 +87,7 @@ export default class SwadeItem extends Item<SysItemData> {
 
     // Roll and return
     return SwadeDice.Roll({
-      roll: roll,
+      roll: newRoll,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.Dmg',
@@ -267,22 +266,20 @@ export default class SwadeItem extends Item<SysItemData> {
     return chatCard;
   }
 
-  private makeExplodable(expresion): string {
+  private _makeExplodable(expresion: string): string {
     // Make all dice of a roll able to explode
     const diceRegExp = /\d*d\d+[^kdrxc]/g;
     expresion = expresion + ' '; // Just because of my poor reg_exp foo
-    const diceStrings = expresion.match(diceRegExp);
+    const diceStrings: string[] = expresion.match(diceRegExp) || [];
     const used = [];
-    if (diceStrings) {
-      diceStrings.forEach((match) => {
-        if (used.indexOf(match) === -1) {
-          expresion = expresion.replace(
-            new RegExp(match.slice(0, -1), 'g'),
-            match.slice(0, -1) + 'x',
-          );
-          used.push(match);
-        }
-      });
+    for (const match of diceStrings) {
+      if (used.indexOf(match) === -1) {
+        expresion = expresion.replace(
+          new RegExp(match.slice(0, -1), 'g'),
+          match.slice(0, -1) + 'x',
+        );
+        used.push(match);
+      }
     }
     return expresion;
   }
