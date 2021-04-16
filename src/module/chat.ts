@@ -2,6 +2,7 @@ import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import ItemChatCardHelper from './ItemChatCardHelper';
 
+//TODO Find a better way to format the rolls to make clear what is roll
 export async function formatRoll(
   chatMessage: ChatMessage,
   html: JQuery<HTMLElement>,
@@ -10,7 +11,7 @@ export async function formatRoll(
   const colorMessage = chatMessage.getFlag('swade', 'colorMessage');
 
   // Little helper function
-  const pushDice = (chatData, total, faces, red?: boolean) => {
+  const pushDice = (data, total, faces, red?: boolean) => {
     let color = 'black';
     if (total > faces) {
       color = 'green';
@@ -22,7 +23,7 @@ export async function formatRoll(
     if ([4, 6, 8, 10, 12, 20].indexOf(faces) > -1) {
       img = `icons/svg/d${faces}-grey.svg`;
     }
-    chatData.dice.push({
+    data.dice.push({
       img: img,
       result: total,
       color: color,
@@ -41,61 +42,95 @@ export async function formatRoll(
 
   //helper function that determines if a roll contained at least one result of 1
   const dieIsRed = (die?: Die) => {
-    if (die['class'] !== 'Die') return false;
+    if (!(die instanceof Die)) return false;
     return die.results[0]['result'] === 1;
   };
 
-  const roll = JSON.parse(data.message.roll);
+  const roll = Roll.fromJSON(data.message.roll);
   const chatData = { dice: [], modifiers: [] };
 
-  //don't format older messages anymore
-  if (roll.parts) return;
-  for (let i = 0; i < roll.terms.length; i++) {
-    if (roll.terms[i].class === 'DicePool') {
-      // Format the dice pools
-      const pool = roll.terms[i].rolls;
-      let faces = 0;
+  for (const term of roll.terms) {
+    if (term instanceof DicePool) {
       // Compute dice from the pool
-      pool.forEach((poolRoll: Roll) => {
-        faces = poolRoll.terms[0]['faces'];
-        pushDice(
-          chatData,
-          poolRoll.total,
-          faces,
-          colorMessage && rollIsRed(poolRoll),
-        );
+      term.rolls.forEach((roll: Roll) => {
+        const faces = roll.terms[0]['faces'];
+        pushDice(chatData, roll.total, faces, colorMessage && rollIsRed(roll));
       });
-    } else if (roll.terms[i].class === 'Die') {
+    } else if (term instanceof Die) {
       // Grab the right dice
-      const faces = roll.terms[i].faces;
+      const faces = term.faces;
       let totalDice = 0;
-      roll.terms[i].results.forEach((result) => {
+      term.results.forEach((result) => {
         totalDice += result.result;
       });
-      pushDice(
-        chatData,
-        totalDice,
-        faces,
-        colorMessage && dieIsRed(roll.terms[i]),
-      );
+      pushDice(chatData, totalDice, faces, colorMessage && dieIsRed(term));
     } else {
-      if (roll.terms[i]) {
-        chatData.dice.push({
-          img: null,
-          result: roll.terms[i],
-          color: 'black',
-          dice: false,
-        });
-      }
+      chatData.dice.push({
+        img: null,
+        result: term,
+        color: 'black',
+        dice: false,
+      });
     }
   }
-  // Replace default dice-formula by this custom;
-  const rendered = await renderTemplate(
-    'systems/swade/templates/chat/roll-formula.html',
-    chatData,
-  );
-  const formula = html.find('.dice-formula');
-  formula.replaceWith(rendered);
+  // Replace default dice-formula with custom html;
+  const formulaTemplate = 'systems/swade/templates/chat/roll-formula.html';
+  html
+    .find('.dice-formula')
+    .replaceWith(await renderTemplate(formulaTemplate, chatData));
+
+  const results = { dice: [], modifiers: [], total: 0 };
+  const modifiers: (string | number)[] = [];
+  let conviction = 0;
+
+  for (const term of roll.terms) {
+    if (term instanceof DicePool) {
+      // Compute dice from the pool
+      term.rolls.forEach((roll: Roll, i) => {
+        const faces = roll.terms[0]['faces'];
+        if (!term.results[i].discarded) {
+          pushDice(results, roll.total, faces, colorMessage && rollIsRed(roll));
+        }
+      });
+    } else if (term instanceof Die) {
+      if (term.flavor === game.i18n.localize('SWADE.Conv')) {
+        conviction = term.total;
+      } else {
+        modifiers.push(term.total);
+      }
+    } else if (term instanceof Roll) {
+      results.total += term.total;
+    } else if (typeof term === 'string' || typeof term === 'number') {
+      modifiers.push(term);
+    }
+  }
+
+  //add conviction modifier
+  let mod = 0;
+  const modString = `0+${modifiers.join('')}`
+    .replace(/\+{2,}/g, '+') //replace double plusses with single plus
+    .replace(/[+-]*$/, '') //remove any plus or minus at the end of the string
+    .replace('+-', '-');
+  try {
+    if (modString.length > 2) {
+      mod = eval(modString) as number;
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (results.dice.length > 0) {
+      results.dice.forEach((v) => {
+        v.result += conviction;
+        v.result += mod;
+      });
+    } else {
+      results.total += mod + conviction;
+    }
+  }
+  const resultTemplate = 'systems/swade/templates/chat/roll-result.html';
+  html
+    .find('.dice-total')
+    .replaceWith(await renderTemplate(resultTemplate, results));
 }
 
 export function chatListeners(html: JQuery<HTMLElement>) {

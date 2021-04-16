@@ -5,7 +5,7 @@ interface CharacterCommon {
   attributes: {
     agility: {
       die: {
-        side: number;
+        sides: number;
         modifier: number;
       };
       'wild-die': {
@@ -13,38 +13,38 @@ interface CharacterCommon {
       };
     };
     smarts: {
-      animal: boolean;
       die: {
-        side: number;
+        sides: number;
         modifier: number;
       };
       'wild-die': {
         sides: number;
       };
+      animal: boolean;
     };
     spirit: {
-      unShakeBonus: number;
       die: {
-        side: number;
+        sides: number;
         modifier: number;
       };
       'wild-die': {
         sides: number;
       };
+      unShakeBonus: number;
     };
     strenght: {
-      encumbranceSteps: number;
       die: {
-        side: number;
+        sides: number;
         modifier: number;
       };
       'wild-die': {
         sides: number;
       };
+      encumbranceSteps: number;
     };
     vigor: {
       die: {
-        side: number;
+        sides: number;
         modifier: number;
       };
       'wild-die': {
