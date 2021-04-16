@@ -31,6 +31,17 @@
         <p class="notes">{{localize "SWADE.CoreSkillsDesc"}}</p>
       </div>
       <div class="form-group">
+        <label>{{localize "SWADE.CoreSkillsPack"}}</label>
+        <div class="form-fields">
+          <select name="settingRules.coreSkillsCompendium">
+            {{#select settingRules.coreSkillsCompendium}}{{selectOptions
+            coreSkillPackChoices}} {{/select}}
+          </select>
+        </div>
+        <p class="notes">{{localize "SWADE.CoreSkillsPackDesc"}}</p>
+      </div>
+
+      <div class="form-group">
         <label>{{localize "SWADE.WealthDie"}}</label>
         <div class="form-fields">
           <select name="settingRules.wealthType">
@@ -206,9 +217,7 @@
       </div>
     </section>
     <section class="attributes" id="setting-specific">
-      <h2 class="module-header">
-        {{localize "SWADE.AddStats"}}
-      </h2>
+      <h2 class="module-header">{{localize "SWADE.AddStats"}}</h2>
       <h3>{{localize "SWADE.Actors"}}</h3>
       <ul class="stats-container">
         <li class="attribute attributes-header">

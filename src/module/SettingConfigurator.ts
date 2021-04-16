@@ -42,6 +42,7 @@ export default class SettingConfigurator extends FormApplication {
         Boolean: 'SWADE.Checkbox',
         Die: 'SWADE.Die',
       },
+      coreSkillPackChoices: this._buildCoreSkillPackChoices(),
     };
     for (const setting of this.config.settings) {
       data.settingRules[setting] = game.settings.get('swade', setting);
@@ -169,5 +170,15 @@ export default class SettingConfigurator extends FormApplication {
       }
     }
     return attributes;
+  }
+  private _buildCoreSkillPackChoices() {
+    const retVal = {};
+
+    game.packs
+      .filter((p) => p.entity === 'Item')
+      .forEach((p) => {
+        retVal[p.collection] = `${p.metadata.label} (${p.metadata.package})`;
+      });
+    return retVal;
   }
 }

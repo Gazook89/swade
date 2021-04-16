@@ -67,6 +67,7 @@ export const SWADE = {
     title: 'SWADE Setting Rule Configurator',
     settings: [
       'coreSkills',
+      'coreSkillsCompendium',
       'enableConviction',
       'jokersWild',
       'parryBaseSkill',

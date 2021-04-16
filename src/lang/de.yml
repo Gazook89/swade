@@ -181,7 +181,7 @@ SWADE.AutoInitDesc: Aktionskarten jede Runde automatisch ziehen
 SWADE.CreateInitChat: Chatnachrichten für Initiative
 SWADE.HideWC: NSC Wildcards verstecken
 SWADE.HideWCDesc: Den Spielern nicht anzeigen, welche NSCs Wildcards sind
-SWADE.EnableConv: Entschlossenheit verwenden
+SWADE.EnableConv: Entschlossenheit
 SWADE.EnableConvDesc: Setting-Regel Entschlossenheit verwenden
 SWADE.EnableWoundPace: Bewegung durch Wunden modifizieren
 SWADE.EnableWoundPaceDesc: Wenn aktiviert, wird die Bewegung automatisch durch Wunden angepasst
@@ -328,10 +328,14 @@ SWADE.WealthTypeDesc: >-
   Wählen Sie aus, wie der Charakterreichtum und die Währung verfolgt werden
   sollen
 SWADE.CurrencyName: Währungsname
-SWADE.CurrencyNameDesc: Nennen Sie Ihre Währung
+SWADE.CurrencyNameDesc: Benennen Sie Ihre Währung
 SWADE.TraitRolls: Eigenschaftswürfe
 SWADE.Trait: Eigenschaft
 SWADE.AltTrait: Alternative Eigenschaft
 SWADE.ClickSuggestions: Klicken Sie hier für Vorschläge
 SWADE.Quick: Schnell
 SWADE.BonusDamage: Bonusschaden
+SWADE.CoreSkillsDesc: >-
+  Geben Sie eine durch Beistriche getrennte Liste von Fertigkeitsnamen ein, die
+  als Grundfertigkeiten für alle Spielercharaktere definiert werden sollen
+SWADE.CoreSkillsPackDesc: Wählen Sie aus welchem ​​Kompendium die Grundfertigkeiten bezogen werden

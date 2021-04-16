@@ -211,7 +211,7 @@ SWADE.AutoInitDesc: Automatically draw Action Cards every round
 SWADE.CreateInitChat: Create Chat Message for Initiative
 SWADE.HideWC: Hide NPC Wild Cards
 SWADE.HideWCDesc: Do not show which NPCs are Wild Cards to players
-SWADE.EnableConv: Enable Conviction
+SWADE.EnableConv: Conviction
 SWADE.EnableConvDesc: Enable the Conviction setting rule
 SWADE.EnableWoundPace: Adjust Pace with Wounds
 SWADE.EnableWoundPaceDesc: When enabled, Pace is automatically affected by Wounds
@@ -339,3 +339,5 @@ SWADE.AltTrait: Alternative Trait
 SWADE.ClickSuggestions: Click for suggestions
 SWADE.Quick: Quick
 SWADE.BonusDamage: Bonus Damage
+SWADE.CoreSkillsPack: Core Skills Compendium
+SWADE.CoreSkillsPackDesc: Choose from which Compendium the core skills will be drawn

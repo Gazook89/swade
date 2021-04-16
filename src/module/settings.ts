@@ -71,6 +71,7 @@ export function registerSettings() {
     config: true,
   });
 }
+
 export function registerSettingRules() {
   game.settings.register('swade', 'coreSkills', {
     name: game.i18n.localize('SWADE.CoreSkills'),
@@ -78,6 +79,15 @@ export function registerSettingRules() {
     default: 'Athletics, Common Knowledge, Notice, Persuasion, Stealth',
     scope: 'world',
     type: String,
+    config: false,
+  });
+
+  game.settings.register('swade', 'coreSkillsCompendium', {
+    name: game.i18n.localize('SWADE.CoreSkillsPack'),
+    hint: game.i18n.localize('SWADE.CoreSkillsPackDesc'),
+    default: 'swade.skills',
+    type: String,
+    scope: 'world',
     config: false,
   });
 
