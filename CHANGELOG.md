@@ -45,7 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Overhauled the way currencies are handled. You can now select one of **three** options in the Setting Configurator
   1. **Currency**, the system as it has been until now. Selecting this option now also adds an additional input field that lets you name the currency yourself.
   1. **Wealth**, representing the Wealth setting rule, which replaces the currency field with dice controls.
-  1. **None** / Other, which hides the currency field. This is ideal for the people that prefer tracking currency and wealth via inventory items.
+  1. **None / Other**, which hides the currency field. This is ideal for the people that prefer tracking currency and wealth via inventory items.
 - Chnaged how rolls are displayed in chat. Trait rolls will now display the result dice, adjusted with all modifiers
 
 ### Fixed
