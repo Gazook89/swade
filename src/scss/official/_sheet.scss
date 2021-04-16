@@ -931,7 +931,7 @@
       margin-top: $medium-spacing;
       font-size: $small-font;
       .editor {
-        height: 270px;
+        min-height: 270px;
         padding: 3px;
       }
     }
