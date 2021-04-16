@@ -415,12 +415,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     // Attributes
     const attributes = this.data.data.attributes;
-    for (const name in attributes) {
-      const attribute = attributes[name];
-      const short = name.substring(0, 3);
+    for (const [key, attribute] of Object.entries(attributes)) {
+      const short = key.substring(0, 3);
+      const name = game.i18n.localize(SWADE.attributes[key].long);
       const die: number = attribute.die.sides;
       const mod: number = attribute.die.modifier || 0;
-      out[short] = `(1d${die}x${mod !== 0 ? mod.signedString() : ''})`;
+      out[short] = `(1d${die}x[${name}]${mod !== 0 ? mod.signedString() : ''})`;
     }
     return out;
   }
@@ -430,7 +430,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    */
   getRollData(): any {
     const retVal = this.getRollShortcuts();
-    const skills = this.items.filter((i: Item) => i.type === 'skill') as Item[];
+    const skills = this.items.filter((i) => i.type === 'skill');
     for (const skill of skills) {
       const skillDie = getProperty(skill.data, 'data.die.sides');
       let skillMod = getProperty(skill.data, 'data.die.modifier');
