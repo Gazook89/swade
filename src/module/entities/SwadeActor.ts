@@ -437,7 +437,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       skillMod = skillMod !== 0 ? parseInt(skillMod).signedString() : '';
       retVal[
         skill.name.slugify({ strict: true })
-      ] = `1d${skillDie}x${skillMod}`;
+      ] = `1d${skillDie}x[${skill.name}]${skillMod}`;
     }
     retVal['wounds'] = getProperty(this.data, 'data.wounds.value') || 0;
     retVal['fatigue'] = getProperty(this.data, 'data.fatigue.value') || 0;
