@@ -36,7 +36,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added a suggestion list to the ammunition field of owned weapons
 - Added support for the quick edge
 - Added additional dice labels to damage rolls for Bonus damage and attribute shortcuts
-- Jokers now add the appropriate +2 bonus to all trait and damage rolls
+- Jokers now add the appropriate +2 bonus to all trait and damage rollsP
 - Added additional translation strings
 
 ### Changed

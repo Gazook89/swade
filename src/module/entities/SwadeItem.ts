@@ -75,20 +75,8 @@ export default class SwadeItem extends Item<SysItemData> {
     }
 
     //Joker Modifier
-    let combatant;
     let joker = '';
-    if (this.actor.data.token.actorLink) {
-      //linked token
-      combatant = game.combat?.combatants.find(
-        (c) => c.actor.id === this.actor.id,
-      );
-    } else {
-      combatant = game.combat?.combatants.find(
-        (c) => c.tokenId === this.actor.token.id,
-      );
-    }
-
-    if (combatant && getProperty(combatant, 'flags.swade.hasJoker')) {
+    if (actor.hasJoker) {
       newParts.push('+2');
       joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
     }

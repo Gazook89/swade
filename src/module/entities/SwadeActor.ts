@@ -35,6 +35,19 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     return abEdges.length > 0 || abAbilities.length > 0;
   }
 
+  get hasJoker(): boolean {
+    let combatant;
+    if (this.data.token.actorLink) {
+      //linked token
+      combatant = game.combat?.combatants.find((c) => c.actor.id === this.id);
+    } else {
+      combatant = game.combat?.combatants.find(
+        (c) => c.tokenId === this.token.id,
+      );
+    }
+    return combatant && getProperty(combatant, 'flags.swade.hasJoker');
+  }
+
   /**
    * @override
    */
@@ -787,18 +800,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     //Joker
-    //get combatant from currently viewed combat instance
-    let combatant;
-    if (this.data.token.actorLink) {
-      //linked token
-      combatant = game.combat?.combatants.find((c) => c.actor.id === this.id);
-    } else {
-      combatant = game.combat?.combatants.find(
-        (c) => c.tokenId === this.token.id,
-      );
-    }
-
-    if (combatant && getProperty(combatant, 'flags.swade.hasJoker')) {
+    if (this.hasJoker) {
       mods.push({
         label: game.i18n.localize('SWADE.Joker'),
         value: '+2',
