@@ -74,12 +74,33 @@ export default class SwadeItem extends Item<SysItemData> {
       newParts.push(`+1d6x[${game.i18n.localize('SWADE.Conv')}]`);
     }
 
+    //Joker Modifier
+    let combatant;
+    let joker = '';
+    if (this.actor.data.token.actorLink) {
+      //linked token
+      combatant = game.combat?.combatants.find(
+        (c) => c.actor.id === this.actor.id,
+      );
+    } else {
+      combatant = game.combat?.combatants.find(
+        (c) => c.tokenId === this.actor.token.id,
+      );
+    }
+
+    if (combatant && getProperty(combatant, 'flags.swade.hasJoker')) {
+      newParts.push('+2');
+      joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
+    }
+
     const newRoll = new Roll(newParts.join(''));
 
     let flavour = '';
     if (options.flavour) {
       flavour = ` - ${options.flavour}`;
     }
+
+    flavour = flavour.concat(joker);
 
     if (options.suppressChat) {
       return new Roll(newParts.join(''));
@@ -89,10 +110,8 @@ export default class SwadeItem extends Item<SysItemData> {
     return SwadeDice.Roll({
       roll: newRoll,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
-        'SWADE.Dmg',
-      )}${ap}${flavour}`,
-      title: `${game.i18n.localize(label)} ${game.i18n.localize('SWADE.Dmg')}`,
+      flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
+      title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,
       item: this,
       flags: { swade: { colorMessage: false } },
     });

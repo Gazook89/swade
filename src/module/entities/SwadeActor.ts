@@ -738,7 +738,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     data: any,
     options: IRollOptions,
   ): ITraitRollModifiers[] {
-    const mods = [];
+    const mods: ITraitRollModifiers[] = [];
 
     //Trait modifier
     const itemMod = parseInt(data.die.modifier);
@@ -749,7 +749,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       });
     }
 
-    // Wound and Fatigue Penalties
+    // Wounds
     const woundPenalties = this.calcWoundPenalties();
     if (woundPenalties !== 0)
       mods.push({
@@ -757,6 +757,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         value: woundPenalties.signedString(),
       });
 
+    //Fatigue
     const fatiguePenalties = this.calcFatiguePenalties();
     if (fatiguePenalties !== 0)
       mods.push({
@@ -764,6 +765,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         value: fatiguePenalties.signedString(),
       });
 
+    // Status penalties
     const statusPenalties = this.calcStatusPenalties();
     if (statusPenalties !== 0)
       mods.push({
@@ -783,6 +785,26 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         mods.push({ label: game.i18n.localize('SWADE.Addi'), value });
       });
     }
+
+    //Joker
+    //get combatant from currently viewed combat instance
+    let combatant;
+    if (this.data.token.actorLink) {
+      //linked token
+      combatant = game.combat?.combatants.find((c) => c.actor.id === this.id);
+    } else {
+      combatant = game.combat?.combatants.find(
+        (c) => c.tokenId === this.token.id,
+      );
+    }
+
+    if (combatant && getProperty(combatant, 'flags.swade.hasJoker')) {
+      mods.push({
+        label: game.i18n.localize('SWADE.Joker'),
+        value: '+2',
+      });
+    }
+
     return [...mods.filter((m) => m.value)];
   }
 }
