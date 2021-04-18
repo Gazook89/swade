@@ -166,7 +166,7 @@ export default class CharacterSheet extends ActorSheet {
     // Roll Damage
     html.find('.damage-roll').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.getOwnedItem(li.data('itemId'));
       return item.rollDamage();
     });
 
@@ -186,7 +186,7 @@ export default class CharacterSheet extends ActorSheet {
 
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.getOwnedItem(li.data('itemId'));
       item.show();
     });
 
@@ -255,7 +255,7 @@ export default class CharacterSheet extends ActorSheet {
     //Toggle Equipment
     html.find('.item-toggle').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.getOwnedItem(li.data('itemId'));
       await this.actor.updateOwnedItem(
         this._toggleEquipped(li.data('itemId'), item),
       );
@@ -435,11 +435,12 @@ export default class CharacterSheet extends ActorSheet {
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
-      const dieSides = statData.value || 4;
-      new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
-        speaker: ChatMessage.getSpeaker(),
-        flavor: statData.label,
-      });
+      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
+        .evaluate()
+        .toMessage({
+          speaker: ChatMessage.getSpeaker(),
+          flavor: statData.label,
+        });
     });
 
     //Wealth Die Roll

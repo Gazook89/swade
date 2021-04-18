@@ -215,11 +215,12 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
-      const dieSides = statData.value || 4;
-      new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
-        speaker: ChatMessage.getSpeaker(),
-        flavor: statData.label,
-      });
+      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
+        .evaluate()
+        .toMessage({
+          speaker: ChatMessage.getSpeaker(),
+          flavor: statData.label,
+        });
     });
   }
 

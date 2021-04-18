@@ -42,20 +42,13 @@
         </button>
       </label>
       <span class="form-fields">
-        <select name="data.additionalStats.{{key}}.value">
-          {{#select attr.value}}
-          <option value="4">d4</option>
-          <option value="6">d6</option>
-          <option value="8">d8</option>
-          <option value="10">d10</option>
-          <option value="12">d12</option>
-          <option value="4x">d4, {{localize 'SWADE.Ace'}}</option>
-          <option value="6x">d6, {{localize 'SWADE.Ace'}}</option>
-          <option value="8x">d8, {{localize 'SWADE.Ace'}}</option>
-          <option value="10x">d10, {{localize 'SWADE.Ace'}}</option>
-          <option value="12x">d12, {{localize 'SWADE.Ace'}}</option>
-          {{/select}}
-        </select>
+        <input
+          type="text"
+          name="data.additionalStats.{{key}}.value"
+          data-dtype="String"
+          value="{{attr.value}}"
+          placeholder="{{localize 'SWADE.Die'}}"
+        />
         <input
           type="text"
           name="data.additionalStats.{{key}}.modifier"
