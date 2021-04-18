@@ -42,7 +42,7 @@
     <h4 class="actions-subheading">
       <i class="fas fa-bullseye"></i> {{localize "SWADE.TraitRolls"}}
     </h4>
-    {{#if hasSkillRoll}}<button data-action="formula">{{trait}}</button>{{/if}}
+    {{#if hasTraitRoll}}<button data-action="formula">{{trait}}</button>{{/if}}
     {{#if hasAdditionalActions}} {{#each data.actions as |attr key|}} {{#if (eq
     attr.type "skill")}}
     <button data-action="{{attr.key}}">{{attr.name}}</button>

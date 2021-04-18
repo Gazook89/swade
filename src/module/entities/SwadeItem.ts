@@ -107,7 +107,11 @@ export default class SwadeItem extends Item<SysItemData> {
 
     switch (this.type) {
       case 'hindrance':
-        props.push(data.major ? 'Major' : 'Minor');
+        props.push(
+          data.major
+            ? game.i18n.localize('SWADE.Major')
+            : game.i18n.localize('SWADE.Minor'),
+        );
         break;
       case 'shield':
         props.push(
@@ -149,7 +153,6 @@ export default class SwadeItem extends Item<SysItemData> {
           data.arcane,
           `${data.pp}PP`,
           `<i class="fas fa-ruler"></i> ${data.range}`,
-          data.damage ? `<i class='fas fa-tint'></i> ${data.damage}` : '',
           `<i class='fas fa-hourglass-half'></i> ${data.duration}`,
           data.trapping,
         );
@@ -160,16 +163,13 @@ export default class SwadeItem extends Item<SysItemData> {
             ? '<i class="fas fa-tshirt"></i>'
             : '<i class="fas fa-tshirt" style="color:grey"></i>',
         );
-        props.push(
-          data.damage ? `<i class='fas fa-tint'></i> ${data.damage}` : '',
-        );
         props.push(`<i class='fas fa-shield-alt'></i> ${data.ap}`);
         props.push(`<i class="fas fa-ruler"></i> ${data.range}`);
         props.push(
           data.notes ? `<i class="fas fa-sticky-note"></i> ${data.notes}` : '',
         );
         break;
-      case 'item':
+      default:
         props.push(
           data.equipped
             ? '<i class="fas fa-tshirt"></i>'
@@ -225,11 +225,11 @@ export default class SwadeItem extends Item<SysItemData> {
       hasAmmoManagement: hasAmmoManagement,
       hasReloadButton: hasReloadButton,
       hasDamage: hasDamage,
-      showDamageRolls: hasDamage && hasAdditionalActions,
+      showDamageRolls: hasDamage,
       hasAdditionalActions: hasAdditionalActions,
       trait: getProperty(this.data, 'data.actions.skill'),
-      hasSkillRoll: hasTraitRoll,
-      showTraitRolls: hasTraitRoll && hasAdditionalActions,
+      hasTraitRoll: hasTraitRoll,
+      showTraitRolls: hasTraitRoll,
       powerPoints: this._getPowerPoints(),
       settingrules: {
         noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
