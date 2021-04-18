@@ -5,7 +5,7 @@ import SwadeDice from '../dice';
 import * as util from '../util';
 import SwadeItem from './SwadeItem';
 
-interface ITraitRollModifiers {
+interface ITraitRollModifier {
   label: string;
   value: string;
 }
@@ -760,8 +760,8 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
-  ): ITraitRollModifiers[] {
-    const mods: ITraitRollModifiers[] = [];
+  ): ITraitRollModifier[] {
+    const mods: ITraitRollModifier[] = [];
 
     //Trait modifier
     const itemMod = parseInt(data.die.modifier);
