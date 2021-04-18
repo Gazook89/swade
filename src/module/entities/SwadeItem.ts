@@ -1,3 +1,4 @@
+import { ItemAction } from '../../interfaces/additional';
 import IRollOptions from '../../interfaces/IRollOptions';
 import { SysItemData } from '../../interfaces/item-data';
 import SwadeDice from '../dice';
@@ -194,6 +195,10 @@ export default class SwadeItem extends Item<SysItemData> {
     return data;
   }
 
+  /**
+   * Assembles data and creates a chat card for the item
+   * @returns the rendered chatcard
+   */
   async show() {
     // Basic template rendering data
     const token = this.actor.token;
@@ -213,8 +218,16 @@ export default class SwadeItem extends Item<SysItemData> {
       this.type === 'weapon' &&
       getProperty(this.data, 'data.shots') > 0 &&
       !getProperty(this.data, 'data.autoReload');
-    const hasAdditionalActions = !isObjectEmpty(
-      getProperty(this.data, 'data.actions.additional'),
+
+    const additionalActions: Record<string, ItemAction> =
+      getProperty(this.data, 'data.actions.additional') || {};
+    const hasAdditionalActions = !isObjectEmpty(additionalActions);
+
+    const hasTraitActions = Object.values(additionalActions).some(
+      (v) => v.type === 'skill',
+    );
+    const hasDamageActions = Object.values(additionalActions).some(
+      (v) => v.type === 'damage',
     );
 
     const templateData = {
@@ -225,11 +238,11 @@ export default class SwadeItem extends Item<SysItemData> {
       hasAmmoManagement: hasAmmoManagement,
       hasReloadButton: hasReloadButton,
       hasDamage: hasDamage,
-      showDamageRolls: hasDamage,
+      showDamageRolls: hasDamage || hasDamageActions,
       hasAdditionalActions: hasAdditionalActions,
       trait: getProperty(this.data, 'data.actions.skill'),
       hasTraitRoll: hasTraitRoll,
-      showTraitRolls: hasTraitRoll,
+      showTraitRolls: hasTraitRoll || hasTraitActions,
       powerPoints: this._getPowerPoints(),
       settingrules: {
         noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
@@ -291,12 +304,19 @@ export default class SwadeItem extends Item<SysItemData> {
     return expresion;
   }
 
-  private _getPowerPoints(): { current: number; max: number } {
-    if (this.type !== 'power') return { current: null, max: null };
+  /**
+   *
+   * @returns the power points for the AB that this power belongs to or null when the item is not a power
+   */
+  private _getPowerPoints(): { current: number; max: number } | null {
+    if (this.type !== 'power') return null;
 
-    const arcane = getProperty(this.data, 'data.arcane');
-    let current = getProperty(this.actor.data, 'data.powerPoints.value');
-    let max = getProperty(this.actor.data, 'data.powerPoints.max');
+    const arcane: string = getProperty(this.data, 'data.arcane');
+    let current: number = getProperty(
+      this.actor.data,
+      'data.powerPoints.value',
+    );
+    let max: number = getProperty(this.actor.data, 'data.powerPoints.max');
     if (arcane) {
       current = getProperty(
         this.actor.data,
