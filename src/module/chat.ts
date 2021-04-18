@@ -178,30 +178,6 @@ export function chatListeners(html: JQuery<HTMLElement>) {
       await actor.update({ [key]: newPP });
       await ItemChatCardHelper.refreshItemCard(actor, messageId);
     }
-
-    // Conviction
-    if (action === 'yes' && actor.data.type !== 'vehicle') {
-      const currentBennies = getProperty(
-        actor.data,
-        'data.bennies.value',
-      ) as number;
-      if (actor.data.data.bennies.value) {
-        await actor.update({ 'data.bennies.value': currentBennies - 1 });
-      } else {
-        await actor.update({ 'data.details.conviction.active': false });
-        ui.notifications.warn(game.i18n.localize('SWADE.NoBennies'));
-      }
-    } else if (action === 'no') {
-      await actor.update({ 'data.details.conviction.active': false });
-      createConvictionEndMessage(actor);
-    }
-    if (['yes', 'no'].includes(action)) {
-      if (game.user.isGM) {
-        game.messages.get(messageId).delete();
-      } else {
-        game.swade.sockets.deleteConvictionMessage(messageId);
-      }
-    }
   });
 }
 
