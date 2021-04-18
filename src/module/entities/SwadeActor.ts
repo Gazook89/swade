@@ -14,6 +14,9 @@ interface ITraitRollModifiers {
  * @noInheritDoc
  */
 export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
+  /**
+   * @returns true when the actor is a Wild Card
+   */
   get isWildcard(): boolean {
     if (this.data.type === 'vehicle') {
       return false;
@@ -25,6 +28,9 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
   }
 
+  /**
+   * @returns true when the actor has an arcane background or a special ability that grants powers.
+   */
   get hasArcaneBackground(): boolean {
     const abEdges = this.items.filter(
       (i) => i.type === 'edge' && i.data.data['isArcaneBackground'] === true,
@@ -35,12 +41,16 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     return abEdges.length > 0 || abAbilities.length > 0;
   }
 
+  /**
+   * @returns true when the actor is currently in combat and has drawna joker
+   */
   get hasJoker(): boolean {
     let combatant;
     if (this.data.token.actorLink) {
       //linked token
       combatant = game.combat?.combatants.find((c) => c.actor.id === this.id);
     } else {
+      //unlinked token
       combatant = game.combat?.combatants.find(
         (c) => c.tokenId === this.token.id,
       );
