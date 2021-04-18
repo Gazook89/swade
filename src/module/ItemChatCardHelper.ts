@@ -156,14 +156,9 @@ export default class ItemChatCardHelper {
         await this.reloadWeapon(actor, item);
         break;
       default:
-        roll = await this.handleAdditionalActions(
-          item,
-          actor,
-          action,
-          additionalMods,
-        );
-        // No need to call the hook here, as _handleAdditionalActions already calls the hook
-        // This is so an external API can directly use _handleAdditionalActions to use an action and still fire the hook
+        await this.handleAdditionalActions(item, actor, action, additionalMods);
+        // No need to call the hook here, as handleAdditionalActions already calls the hook
+        // This is so an external API can directly use handleAdditionalActions to use an action and still fire the hook
         break;
     }
     return;

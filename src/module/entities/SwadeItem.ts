@@ -1,6 +1,5 @@
 import IRollOptions from '../../interfaces/IRollOptions';
 import { SysItemData } from '../../interfaces/item-data';
-import { SWADE } from '../config';
 import SwadeDice from '../dice';
 import SwadeActor from './SwadeActor';
 
@@ -10,19 +9,10 @@ import SwadeActor from './SwadeActor';
  */
 export default class SwadeItem extends Item<SysItemData> {
   get isMeleeWeapon(): boolean {
+    if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
-    return (
-      this.type === 'weapon' &&
-      ((!shots && !currentShots) || (shots === '0' && currentShots === '0'))
-    );
-  }
-
-  /**
-   * Augment the basic Item data model with additional dynamic data.
-   */
-  prepareData() {
-    super.prepareData();
+    return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
   }
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
@@ -192,7 +182,6 @@ export default class SwadeItem extends Item<SysItemData> {
 
     //Additional actions
     const actions = getProperty(this.data, 'data.actions.additional');
-    data.hasAdditionalActions = !!actions && Object.keys(actions).length > 0;
 
     data.actions = [];
     for (const action in actions) {
@@ -210,27 +199,37 @@ export default class SwadeItem extends Item<SysItemData> {
     const token = this.actor.token;
     const tokenId = token ? `${token.scene._id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    const hasAmmoManagement =
+      this.type === 'weapon' &&
+      !this.isMeleeWeapon &&
+      ammoManagement &&
+      !getProperty(this.data, 'data.autoReload');
+    const hasDamage = !!getProperty(this.data, 'data.damage');
+    const hasTraitRoll =
+      ['weapon', 'power', 'shield'].includes(this.data.type) &&
+      !!getProperty(this.data, 'data.actions.skill');
+    const hasReloadButton =
+      ammoManagement &&
+      this.type === 'weapon' &&
+      getProperty(this.data, 'data.shots') > 0 &&
+      !getProperty(this.data, 'data.autoReload');
+    const hasAdditionalActions = !isObjectEmpty(
+      getProperty(this.data, 'data.actions.additional'),
+    );
+
     const templateData = {
       actor: this.actor,
       tokenId: tokenId,
       item: this.data,
       data: this.getChatData({}),
-      config: SWADE,
-      hasAmmoManagement:
-        this.type === 'weapon' &&
-        !this.isMeleeWeapon &&
-        ammoManagement &&
-        !getProperty(this.data, 'data.autoReload'),
-      hasReloadButton:
-        ammoManagement &&
-        this.type === 'weapon' &&
-        getProperty(this.data, 'data.shots') > 0 &&
-        !getProperty(this.data, 'data.autoReload'),
-      hasDamage: !!getProperty(this.data, 'data.damage'),
-      skill: getProperty(this.data, 'data.actions.skill'),
-      hasSkillRoll:
-        ['weapon', 'power', 'shield'].includes(this.data.type) &&
-        !!getProperty(this.data, 'data.actions.skill'),
+      hasAmmoManagement: hasAmmoManagement,
+      hasReloadButton: hasReloadButton,
+      hasDamage: hasDamage,
+      showDamageRolls: hasDamage && hasAdditionalActions,
+      hasAdditionalActions: hasAdditionalActions,
+      trait: getProperty(this.data, 'data.actions.skill'),
+      hasSkillRoll: hasTraitRoll,
+      showTraitRolls: hasTraitRoll && hasAdditionalActions,
       powerPoints: this._getPowerPoints(),
       settingrules: {
         noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
@@ -251,8 +250,9 @@ export default class SwadeItem extends Item<SysItemData> {
         token: tokenId,
         alias: this.actor.name,
       },
-      flags: { 'core.canPopout': true } as Record<string, unknown>,
+      flags: { 'core.canPopout': true },
     };
+
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&
       this.actor.data.type === 'npc'
