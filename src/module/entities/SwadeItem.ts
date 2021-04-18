@@ -43,9 +43,9 @@ export default class SwadeItem extends Item<SysItemData> {
       rollParts = rollParts.concat(options.additionalMods);
     }
 
-    const roll = new Roll(rollParts.join(''), actor.getRollShortcuts());
+    const roll = new Roll(rollParts.join(''), actor.getRollData());
 
-    const newParts: string[] = [];
+    const newParts = [];
     for (const term of roll.terms) {
       if (term instanceof Die) {
         newParts.push(`${term.number}d${term.faces}x`);
@@ -53,6 +53,8 @@ export default class SwadeItem extends Item<SysItemData> {
         newParts.push(term.formula);
       } else if (typeof term === 'string') {
         newParts.push(this._makeExplodable(term));
+      } else {
+        newParts.push(term);
       }
     }
 

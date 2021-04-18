@@ -443,7 +443,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       const name = game.i18n.localize(SWADE.attributes[key].long);
       const die: number = attribute.die.sides;
       const mod: number = attribute.die.modifier || 0;
-      out[short] = `(1d${die}x[${name}]${mod !== 0 ? mod.signedString() : ''})`;
+      out[short] = `1d${die}x[${name}]${mod !== 0 ? mod.signedString() : ''}`;
     }
     return out;
   }
