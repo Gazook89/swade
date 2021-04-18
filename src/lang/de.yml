@@ -340,3 +340,6 @@ SWADE.CoreSkillsDesc: >-
   als Grundfertigkeiten für alle Spielercharaktere definiert werden sollen
 SWADE.CoreSkillsPackDesc: Wählen Sie aus welchem ​​Kompendium die Grundfertigkeiten bezogen werden
 SWADE.Joker: Joker
+SWADE.DmgRolls: Schadenswürfe
+SWADE.SubtractPPDesc: MP Kosten von verfügbaren MP abziehen
+SWADE.AddPPDesc: MP Kosten zu den verfügbaren PP hinzurechnen

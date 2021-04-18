@@ -51,6 +51,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   1. **None / Other**, which hides the currency field. This is ideal for the people that prefer tracking currency and wealth via inventory items.
 - Chnaged how rolls are displayed in chat. Trait rolls will now display the result dice, adjusted with all modifiers
 - The biography text editor on the character sheet now expands to display it's entire contents
+- Updated the item chat cards so their design matches the layout on the character sheet
 
 ### Fixed
 
