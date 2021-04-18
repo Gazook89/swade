@@ -1,6 +1,6 @@
+import { ItemAction } from '../../interfaces/additional';
 import IRollOptions from '../../interfaces/IRollOptions';
 import { SysItemData } from '../../interfaces/item-data';
-import { SWADE } from '../config';
 import SwadeDice from '../dice';
 import SwadeActor from './SwadeActor';
 
@@ -10,19 +10,10 @@ import SwadeActor from './SwadeActor';
  */
 export default class SwadeItem extends Item<SysItemData> {
   get isMeleeWeapon(): boolean {
+    if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
-    return (
-      this.type === 'weapon' &&
-      ((!shots && !currentShots) || (shots === '0' && currentShots === '0'))
-    );
-  }
-
-  /**
-   * Augment the basic Item data model with additional dynamic data.
-   */
-  prepareData() {
-    super.prepareData();
+    return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
   }
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
@@ -117,7 +108,11 @@ export default class SwadeItem extends Item<SysItemData> {
 
     switch (this.type) {
       case 'hindrance':
-        props.push(data.major ? 'Major' : 'Minor');
+        props.push(
+          data.major
+            ? game.i18n.localize('SWADE.Major')
+            : game.i18n.localize('SWADE.Minor'),
+        );
         break;
       case 'shield':
         props.push(
@@ -159,7 +154,6 @@ export default class SwadeItem extends Item<SysItemData> {
           data.arcane,
           `${data.pp}PP`,
           `<i class="fas fa-ruler"></i> ${data.range}`,
-          data.damage ? `<i class='fas fa-tint'></i> ${data.damage}` : '',
           `<i class='fas fa-hourglass-half'></i> ${data.duration}`,
           data.trapping,
         );
@@ -170,16 +164,13 @@ export default class SwadeItem extends Item<SysItemData> {
             ? '<i class="fas fa-tshirt"></i>'
             : '<i class="fas fa-tshirt" style="color:grey"></i>',
         );
-        props.push(
-          data.damage ? `<i class='fas fa-tint'></i> ${data.damage}` : '',
-        );
         props.push(`<i class='fas fa-shield-alt'></i> ${data.ap}`);
         props.push(`<i class="fas fa-ruler"></i> ${data.range}`);
         props.push(
           data.notes ? `<i class="fas fa-sticky-note"></i> ${data.notes}` : '',
         );
         break;
-      case 'item':
+      default:
         props.push(
           data.equipped
             ? '<i class="fas fa-tshirt"></i>'
@@ -192,7 +183,6 @@ export default class SwadeItem extends Item<SysItemData> {
 
     //Additional actions
     const actions = getProperty(this.data, 'data.actions.additional');
-    data.hasAdditionalActions = !!actions && Object.keys(actions).length > 0;
 
     data.actions = [];
     for (const action in actions) {
@@ -205,32 +195,54 @@ export default class SwadeItem extends Item<SysItemData> {
     return data;
   }
 
+  /**
+   * Assembles data and creates a chat card for the item
+   * @returns the rendered chatcard
+   */
   async show() {
     // Basic template rendering data
     const token = this.actor.token;
     const tokenId = token ? `${token.scene._id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    const hasAmmoManagement =
+      this.type === 'weapon' &&
+      !this.isMeleeWeapon &&
+      ammoManagement &&
+      !getProperty(this.data, 'data.autoReload');
+    const hasDamage = !!getProperty(this.data, 'data.damage');
+    const hasTraitRoll =
+      ['weapon', 'power', 'shield'].includes(this.data.type) &&
+      !!getProperty(this.data, 'data.actions.skill');
+    const hasReloadButton =
+      ammoManagement &&
+      this.type === 'weapon' &&
+      getProperty(this.data, 'data.shots') > 0 &&
+      !getProperty(this.data, 'data.autoReload');
+
+    const additionalActions: Record<string, ItemAction> =
+      getProperty(this.data, 'data.actions.additional') || {};
+    const hasAdditionalActions = !isObjectEmpty(additionalActions);
+
+    const hasTraitActions = Object.values(additionalActions).some(
+      (v) => v.type === 'skill',
+    );
+    const hasDamageActions = Object.values(additionalActions).some(
+      (v) => v.type === 'damage',
+    );
+
     const templateData = {
       actor: this.actor,
       tokenId: tokenId,
       item: this.data,
       data: this.getChatData({}),
-      config: SWADE,
-      hasAmmoManagement:
-        this.type === 'weapon' &&
-        !this.isMeleeWeapon &&
-        ammoManagement &&
-        !getProperty(this.data, 'data.autoReload'),
-      hasReloadButton:
-        ammoManagement &&
-        this.type === 'weapon' &&
-        getProperty(this.data, 'data.shots') > 0 &&
-        !getProperty(this.data, 'data.autoReload'),
-      hasDamage: !!getProperty(this.data, 'data.damage'),
-      skill: getProperty(this.data, 'data.actions.skill'),
-      hasSkillRoll:
-        ['weapon', 'power', 'shield'].includes(this.data.type) &&
-        !!getProperty(this.data, 'data.actions.skill'),
+      hasAmmoManagement: hasAmmoManagement,
+      hasReloadButton: hasReloadButton,
+      hasDamage: hasDamage,
+      showDamageRolls: hasDamage || hasDamageActions,
+      hasAdditionalActions: hasAdditionalActions,
+      trait: getProperty(this.data, 'data.actions.skill'),
+      hasTraitRoll: hasTraitRoll,
+      showTraitRolls: hasTraitRoll || hasTraitActions,
       powerPoints: this._getPowerPoints(),
       settingrules: {
         noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
@@ -251,8 +263,9 @@ export default class SwadeItem extends Item<SysItemData> {
         token: tokenId,
         alias: this.actor.name,
       },
-      flags: { 'core.canPopout': true } as Record<string, unknown>,
+      flags: { 'core.canPopout': true },
     };
+
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&
       this.actor.data.type === 'npc'
@@ -291,12 +304,19 @@ export default class SwadeItem extends Item<SysItemData> {
     return expresion;
   }
 
-  private _getPowerPoints(): { current: number; max: number } {
-    if (this.type !== 'power') return { current: null, max: null };
+  /**
+   *
+   * @returns the power points for the AB that this power belongs to or null when the item is not a power
+   */
+  private _getPowerPoints(): { current: number; max: number } | null {
+    if (this.type !== 'power') return null;
 
-    const arcane = getProperty(this.data, 'data.arcane');
-    let current = getProperty(this.actor.data, 'data.powerPoints.value');
-    let max = getProperty(this.actor.data, 'data.powerPoints.max');
+    const arcane: string = getProperty(this.data, 'data.arcane');
+    let current: number = getProperty(
+      this.actor.data,
+      'data.powerPoints.value',
+    );
+    let max: number = getProperty(this.actor.data, 'data.powerPoints.max');
     if (arcane) {
       current = getProperty(
         this.actor.data,

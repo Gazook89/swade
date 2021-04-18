@@ -161,7 +161,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
       const ppToAdjust = $(element)
         .closest('.flexcol')
         .find('input.pp-adjust')
-        .val() as string;
+        .val() as number;
       const adjustment = element.getAttribute('data-adjust') as string;
       const power = actor.getOwnedItem(itemId);
       let key = 'data.powerPoints.value';
@@ -169,9 +169,9 @@ export function chatListeners(html: JQuery<HTMLElement>) {
       if (arcane) key = `data.powerPoints.${arcane}.value`;
       let newPP = getProperty(actor.data, key);
       if (adjustment === 'plus') {
-        newPP += parseInt(ppToAdjust);
+        newPP += ppToAdjust;
       } else if (adjustment === 'minus') {
-        newPP -= parseInt(ppToAdjust);
+        newPP -= ppToAdjust;
       } else if (adjustment === 'refresh') {
         await ItemChatCardHelper.refreshItemCard(actor, messageId);
       }

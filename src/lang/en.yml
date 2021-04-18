@@ -342,3 +342,7 @@ SWADE.BonusDamage: Bonus Damage
 SWADE.CoreSkillsPack: Core Skills Compendium
 SWADE.CoreSkillsPackDesc: Choose from which Compendium the core skills will be drawn
 SWADE.Joker: Joker
+SWADE.Subtract: Subtract
+SWADE.DmgRolls: Damage Rolls
+SWADE.SubtractPPDesc: Subtract PP Cost from the available PP
+SWADE.AddPPDesc: Add PP Cost to the available PP

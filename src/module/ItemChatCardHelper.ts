@@ -9,7 +9,7 @@ import { getTrait, notificationExists } from './util';
  * A helper class for Item chat card logic
  */
 export default class ItemChatCardHelper {
-  static async onChatCardAction(event) {
+  static async onChatCardAction(event): Promise<Roll> {
     event.preventDefault();
 
     // Extract card data
@@ -37,9 +37,10 @@ export default class ItemChatCardHelper {
     // Get the Item
     const item = actor.getOwnedItem(card.dataset.itemId);
     if (!item) {
-      return ui.notifications.error(
-        `The requested item ${card.dataset.itemId} no longer exists on Actor ${actor.name}`,
+      ui.notifications.error(
+        `The requested item ${card.dataset.itemId} does not exist on Actor ${actor.name}`,
       );
+      return null;
     }
 
     //if it's a power and the No Power Points rule is in effect
@@ -56,11 +57,14 @@ export default class ItemChatCardHelper {
       }
     }
 
-    await this.handleAction(item, actor, action, additionalMods);
-    await this.refreshItemCard(actor);
+    const roll = await this.handleAction(item, actor, action, additionalMods);
+
+    //Only refresh the card if there is a roll and the item isn't a power
+    if (roll && item.type !== 'power') await this.refreshItemCard(actor);
 
     // Re-enable the button
     button.disabled = false;
+    return roll;
   }
 
   static getChatCardActor(card): SwadeActor {
@@ -92,7 +96,7 @@ export default class ItemChatCardHelper {
     actor: SwadeActor,
     action: string,
     additionalMods: (string | number)[] = [],
-  ) {
+  ): Promise<Roll> | null {
     const traitName = getProperty(item.data, 'data.actions.skill');
     let trait: SwadeItem | string = null;
     let roll: Promise<Roll> | Roll = null;
@@ -162,11 +166,11 @@ export default class ItemChatCardHelper {
           action,
           additionalMods,
         );
-        // No need to call the hook here, as _handleAdditionalActions already calls the hook
-        // This is so an external API can directly use _handleAdditionalActions to use an action and still fire the hook
+        // No need to call the hook here, as handleAdditionalActions already calls the hook
+        // This is so an external API can directly use handleAdditionalActions to use an action and still fire the hook
         break;
     }
-    return;
+    return roll as Promise<Roll>;
   }
 
   /**
@@ -181,7 +185,7 @@ export default class ItemChatCardHelper {
     actor: SwadeActor,
     action: string,
     additionalMods: (string | number)[] = [],
-  ) {
+  ): Promise<Roll> {
     const availableActions = getProperty(item.data, 'data.actions.additional');
     const ammoManagement =
       game.settings.get('swade', 'ammoManagement') && !item.isMeleeWeapon;
@@ -192,7 +196,7 @@ export default class ItemChatCardHelper {
       return;
     }
 
-    let roll = null;
+    let roll: Promise<Roll> | Roll = null;
 
     if (actionToUse.type === 'skill') {
       //set the trait name and potentially override it via the action
