@@ -596,13 +596,10 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     //add shields
-    const shields = this.items.filter(
-      (i: Item) => i.type === 'shield',
-    ) as Item[];
+    const shields = this.items.filter((i) => i.type === 'shield');
 
     for (const shield of shields) {
       const isEquipped = getProperty(shield.data, 'data.equipped');
-
       if (isEquipped) {
         parryTotal += getProperty(shield.data, 'data.parry');
       }
