@@ -451,11 +451,10 @@ export default class CharacterSheet extends ActorSheet {
         getProperty(this.actor.data, 'data.details.wealth.modifier') || 0;
       const wildDie: number =
         getProperty(this.actor.data, 'data.details.wealth.wild-die') || 6;
-
+      const modString = mod !== 0 ? mod.signedString() : '';
       const dieLabel = game.i18n.localize('SWADE.WealthDie');
       const wildDieLabel = game.i18n.localize('SWADE.WildDie');
-      const formula = `{1d${die}x[${dieLabel}]${mod.signedString()}, 1d${wildDie}x[${wildDieLabel}]${mod.signedString()}}kh`;
-
+      const formula = `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh${modString}`;
       const roll = new Roll(formula);
 
       SwadeDice.Roll({
