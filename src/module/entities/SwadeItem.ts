@@ -172,6 +172,8 @@ export default class SwadeItem extends Item<SysItemData> {
           data.notes ? `<i class="fas fa-sticky-note"></i> ${data.notes}` : '',
         );
         break;
+      case 'skill':
+        break;
       default:
         props.push(
           data.equipped

@@ -53,6 +53,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - The biography text editor on the character sheet now expands to display it's entire contents
 - Updated the item chat cards so their design matches the layout on the character sheet
 
+### Deprecated
+
+- Started depreceation of current hotbar macro functions in favour of posting the chat card
+
 ### Fixed
 
 - Fixed how Conviction is rolled. It is now a single `d6` whose result is added to all rolls in a trait roll

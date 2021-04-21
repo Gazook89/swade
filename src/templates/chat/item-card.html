@@ -30,11 +30,11 @@
   <div class="card-content" style="display: none">{{{data.description}}}</div>
 
   <!-- Reload Button -->
+  {{#if hasReloadButton}}
   <div class="card-buttons">
-    {{#if hasReloadButton}}<button data-action="reload">
-      {{localize "SWADE.Reload"}}</button
-    >{{/if}}
+    <button data-action="reload">{{localize "SWADE.Reload"}}</button>
   </div>
+  {{/if}}
 
   <!-- Trait Rolls -->
   {{#if showTraitRolls}}

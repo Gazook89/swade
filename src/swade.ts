@@ -24,12 +24,19 @@ import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import { rollPowerMacro, rollSkillMacro, rollWeaponMacro } from './module/util';
+import {
+  rollPowerMacro,
+  rollSkillMacro,
+  rollWeaponMacro,
+  rollItemMacro,
+  createSwadeMacro,
+} from './module/util';
 
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
 
+const sockets: SwadeSocketHandler = null;
 export const swadeGame = {
   SwadeActor,
   SwadeItem,
@@ -37,7 +44,8 @@ export const swadeGame = {
   rollSkillMacro,
   rollWeaponMacro,
   rollPowerMacro,
-  sockets: null,
+  rollItemMacro,
+  sockets: sockets,
   itemChatCardHelper: ItemChatCardHelper,
 };
 Hooks.once('init', () => {
@@ -246,3 +254,5 @@ Hooks.on('preCreateScene', (createData: any, options: any, userId: string) =>
 Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
   SwadeHooks.onPreUpdateToken(scene, token, updateData, options, userId),
 );
+
+Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));

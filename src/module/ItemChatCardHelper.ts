@@ -158,6 +158,7 @@ export default class ItemChatCardHelper {
           break;
         }
         await this.reloadWeapon(actor, item);
+        await this.refreshItemCard(actor);
         break;
       default:
         roll = await this.handleAdditionalActions(

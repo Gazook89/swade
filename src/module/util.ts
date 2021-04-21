@@ -69,38 +69,28 @@ export async function createSwadeMacro(data: any, slot: number) {
       'You can only create macro buttons for owned Items',
     );
   const item = data.data;
-  let command: string;
   // Create the macro command
-  switch (item.type) {
-    case 'skill':
-      command = `game.swade.rollSkillMacro("${item.name}");`;
-      break;
-    case 'weapon':
-      command = `game.swade.rollWeaponMacro("${item.name}");`;
-      break;
-    case 'power':
-      command = `game.swade.rollPowerMacro("${item.name}");`;
-      break;
-    default:
-      break;
-  }
-  const macro = (await Macro.create({
+  const command = `game.swade.rollItemMacro("${item.name}");`;
+  const macro = await Macro.create({
     name: item.name,
     type: 'script',
     img: item.img,
     command: command,
-  })) as Macro;
-
+  });
   await game.user.assignHotbarMacro(macro, slot);
 }
 
 /**
+ * @deprecated
  * Create a Macro from an Item drop.
  * Get an existing item macro if one exists, otherwise create a new one.
  * @param {string} skillName
  * @return {Promise}
  */
 export function rollSkillMacro(skillName) {
+  ui.notifications.warn(
+    'This type of macro will soon be removed. Please create a new one by dragging/dropping',
+  );
   const speaker = ChatMessage.getSpeaker();
   let actor;
   if (speaker.token) actor = game.actors.tokens[speaker.token];
@@ -118,12 +108,17 @@ export function rollSkillMacro(skillName) {
 }
 
 /**
+ * @deprecated
  * Create a Macro from an Item drop.
  * Get an existing item macro if one exists, otherwise create a new one.
  * @param {string} skillName
  * @return {Promise}
  */
+
 export function rollWeaponMacro(weaponName) {
+  ui.notifications.warn(
+    'This type of macro will soon be removed. Please create a new one by dragging/dropping',
+  );
   const speaker = ChatMessage.getSpeaker();
   let actor;
   if (speaker.token) actor = game.actors.tokens[speaker.token];
@@ -139,7 +134,15 @@ export function rollWeaponMacro(weaponName) {
   return item.rollDamage();
 }
 
+/**
+ * @deprecated
+ * @param powerName
+ * @returns
+ */
 export function rollPowerMacro(powerName) {
+  ui.notifications.warn(
+    'This type of macro will soon be removed. Please create a new one by dragging/dropping',
+  );
   const speaker = ChatMessage.getSpeaker();
   let actor;
   if (speaker.token) actor = game.actors.tokens[speaker.token];
@@ -157,6 +160,36 @@ export function rollPowerMacro(powerName) {
     return item.rollDamage();
   }
   return;
+}
+
+/**
+ *
+ * @param itemName
+ * @returns
+ */
+export function rollItemMacro(itemName) {
+  const speaker = ChatMessage.getSpeaker();
+  let actor: SwadeActor;
+  if (speaker.token) actor = game.actors.tokens[speaker.token] as SwadeActor;
+  if (!actor) actor = game.actors.get(speaker.actor);
+  if (actor && !actor.owner) {
+    return null;
+  }
+
+  const item = actor.items.find((i) => i.name === itemName);
+  if (!item) {
+    ui.notifications.warn(
+      `Your controlled Actor does not have an item named ${itemName}`,
+    );
+    return null;
+  }
+  //Roll the skill
+  if (item.type === 'skill') {
+    return actor.rollSkill(item.id, {});
+  } else {
+    // Show the item
+    return item.show();
+  }
 }
 
 /**

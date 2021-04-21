@@ -55,7 +55,6 @@ export default class SwadeHooks {
       },
     });
     await SwadeSetup.setup();
-    Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 
     SWADE.diceConfig.flags = {
       dsnShowBennyAnimation: {
