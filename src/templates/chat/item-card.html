@@ -9,6 +9,7 @@
     <h3 class="item-name"><a>{{item.name}}</a></h3>
   </header>
 
+  <!-- Ammo Management -->
   {{#if hasAmmoManagement}}
   <div class="ammo-counter">
     <i class="fas fa-dot-circle"></i> {{localize "SWADE.Mag"}}:
@@ -17,7 +18,10 @@
     <span class="max-shots">{{data.shots}}</span>
     {{#if data.ammo}}&nbsp;- &nbsp;{{data.ammo}}{{/if}}
   </div>
-  {{/if}} {{#if (eq item.type "power")}} {{#unless settingrules.noPowerPoints}}
+  {{/if}}
+
+  <!-- PP Display -->
+  {{#if (eq item.type "power")}} {{#unless settingrules.noPowerPoints}}
   <div class="pp-counter">
     {{#if data.arcane}}{{data.arcane}}{{/if}} {{localize "SWADE.PP"}}:
     <span class="current-pp">{{powerPoints.current}}</span>&nbsp;/&nbsp;<span
@@ -27,6 +31,7 @@
   </div>
   {{/unless}} {{/if}}
 
+  <!-- Description -->
   <div class="card-content" style="display: none">{{{data.description}}}</div>
 
   <!-- Reload Button -->
