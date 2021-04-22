@@ -96,7 +96,7 @@ SWADE.Notes: Notizen
 SWADE.ActionsEffects: Aktionen & Effekte
 SWADE.Actions: Aktionen
 SWADE.DmgModUni: Schadensmodifikator (universell)
-SWADE.SkillModUni: Fertigkeitsmodifikator (universell)
+SWADE.SkillModUni: Eigenschaftsmodifikator (universell)
 SWADE.ShotsUsed: Schuss verbraucht
 SWADE.NaturalArmor: Natürliche Rüstung
 SWADE.HitLocations: Trefferzonen
@@ -141,6 +141,7 @@ SWADE.Weight: Gewicht
 SWADE.Price: Kosten
 SWADE.PP: Machtpunkte
 SWADE.PPShort: Machtp.
+SWADE.PPCost: MP Kosten
 SWADE.CurPP: Aktuelle Machtpunkte
 SWADE.MaxPP: Maximum Machtpunkte
 SWADE.Dur: Dauer
@@ -180,7 +181,7 @@ SWADE.AutoInitDesc: Aktionskarten jede Runde automatisch ziehen
 SWADE.CreateInitChat: Chatnachrichten für Initiative
 SWADE.HideWC: NSC Wildcards verstecken
 SWADE.HideWCDesc: Den Spielern nicht anzeigen, welche NSCs Wildcards sind
-SWADE.EnableConv: Entschlossenheit verwenden
+SWADE.EnableConv: Entschlossenheit
 SWADE.EnableConvDesc: Setting-Regel Entschlossenheit verwenden
 SWADE.EnableWoundPace: Bewegung durch Wunden modifizieren
 SWADE.EnableWoundPaceDesc: Wenn aktiviert, wird die Bewegung automatisch durch Wunden angepasst
@@ -208,13 +209,13 @@ SWADE.RollRaise: Steigerungswurf
 SWADE.GroupRoll: Gruppenprobe
 SWADE.Ok: OK
 SWADE.Cancel: Abbruch
-SWADE.Redraw: Neu ziehen
+SWADE.Redraw: Karte ziehen
 SWADE.Add: ' '
 SWADE.ConfigInit: Initiative konfigurieren
 SWADE.IgnWounds: Wunden ignorieren
 SWADE.Size: Größe
 SWADE.Scale: Größenkategorie
-SWADE.PickACard: Ziehe eine Karte
+SWADE.PickACard: Wähle eine Karte für
 SWADE.NoCardsLeft: Es sind nicht genug Karten im Deck!
 SWADE.OldCard: Alte Karte
 SWADE.ActionCard: Aktiionskarte
@@ -311,3 +312,35 @@ SWADE.RacialAbilities: Volkseigenschaften
 SWADE.About: Beschreibung
 SWADE.EdgesHindrances: Talente & Handicaps
 SWADE.GrantsPowers: Gewährt Mächte
+SWADE.Passengers: Passagiere
+SWADE.Crew: Besatzung
+SWADE.String: Text
+SWADE.Number: Nummer
+SWADE.Checkbox: Checkbox
+SWADE.NoPowerPoints: Keine Machtpunkte
+SWADE.NoPowerPointsDesc: >-
+  Wenn diese Option aktiviert ist, werden alle Machtpunkte-Interaktionen
+  ausgeblendet
+SWADE.WealthType: Wohlstandstyp
+SWADE.WealthDie: Wohlstand
+SWADE.NoneOther: Keiner / Anderer
+SWADE.WealthTypeDesc: >-
+  Wählen Sie aus, wie der Charakterreichtum und die Währung verfolgt werden
+  sollen
+SWADE.CurrencyName: Währungsname
+SWADE.CurrencyNameDesc: Benennen Sie Ihre Währung
+SWADE.TraitRolls: Eigenschaftswürfe
+SWADE.Trait: Eigenschaft
+SWADE.AltTrait: Alternative Eigenschaft
+SWADE.ClickSuggestions: Klicken Sie hier für Vorschläge
+SWADE.Quick: Schnell
+SWADE.BonusDamage: Bonusschaden
+SWADE.CoreSkillsDesc: >-
+  Geben Sie eine durch Beistriche getrennte Liste von Fertigkeitsnamen ein, die
+  als Grundfertigkeiten für alle Spielercharaktere definiert werden sollen
+SWADE.CoreSkillsPackDesc: Wählen Sie aus welchem ​​Kompendium die Grundfertigkeiten bezogen werden
+SWADE.Joker: Joker
+SWADE.DmgRolls: Schadenswürfe
+SWADE.SubtractPPDesc: MP Kosten von verfügbaren MP abziehen
+SWADE.AddPPDesc: MP Kosten zu den verfügbaren PP hinzurechnen
+SWADE.RightClickZoom: Für eine größere Ansicht rechtsklicken

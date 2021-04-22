@@ -303,6 +303,28 @@
     }
   }
 
+  .additional-stats,
+  .currency {
+    select {
+      background-color: transparent;
+      border: none;
+      border-bottom: $solid-line;
+      border-radius: 0;
+      option {
+        color: black;
+      }
+    }
+    button {
+      text-align: left;
+      text-decoration: underline;
+      text-decoration-style: dashed;
+      width: 80%;
+    }
+    input {
+      text-align: center;
+    }
+  }
+
   //#######################
   // Summary Tab
   //#######################
@@ -909,7 +931,7 @@
       margin-top: $medium-spacing;
       font-size: $small-font;
       .editor {
-        height: 270px;
+        min-height: 270px;
         padding: 3px;
       }
     }

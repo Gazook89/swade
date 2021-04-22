@@ -1,10 +1,9 @@
-import SwadeItem from './entities/SwadeItem';
 import SwadeActor from './entities/SwadeActor';
+import SwadeItem from './entities/SwadeItem';
 
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
-  data?: any;
   speaker?: any;
   flavor?: string;
   title?: string;
@@ -21,7 +20,6 @@ interface RollHandlerData {
   flavor: string;
   raise?: boolean;
   actor?: SwadeActor;
-  data?: object;
   allowGroup?: boolean;
   flags?: object;
 }
@@ -32,7 +30,6 @@ interface RollHandlerData {
 export default class SwadeDice {
   static async Roll({
     roll,
-    data,
     speaker,
     flavor,
     title,
@@ -44,7 +41,6 @@ export default class SwadeDice {
     const template = 'systems/swade/templates/chat/roll-dialog.html';
     const dialogData = {
       formula: roll.formula,
-      data: data,
       rollMode: game.settings.get('core', 'rollMode'),
       rollModes: CONFIG.Dice.rollModes,
     };
@@ -114,45 +110,52 @@ export default class SwadeDice {
     raise = false,
     actor = null,
     roll = null,
-    data = {},
     speaker = null,
     flavor = '',
     allowGroup = false,
     flags,
   }: RollHandlerData): Roll {
-    let rollMode = game.settings.get('core', 'rollMode');
+    let rollMode = game.settings.get('core', 'rollMode') as Const.DiceRollMode;
     const groupRoll = actor && raise;
     // Optionally include a situational bonus
-    if (form) data['bonus'] = form.find('#bonus').val();
-    if (data['bonus']) roll.terms.push(data['bonus']);
+    let bonus: string = null;
+    if (form) bonus = form.find('#bonus').val();
+    if (bonus) {
+      if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;
+      roll.terms.push(bonus);
+      flavor = `${flavor}<br>${game.i18n.localize('SWADE.SitMod')}: ${bonus}`;
+    }
     if (groupRoll && allowGroup) {
       //Group roll
-      const tempRoll = new Roll('');
-      const wildRoll = new Roll('');
-
-      tempRoll.terms.push(roll.terms[0]);
-      const wildDie = new Die({
-        faces: 6,
-        modifiers: ['x'],
-        options: { flavor: game.i18n.localize('SWADE.WildDie') },
-      });
-      wildRoll.terms.push(wildDie);
-      const pool = new DicePool({
-        rolls: [tempRoll, wildRoll],
-        modifiers: ['kh'],
-      });
-      roll.terms[0] = pool;
-      flavor = `${flavor} ${game.i18n.localize('SWADE.GroupRoll')}`;
+      const pool = roll.terms[0];
+      if (pool instanceof DicePool) {
+        const wildRoll = new Roll(
+          `1d6x[${game.i18n.localize('SWADE.WildDie').replace(' ', '')}]`,
+        );
+        if (pool.rolls[0] instanceof Roll) {
+          //copy modifiers
+          wildRoll.terms = [...wildRoll.terms, ...pool.rolls[0].terms.slice(1)];
+        }
+        pool.rolls.push(wildRoll);
+      }
+      flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
       roll.terms.push('+');
-      roll.terms.push(new Die({ modifiers: ['x'] }));
+      roll.terms.push(
+        new Die({
+          number: 1,
+          faces: 6,
+          modifiers: ['x'],
+          options: { flavor: game.i18n.localize('SWADE.BonusDamage') },
+        }),
+      );
     }
-    const retVal = roll.roll();
+    const retVal = roll.evaluate();
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
-    for (const v of roll.terms) {
-      if (v instanceof Die) continue;
-      if (v['rolls']) {
-        v['rolls'].forEach((roll: Roll) => {
+    for (const term of roll.terms) {
+      if (term instanceof Die) continue;
+      if (term instanceof DicePool) {
+        term.rolls.forEach((roll: Roll) => {
           roll.terms.forEach((term: Die | string | number) => {
             if (
               term instanceof Die &&
@@ -171,7 +174,9 @@ export default class SwadeDice {
     }
     //End of Workaround
     // Convert the roll to a chat message and return the roll
-    rollMode = form ? form.find('#rollMode').val() : rollMode;
+    rollMode = form
+      ? (form.find('#rollMode').val() as Const.DiceRollMode)
+      : (rollMode as Const.DiceRollMode);
     retVal.toMessage(
       {
         speaker: speaker,

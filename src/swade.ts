@@ -24,11 +24,30 @@ import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import { rollPowerMacro, rollSkillMacro, rollWeaponMacro } from './module/util';
+import {
+  rollPowerMacro,
+  rollSkillMacro,
+  rollWeaponMacro,
+  rollItemMacro,
+  createSwadeMacro,
+} from './module/util';
 
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
+
+const sockets: SwadeSocketHandler = null;
+export const swadeGame = {
+  SwadeActor,
+  SwadeItem,
+  SwadeEntityTweaks,
+  rollSkillMacro,
+  rollWeaponMacro,
+  rollPowerMacro,
+  rollItemMacro,
+  sockets: sockets,
+  itemChatCardHelper: ItemChatCardHelper,
+};
 Hooks.once('init', () => {
   console.log(
     `SWADE | Initializing Savage Worlds Adventure Edition\n${SWADE.ASCII}`,
@@ -38,21 +57,13 @@ Hooks.once('init', () => {
   // CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
-  game.swade = {
-    SwadeActor,
-    SwadeItem,
-    SwadeEntityTweaks,
-    rollSkillMacro,
-    rollWeaponMacro,
-    rollPowerMacro,
-    sockets: new SwadeSocketHandler(),
-    itemChatCardHelper: ItemChatCardHelper,
-  };
-
+  game.swade = swadeGame;
+  game.swade.sockets = new SwadeSocketHandler();
   //Register custom Handlebars helpers
   registerCustomHelpers();
 
   //Overwrite method prototypes
+  //@ts-expect-error
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
@@ -100,9 +111,9 @@ Hooks.once('init', () => {
   listenJournalDrop();
 
   // Preload Handlebars templates
-  CONFIG.SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  CONFIG.SWADE.templates.preloadPromise.then(() => {
-    CONFIG.SWADE.templates.templatesPreloaded = true;
+  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
+  SWADE.templates.preloadPromise.then(() => {
+    SWADE.templates.templatesPreloaded = true;
   });
 });
 
@@ -124,12 +135,6 @@ Hooks.on(
   'preCreateOwnedItem',
   (actor: SwadeActor, createData: any, options: any, userId: string) =>
     SwadeHooks.onPreCreateOwnedItem(actor, createData, options, userId),
-);
-
-Hooks.on(
-  'preCreateActor',
-  async (createData: any, options: any, userId: string) =>
-    SwadeHooks.onPreCreateActor(createData, options, userId),
 );
 
 Hooks.on(
@@ -166,12 +171,6 @@ Hooks.on(
   'renderCombatTracker',
   (app: CombatTracker, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCombatTracker(app, html, data),
-);
-
-Hooks.on(
-  'updateCombat',
-  (combat: Combat, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onUpdateCombat(combat, updateData, options, userId),
 );
 
 Hooks.on(
@@ -251,3 +250,9 @@ Hooks.once('diceSoNiceReady', (dice3d: any) => {
 Hooks.on('preCreateScene', (createData: any, options: any, userId: string) =>
   SwadeHooks.onPreCreateScene(createData, options, userId),
 );
+
+Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
+  SwadeHooks.onPreUpdateToken(scene, token, updateData, options, userId),
+);
+
+Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));

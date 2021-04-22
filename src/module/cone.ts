@@ -1,7 +1,3 @@
-export function fromRange(n) {
-  return Array.from(new Array(parseInt(n)).keys());
-}
-
 export function getSwadeConeShape(
   direction: number,
   angle: number,
@@ -19,7 +15,7 @@ export function getSwadeConeShape(
   if (coneType === 'round') {
     const da = Math.min(angle, 3);
     const c = Ray.fromAngle(0, 0, direction, coneLength);
-    angles = fromRange(180 / da)
+    angles = Array.fromRange(180 / da)
       .map((a) => 180 / -2 + a * da)
       .concat([180 / 2]);
     // Get the cone shape as a polygon
@@ -51,6 +47,5 @@ export function getSwadeConeShape(
       )
       .concat([0, 0]);
   }
-
   return new PIXI.Polygon(points);
 }

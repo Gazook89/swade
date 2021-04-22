@@ -18,6 +18,56 @@
     <section id="characters">
       <h2 class="module-header">{{localize "SWADE.Actors"}}</h2>
       <div class="form-group">
+        <label>{{localize "SWADE.CoreSkills"}}</label>
+        <div class="form-fields">
+          <textarea
+            name="settingRules.coreSkills"
+            data-dtype="String"
+            placeholder="Example: Athletics, Common Knowledge, Notice, Persuasion, Stealth"
+          >
+{{settingRules.coreSkills}}</textarea
+          >
+        </div>
+        <p class="notes">{{localize "SWADE.CoreSkillsDesc"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "SWADE.CoreSkillsPack"}}</label>
+        <div class="form-fields">
+          <select name="settingRules.coreSkillsCompendium">
+            {{#select settingRules.coreSkillsCompendium}}{{selectOptions
+            coreSkillPackChoices}} {{/select}}
+          </select>
+        </div>
+        <p class="notes">{{localize "SWADE.CoreSkillsPackDesc"}}</p>
+      </div>
+
+      <div class="form-group">
+        <label>{{localize "SWADE.WealthDie"}}</label>
+        <div class="form-fields">
+          <select name="settingRules.wealthType">
+            {{#select settingRules.wealthType}}
+            <option value="currency">{{localize 'SWADE.Currency'}}</option>
+            <option value="wealthDie">{{localize 'SWADE.WealthDie'}}</option>
+            <option value="none">{{localize 'SWADE.NoneOther'}}</option>
+            {{/select}}
+          </select>
+        </div>
+        <p class="notes">{{localize "SWADE.WealthTypeDesc"}}</p>
+      </div>
+      {{#if (eq settingRules.wealthType "currency")}}
+      <div class="form-group">
+        <label>{{localize "SWADE.CurrencyName"}}</label>
+        <div class="form-fields">
+          <input
+            type="text"
+            name="settingRules.currencyName"
+            value="{{settingRules.currencyName}}"
+          />
+        </div>
+        <p class="notes">{{localize "SWADE.CurrencyNameDesc"}}</p>
+      </div>
+      {{/if}}
+      <div class="form-group">
         <label>{{localize "SWADE.EnableConv"}}</label>
         <div class="form-fields">
           <input
@@ -67,6 +117,19 @@
           />
         </div>
         <p class="notes">{{localize "SWADE.EnableWoundPaceDesc"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "SWADE.NoPowerPoints"}}</label>
+        <div class="form-fields">
+          <input
+            type="checkbox"
+            name="settingRules.noPowerPoints"
+            data-dtype="Boolean"
+            {{checked
+            settingRules.noPowerPoints}}
+          />
+        </div>
+        <p class="notes">{{localize "SWADE.NoPowerPointsDesc"}}</p>
       </div>
       <section id="ammo">
         <h3>{{localize "SWADE.Ammo"}}</h3>
@@ -154,9 +217,7 @@
       </div>
     </section>
     <section class="attributes" id="setting-specific">
-      <h2 class="module-header">
-        {{localize "SWADE.AddStats"}}
-      </h2>
+      <h2 class="module-header">{{localize "SWADE.AddStats"}}</h2>
       <h3>{{localize "SWADE.Actors"}}</h3>
       <ul class="stats-container">
         <li class="attribute attributes-header">
@@ -189,9 +250,8 @@
             class="attribute-dtype"
             name="actorSettingStats.{{key}}.dtype"
           >
-            {{#select attr.dtype}} {{#each ../dtypes as |t|}}
-            <option value="{{t}}">{{t}}</option>
-            {{/each}} {{/select}}
+            {{#select attr.dtype}} {{selectOptions ../dtypes selected=attr.dtype
+            localize=true}} {{/select}}
           </select>
           <input
             class="attribute-maxValue"
@@ -243,9 +303,8 @@
             value="{{attr.label}}"
           />
           <select class="attribute-dtype" name="itemSettingStats.{{key}}.dtype">
-            {{#select attr.dtype}} {{#each ../dtypes as |t|}}
-            <option value="{{t}}">{{t}}</option>
-            {{/each}} {{/select}}
+            {{#select attr.dtype}} {{selectOptions ../dtypes selected=attr.dtype
+            localize=true}} {{/select}}
           </select>
           <input
             class="attribute-maxValue"

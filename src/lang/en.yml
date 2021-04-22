@@ -51,6 +51,11 @@ SWADE.AttrStrShort: Str
 SWADE.AttrVigShort: Vig
 SWADE.Skills: Skills
 SWADE.Unskilled: Unskilled
+SWADE.CoreSkill: Core Skill
+SWADE.CoreSkills: Core Skills
+SWADE.CoreSkillsDesc: >-
+  Enter a comma-separated list of skill names to be defined as core skills for
+  all actors
 SWADE.LinkAttr: Linked Attribute
 SWADE.Die: Die
 SWADE.WildDie: Wild Die
@@ -119,7 +124,7 @@ SWADE.Notes: Notes
 SWADE.ActionsEffects: Actions & Effects
 SWADE.Actions: Actions
 SWADE.DmgModUni: Damage Modifier (universal)
-SWADE.SkillModUni: Skill Modifier (universal)
+SWADE.SkillModUni: Trait Modifier (universal)
 SWADE.ShotsUsed: Shots Used
 SWADE.NaturalArmor: Natural Armor
 SWADE.HitLocations: Hit Locations
@@ -164,6 +169,7 @@ SWADE.Weight: Weight
 SWADE.Price: Cost
 SWADE.PP: Power Points
 SWADE.PPShort: P. Points
+SWADE.PPCost: PP Cost
 SWADE.CurPP: Current Power Points
 SWADE.MaxPP: Maximum Power Points
 SWADE.Dur: Duration
@@ -205,7 +211,7 @@ SWADE.AutoInitDesc: Automatically draw Action Cards every round
 SWADE.CreateInitChat: Create Chat Message for Initiative
 SWADE.HideWC: Hide NPC Wild Cards
 SWADE.HideWCDesc: Do not show which NPCs are Wild Cards to players
-SWADE.EnableConv: Enable Conviction
+SWADE.EnableConv: Conviction
 SWADE.EnableConvDesc: Enable the Conviction setting rule
 SWADE.EnableWoundPace: Adjust Pace with Wounds
 SWADE.EnableWoundPaceDesc: When enabled, Pace is automatically affected by Wounds
@@ -257,13 +263,13 @@ SWADE.RollRaise: Roll Raise
 SWADE.GroupRoll: Group Roll
 SWADE.Ok: Ok
 SWADE.Cancel: Cancel
-SWADE.Redraw: Redraw
+SWADE.Redraw: Draw Card
 SWADE.Add: Add
 SWADE.ConfigInit: Configure Initiative
 SWADE.IgnWounds: Ignore Wounds
 SWADE.Size: Size
 SWADE.Scale: Scale
-SWADE.PickACard: Pick a card
+SWADE.PickACard: Pick a card for
 SWADE.NoCardsLeft: There are not enough cards left in the deck!
 SWADE.OldCard: Old card
 SWADE.ActionCard: Action Card
@@ -313,3 +319,31 @@ SWADE.RacialAbilities: Racial Abilities
 SWADE.About: About
 SWADE.EdgesHindrances: Edges & Hindrances
 SWADE.GrantsPowers: Grants Powers
+SWADE.Crew: Required Crew
+SWADE.Passengers: Optional Passengers
+SWADE.String: Text
+SWADE.Number: Number
+SWADE.Checkbox: Checkbox
+SWADE.Ace: Acing
+SWADE.NoPowerPoints: No Power Points
+SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions
+SWADE.WealthType: Wealth Type
+SWADE.WealthDie: Wealth
+SWADE.NoneOther: None / Other
+SWADE.WealthTypeDesc: Choose how to track character wealth and currency
+SWADE.CurrencyName: Currency Name
+SWADE.CurrencyNameDesc: Name your currency
+SWADE.TraitRolls: Trait Rolls
+SWADE.Trait: Trait
+SWADE.AltTrait: Alternative Trait
+SWADE.ClickSuggestions: Click for suggestions
+SWADE.Quick: Quick
+SWADE.BonusDamage: Bonus Damage
+SWADE.CoreSkillsPack: Core Skills Compendium
+SWADE.CoreSkillsPackDesc: Choose from which Compendium the core skills will be drawn
+SWADE.Joker: Joker
+SWADE.Subtract: Subtract
+SWADE.DmgRolls: Damage Rolls
+SWADE.SubtractPPDesc: Subtract PP Cost from the available PP
+SWADE.AddPPDesc: Add PP Cost to the available PP
+SWADE.RightClickZoom: Right-Click to Zoom

@@ -1,4 +1,7 @@
-export const listenJournalDrop = function () {
+import { SWADE } from './config';
+import { getCanvas } from './util';
+
+export function listenJournalDrop() {
   // Grabbing the image url from the journal entry
   function _onDragStart(event: any) {
     event.stopPropagation();
@@ -13,18 +16,19 @@ export const listenJournalDrop = function () {
   async function _onDropImage(event, data) {
     if (data.type == 'image') {
       // Projecting screen coords to the canvas
-      const t = canvas.tiles.worldTransform;
+      const t = getCanvas().tiles.worldTransform;
       // Determine the tile size
       const tex = await loadTexture(data.src);
 
-      const tileData = {
-        img: data.src,
-        width: (CONFIG.SWADE.imagedrop.height * tex.width) / tex.height,
-        height: CONFIG.SWADE.imagedrop.height,
-        x: (event.clientX - t.tx) / canvas.stage.scale.x,
-        y: (event.clientY - t.ty) / canvas.stage.scale.y,
-        scale: 1,
+      //TODO why no work without explicit type?
+      const tileData: DeepPartial<Tile.Data> = {
+        img: data.src as string,
+        width: (SWADE.imagedrop.height * tex.width) / tex.height,
+        height: SWADE.imagedrop.height,
+        x: (event.clientX - t.tx) / getCanvas().stage.scale.x,
+        y: (event.clientY - t.ty) / getCanvas().stage.scale.y,
         z: 400,
+        scale: 1,
         hidden: false,
         locked: false,
         rotation: 0,
@@ -56,4 +60,4 @@ export const listenJournalDrop = function () {
       div.addEventListener('dragstart', _onDragStart, false);
     });
   });
-};
+}

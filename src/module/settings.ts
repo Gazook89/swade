@@ -71,7 +71,49 @@ export function registerSettings() {
     config: true,
   });
 }
+
 export function registerSettingRules() {
+  game.settings.register('swade', 'coreSkills', {
+    name: game.i18n.localize('SWADE.CoreSkills'),
+    hint: game.i18n.localize('SWADE.CoreSkillsDesc'),
+    default: 'Athletics, Common Knowledge, Notice, Persuasion, Stealth',
+    scope: 'world',
+    type: String,
+    config: false,
+  });
+
+  game.settings.register('swade', 'coreSkillsCompendium', {
+    name: game.i18n.localize('SWADE.CoreSkillsPack'),
+    hint: game.i18n.localize('SWADE.CoreSkillsPackDesc'),
+    default: 'swade.skills',
+    type: String,
+    scope: 'world',
+    config: false,
+  });
+
+  game.settings.register('swade', 'wealthType', {
+    name: game.i18n.localize('SWADE.WealthType'),
+    hint: game.i18n.localize('SWADE.WealthTypeDesc'),
+    scope: 'world',
+    type: String,
+    choices: {
+      currency: 'SWADE.Currency',
+      wealthDie: 'SWADE.WealthDie',
+      none: 'SWADE.NoneOther',
+    },
+    default: 'currency',
+    config: false,
+  });
+
+  game.settings.register('swade', 'currencyName', {
+    name: game.i18n.localize('SWADE.CurrencyName'),
+    hint: game.i18n.localize('SWADE.CurrencyNameDesc'),
+    scope: 'world',
+    type: String,
+    default: 'Currency',
+    config: false,
+  });
+
   game.settings.register('swade', 'jokersWild', {
     name: game.i18n.localize('SWADE.JokersWild'),
     hint: game.i18n.localize('SWADE.JokersWildDesc'),
@@ -137,6 +179,15 @@ export function registerSettingRules() {
     name: game.i18n.localize('SWADE.EnableWoundPace'),
     hint: game.i18n.localize('SWADE.EnableWoundPaceDesc'),
     default: true,
+    scope: 'world',
+    type: Boolean,
+    config: false,
+  });
+
+  game.settings.register('swade', 'noPowerPoints', {
+    name: game.i18n.localize('SWADE.NoPowerPoints'),
+    hint: game.i18n.localize('SWADE.NoPowerPointsDesc'),
+    default: false,
     scope: 'world',
     type: Boolean,
     config: false,

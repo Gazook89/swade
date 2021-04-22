@@ -21,13 +21,13 @@
           </label>
         </div>
         <div class="form-group">
-          <label for="data.cover">{{localize "SWADE.Cover"}}</label>
+          <label for="data.quantity">{{localize "SWADE.Quantity"}}</label>
           <span class="form-fields">
             <input
-              name="data.cover"
+              name="data.quantity"
               type="text"
-              value="{{item.data.cover}}"
-              placeholder="{{localize 'SWADE.Cover'}}"
+              value="{{item.data.quantity}}"
+              placeholder="{{localize 'SWADE.Quantity'}}"
               data-dtype="Number"
           /></span>
         </div>
@@ -43,14 +43,25 @@
           /></span>
         </div>
         <div class="form-group">
-          <label for="data.price">{{localize "SWADE.Price"}}</label>
+          <label for="data.cover">{{localize "SWADE.Cover"}}</label>
           <span class="form-fields">
             <input
-              name="data.price"
+              name="data.cover"
               type="text"
-              value="{{item.data.price}}"
-              placeholder="{{localize 'SWADE.Price'}}"
+              value="{{item.data.cover}}"
+              placeholder="{{localize 'SWADE.Cover'}}"
               data-dtype="Number"
+          /></span>
+        </div>
+        <div class="form-group">
+          <label for="data.minStr">{{localize "SWADE.MinStrShort"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.minStr"
+              type="text"
+              value="{{item.data.minStr}}"
+              placeholder="{{localize 'SWADE.MinStr'}}"
+              data-dtype="String"
           /></span>
         </div>
         <div class="form-group">
@@ -65,25 +76,14 @@
           /></span>
         </div>
         <div class="form-group">
-          <label for="data.quantity">{{localize "SWADE.Quantity"}}</label>
+          <label for="data.price">{{localize "SWADE.Price"}}</label>
           <span class="form-fields">
             <input
-              name="data.quantity"
+              name="data.price"
               type="text"
-              value="{{item.data.quantity}}"
-              placeholder="{{localize 'SWADE.Quantity'}}"
+              value="{{item.data.price}}"
+              placeholder="{{localize 'SWADE.Price'}}"
               data-dtype="Number"
-          /></span>
-        </div>
-        <div class="form-group">
-          <label for="data.minStr">{{localize "SWADE.MinStrShort"}}</label>
-          <span class="form-fields">
-            <input
-              name="data.minStr"
-              type="text"
-              value="{{item.data.minStr}}"
-              placeholder="{{localize 'SWADE.MinStr'}}"
-              data-dtype="String"
           /></span>
         </div>
         <div class="form-group">

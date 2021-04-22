@@ -1,44 +1,52 @@
+import { SWADE } from './config';
+
 export default class SettingConfigurator extends FormApplication {
   config: any;
   settingStats: any;
-  constructor(object = {}, options = { parent: null }) {
+  constructor(object = {}, options?: Application.RenderOptions) {
     super(object, options);
-    this.config = CONFIG.SWADE.settingConfig;
+    this.config = SWADE.settingConfig;
   }
 
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
-      id: CONFIG.SWADE.settingConfig.id,
-      title: CONFIG.SWADE.settingConfig.title,
+    return {
+      ...super.defaultOptions,
+      id: SWADE.settingConfig.id,
+      title: SWADE.settingConfig.title,
       template: 'systems/swade/templates/setting-config.html',
       classes: ['swade', 'setting-config'],
+      scrollY: ['.sheet-body'],
       width: 600,
-      height: 'auto',
+      height: 'auto' as const,
       top: 200,
       left: 400,
-      background: '#000',
       resizable: false,
       closeOnSubmit: false,
       submitOnClose: true,
       submitOnChange: true,
-    });
+    };
   }
 
   /**
    * @override
    */
-  getData() {
-    const data = {};
-    const settingRules = {};
+  getData(): any {
+    const settingFields = game.settings.get('swade', 'settingFields') as any;
+    const data = {
+      settingRules: {},
+      actorSettingStats: settingFields.actor,
+      itemSettingStats: settingFields.item,
+      dtypes: {
+        String: 'SWADE.String',
+        Number: 'SWADE.Number',
+        Boolean: 'SWADE.Checkbox',
+        Die: 'SWADE.Die',
+      },
+      coreSkillPackChoices: this._buildCoreSkillPackChoices(),
+    };
     for (const setting of this.config.settings) {
-      settingRules[setting] = game.settings.get('swade', setting);
+      data.settingRules[setting] = game.settings.get('swade', setting);
     }
-    data['settingRules'] = settingRules;
-
-    const settingFields = game.settings.get('swade', 'settingFields');
-    data['actorSettingStats'] = settingFields.actor;
-    data['itemSettingStats'] = settingFields.item;
-    data['dtypes'] = ['String', 'Number', 'Boolean'];
     return data;
   }
 
@@ -74,7 +82,7 @@ export default class SettingConfigurator extends FormApplication {
     }
 
     // Handle the free-form attributes list
-    const settingFields = game.settings.get('swade', 'settingFields');
+    const settingFields = game.settings.get('swade', 'settingFields') as any;
 
     const actorAttributes = this._handleKeyValidityCheck(formActorAttrs);
     const itemAttributes = this._handleKeyValidityCheck(formItemAttrs);
@@ -86,6 +94,8 @@ export default class SettingConfigurator extends FormApplication {
       item: this._handleDeletableAttributes(itemAttributes, settingFields.item),
     };
     await game.settings.set('swade', 'settingFields', saveValue);
+
+    this.render(true);
   }
 
   async _resetSettings() {
@@ -102,7 +112,7 @@ export default class SettingConfigurator extends FormApplication {
     event.preventDefault();
     const a = event.currentTarget;
     const action = a.dataset.action;
-    const settingFields = game.settings.get('swade', 'settingFields');
+    const settingFields = game.settings.get('swade', 'settingFields') as any;
     const form = this.form;
 
     // Add new attribute
@@ -160,5 +170,15 @@ export default class SettingConfigurator extends FormApplication {
       }
     }
     return attributes;
+  }
+  private _buildCoreSkillPackChoices() {
+    const retVal = {};
+
+    game.packs
+      .filter((p) => p.entity === 'Item')
+      .forEach((p) => {
+        retVal[p.collection] = `${p.metadata.label} (${p.metadata.package})`;
+      });
+    return retVal;
   }
 }

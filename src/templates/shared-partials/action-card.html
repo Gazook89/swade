@@ -84,21 +84,37 @@
   {{/unless}} {{/if}}
 
   <div class="card-buttons">
-    {{#if (eq type "power")}} {{#unless powersTab}}
+    {{#if (eq type "power")}}
     <span class="flexcol">
-      <input type="number" class="pp-adjust" value="{{data.pp}}" />
-      <span class="flexrow" style="display: flex;">
-        <button class="card-button" data-action="pp-adjust" data-adjust="plus">
-          &plus; Add
+      <span class="flexrow" style="display: flex">
+        <label>
+          <strong>{{localize "SWADE.PPCost"}}: </strong>
+        </label>
+        <input type="number" class="pp-adjust" value="{{data.pp}}" />
+      </span>
+      {{#unless powersTab}} {{#unless settingrules.noPowerPoints}}
+      <span class="flexrow" style="display: flex">
+        <button
+          class="card-button"
+          data-action="pp-adjust"
+          data-adjust="plus"
+          title="{{localize 'SWADE.AddPPDesc'}}"
+        >
+          &plus; {{localize "SWADE.Add"}}
         </button>
-        <button class="card-button" data-action="pp-adjust" data-adjust="minus">
-          &minus; Subtract
+        <button
+          class="card-button"
+          data-action="pp-adjust"
+          data-adjust="minus"
+          title="{{localize 'SWADE.SubtractPPDesc'}}"
+        >
+          &minus; {{localize "SWADE.Subtract"}}
         </button>
       </span>
     </span>
-    {{/unless}} {{/if}} {{#unless powersTab}} {{#if hasSkillRoll}}
+    {{/unless}} {{/unless}} {{/if}} {{#unless powersTab}} {{#if hasSkillRoll}}
     <h4 class="actions-subheading">
-      <i class="fas fa-bullseye"></i> Skill Rolls
+      <i class="fas fa-bullseye"></i> {{localize "SWADE.TraitRolls"}}
     </h4>
     {{/if}} {{/unless}} {{#if hasSkillRoll}}
     <button class="card-button" data-action="formula">
@@ -110,7 +126,9 @@
       {{#if powersTab}}<i class="fas fa-hand-sparkles"></i> {{/if}}{{attr.name}}
     </button>
     {{/if}} {{/each}} {{/if}} {{#unless powersTab}} {{#if hasDamage }}
-    <h4 class="actions-subheading"><i class="fas fa-tint"></i> Damage Rolls</h4>
+    <h4 class="actions-subheading">
+      <i class="fas fa-tint"></i> {{localize "SWADE.DmgRolls"}}
+    </h4>
     {{/if}} {{/unless}} {{#if data.damage}}
     <button class="card-button" data-action="damage">
       {{#if powersTab}}<i class="fas fa-tint"></i> {{/if}}{{data.damage}}

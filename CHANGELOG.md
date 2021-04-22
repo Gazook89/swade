@@ -20,6 +20,48 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [Unreleased v0.18.0]
+
+### Added
+
+- Added missing translation keys for vehicles
+- Added a convenience shortcut on the official sheet which opens the parent itemsheet of transfered Active Effects
+- Added Die type additional stat
+- Added focus state to checkboxes
+- Added support for the No Power Points rule, which can be activated via the Setting Configurator. When this setting rule is effect the recording of power points is disabled and the PP Cost input is instead used to calculate the penalty on the trait roll based on the total PP Cost entered. This works with the inline interaction on the character sheet as well as the chat cards
+- Added the ability to define a list of Core Skills in the Setting Configurator
+- Added the ability to set which compendium the core skills will be drawn from. This defaults to the system compendium
+- Added the ability to drag&drop Active Effects between actors. Please keep in mind that is only possible for AE which are not transfered from an item.
+- Added the ability to use Attributes (such a Spirit or Agility) with actions instead of only skills. Adjusted UI of the _Actions & Effects_ tab accordingly. Please keep in mind that Attributes do not currently support actions with an RoF greater than 1 and will roll as if the RoF is 1
+- Added a suggestion list to the ammunition field of owned weapons
+- Added support for the Quick edge
+- Added additional dice labels to damage rolls for Bonus damage and attribute shortcuts
+- Jokers now add the appropriate +2 bonus to all trait and damage rolls
+- Added `SwadeActor#hasJoker` getter which returns a boolean value
+- Added added `profile-img` class to the image element that displays a characters image on the Official Sheet
+- Added additional translation strings
+- Edges, Hindrances and Special Abilities can now be dragged&dropped to the Hotbar from the character sheet
+
+### Changed
+
+- NPCs now automatically equip equipable items
+- Changed order of the stats for Vehicles, armor, shields and weapons to properly reflect the order in the books
+- Overhauled the way currencies are handled. You can now select one of **three** options in the Setting Configurator
+  1. **Currency**, the system as it has been until now. Selecting this option now also adds an additional input field that lets you name the currency yourself.
+  1. **Wealth**, representing the Wealth setting rule, which replaces the currency field with dice controls.
+  1. **None / Other**, which hides the currency field. This is ideal for the people that prefer tracking currency and wealth via inventory items.
+- Chnaged how rolls are displayed in chat. Trait rolls will now display the result dice, adjusted with all modifiers
+- The biography text editor on the character sheet now expands to display it's entire contents
+- Updated the item chat cards so their design matches the layout on the character sheet
+
+### Deprecated
+
+- Started depreceation of current hotbar macro functions in favour of posting the chat card
+
+### Fixed
+
+- Fixed how Conviction is rolled. It is now a single `d6` whose result is added to all rolls in a trait roll
+
 ## [v0.17.2]
 
 ### Changed

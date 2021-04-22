@@ -1,47 +1,29 @@
+import { ItemAction } from '../../interfaces/additional';
 import IRollOptions from '../../interfaces/IRollOptions';
-import { SWADE } from '../config';
+import { SysItemData } from '../../interfaces/item-data';
 import SwadeDice from '../dice';
-import { ActorType } from '../enums/ActorTypeEnum';
-import { ItemType } from '../enums/ItemTypeEnum';
 import SwadeActor from './SwadeActor';
 
 /**
  * Override and extend the basic :class:`Item` implementation
  * @noInheritDoc
  */
-export default class SwadeItem extends Item {
-  /**
-   * @override
-   */
-  get actor(): SwadeActor {
-    return (this.options.actor as SwadeActor) || null;
-  }
-
+export default class SwadeItem extends Item<SysItemData> {
   get isMeleeWeapon(): boolean {
+    if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
-    return (
-      this.type === ItemType.Weapon &&
-      ((!shots && !currentShots) || (shots === '0' && currentShots === '0'))
-    );
-  }
-
-  /* -------------------------------------------- */
-  /*	Data Preparation														*/
-  /* -------------------------------------------- */
-
-  /**
-   * Augment the basic Item data model with additional dynamic data.
-   */
-  prepareData() {
-    super.prepareData();
+    return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
   }
 
   rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
-    const itemData = this.data.data;
-    const actor = this.actor;
-    const actorIsVehicle = actor.data.type === 'vehicle';
-    const actorData = actor.data.data;
+    let itemData;
+    if (['weapon', 'power', 'shield'].includes(this.type)) {
+      itemData = this.data.data;
+    } else {
+      return null;
+    }
+    const actor = (this.actor as unknown) as SwadeActor;
     const label = this.name;
     let ap = getProperty(this.data, 'data.ap');
 
@@ -51,66 +33,73 @@ export default class SwadeItem extends Item {
       ap = ` - ${game.i18n.localize('SWADE.Ap')} 0`;
     }
 
-    let roll;
     let rollParts = [itemData.damage];
-    if (options.dmgOverride) {
+
+    if (this.type === 'shield' || options.dmgOverride) {
       rollParts = [options.dmgOverride];
     }
-
     //Additional Mods
     if (options.additionalMods) {
       rollParts = rollParts.concat(options.additionalMods);
     }
 
-    roll = new Roll(rollParts.join(''), actor.getRollShortcuts());
+    const roll = new Roll(rollParts.join(''), actor.getRollData());
 
     const newParts = [];
-    roll.terms.forEach((term) => {
+    for (const term of roll.terms) {
       if (term instanceof Die) {
-        newParts.push(`${term['number']}d${term.faces}x`);
+        newParts.push(`${term.number}d${term.faces}x`);
       } else if (term instanceof Roll) {
         newParts.push(term.formula);
+      } else if (typeof term === 'string') {
+        newParts.push(this._makeExplodable(term));
       } else {
-        newParts.push(this.makeExplodable(term));
+        newParts.push(term);
       }
-    });
+    }
 
     //Conviction Modifier
     if (
-      !actorIsVehicle &&
+      actor.data.type !== 'vehicle' &&
       game.settings.get('swade', 'enableConviction') &&
-      getProperty(actor.data, 'data.details.conviction.active')
+      actor.data.data.details.conviction.active
     ) {
-      newParts.push('+1d6x');
+      newParts.push(`+1d6x[${game.i18n.localize('SWADE.Conv')}]`);
     }
 
-    roll = new Roll(newParts.join(''));
+    //Joker Modifier
+    let joker = '';
+    if (actor.hasJoker) {
+      newParts.push('+2');
+      joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
+    }
+
+    const newRoll = new Roll(newParts.join(''));
 
     let flavour = '';
     if (options.flavour) {
       flavour = ` - ${options.flavour}`;
     }
 
+    flavour = flavour.concat(joker);
+
     if (options.suppressChat) {
       return new Roll(newParts.join(''));
     }
-    console.log(roll);
+
     // Roll and return
     return SwadeDice.Roll({
-      roll: roll,
-      data: actorData,
+      roll: newRoll,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
-        'SWADE.Dmg',
-      )}${ap}${flavour}`,
-      title: `${game.i18n.localize(label)} ${game.i18n.localize('SWADE.Dmg')}`,
+      flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
+      title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,
       item: this,
       flags: { swade: { colorMessage: false } },
     });
   }
 
   getChatData(htmlOptions) {
-    const data = duplicate(this.data.data);
+    const data = duplicate(this.data.data) as any;
 
     // Rich text description
     data.description = TextEditor.enrichHTML(data.description, htmlOptions);
@@ -121,7 +110,11 @@ export default class SwadeItem extends Item {
 
     switch (this.type) {
       case 'hindrance':
-        props.push(data.major ? 'Major' : 'Minor');
+        props.push(
+          data.major
+            ? game.i18n.localize('SWADE.Major')
+            : game.i18n.localize('SWADE.Minor'),
+        );
         break;
       case 'shield':
         props.push(
@@ -163,7 +156,6 @@ export default class SwadeItem extends Item {
           data.arcane,
           `${data.pp}PP`,
           `<i class="fas fa-ruler"></i> ${data.range}`,
-          data.damage ? `<i class='fas fa-tint'></i> ${data.damage}` : '',
           `<i class='fas fa-hourglass-half'></i> ${data.duration}`,
           data.trapping,
         );
@@ -174,21 +166,13 @@ export default class SwadeItem extends Item {
             ? '<i class="fas fa-tshirt"></i>'
             : '<i class="fas fa-tshirt" style="color:grey"></i>',
         );
-        props.push(
-          data.damage ? `<i class='fas fa-tint'></i> ${data.damage}` : '',
-        );
         props.push(`<i class='fas fa-shield-alt'></i> ${data.ap}`);
         props.push(`<i class="fas fa-ruler"></i> ${data.range}`);
         props.push(
           data.notes ? `<i class="fas fa-sticky-note"></i> ${data.notes}` : '',
         );
         break;
-      case 'item':
-        props.push(
-          data.equipped
-            ? '<i class="fas fa-tshirt"></i>'
-            : '<i class="fas fa-tshirt" style="color:grey"></i>',
-        );
+      default:
         break;
     }
     // Filter properties and return
@@ -196,7 +180,6 @@ export default class SwadeItem extends Item {
 
     //Additional actions
     const actions = getProperty(this.data, 'data.actions.additional');
-    data.hasAdditionalActions = !!actions && Object.keys(actions).length > 0;
 
     data.actions = [];
     for (const action in actions) {
@@ -209,36 +192,58 @@ export default class SwadeItem extends Item {
     return data;
   }
 
+  /**
+   * Assembles data and creates a chat card for the item
+   * @returns the rendered chatcard
+   */
   async show() {
     // Basic template rendering data
     const token = this.actor.token;
+    const tokenId = token ? `${token.scene._id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    const hasAmmoManagement =
+      this.type === 'weapon' &&
+      !this.isMeleeWeapon &&
+      ammoManagement &&
+      !getProperty(this.data, 'data.autoReload');
+    const hasDamage = !!getProperty(this.data, 'data.damage');
+    const hasTraitRoll =
+      ['weapon', 'power', 'shield'].includes(this.data.type) &&
+      !!getProperty(this.data, 'data.actions.skill');
+    const hasReloadButton =
+      ammoManagement &&
+      this.type === 'weapon' &&
+      getProperty(this.data, 'data.shots') > 0 &&
+      !getProperty(this.data, 'data.autoReload');
+
+    const additionalActions: Record<string, ItemAction> =
+      getProperty(this.data, 'data.actions.additional') || {};
+    const hasAdditionalActions = !isObjectEmpty(additionalActions);
+
+    const hasTraitActions = Object.values(additionalActions).some(
+      (v) => v.type === 'skill',
+    );
+    const hasDamageActions = Object.values(additionalActions).some(
+      (v) => v.type === 'damage',
+    );
+
     const templateData = {
       actor: this.actor,
-      tokenId: token ? `${token.scene._id}.${token.id}` : null,
+      tokenId: tokenId,
       item: this.data,
       data: this.getChatData({}),
-      config: SWADE,
-      hasAmmoManagement:
-        this.type === ItemType.Weapon &&
-        !this.isMeleeWeapon &&
-        ammoManagement &&
-        !getProperty(this.data, 'data.autoReload'),
-      hasReloadButton:
-        ammoManagement &&
-        this.type === ItemType.Weapon &&
-        getProperty(this.data, 'data.shots') > 0 &&
-        !getProperty(this.data, 'data.autoReload'),
-      hasDamage: !!getProperty(this.data, 'data.damage'),
-      skill: getProperty(this.data, 'data.actions.skill'),
-      hasSkillRoll:
-        [
-          ItemType.Weapon.toString(),
-          ItemType.Power.toString(),
-          ItemType.Shield.toString(),
-        ].includes(this.data.type) &&
-        !!getProperty(this.data, 'data.actions.skill'),
+      hasAmmoManagement: hasAmmoManagement,
+      hasReloadButton: hasReloadButton,
+      hasDamage: hasDamage,
+      showDamageRolls: hasDamage || hasDamageActions,
+      hasAdditionalActions: hasAdditionalActions,
+      trait: getProperty(this.data, 'data.actions.skill'),
+      hasTraitRoll: hasTraitRoll,
+      showTraitRolls: hasTraitRoll || hasTraitActions,
       powerPoints: this._getPowerPoints(),
+      settingrules: {
+        noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
+      },
     };
 
     // Render the chat card template
@@ -247,25 +252,26 @@ export default class SwadeItem extends Item {
 
     // Basic chat message data
     const chatData = {
-      user: game.user._id,
+      user: game.user.id,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       content: html,
       speaker: {
-        actor: this.actor._id,
-        token: this.actor.token,
+        actor: this.actor.id,
+        token: tokenId,
         alias: this.actor.name,
       },
       flags: { 'core.canPopout': true },
     };
+
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&
-      this.actor.data.type === ActorType.NPC
+      this.actor.data.type === 'npc'
     ) {
       chatData['whisper'] = game.users.filter((u: User) => u.isGM);
     }
 
     // Toggle default roll mode
-    const rollMode = game.settings.get('core', 'rollMode');
+    const rollMode = game.settings.get('core', 'rollMode') as string;
     if (['gmroll', 'blindroll'].includes(rollMode))
       chatData['whisper'] = ChatMessage.getWhisperRecipients('GM');
     if (rollMode === 'selfroll') chatData['whisper'] = [game.user._id];
@@ -277,37 +283,37 @@ export default class SwadeItem extends Item {
     return chatCard;
   }
 
-  private makeExplodable(expresion) {
+  private _makeExplodable(expresion: string): string {
     // Make all dice of a roll able to explode
-    // Code from the SWADE system
     const diceRegExp = /\d*d\d+[^kdrxc]/g;
     expresion = expresion + ' '; // Just because of my poor reg_exp foo
-    const diceStrings = expresion.match(diceRegExp);
+    const diceStrings: string[] = expresion.match(diceRegExp) || [];
     const used = [];
-    if (diceStrings) {
-      diceStrings.forEach((match) => {
-        if (used.indexOf(match) === -1) {
-          expresion = expresion.replace(
-            new RegExp(match.slice(0, -1), 'g'),
-            match.slice(0, -1) + 'x',
-          );
-          used.push(match);
-        }
-      });
+    for (const match of diceStrings) {
+      if (used.indexOf(match) === -1) {
+        expresion = expresion.replace(
+          new RegExp(match.slice(0, -1), 'g'),
+          match.slice(0, -1) + 'x',
+        );
+        used.push(match);
+      }
     }
     return expresion;
   }
 
-  getRollData() {
-    return {};
-  }
+  /**
+   *
+   * @returns the power points for the AB that this power belongs to or null when the item is not a power
+   */
+  private _getPowerPoints(): { current: number; max: number } | null {
+    if (this.type !== 'power') return null;
 
-  private _getPowerPoints(): any {
-    if (this.type !== ItemType.Power) return {};
-
-    const arcane = getProperty(this.data, 'data.arcane');
-    let current = getProperty(this.actor.data, 'data.powerPoints.value');
-    let max = getProperty(this.actor.data, 'data.powerPoints.max');
+    const arcane: string = getProperty(this.data, 'data.arcane');
+    let current: number = getProperty(
+      this.actor.data,
+      'data.powerPoints.value',
+    );
+    let max: number = getProperty(this.actor.data, 'data.powerPoints.max');
     if (arcane) {
       current = getProperty(
         this.actor.data,

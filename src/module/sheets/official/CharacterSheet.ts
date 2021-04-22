@@ -1,10 +1,15 @@
+import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
+import { SysItemData } from '../../../interfaces/item-data';
+import { SWADE } from '../../config';
+import SwadeDice from '../../dice';
 import SwadeActor from '../../entities/SwadeActor';
 import SwadeItem from '../../entities/SwadeItem';
-import { ItemType } from '../../enums/ItemTypeEnum';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
+    //TODO Revisit once mergeObject is typed correctly
+    //@ts-ignore
     return mergeObject(super.defaultOptions, {
       classes: ['swade-official', 'sheet', 'actor'],
       width: 630,
@@ -56,12 +61,27 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
+      html.find('li.item.shield').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
       html.find('li.item.misc').each((i, li) => {
         // Add draggable attribute and dragstart listener.
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
       html.find('li.item.power').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
+      html.find('li.active-effect').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
+      html.find('li.item.edge-hindrance').each((i, li) => {
         // Add draggable attribute and dragstart listener.
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
@@ -86,7 +106,7 @@ export default class CharacterSheet extends ActorSheet {
         });
         ChatMessage.create({
           speaker: {
-            actor: this.actor,
+            actor: this.actor.id,
             alias: this.actor.name,
           },
           content: game.i18n.localize('SWADE.ConvictionActivate'),
@@ -156,7 +176,7 @@ export default class CharacterSheet extends ActorSheet {
     // Roll Damage
     html.find('.damage-roll').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.getOwnedItem(li.data('itemId'));
       return item.rollDamage();
     });
 
@@ -176,7 +196,7 @@ export default class CharacterSheet extends ActorSheet {
 
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.getOwnedItem(li.data('itemId'));
       item.show();
     });
 
@@ -196,7 +216,7 @@ export default class CharacterSheet extends ActorSheet {
       await Dialog.confirm({
         title: game.i18n.localize('Delete'),
         content: template,
-        yes: async () => {
+        yes: () => {
           li.slideUp(200, () => this.actor.deleteOwnedItem(ownedItem.id));
         },
         no: () => {},
@@ -215,7 +235,7 @@ export default class CharacterSheet extends ActorSheet {
         const itemData = {
           name: name ? name : `New ${type.capitalize()}`,
           type: type,
-          data: duplicate(header.dataset),
+          data: header.dataset,
         };
         delete itemData.data['type'];
         return itemData;
@@ -227,7 +247,7 @@ export default class CharacterSheet extends ActorSheet {
               const itemData = createItem(dialogInput.type, dialogInput.name);
               await this.actor.createOwnedItem(itemData, { renderSheet: true });
             } else {
-              this._createActiveEffect();
+              this._createActiveEffect(dialogInput.name);
             }
           });
           break;
@@ -245,7 +265,7 @@ export default class CharacterSheet extends ActorSheet {
     //Toggle Equipment
     html.find('.item-toggle').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.getOwnedItem(li.data('itemId'));
       await this.actor.updateOwnedItem(
         this._toggleEquipped(li.data('itemId'), item),
       );
@@ -259,7 +279,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.actor['effects'].get(effectId) as any;
+      const effect = this.actor.effects.get(effectId);
       const action = a.dataset.action;
 
       switch (action) {
@@ -269,6 +289,14 @@ export default class CharacterSheet extends ActorSheet {
           return effect.delete();
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
+        case 'open-origin':
+          fromUuid(effect.data.origin).then((item: SysItemData) => {
+            if (item) this.actor.items.get(item._id).sheet.render(true);
+          });
+          break;
+        default:
+          console.warn(`The action ${action} is not currently supported`);
+          break;
       }
     });
 
@@ -359,18 +387,37 @@ export default class CharacterSheet extends ActorSheet {
       const button = ev.currentTarget;
       const action = button.dataset['action'];
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      ItemChatCardHelper.handleAction(
-        this.actor.getOwnedItem(itemId) as SwadeItem,
-        this.actor,
-        action,
-      );
+      const item = this.actor.getOwnedItem(itemId);
+      const additionalMods = [];
+      const ppToAdjust = $(button)
+        .parents('.chat-card.item-card')
+        .find('input.pp-adjust')
+        .val() as string;
+
+      //if it's a power and the No Power Points rule is in effect
+      if (
+        item.type === 'power' &&
+        game.settings.get('swade', 'noPowerPoints')
+      ) {
+        let modifier = Math.ceil(parseInt(ppToAdjust, 10) / 2);
+        modifier = Math.min(modifier * -1, modifier);
+        const actionObj = getProperty(
+          item.data,
+          `data.actions.additional.${action}.skillOverride`,
+        ) as ItemAction;
+        //filter down further to make sure we only apply the penalty to a trait roll
+        if (
+          action === 'formula' ||
+          (!!actionObj && actionObj.type === 'skill')
+        ) {
+          additionalMods.push(modifier.signedString());
+        }
+      }
+
+      ItemChatCardHelper.handleAction(item, this.actor, action, additionalMods);
 
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
-        const ppToAdjust = $(button)
-          .closest('.flexcol')
-          .find('input.pp-adjust')
-          .val() as string;
         const adjustment = button.getAttribute('data-adjust') as string;
         const power = this.actor.getOwnedItem(itemId);
         let key = 'data.powerPoints.value';
@@ -385,12 +432,55 @@ export default class CharacterSheet extends ActorSheet {
         await this.actor.update({ [key]: newPP });
       }
     });
+
+    //Additional Stats roll
+    html.find('.additional-stats .roll').on('click', (ev) => {
+      const button = ev.currentTarget;
+      const stat = button.dataset.stat;
+      const statData = getProperty(
+        this.actor.data,
+        `data.additionalStats.${stat}`,
+      ) as AdditionalStat;
+      let modifier = statData.modifier || '';
+      if (!!modifier && !modifier.match(/^[+-]/)) {
+        modifier = '+' + modifier;
+      }
+      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
+        .evaluate()
+        .toMessage({
+          speaker: ChatMessage.getSpeaker(),
+          flavor: statData.label,
+        });
+    });
+
+    //Wealth Die Roll
+    html.find('.currency .roll').on('click', () => {
+      const die: number =
+        getProperty(this.actor.data, 'data.details.wealth.die') || 6;
+      const mod: number =
+        getProperty(this.actor.data, 'data.details.wealth.modifier') || 0;
+      const wildDie: number =
+        getProperty(this.actor.data, 'data.details.wealth.wild-die') || 6;
+      const modString = mod !== 0 ? mod.signedString() : '';
+      const dieLabel = game.i18n.localize('SWADE.WealthDie');
+      const wildDieLabel = game.i18n.localize('SWADE.WildDie');
+      const formula = `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh${modString}`;
+      const roll = new Roll(formula);
+
+      SwadeDice.Roll({
+        roll: roll,
+        speaker: ChatMessage.getSpeaker(),
+        actor: this.actor,
+        flavor: game.i18n.localize('SWADE.WealthDie'),
+        title: game.i18n.localize('SWADE.WealthDie'),
+      });
+    });
   }
 
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = CONFIG.SWADE.bennies.sheetImage;
+    data.bennyImageURL = SWADE.bennies.sheetImage;
     data.itemsByType = {};
     for (const type of game.system.entityTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
@@ -404,7 +494,7 @@ export default class CharacterSheet extends ActorSheet {
         item.currentShots = getProperty(item, 'data.currentShots');
 
         item.isMeleeWeapon =
-          ItemType.Weapon &&
+          'weapon' &&
           ((!item.shots && !item.currentShots) ||
             (item.shots === '0' && item.currentShots === '0'));
 
@@ -423,15 +513,15 @@ export default class CharacterSheet extends ActorSheet {
         }
 
         item.actor = data.actor;
-        item.config = CONFIG.SWADE;
+        item.config = SWADE;
         item.hasAmmoManagement =
-          item.type === ItemType.Weapon &&
+          item.type === 'weapon' &&
           !item.isMeleeWeapon &&
           ammoManagement &&
           !getProperty(item, 'data.autoReload');
         item.hasReloadButton =
           ammoManagement &&
-          item.type === ItemType.Weapon &&
+          item.type === 'weapon' &&
           getProperty(item, 'data.shots') > 0 &&
           !getProperty(item, 'data.autoReload');
         item.hasDamage =
@@ -441,11 +531,8 @@ export default class CharacterSheet extends ActorSheet {
           getProperty(item, 'data.actions.skill') ||
           !!item.actions.find((action) => action.type === 'skill');
         item.hasSkillRoll =
-          [
-            ItemType.Weapon.toString(),
-            ItemType.Power.toString(),
-            ItemType.Shield.toString(),
-          ].includes(item.type) && !!getProperty(item, 'data.actions.skill');
+          ['weapon', 'power', 'shield'].includes(item.type) &&
+          !!getProperty(item, 'data.actions.skill');
         item.powerPoints = getPowerPoints(item);
       }
     }
@@ -533,6 +620,9 @@ export default class CharacterSheet extends ActorSheet {
     // Check for enabled optional rules
     data.settingrules = {
       conviction: game.settings.get('swade', 'enableConviction'),
+      noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
+      wealthType: game.settings.get('swade', 'wealthType'),
+      currencyName: game.settings.get('swade', 'currencyName'),
     };
     return data;
   }
@@ -561,10 +651,7 @@ export default class CharacterSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new game.swade.SwadeEntityTweaks(this.actor, {
-      top: this.position.top + 40,
-      left: this.position.left + ((this.position.height as number) - 400) / 2,
-    }).render(true);
+    new game.swade.SwadeEntityTweaks(this.actor).render(true);
   }
 
   protected _calcInventoryWeight(items): number {
@@ -633,12 +720,14 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
-  protected async _createActiveEffect() {
+  protected async _createActiveEffect(name?: string) {
+    let possibleName = game.i18n
+      .localize('ENTITY.New')
+      .replace('{entity}', game.i18n.localize('Active Effect'));
+    if (name) possibleName = name;
     const id = (
       await this.actor.createEmbeddedEntity('ActiveEffect', {
-        label: game.i18n
-          .localize('ENTITY.New')
-          .replace('{entity}', game.i18n.localize('Active Effect')),
+        label: possibleName,
         icon: '/icons/svg/mystery-man-black.svg',
       })
     )._id;
@@ -647,7 +736,7 @@ export default class CharacterSheet extends ActorSheet {
 }
 
 function getPowerPoints(item) {
-  if (item.type !== ItemType.Power) return {};
+  if (item.type !== 'power') return {};
 
   const arcane = getProperty(item, 'data.arcane');
   let current = getProperty(item.actor, 'data.powerPoints.value');

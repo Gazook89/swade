@@ -2,8 +2,8 @@ export const SWADE = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
   ██╔════╝██║    ██║██╔══██╗██╔══██╗██╔════╝
-  ███████╗██║ █╗ ██║███████║██║  ██║█████╗  
-  ╚════██║██║███╗██║██╔══██║██║  ██║██╔══╝  
+  ███████╗██║ █╗ ██║███████║██║  ██║█████╗
+  ╚════██║██║███╗██║██╔══██║██║  ██║██╔══╝
   ███████║╚███╔███╔╝██║  ██║██████╔╝███████╗
   ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═════╝ ╚══════╝`,
 
@@ -66,6 +66,8 @@ export const SWADE = {
     id: 'settingConfig',
     title: 'SWADE Setting Rule Configurator',
     settings: [
+      'coreSkills',
+      'coreSkillsCompendium',
       'enableConviction',
       'jokersWild',
       'parryBaseSkill',
@@ -77,6 +79,9 @@ export const SWADE = {
       'ammoFromInventory',
       'npcAmmo',
       'vehicleAmmo',
+      'noPowerPoints',
+      'wealthType',
+      'currencyName',
     ],
   },
 

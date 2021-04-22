@@ -1,8 +1,11 @@
+import { AdditionalStat } from '../../interfaces/additional';
+import { SysItemData } from '../../interfaces/item-data';
+import * as chat from '../chat';
+import { SWADE } from '../config';
+import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeDice from '../dice';
 import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
-import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import * as chat from '../chat';
-import SwadeDice from '../dice';
 /**
  * @noInheritDoc
  */
@@ -19,6 +22,15 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
+
+    if (this.actor.owner) {
+      const handler = (ev) => this._onDragStart(ev);
+      html.find('li.active-effect').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
+    }
 
     // Update Item
     html.find('.item-edit').on('click', (ev) => {
@@ -92,7 +104,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         });
         ChatMessage.create({
           speaker: {
-            actor: this.actor,
+            actor: this.actor.id,
             alias: this.actor.name,
           },
           content: game.i18n.localize('SWADE.ConvictionActivate'),
@@ -167,6 +179,14 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           return effect.delete();
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
+        case 'open-origin':
+          fromUuid(effect.data.origin).then((item: SysItemData) => {
+            if (item) this.actor.items.get(item._id).sheet.render(true);
+          });
+          break;
+        default:
+          console.warn(`The action ${action} is not currently supported`);
+          break;
       }
     });
 
@@ -183,11 +203,30 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       )._id;
       return new ActiveEffectConfig(this.actor['effects'].get(id)).render(true);
     });
+
+    html.find('.additional-stats .roll').on('click', (ev) => {
+      const button = ev.currentTarget;
+      const stat = button.dataset.stat;
+      const statData = getProperty(
+        this.actor.data,
+        `data.additionalStats.${stat}`,
+      ) as AdditionalStat;
+      let modifier = statData.modifier || '';
+      if (!!modifier && !modifier.match(/^[+-]/)) {
+        modifier = '+' + modifier;
+      }
+      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
+        .evaluate()
+        .toMessage({
+          speaker: ChatMessage.getSpeaker(),
+          flavor: statData.label,
+        });
+    });
   }
 
   getData() {
     const data: any = super.getData();
-    data.config = CONFIG.SWADE;
+    data.config = SWADE;
 
     data.itemsByType = {};
     for (const type of game.system.entityTypes.Item) {
@@ -216,7 +255,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       }
 
       // Display the current active arcane
-      data.activeArcane = this.options.activeArcane;
+      data.activeArcane = this.options['activeArcane'];
       data.arcanes = [];
       const powers = data.itemsByType['power'];
       if (powers) {
@@ -236,8 +275,9 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       }
 
       // Check for enabled optional rules
-      data.data.settingrules = {
+      data.settingrules = {
         conviction: game.settings.get('swade', 'enableConviction'),
+        noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
       };
     }
 
@@ -273,10 +313,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.actor, {
-      top: this.position.top + 40,
-      left: this.position.left + ((this.position.height as number) - 400) / 2,
-    }).render(true);
+    new SwadeEntityTweaks(this.actor).render(true);
   }
 
   protected async _chooseItemType(choices?: any) {
@@ -421,7 +458,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
   }
 
   protected _filterPowers(html: JQuery, arcane: string) {
-    this.options.activeArcane = arcane;
+    this.options['activeArcane'] = arcane;
     // Show, hide powers
     html.find('.power').each((id: number, pow: any) => {
       if (pow.dataset.arcane == arcane || arcane == 'All') {
@@ -441,12 +478,12 @@ export default class SwadeBaseActorSheet extends ActorSheet {
   }
 
   /** @override */
-  render(force?: boolean, options?: RenderOptions) {
-    if (!CONFIG.SWADE.templates.templatesPreloaded) {
+  render(force?: boolean, options?: Application.RenderOptions) {
+    if (!SWADE.templates.templatesPreloaded) {
       console.log('Templates not loaded yet, waiting');
-      CONFIG.SWADE.templates.preloadPromise.then(() => {
+      SWADE.templates.preloadPromise.then(() => {
         console.log('Templates loaded, rendering');
-        CONFIG.SWADE.templates.templatesPreloaded = true;
+        SWADE.templates.templatesPreloaded = true;
         super.render(force, options);
       });
     } else {

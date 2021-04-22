@@ -1,7 +1,7 @@
 <ul class="effects-list">
   {{#each entity.effects}}
   <li
-    class="flexrow{{#if disabled}} disabled-effect{{/if}}"
+    class="flexrow {{#unless origin}}active-effect{{/unless}} {{#if disabled}}disabled-effect{{/if}}"
     data-effect-id="{{_id}}"
   >
     <img src="{{icon}}" alt="{{label}}" class="effect-icon" />
@@ -17,6 +17,10 @@
       {{#unless origin}}
       <a class="effect-action" data-action="delete">
         <i class="fas fa-trash"></i>
+      </a>
+      {{else}}
+      <a class="effect-action" data-action="open-origin">
+        <i class="fas fa-sign-out-alt"></i>
       </a>
       {{/unless}}
     </span>
