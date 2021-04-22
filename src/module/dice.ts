@@ -118,9 +118,10 @@ export default class SwadeDice {
     let rollMode = game.settings.get('core', 'rollMode') as Const.DiceRollMode;
     const groupRoll = actor && raise;
     // Optionally include a situational bonus
-    let bonus = null;
+    let bonus: string = null;
     if (form) bonus = form.find('#bonus').val();
     if (bonus) {
+      if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;
       roll.terms.push(bonus);
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.SitMod')}: ${bonus}`;
     }
