@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added `SwadeActor#hasJoker` getter which returns a boolean value
 - Added added `profile-img` class to the image element that displays a characters image on the Official Sheet
 - Added additional translation strings
+- Edges, Hindrances and Special Abilities can now be dragged&dropped to the Hotbar from the character sheet
 
 ### Changed
 

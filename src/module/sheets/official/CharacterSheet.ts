@@ -61,6 +61,11 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
+      html.find('li.item.shield').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
       html.find('li.item.misc').each((i, li) => {
         // Add draggable attribute and dragstart listener.
         li.setAttribute('draggable', 'true');
@@ -72,6 +77,11 @@ export default class CharacterSheet extends ActorSheet {
         li.addEventListener('dragstart', handler, false);
       });
       html.find('li.active-effect').each((i, li) => {
+        // Add draggable attribute and dragstart listener.
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
+      });
+      html.find('li.item.edge-hindrance').each((i, li) => {
         // Add draggable attribute and dragstart listener.
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
