@@ -167,16 +167,15 @@ export function rollPowerMacro(powerName) {
  * @param itemName
  * @returns
  */
-export function rollItemMacro(itemName) {
+export function rollItemMacro(itemName: string) {
   const speaker = ChatMessage.getSpeaker();
-  let actor: SwadeActor;
+  let actor: SwadeActor = null;
   if (speaker.token) actor = game.actors.tokens[speaker.token] as SwadeActor;
   if (!actor) actor = game.actors.get(speaker.actor);
-  if (actor && !actor.owner) {
+  if (!actor || !actor.owner) {
     return null;
   }
-
-  const item = actor.items.find((i) => i.name === itemName);
+  const item = actor.items.getName(itemName);
   if (!item) {
     ui.notifications.warn(
       `Your controlled Actor does not have an item named ${itemName}`,
@@ -185,7 +184,7 @@ export function rollItemMacro(itemName) {
   }
   //Roll the skill
   if (item.type === 'skill') {
-    return actor.rollSkill(item.id, {});
+    return actor.rollSkill(item.id, {}) as Promise<Roll>;
   } else {
     // Show the item
     return item.show();
