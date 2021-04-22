@@ -4,7 +4,8 @@
       class="profile-img"
       src="{{item.img}}"
       data-edit="img"
-      title="{{item.name}}"
+      alt="{{item.name}}"
+      title="{{localize 'SWADE.RightClickZoom'}}"
     />
   </div>
   <div class="header-fields">
@@ -19,7 +20,7 @@
     </h1>
   </div>
 </header>
-<nav class="flexrow tabs" data-group="primary" style="margin-bottom: 5px;">
+<nav class="flexrow tabs" data-group="primary" style="margin-bottom: 5px">
   <a class="item active" data-tab="summary">{{localize "SWADE.Desc"}}</a>
   <a class="item" data-tab="actions-effects"
     >{{localize "SWADE.ActionsEffects"}}</a

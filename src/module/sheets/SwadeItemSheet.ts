@@ -89,7 +89,8 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.profile-img').on('contextmenu', () => {
       new ImagePopout(this.item.img, {
         title: this.item.name,
-        shareable: game.user.isGM,
+        shareable:
+          (this.item.isOwned && this.item.actor.owner) || game.user.isGM,
       }).render(true);
     });
 
