@@ -451,19 +451,24 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   /**
    * @override
    */
-  getRollData(): any {
+  getRollData() {
     const retVal = this.getRollShortcuts();
-    const skills = this.items.filter((i) => i.type === 'skill');
-    for (const skill of skills) {
-      const skillDie = getProperty(skill.data, 'data.die.sides');
-      let skillMod = getProperty(skill.data, 'data.die.modifier');
-      skillMod = skillMod !== 0 ? parseInt(skillMod).signedString() : '';
-      retVal[
-        skill.name.slugify({ strict: true })
-      ] = `1d${skillDie}x[${skill.name}]${skillMod}`;
+    retVal['wounds'] = this.data.data.wounds.value || 0;
+
+    if (this.data.type === 'vehicle') {
+      retVal['topspeed'] = this.data.data.topspeed || 0;
+    } else {
+      const skills = this.itemTypes['skill'];
+      for (const skill of skills) {
+        const skillDie = getProperty(skill.data, 'data.die.sides');
+        let skillMod = getProperty(skill.data, 'data.die.modifier');
+        skillMod = skillMod !== 0 ? parseInt(skillMod).signedString() : '';
+        const name = skill.name.slugify({ strict: true });
+        retVal[name] = `1d${skillDie}x[${skill.name}]${skillMod}`;
+      }
+      retVal['fatigue'] = this.data.data.fatigue.value || 0;
+      retVal['pace'] = this.data.data.stats.speed.value || 0;
     }
-    retVal['wounds'] = getProperty(this.data, 'data.wounds.value') || 0;
-    retVal['fatigue'] = getProperty(this.data, 'data.fatigue.value') || 0;
     return retVal;
   }
 
