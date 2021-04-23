@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased v0.18.1]
 
+### Changed
+
+- The `options` parameter for `SwadeActor#rollSkill` and `SwadeActor#rollAttribute` is now optional
+
 ### Fixed
 
 - Fixed a small bug which would cause Power chat cards to concatinate numbers instead of adding them when adjusting power points

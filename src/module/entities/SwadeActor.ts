@@ -180,7 +180,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   rollAttribute(
     abilityId: string,
-    options: IRollOptions,
+    options: IRollOptions = {},
   ): Promise<Roll> | Roll {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
@@ -256,7 +256,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   rollSkill(
     skillId: string,
-    options: IRollOptions,
+    options: IRollOptions = {},
     tempSkill?: SwadeItem,
   ): Promise<Roll> | Roll {
     if (!options.rof) options.rof = 1;
@@ -305,7 +305,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     });
   }
 
-  async makeUnskilledAttempt(options: IRollOptions): Promise<Roll> {
+  async makeUnskilledAttempt(options: IRollOptions = {}): Promise<Roll> {
     const tempSkill = new Item(
       {
         name: game.i18n.localize('SWADE.Unskilled'),
