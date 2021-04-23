@@ -82,7 +82,12 @@
         <label>
           <strong>{{localize "SWADE.PPCost"}}: </strong>
         </label>
-        <input type="number" class="pp-adjust" value="{{data.pp}}" />
+        <input
+          type="number"
+          class="pp-adjust"
+          data-dtype="Number"
+          value="{{data.pp}}"
+        />
       </span>
       {{#unless settingrules.noPowerPoints}}
       <span class="flexrow" style="display: flex">

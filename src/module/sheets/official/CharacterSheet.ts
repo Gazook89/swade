@@ -425,9 +425,9 @@ export default class CharacterSheet extends ActorSheet {
         if (arcane) key = `data.powerPoints.${arcane}.value`;
         let newPP = getProperty(this.actor.data, key);
         if (adjustment === 'plus') {
-          newPP += parseInt(ppToAdjust);
+          newPP += parseInt(ppToAdjust, 10);
         } else if (adjustment === 'minus') {
-          newPP -= parseInt(ppToAdjust);
+          newPP -= parseInt(ppToAdjust, 10);
         }
         await this.actor.update({ [key]: newPP });
       }

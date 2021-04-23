@@ -161,21 +161,18 @@ export function chatListeners(html: JQuery<HTMLElement>) {
       const ppToAdjust = $(element)
         .closest('.flexcol')
         .find('input.pp-adjust')
-        .val() as number;
+        .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
       const power = actor.getOwnedItem(itemId);
       let key = 'data.powerPoints.value';
       const arcane = getProperty(power.data, 'data.arcane');
       if (arcane) key = `data.powerPoints.${arcane}.value`;
-      let newPP = getProperty(actor.data, key);
+      const oldPP = getProperty(actor.data, key) as number;
       if (adjustment === 'plus') {
-        newPP += ppToAdjust;
+        await actor.update({ [key]: oldPP + parseInt(ppToAdjust, 10) });
       } else if (adjustment === 'minus') {
-        newPP -= ppToAdjust;
-      } else if (adjustment === 'refresh') {
-        await ItemChatCardHelper.refreshItemCard(actor, messageId);
+        await actor.update({ [key]: oldPP - parseInt(ppToAdjust, 10) });
       }
-      await actor.update({ [key]: newPP });
       await ItemChatCardHelper.refreshItemCard(actor, messageId);
     }
   });

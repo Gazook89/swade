@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [Unreleased v0.18.1]
+
+### Fixed
+
+- Fixed a small bug which would cause Power chat cards to concatinate numbers instead of adding them when adjusting power points
+
 ## [v0.18.0]
 
 ### Added
