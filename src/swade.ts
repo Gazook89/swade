@@ -257,13 +257,6 @@ Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 
-Hooks.on(
-  'getCombatTrackerEntryContext',
-  (html: JQuery<HTMLElement>, options: any[]) => {
-    const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
-    if (index !== -1) {
-      options[index].name = 'SWADE.Redraw';
-      options[index].icon = '<i class="fas fa-sync-alt"></i>';
-    }
-  },
+Hooks.on('getCombatTrackerEntryContext', (html, options) =>
+  SwadeHooks.onGetCombatTrackerEntryContext(html, options),
 );
