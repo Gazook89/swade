@@ -12,28 +12,28 @@
   "packs": [
     {
       "name": "skills",
-      "label": "Skills",
+      "label": "Basic Skills",
       "system": "swade",
       "path": "./packs/skills.db",
       "entity": "Item"
     },
     {
       "name": "edges",
-      "label": "Edges",
+      "label": "Basic Edges",
       "system": "swade",
       "path": "./packs/edges.db",
       "entity": "Item"
     },
     {
       "name": "hindrances",
-      "label": "Hindrances",
+      "label": "Basic Hindrances",
       "system": "swade",
       "path": "./packs/hindrances.db",
       "entity": "Item"
     },
     {
       "name": "action-cards",
-      "label": "Action Cards",
+      "label": "Basic Action Cards",
       "system": "swade",
       "path": "./packs/action-cards.db",
       "entity": "JournalEntry"

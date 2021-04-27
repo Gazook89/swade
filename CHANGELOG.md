@@ -20,6 +20,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [Unreleased]
+
+### Changed
+
+- Changed the labels of the system Compendiums to _Basic Skills_, _Basic Edges_, _Basic Hindrances_ and _Basic Action Cards_
+- Renamed the Combat Tracker contextmenu option for rerolling Initiative to give it a more appropriate name and symbol
+
 ## [v0.18.1]
 
 ### Changed

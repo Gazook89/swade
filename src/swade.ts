@@ -25,11 +25,11 @@ import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
 import {
+  createSwadeMacro,
+  rollItemMacro,
   rollPowerMacro,
   rollSkillMacro,
   rollWeaponMacro,
-  rollItemMacro,
-  createSwadeMacro,
 } from './module/util';
 
 /* ------------------------------------ */
@@ -54,7 +54,7 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  // CONFIG.debug.hooks = true;
+  CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
   game.swade = swadeGame;
@@ -256,3 +256,14 @@ Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
 );
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
+
+Hooks.on(
+  'getCombatTrackerEntryContext',
+  (html: JQuery<HTMLElement>, options: any[]) => {
+    const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
+    if (index !== -1) {
+      options[index].name = 'SWADE.Redraw';
+      options[index].icon = '<i class="fas fa-sync-alt"></i>';
+    }
+  },
+);
