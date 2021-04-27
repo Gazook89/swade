@@ -14,7 +14,7 @@ import CharacterSheet from './sheets/official/CharacterSheet';
 import SwadeCharacterSheet from './sheets/SwadeCharacterSheet';
 import SwadeNPCSheet from './sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
-import { createActionCardTable, createSwadeMacro } from './util';
+import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
   public static onSetup() {
@@ -447,6 +447,17 @@ export default class SwadeHooks {
         callback: (li) => chat.rerollFromChat(li, false),
       },
     );
+  }
+
+  public static onGetCombatTrackerEntryContext(
+    html: JQuery<HTMLElement>,
+    options: any[],
+  ) {
+    const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
+    if (index !== -1) {
+      options[index].name = 'SWADE.Redraw';
+      options[index].icon = '<i class="fas fa-sync-alt"></i>';
+    }
   }
 
   public static async onRenderPlayerList(

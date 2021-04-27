@@ -25,11 +25,11 @@ import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
 import {
+  createSwadeMacro,
+  rollItemMacro,
   rollPowerMacro,
   rollSkillMacro,
   rollWeaponMacro,
-  rollItemMacro,
-  createSwadeMacro,
 } from './module/util';
 
 /* ------------------------------------ */
@@ -256,3 +256,7 @@ Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
 );
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
+
+Hooks.on('getCombatTrackerEntryContext', (html, options) =>
+  SwadeHooks.onGetCombatTrackerEntryContext(html, options),
+);
