@@ -54,7 +54,7 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  CONFIG.debug.hooks = true;
+  // CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
   game.swade = swadeGame;
