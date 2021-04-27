@@ -20,12 +20,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
-## [Unreleased]
+## [v0.18.2]
 
 ### Changed
 
-- Changed the labels of the system Compendiums to _Basic Skills_, _Basic Edges_, _Basic Hindrances_ and _Basic Action Cards_
+- Changed the labels of the system Compendiums to _Basic Skills_, _Basic Edges_, _Basic Hindrances_ and _Basic Action Cards_ to better differentiate them from the Core Rules
 - Renamed the Combat Tracker contextmenu option for rerolling Initiative to give it a more appropriate name and symbol
+
+### Fixed
+
+- Fixed weird behavior of the Biography Editor on the official character sheet
 
 ## [v0.18.1]
 
