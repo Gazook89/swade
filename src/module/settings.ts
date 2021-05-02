@@ -1,5 +1,16 @@
 import SettingConfigurator from './SettingConfigurator';
 export function registerSettings() {
+  /**
+   * Track the system version upon which point a migration was last applied
+   */
+  game.settings.register('swade', 'systemMigrationVersion', {
+    name: 'System Migration Version',
+    scope: 'world',
+    config: false,
+    type: String,
+    default: '0.0.0',
+  });
+
   game.settings.registerMenu('swade', 'setting-config', {
     name: game.i18n.localize('SWADE.SettingConf'),
     label: game.i18n.localize('SWADE.SettingConfLabel'),

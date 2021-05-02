@@ -263,4 +263,6 @@ export const SWADE = {
   dsnTextureList: {},
 
   raceLocalizationKey: 'SWADE.Race',
+
+  allowedActorFlags: [],
 };

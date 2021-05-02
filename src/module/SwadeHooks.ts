@@ -9,6 +9,7 @@ import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 import SwadeTemplate from './entities/SwadeTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
+import * as migrations from './migrations';
 import { SwadeSetup } from './setup/setupHandler';
 import CharacterSheet from './sheets/official/CharacterSheet';
 import SwadeCharacterSheet from './sheets/SwadeCharacterSheet';
@@ -87,6 +88,33 @@ export default class SwadeHooks {
         },
       },
     };
+
+    // Determine whether a system migration is required and feasible
+    if (!game.user.isGM) return;
+    const currentVersion = game.settings.get(
+      'swade',
+      'systemMigrationVersion',
+    ) as string;
+    //TODO Adjust this version every time a migration needs to be triggered
+    const NEEDS_MIGRATION_VERSION = '1.2.1';
+    //Minimal compativle version needed for the migration
+    const COMPATIBLE_MIGRATION_VERSION = '0.0.0';
+    //If the needed migration version is newer than the old migration version then migrate the world
+    const needsMigration =
+      currentVersion && isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
+    if (!needsMigration) return;
+
+    // Perform the migration
+
+    if (
+      currentVersion &&
+      isNewerVersion(COMPATIBLE_MIGRATION_VERSION, currentVersion)
+    ) {
+      ui.notifications.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
+        permanent: true,
+      });
+    }
+    migrations.migrateWorld();
   }
 
   public static onPreCreateItem(createData: any, options: any, userId: string) {

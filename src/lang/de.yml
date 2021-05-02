@@ -344,3 +344,8 @@ SWADE.DmgRolls: Schadenswürfe
 SWADE.SubtractPPDesc: MP Kosten von verfügbaren MP abziehen
 SWADE.AddPPDesc: MP Kosten zu den verfügbaren PP hinzurechnen
 SWADE.RightClickZoom: Für eine größere Ansicht rechtsklicken
+SWADE.SysMigrationWarning: >-
+  Ihre SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können
+  nicht zuverlässig auf die neueste Version migriert werden. 
+
+  Der Vorgang wird versucht, es können jedoch Fehler auftreten.
