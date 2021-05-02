@@ -96,7 +96,7 @@ export default class SwadeHooks {
       'systemMigrationVersion',
     ) as string;
     //TODO Adjust this version every time a migration needs to be triggered
-    const NEEDS_MIGRATION_VERSION = '0.18.1';
+    const NEEDS_MIGRATION_VERSION = '0.18.0';
     //Minimal compativle version needed for the migration
     const COMPATIBLE_MIGRATION_VERSION = '0.15.0';
     //If the needed migration version is newer than the old migration version then migrate the world
