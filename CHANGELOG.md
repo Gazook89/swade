@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+### Added
+
+- Added `SwadeActor#status` getter which returns an object that contains the current status as booleans
+
 ### Fixed
 
 - Fixed Vehicle operators not working properly when no token exists
