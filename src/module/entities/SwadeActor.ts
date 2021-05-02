@@ -643,12 +643,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     //Get skillname
-    let skillName = getProperty(this.data, 'data.driver.skill');
+    let skillName = this.data.data.driver.skill;
     if (skillName === '') {
-      skillName = getProperty(this.data, 'data.driver.skillAlternative');
+      skillName = this.data.data.driver.skillAlternative;
     }
 
-    const handling = getProperty(this.data, 'data.handling');
+    const handling = this.data.data.handling;
     const wounds = this.calcWoundPenalties();
     let totalHandling: number | string;
     totalHandling = handling + wounds;
@@ -683,7 +683,15 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   async getDriver(): Promise<SwadeActor> {
     if (this.data.type !== 'vehicle') return null;
     const driverId = this.data.data.driver.id;
-    return game.actors.get(driverId) as SwadeActor;
+    let driver: SwadeActor = null;
+    if (driverId) {
+      try {
+        driver = (await fromUuid(driverId)) as SwadeActor;
+      } catch (error) {
+        ui.notifications.error('The Driver could not be found!');
+      }
+    }
+    return driver;
   }
 
   protected _handleComplexSkill(

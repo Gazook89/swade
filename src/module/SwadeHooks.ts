@@ -9,7 +9,7 @@ import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 import SwadeTemplate from './entities/SwadeTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
-import * as migrations from './migrations';
+import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import CharacterSheet from './sheets/official/CharacterSheet';
 import SwadeCharacterSheet from './sheets/SwadeCharacterSheet';
@@ -96,9 +96,9 @@ export default class SwadeHooks {
       'systemMigrationVersion',
     ) as string;
     //TODO Adjust this version every time a migration needs to be triggered
-    const NEEDS_MIGRATION_VERSION = '1.2.1';
+    const NEEDS_MIGRATION_VERSION = '0.18.1';
     //Minimal compativle version needed for the migration
-    const COMPATIBLE_MIGRATION_VERSION = '0.0.0';
+    const COMPATIBLE_MIGRATION_VERSION = '0.15.0';
     //If the needed migration version is newer than the old migration version then migrate the world
     const needsMigration =
       currentVersion && isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
@@ -624,10 +624,15 @@ export default class SwadeHooks {
       const vehicleSheet = sheet as SwadeVehicleSheet;
       const activeTab = getProperty(vehicleSheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
-        vehicleSheet.setDriver(data.id);
+        let idToSet = `Actor.${data.id}`;
+        if ('pack' in data) {
+          idToSet = `Compendium.${data.pack}.${data.id}`;
+        }
+        sheet.actor.update({ 'data.driver.id': idToSet });
       }
       return false;
     }
+    //handle race item creation
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
       let item: SwadeItem;
       if ('pack' in data) {

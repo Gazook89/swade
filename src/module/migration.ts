@@ -1,5 +1,4 @@
-import { SysActorData } from '../interfaces/actor-data';
-import { SysItemData } from '../interfaces/item-data';
+import { VehicleCommon } from '../interfaces/actor-data';
 
 export async function migrateWorld() {
   ui.notifications.info(
@@ -10,7 +9,7 @@ export async function migrateWorld() {
   // Migrate World Actors
   for (const a of game.actors.entities) {
     try {
-      const updateData = migrateActorData(a.data as SysActorData);
+      const updateData = migrateActorData(a.data);
       if (!isObjectEmpty(updateData)) {
         console.log(`Migrating Actor entity ${a.name}`);
         await a.update(updateData, { enforceTypes: false });
@@ -24,7 +23,7 @@ export async function migrateWorld() {
   // Migrate World Items
   for (const i of game.items.entities) {
     try {
-      const updateData = migrateItemData(i.data as SysItemData);
+      const updateData = migrateItemData(i.data);
       if (!isObjectEmpty(updateData)) {
         console.log(`Migrating Item entity ${i.name}`);
         await i.update(updateData, { enforceTypes: false });
@@ -77,13 +76,13 @@ export async function migrateCompendium(pack: Compendium) {
     try {
       switch (entity) {
         case 'Actor':
-          updateData = migrateActorData(ent.data as SysActorData);
+          updateData = migrateActorData(ent.data);
           break;
         case 'Item':
-          updateData = migrateItemData(ent.data as SysItemData);
+          updateData = migrateItemData(ent.data);
           break;
         case 'Scene':
-          updateData = migrateSceneData(ent.data as Scene.Data);
+          updateData = migrateSceneData(ent.data);
           break;
       }
       if (isObjectEmpty(updateData)) continue;
@@ -118,10 +117,11 @@ export async function migrateCompendium(pack: Compendium) {
  * @param {object} actor    The actor data object to update
  * @return {Object}         The updateData to apply
  */
-export function migrateActorData(actor: SysActorData) {
-  const updateData = {};
+export function migrateActorData(actor) {
+  let updateData = {};
 
   // Actor Data Updates
+  _migrateVehicleOperator(actor, updateData);
 
   // Migrate Owned Items
   if (!actor.items) return updateData;
@@ -143,7 +143,7 @@ export function migrateActorData(actor: SysActorData) {
   return updateData;
 }
 
-export function migrateItemData(item: SysItemData) {
+export function migrateItemData(item) {
   const updateData = {};
   return updateData;
 }
@@ -154,7 +154,7 @@ export function migrateItemData(item: SysItemData) {
  * @param {Object} scene  The Scene data to Update
  * @return {Object}       The updateData to apply
  */
-export function migrateSceneData(scene: Scene.Data) {
+export function migrateSceneData(scene) {
   const tokens = duplicate(scene.tokens);
   return {
     tokens: tokens.map((t) => {
@@ -167,9 +167,7 @@ export function migrateSceneData(scene: Scene.Data) {
         t.actorId = null;
         t.actorData = {};
       } else if (!t.actorLink) {
-        const updateData = migrateActorData(
-          token.data.actorData as SysActorData,
-        );
+        const updateData = migrateActorData(token.data.actorData);
         t.actorData = mergeObject(token.data.actorData, updateData);
       }
       return t;
@@ -192,4 +190,17 @@ export function removeDeprecatedObjects(data) {
     }
   }
   return data;
+}
+
+function _migrateVehicleOperator(
+  actorData: Actor.Data<VehicleCommon>,
+  updateData,
+) {
+  if (actorData.type !== 'vehicle') return updateData;
+  const driverId = actorData.data.driver.id;
+  const hasOldID = !!driverId && driverId.split('.').length === 1;
+  if (hasOldID) {
+    updateData['data.driver.id'] = `Actor.${driverId}`;
+  }
+  return updateData;
 }
