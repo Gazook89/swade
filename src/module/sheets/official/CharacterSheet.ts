@@ -538,7 +538,7 @@ export default class CharacterSheet extends ActorSheet {
         item.hasSkillRoll =
           ['weapon', 'power', 'shield'].includes(item.type) &&
           !!getProperty(item, 'data.actions.skill');
-        item.powerPoints = getPowerPoints(item);
+        item.powerPoints = this.getPowerPoints(item);
       }
     }
 
@@ -630,6 +630,19 @@ export default class CharacterSheet extends ActorSheet {
       currencyName: game.settings.get('swade', 'currencyName'),
     };
     return data;
+  }
+
+  getPowerPoints(item) {
+    if (item.type !== 'power') return {};
+
+    const arcane = getProperty(item, 'data.arcane');
+    let current = getProperty(item.actor, 'data.powerPoints.value');
+    let max = getProperty(item.actor, 'data.powerPoints.max');
+    if (arcane) {
+      current = getProperty(item.actor, `data.powerPoints.${arcane}.value`);
+      max = getProperty(item.actor, `data.powerPoints.${arcane}.max`);
+    }
+    return { current, max };
   }
 
   /**
@@ -738,17 +751,4 @@ export default class CharacterSheet extends ActorSheet {
     )._id;
     return this.actor['effects'].get(id).sheet.render(true);
   }
-}
-
-function getPowerPoints(item) {
-  if (item.type !== 'power') return {};
-
-  const arcane = getProperty(item, 'data.arcane');
-  let current = getProperty(item.actor, 'data.powerPoints.value');
-  let max = getProperty(item.actor, 'data.powerPoints.max');
-  if (arcane) {
-    current = getProperty(item.actor, `data.powerPoints.${arcane}.value`);
-    max = getProperty(item.actor, `data.powerPoints.${arcane}.max`);
-  }
-  return { current, max };
 }
