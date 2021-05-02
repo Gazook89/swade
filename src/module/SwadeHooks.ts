@@ -146,15 +146,18 @@ export default class SwadeHooks {
       return;
     }
 
+    //return early if the actor already has skills
+    if (actor.itemTypes['skill'].length > 0) {
+      return;
+    }
+
     //Get list of core skills from settings
     const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
       .split(',')
       .map((s) => s.trim());
 
     //Get and map the existing skills on the actor to an array of names
-    const existingSkills = actor.items
-      .filter((i: SwadeItem) => i.type === 'skill')
-      .map((i: SwadeItem) => i.name);
+    const existingSkills = actor.itemTypes['skill'].map((i) => i.name);
 
     //Filter the expected
     const skillsToAdd = coreSkills.filter((s) => !existingSkills.includes(s));
