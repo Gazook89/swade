@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [Unreleased]
+
+### Added
+
+- When Equipping/unequipping a weapon, armor or shield _all_ Active Effects that come from that item are now toggled as well
+
 ## [v0.18.3]
 
 ### Added

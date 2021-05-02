@@ -262,16 +262,21 @@ export default class CharacterSheet extends ActorSheet {
       }
     });
 
-    //Toggle Equipment
+    //Toggle Equipment Status
     html.find('.item-toggle').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
-      await this.actor.updateOwnedItem(
-        this._toggleEquipped(li.data('itemId'), item),
+      const itemID = li.data('itemId');
+      const item = this.actor.getOwnedItem(itemID);
+      await this.actor.updateOwnedItem(this._toggleEquipped(itemID, item));
+      //filter active effects
+      const effects = this.actor.effects.filter(
+        (ae) => ae.data.origin === item.uuid,
       );
-      if (item.type === 'armor') {
-        await this.actor.update({
-          'data.stats.toughness.armor': this.actor.calcArmor(),
+      //toggle all active effects so they correspond with the status of the item
+      for (const ae of effects) {
+        await this.actor.updateEmbeddedEntity('ActiveEffect', {
+          _id: ae.id,
+          disabled: !item.data.data['equipped'],
         });
       }
     });
@@ -533,7 +538,7 @@ export default class CharacterSheet extends ActorSheet {
         item.hasSkillRoll =
           ['weapon', 'power', 'shield'].includes(item.type) &&
           !!getProperty(item, 'data.actions.skill');
-        item.powerPoints = getPowerPoints(item);
+        item.powerPoints = this.getPowerPoints(item);
       }
     }
 
@@ -625,6 +630,19 @@ export default class CharacterSheet extends ActorSheet {
       currencyName: game.settings.get('swade', 'currencyName'),
     };
     return data;
+  }
+
+  getPowerPoints(item) {
+    if (item.type !== 'power') return {};
+
+    const arcane = getProperty(item, 'data.arcane');
+    let current = getProperty(item.actor, 'data.powerPoints.value');
+    let max = getProperty(item.actor, 'data.powerPoints.max');
+    if (arcane) {
+      current = getProperty(item.actor, `data.powerPoints.${arcane}.value`);
+      max = getProperty(item.actor, `data.powerPoints.${arcane}.max`);
+    }
+    return { current, max };
   }
 
   /**
@@ -733,17 +751,4 @@ export default class CharacterSheet extends ActorSheet {
     )._id;
     return this.actor['effects'].get(id).sheet.render(true);
   }
-}
-
-function getPowerPoints(item) {
-  if (item.type !== 'power') return {};
-
-  const arcane = getProperty(item, 'data.arcane');
-  let current = getProperty(item.actor, 'data.powerPoints.value');
-  let max = getProperty(item.actor, 'data.powerPoints.max');
-  if (arcane) {
-    current = getProperty(item.actor, `data.powerPoints.${arcane}.value`);
-    max = getProperty(item.actor, `data.powerPoints.${arcane}.max`);
-  }
-  return { current, max };
 }
