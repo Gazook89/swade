@@ -339,6 +339,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   }
 
   async spendBenny() {
+    if (this.data.type === 'vehicle') return;
     const currentBennies = getProperty(this.data, 'data.bennies.value');
     //return early if there no bennies to spend
     if (currentBennies < 1) return;
@@ -360,6 +361,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   }
 
   async getBenny() {
+    if (this.data.type === 'vehicle') return;
     if (game.settings.get('swade', 'notifyBennies')) {
       const message = await renderTemplate(SWADE.bennies.templates.add, {
         target: this,
@@ -381,6 +383,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * @param displayToChat display a message to chat
    */
   async refreshBennies(displayToChat = true) {
+    if (this.data.type === 'vehicle') return;
     if (displayToChat) {
       const message = await renderTemplate(SWADE.bennies.templates.refresh, {
         target: this,
@@ -391,7 +394,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       };
       ChatMessage.create(chatData);
     }
-    if (this.data.type === 'vehicle') return;
     await this.update({ 'data.bennies.value': this.data.data.bennies.max });
   }
 
@@ -488,6 +490,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * Calculates the correct armor value based on SWADE v5.5 and returns that value
    */
   calcArmor(): number {
+    if (this.data.type === 'vehicle') return null;
     const getArmorValue = (value: string | number): number => {
       return typeof value === 'number' ? value : parseInt(value, 10);
     };
@@ -543,6 +546,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * @param includeArmor include armor in final value (true/false). Default is true
    */
   calcToughness(includeArmor = true): number {
+    if (this.data.type === 'vehicle') return null;
     let retVal = 0;
     const vigor = getProperty(this.data, 'data.attributes.vigor.die.sides');
     const vigMod = parseInt(
@@ -572,6 +576,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * Calculates the maximum carry capacity based on the strength die and any adjustment steps
    */
   calcMaxCarryCapacity(): number {
+    if (this.data.type === 'vehicle') return null;
     const strengthDie = getProperty(this.data, 'data.attributes.strength.die');
 
     let stepAdjust =
@@ -593,6 +598,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   }
 
   calcParry(): number {
+    if (this.data.type === 'vehicle') return null;
     let parryTotal = 0;
     const parryBase = game.settings.get('swade', 'parryBaseSkill') as string;
     const parryBaseSkill = this.items.find(
