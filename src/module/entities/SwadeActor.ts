@@ -474,7 +474,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       retVal['fatigue'] = this.data.data.fatigue.value || 0;
       retVal['pace'] = this.data.data.stats.speed.value || 0;
     }
-    console.log(retVal);
     return retVal;
   }
 
