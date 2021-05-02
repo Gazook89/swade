@@ -268,9 +268,11 @@ export default class CharacterSheet extends ActorSheet {
       const itemID = li.data('itemId');
       const item = this.actor.getOwnedItem(itemID);
       await this.actor.updateOwnedItem(this._toggleEquipped(itemID, item));
+      //filter active effects
       const effects = this.actor.effects.filter(
-        (ae) => ae.data.origin === item.uuid && ae.parent.id === this.actor.id,
+        (ae) => ae.data.origin === item.uuid,
       );
+      //toggle all active effects so they correspond with the status of the item
       for (const ae of effects) {
         await this.actor.updateEmbeddedEntity('ActiveEffect', {
           _id: ae.id,
