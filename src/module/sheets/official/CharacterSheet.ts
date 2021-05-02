@@ -262,16 +262,19 @@ export default class CharacterSheet extends ActorSheet {
       }
     });
 
-    //Toggle Equipment
+    //Toggle Equipment Status
     html.find('.item-toggle').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
-      await this.actor.updateOwnedItem(
-        this._toggleEquipped(li.data('itemId'), item),
+      const itemID = li.data('itemId');
+      const item = this.actor.getOwnedItem(itemID);
+      await this.actor.updateOwnedItem(this._toggleEquipped(itemID, item));
+      const effects = this.actor.effects.filter(
+        (ae) => ae.data.origin === item.uuid && ae.parent.id === this.actor.id,
       );
-      if (item.type === 'armor') {
-        await this.actor.update({
-          'data.stats.toughness.armor': this.actor.calcArmor(),
+      for (const ae of effects) {
+        await this.actor.updateEmbeddedEntity('ActiveEffect', {
+          _id: ae.id,
+          disabled: !item.data.data['equipped'],
         });
       }
     });
