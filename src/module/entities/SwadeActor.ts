@@ -63,6 +63,10 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     return combatant && getProperty(combatant, 'flags.swade.hasJoker');
   }
 
+  get status() {
+    return this.data.data.status;
+  }
+
   /**
    * @override
    */
