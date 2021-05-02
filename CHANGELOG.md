@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed Vehicle operators not working properly when no token exists
+
 ## [v0.18.2]
 
 ### Changed

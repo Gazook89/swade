@@ -45,8 +45,13 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * @returns true when the actor is currently in combat and has drawna joker
    */
   get hasJoker(): boolean {
+    //return early if no combat is running
+    if (!game.combats.active) return false;
+
     let combatant;
-    if (this.data.token.actorLink) {
+    const hasToken = !!this.token;
+    const isLinked = this.data.token.actorLink;
+    if (isLinked || !hasToken) {
       //linked token
       combatant = game.combat?.combatants.find((c) => c.actor.id === this.id);
     } else {
@@ -469,6 +474,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       retVal['fatigue'] = this.data.data.fatigue.value || 0;
       retVal['pace'] = this.data.data.stats.speed.value || 0;
     }
+    console.log(retVal);
     return retVal;
   }
 
