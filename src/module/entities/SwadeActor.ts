@@ -633,12 +633,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   /**
    * Helper Function for Vehicle Actors, to roll Maneuevering checks
    */
-  rollManeuverCheck(event: any = null) {
-    const driverId = getProperty(this.data, 'data.driver.id') as string;
-    const driver = game.actors.get(driverId) as SwadeActor;
+  async rollManeuverCheck(event: any = null) {
+    if (this.data.type !== 'vehicle') return;
+    const driver = await this.getDriver();
 
     //Return early if no driver was found
-    if (!driverId || !driver) {
+    if (!driver) {
       return;
     }
 
@@ -678,6 +678,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     } else {
       driver.makeUnskilledAttempt(options);
     }
+  }
+
+  async getDriver(): Promise<SwadeActor> {
+    if (this.data.type !== 'vehicle') return null;
+    const driverId = this.data.data.driver.id;
+    return game.actors.get(driverId) as SwadeActor;
   }
 
   protected _handleComplexSkill(
