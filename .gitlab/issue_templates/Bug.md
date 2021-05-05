@@ -21,4 +21,4 @@ In order to submit an effective bug report, please include the following informa
 
 > If you have any possible leads to the Root Cause or suggestions for fixes thgen please provide them here
 
-/label ~Bug
+/label ~bug

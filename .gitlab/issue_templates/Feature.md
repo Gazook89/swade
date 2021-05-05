@@ -12,4 +12,4 @@ In order to submit an effective feature request, please include the following in
 
 > Please describe your assessment of feature priority. If you feel it is highly important, describe why you believe it to be more important than other enhancements.
 
-/label ~"Feature Request"
+/label ~request
