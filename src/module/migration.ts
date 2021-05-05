@@ -56,7 +56,7 @@ export async function migrateWorld() {
 
 /**
  * Apply migration rules to all Entities within a single Compendium pack
- * @param pack
+ * @param pack The compendium to migrate. Only Actor, Item or Scene compendiums are processed
  */
 export async function migrateCompendium(pack: Compendium) {
   const entity = pack.metadata.entity;
@@ -82,7 +82,7 @@ export async function migrateCompendium(pack: Compendium) {
           updateData = migrateItemData(ent.data);
           break;
         case 'Scene':
-          updateData = migrateSceneData(ent.data);
+          updateData = migrateSceneData(ent.data as Scene.Data);
           break;
       }
       if (isObjectEmpty(updateData)) continue;
@@ -118,7 +118,7 @@ export async function migrateCompendium(pack: Compendium) {
  * @return {Object}         The updateData to apply
  */
 export function migrateActorData(actor) {
-  let updateData = {};
+  const updateData = {};
 
   // Actor Data Updates
   _migrateVehicleOperator(actor, updateData);
@@ -144,6 +144,7 @@ export function migrateActorData(actor) {
 }
 
 export function migrateItemData(item) {
+  console.log(item);
   const updateData = {};
   return updateData;
 }
@@ -154,7 +155,7 @@ export function migrateItemData(item) {
  * @param {Object} scene  The Scene data to Update
  * @return {Object}       The updateData to apply
  */
-export function migrateSceneData(scene) {
+export function migrateSceneData(scene: Scene.Data) {
   const tokens = duplicate(scene.tokens);
   return {
     tokens: tokens.map((t) => {
