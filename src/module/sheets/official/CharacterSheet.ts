@@ -206,11 +206,10 @@ export default class CharacterSheet extends ActorSheet {
       const ownedItem = this.actor.getOwnedItem(li.data('itemId'));
       const template = `
       <form>
-        <div>
-          <center>${game.i18n.localize('Delete')}
-            <strong>${ownedItem.name}</strong>?
-          </center>
-          <br>
+        <div style="text-align: center;">
+          <p>
+          ${game.i18n.localize('Delete')} <strong>${ownedItem.name}</strong>?
+          </p>
         </div>
       </form>`;
       await Dialog.confirm({
