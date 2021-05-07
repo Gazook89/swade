@@ -32,6 +32,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Vehicles now save the UUID instead of the ID of their operator. As a result you can now use operators from compendiums directly. Existing vehicles will be migrated
 - Hostile NPC Wildcards and GMs now recieve a benny each when an NPC Wildcard with a hostile token dispostion draws a Joker in combat
 
+## [v0.18.4]
+
+### Fixed
+
+- Fixed double Conviction messages for NPCs
+- Fixed the conviction activation animation not playing on the NPC sheet
+
 ## [v0.18.3]
 
 ### Added

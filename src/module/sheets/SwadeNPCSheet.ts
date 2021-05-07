@@ -1,4 +1,3 @@
-import * as chat from '../chat';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
 /**
@@ -151,35 +150,6 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         content.slideUp();
       } else {
         content.slideDown();
-      }
-    });
-
-    //Toggle Conviction
-    html.find('.conviction-toggle').on('click', async () => {
-      const current = this.actor.data.data['details']['conviction'][
-        'value'
-      ] as number;
-      const active = this.actor.data.data['details']['conviction'][
-        'active'
-      ] as boolean;
-      if (current > 0 && !active) {
-        await this.actor.update({
-          'data.details.conviction.value': current - 1,
-          'data.details.conviction.active': true,
-        });
-        ChatMessage.create({
-          speaker: {
-            token: this.actor.token.id,
-            actor: this.actor.id,
-            alias: this.actor.name,
-          },
-          content: game.i18n.localize('SWADE.ConvictionActivate'),
-        });
-      } else {
-        await this.actor.update({
-          'data.details.conviction.active': false,
-        });
-        chat.createConvictionEndMessage(this.actor);
       }
     });
   }
