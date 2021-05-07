@@ -121,7 +121,7 @@ Actor:
           value: 0
           max: 0
       driver:
-        id: ''
+        id: null
         skill: ''
         skillAlternative: ''
       status:

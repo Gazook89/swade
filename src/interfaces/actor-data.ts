@@ -1,7 +1,7 @@
 import { AdditionalStat } from './additional';
 import { SysItemData } from './item-data';
 
-interface CharacterCommon {
+export interface CharacterCommon {
   attributes: {
     agility: {
       die: {
@@ -128,7 +128,7 @@ interface CharacterCommon {
   wildcard: boolean;
 }
 
-interface VehicleCommon {
+export interface VehicleCommon {
   size: number;
   scale: number;
   classification: string;

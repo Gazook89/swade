@@ -25,6 +25,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - When Equipping/unequipping a weapon, armor or shield _all_ Active Effects that come from that item are now toggled as well
+- Added the ability to migrate data models
+
+### Changed
+
+- Vehicles now save the UUID instead of the ID of their operator. As a result you can now use operators from compendiums directly. Existing vehicles will be migrated
+- Hostile NPC Wildcards and GMs now recieve a benny each when an NPC Wildcard with a hostile token dispostion draws a Joker in combat
 
 ## [v0.18.3]
 

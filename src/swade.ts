@@ -14,6 +14,7 @@ import SwadeItem from './module/entities/SwadeItem';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
+import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import { registerSettingRules, registerSettings } from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
@@ -47,6 +48,7 @@ export const swadeGame = {
   rollItemMacro,
   sockets: sockets,
   itemChatCardHelper: ItemChatCardHelper,
+  migrations: migrations,
 };
 Hooks.once('init', () => {
   console.log(

@@ -1,6 +1,5 @@
 import IDriverData from '../../interfaces/IDriverData';
 import { SWADE } from '../config';
-import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
@@ -153,7 +152,10 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       .on('click', (event) => this.actor.rollManeuverCheck(event));
   }
 
-  getData() {
+  /**
+   * @override
+   */
+  async getData() {
     const data = super.getData();
 
     data.config = SWADE;
@@ -180,12 +182,12 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     });
 
     data.inventoryWeight = 0;
-    data.inventory.forEach((i: SwadeItem) => {
-      data.inventoryWeight += i.data['weight'] * i.data['quantity'];
+    data.inventory.forEach((i) => {
+      data.inventoryWeight += i.data.weight * i.data.quantity;
     });
 
     //Fetch Driver data
-    data.driver = this._fetchDriver();
+    data.driver = await this._fetchDriver();
 
     // Check for enabled optional rules
     data.settingrules = {
@@ -227,9 +229,11 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     }
   }
 
-  private _fetchDriver() {
-    const driverId = getProperty(this.actor.data, 'data.driver.id');
-    const driver = game.actors.get(driverId) as SwadeActor;
+  private async _fetchDriver() {
+    if (this.actor.data.type !== 'vehicle') return null;
+
+    const driverId = this.actor.data.data.driver.id;
+    const driver = await this.actor.getDriver();
     const userCanViewDriver =
       game.user.isGM ||
       (driver && driver.permission >= CONST.ENTITY_PERMISSIONS.LIMITED);
@@ -256,7 +260,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   }
 
   private async _resetDriver() {
-    await this.actor.update({ 'data.driver.id': '' });
+    await this.actor.update({ 'data.driver.id': null });
   }
 
   private _openDriverSheet() {

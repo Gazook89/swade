@@ -9,6 +9,7 @@ import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 import SwadeTemplate from './entities/SwadeTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
+import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import CharacterSheet from './sheets/official/CharacterSheet';
 import SwadeCharacterSheet from './sheets/SwadeCharacterSheet';
@@ -87,6 +88,33 @@ export default class SwadeHooks {
         },
       },
     };
+
+    // Determine whether a system migration is required and feasible
+    if (!game.user.isGM) return;
+    const currentVersion = game.settings.get(
+      'swade',
+      'systemMigrationVersion',
+    ) as string;
+    //TODO Adjust this version every time a migration needs to be triggered
+    const NEEDS_MIGRATION_VERSION = '0.18.0';
+    //Minimal compativle version needed for the migration
+    const COMPATIBLE_MIGRATION_VERSION = '0.15.0';
+    //If the needed migration version is newer than the old migration version then migrate the world
+    const needsMigration =
+      currentVersion && isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
+    if (!needsMigration) return;
+
+    // Perform the migration
+
+    if (
+      currentVersion &&
+      isNewerVersion(COMPATIBLE_MIGRATION_VERSION, currentVersion)
+    ) {
+      ui.notifications.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
+        permanent: true,
+      });
+    }
+    migrations.migrateWorld();
   }
 
   public static onPreCreateItem(createData: any, options: any, userId: string) {
@@ -349,44 +377,61 @@ export default class SwadeHooks {
     });
   }
 
-  public static onUpdateCombatant(
+  public static async onUpdateCombatant(
     combat: Combat,
-    combatant: any,
+    combatant: Combat.Combatant,
     updateData: any,
     options: any,
     userId: string,
   ) {
     // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-    const user = game.users.get(userId) as User;
-    if (!game.user.isGM || (game.userId !== userId && user.isGM)) {
-      return;
-    }
+    const user = game.users.get(userId);
+    if (!game.user.isGM || (game.userId !== userId && user.isGM)) return;
 
-    if (
-      !getProperty(updateData, 'flags.swade') ||
-      combatant.actor.data.type !== 'character'
-    )
-      return;
-    if (
-      getProperty(combatant, 'flags.swade.hasJoker') &&
-      game.settings.get('swade', 'jokersWild')
-    ) {
-      renderTemplate(SWADE.bennies.templates.joker, {
+    //return early if there's no flag updates
+    if (!getProperty(updateData, 'flags.swade')) return;
+
+    const jokersWild = game.settings.get('swade', 'jokersWild');
+
+    if (jokersWild && getProperty(combatant, 'flags.swade.hasJoker')) {
+      const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
-      })
-        .then((template: string) => {
-          const createData = { user: game.user, content: template };
-          ChatMessage.create(createData);
-        })
-        .then(() => {
-          const combatants = combat.combatants.filter(
-            (c) => c.actor.data.type === 'character',
-          );
-          for (const combatant of combatants) {
-            const actor = (combatant.actor as unknown) as SwadeActor;
-            actor.getBenny();
-          }
+      });
+      const isCombHostile =
+        combatant.token.disposition === TOKEN_DISPOSITIONS.HOSTILE;
+
+      //Give bennies to PCs
+      if (combatant.actor.data.type === 'character') {
+        await ChatMessage.create({ user: game.user, content: template });
+        //filter combatants for PCs and give them bennies
+        const combatants = combat.combatants.filter(
+          (c) => c.actor.data.type === 'character',
+        );
+        for (const combatant of combatants) {
+          const actor = (combatant.actor as unknown) as SwadeActor;
+          await actor.getBenny();
+        }
+      } else if (combatant.actor.data.type === 'npc' && isCombHostile) {
+        await ChatMessage.create({ user: game.user, content: template });
+        //give all GMs a benny
+        const gmUsers = game.users.filter((u) => u.active && u.isGM);
+        for (const gm of gmUsers) {
+          const currBennies = (gm.getFlag('swade', 'bennies') as number) || 0;
+          await gm.setFlag('swade', 'bennies', currBennies + 1);
+          chat.createGmBennyAddMessage(gm, true);
+        }
+
+        //give all enemy wildcards a benny
+        const enemyWCs = combat.combatants.filter((c) => {
+          const a = (c.actor as unknown) as SwadeActor;
+          const hostile = c.token.disposition === TOKEN_DISPOSITIONS.HOSTILE;
+          return a.data.type === 'npc' && hostile && a.isWildcard;
         });
+        for (const enemy of enemyWCs) {
+          const a = (enemy.actor as unknown) as SwadeActor;
+          await a.getBenny();
+        }
+      }
     }
   }
 
@@ -596,10 +641,15 @@ export default class SwadeHooks {
       const vehicleSheet = sheet as SwadeVehicleSheet;
       const activeTab = getProperty(vehicleSheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
-        vehicleSheet.setDriver(data.id);
+        let idToSet = `Actor.${data.id}`;
+        if ('pack' in data) {
+          idToSet = `Compendium.${data.pack}.${data.id}`;
+        }
+        sheet.actor.update({ 'data.driver.id': idToSet });
       }
       return false;
     }
+    //handle race item creation
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
       let item: SwadeItem;
       if ('pack' in data) {
