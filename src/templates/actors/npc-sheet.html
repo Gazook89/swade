@@ -41,15 +41,16 @@
             />
           </div>
         </div>
-        {{/if}} {{#if settingrules.conviction}}
+        {{/if}} {{#if actor.data.wildcard}}{{#if settingrules.conviction}}
         <div class="conviction">
           <a
             class="conviction-toggle {{#if data.details.conviction.active}}pulse{{/if}}"
-            ><strong class=""
-              >{{localize "SWADE.Conv"}}{{#if
-              data.details.conviction.active}}&nbsp;Active{{/if}}</strong
-            ></a
           >
+            <strong
+              >{{localize "SWADE.Conv"}}{{#if data.details.conviction.active}}
+              Active{{/if}}
+            </strong>
+          </a>
           <div>
             <input
               type="text"
@@ -60,7 +61,7 @@
             />
           </div>
         </div>
-        {{/if}}
+        {{/if}} {{/if}}
       </div>
       <section class="vitals flexrow">
         <div class="vitals-container">
