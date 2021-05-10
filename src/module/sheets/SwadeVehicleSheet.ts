@@ -66,7 +66,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.getOwnedItem(li.data('itemId'));
+      const ownedItem = this.actor.items.get(li.data('itemId'));
       const template = `
           <form>
             <div>

@@ -89,7 +89,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     // Update Item via right-click
     html.find('.contextmenu-edit').on('contextmenu', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 

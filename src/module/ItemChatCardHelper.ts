@@ -35,7 +35,7 @@ export default class ItemChatCardHelper {
     if (!actor) return;
 
     // Get the Item
-    const item = actor.getOwnedItem(card.dataset.itemId);
+    const item = actor.items.get(card.dataset.itemId);
     if (!item) {
       ui.notifications.error(
         `The requested item ${card.dataset.itemId} does not exist on Actor ${actor.name}`,
@@ -391,7 +391,7 @@ export default class ItemChatCardHelper {
       .first()
       .data();
 
-    const item = actor.getOwnedItem(messageData.itemId);
+    const item = actor.items.get(messageData.itemId);
     if (item.type === 'weapon') {
       const currentShots = getProperty(item.data, 'data.currentShots');
       const maxShots = getProperty(item.data, 'data.shots');

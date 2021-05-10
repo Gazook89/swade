@@ -35,19 +35,19 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     // Update Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 
     html.find('.item .item-controls .item-show').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.items.get(li.data('itemId')) as SwadeItem;
       item.show();
     });
 
     html.find('.item .item-name .item-image').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.items.get(li.data('itemId')) as SwadeItem;
       item.show();
     });
 
@@ -75,7 +75,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.damage-roll').on('click', (event) => {
       const element = event.currentTarget as Element;
       const itemId = $(element).parents('[data-item-id]').attr('data-item-id');
-      const item = this.actor.getOwnedItem(itemId) as SwadeItem;
+      const item = this.actor.items.get(itemId) as SwadeItem;
       return item.rollDamage();
     });
 

@@ -163,7 +163,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
         .find('input.pp-adjust')
         .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
-      const power = actor.getOwnedItem(itemId);
+      const power = actor.items.get(itemId);
       let key = 'data.powerPoints.value';
       const arcane = getProperty(power.data, 'data.arcane');
       if (arcane) key = `data.powerPoints.${arcane}.value`;

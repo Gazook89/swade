@@ -176,7 +176,7 @@ export default class CharacterSheet extends ActorSheet {
     // Roll Damage
     html.find('.damage-roll').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       return item.rollDamage();
     });
 
@@ -190,20 +190,20 @@ export default class CharacterSheet extends ActorSheet {
 
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.show();
     });
 
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.getOwnedItem(li.data('itemId'));
+      const ownedItem = this.actor.items.get(li.data('itemId'));
       const template = `
       <form>
         <div style="text-align: center;">
@@ -265,7 +265,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.item-toggle').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const itemID = li.data('itemId');
-      const item = this.actor.getOwnedItem(itemID);
+      const item = this.actor.items.get(itemID);
       await this.actor.updateOwnedItem(this._toggleEquipped(itemID, item));
       //filter active effects
       const effects = this.actor.effects.filter(
@@ -391,7 +391,7 @@ export default class CharacterSheet extends ActorSheet {
       const button = ev.currentTarget;
       const action = button.dataset['action'];
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      const item = this.actor.getOwnedItem(itemId);
+      const item = this.actor.items.get(itemId);
       const additionalMods = [];
       const ppToAdjust = $(button)
         .parents('.chat-card.item-card')
@@ -423,7 +423,7 @@ export default class CharacterSheet extends ActorSheet {
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
         const adjustment = button.getAttribute('data-adjust') as string;
-        const power = this.actor.getOwnedItem(itemId);
+        const power = this.actor.items.get(itemId);
         let key = 'data.powerPoints.value';
         const arcane = getProperty(power.data, 'data.arcane');
         if (arcane) key = `data.powerPoints.${arcane}.value`;
