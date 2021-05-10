@@ -14,7 +14,7 @@
               type="checkbox"
               name="data.equippable"
               {{checked
-              item.data.equippable}}
+              data.data.equippable}}
               data-dtype="Boolean"
             />
             <span class="checkmark"></span>
@@ -28,7 +28,7 @@
               type="checkbox"
               name="data.equipped"
               {{checked
-              item.data.equipped}}
+              data.data.equipped}}
               data-dtype="Boolean"
             />
             <span class="checkmark"></span>
@@ -42,7 +42,7 @@
               type="checkbox"
               name="data.isVehicular"
               {{checked
-              item.data.isVehicular}}
+              data.data.isVehicular}}
               data-dtype="Boolean"
             />
             <span class="checkmark"></span>
@@ -55,7 +55,7 @@
             <input
               name="data.quantity"
               type="text"
-              value="{{item.data.quantity}}"
+              value="{{data.data.quantity}}"
               placeholder="{{localize 'SWADE.Quantity'}}"
               data-dtype="Number"
           /></span>
@@ -66,7 +66,7 @@
             <input
               name="data.weight"
               type="text"
-              value="{{item.data.weight}}"
+              value="{{data.data.weight}}"
               placeholder="{{localize 'SWADE.Weight'}}"
               data-dtype="Number"
           /></span>
@@ -77,19 +77,19 @@
             <input
               name="data.price"
               type="text"
-              value="{{item.data.price}}"
+              value="{{data.data.price}}"
               placeholder="{{localize 'SWADE.Price'}}"
               data-dtype="Number"
           /></span>
         </div>
-        {{#if item.data.isVehicular}} {{#if settingrules.modSlots}}
+        {{#if data.data.isVehicular}} {{#if settingrules.modSlots}}
         <div class="form-group">
           <label for="data.mods">{{localize "SWADE.ModSlots"}}</label>
           <span class="form-fields">
             <input
               name="data.mods"
               type="text"
-              value="{{item.data.mods}}"
+              value="{{data.data.mods}}"
               placeholder="{{localize 'SWADE.ModSlots'}}"
               data-dtype="Number"
           /></span>

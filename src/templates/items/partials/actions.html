@@ -2,7 +2,7 @@
   <label>{{localize "SWADE.Trait"}}</label>
   <span class="form-fields">
     <input name="data.actions.skill" type="text"
-    value="{{item.data.actions.skill}}" placeholder="{{localize "SWADE.Trait"}}"
+    value="{{data.data.actions.skill}}" placeholder="{{localize "SWADE.Trait"}}"
     data-dtype="String" /></span
   >
 </div>
@@ -12,7 +12,7 @@
     <input
       name="data.actions.skillMod"
       type="text"
-      value="{{item.data.actions.skillMod}}"
+      value="{{data.data.actions.skillMod}}"
       placeholder="{{localize 'SWADE.RollExample'}}"
       data-dtype="String"
       title="{{localize 'SWADE.ModHint'}}"
@@ -24,7 +24,7 @@
     <input
       name="data.actions.dmgMod"
       type="text"
-      value="{{item.data.actions.dmgMod}}"
+      value="{{data.data.actions.dmgMod}}"
       placeholder="{{localize 'SWADE.RollExample'}}"
       title="{{localize 'SWADE.ModHint'}}"
       data-dtype="String"
@@ -37,14 +37,14 @@
     <input
       type="text"
       name="data.ammo"
-      value="{{item.data.ammo}}"
-      list="{{item.id}}-ammo"
+      value="{{data.data.ammo}}"
+      list="{{data.id}}-ammo"
       data-dtype="String"
       title="{{localize 'SWADE.ClickSuggestions'}}"
     />
   </span>
 </div>
-<datalist id="{{item.id}}-ammo">
+<datalist id="{{data.id}}-ammo">
   {{#each ammoList as |ammo|}}
   <option value="{{ammo}}" />
   {{/each}}
@@ -59,7 +59,7 @@
   </div>
 </header>
 <ol class="actions-list">
-  {{#each data.actions.additional as |attr key|}}
+  {{#each data.data.actions.additional as |attr key|}}
   <li class="actions-container">
     <div class="action-name form-group">
       <label>{{localize "SWADE.Name"}}</label>
