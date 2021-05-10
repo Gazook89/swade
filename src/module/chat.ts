@@ -206,12 +206,12 @@ export function hideChatActionButtons(
  * Creates an end message for Conviction
  * @param actor The Actor whose conviction is ending
  */
-export function createConvictionEndMessage(actor: SwadeActor) {
-  ChatMessage.create({
+export async function createConvictionEndMessage(actor: SwadeActor) {
+  await ChatMessage.create({
     speaker: {
       actor: actor.id,
       alias: actor.name,
-      token: actor.token.id,
+      token: actor.token?.id,
     },
     content: game.i18n.localize('SWADE.ConvictionEnd'),
   });

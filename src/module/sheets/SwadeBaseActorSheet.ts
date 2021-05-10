@@ -91,12 +91,15 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     //Toggle Conviction
     html.find('.conviction-toggle').on('click', async () => {
-      const current = this.actor.data.data['details']['conviction'][
-        'value'
-      ] as number;
-      const active = this.actor.data.data['details']['conviction'][
-        'active'
-      ] as boolean;
+      const current = getProperty(
+        this.actor.data,
+        'data.details.conviction.value',
+      ) as number;
+      const active = getProperty(
+        this.actor.data,
+        'data.details.conviction.active',
+      ) as boolean;
+
       if (current > 0 && !active) {
         await this.actor.update({
           'data.details.conviction.value': current - 1,
@@ -113,7 +116,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         await this.actor.update({
           'data.details.conviction.active': false,
         });
-        chat.createConvictionEndMessage(this.actor as SwadeActor);
+        await chat.createConvictionEndMessage(this.actor as SwadeActor);
       }
     });
 
