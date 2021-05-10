@@ -18,7 +18,6 @@ import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import { registerSettingRules, registerSettings } from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
-import SwadeCharacterSheet from './module/sheets/SwadeCharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
@@ -86,11 +85,6 @@ Hooks.once('init', () => {
     types: ['character'],
     makeDefault: true,
     label: game.i18n.localize('SWADE.OfficialSheet'),
-  });
-
-  Actors.registerSheet('swade', SwadeCharacterSheet, {
-    types: ['character'],
-    label: 'SWADE.CommunityCharSheet',
   });
 
   Actors.registerSheet('swade', SwadeNPCSheet, {

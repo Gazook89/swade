@@ -12,7 +12,6 @@ import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import CharacterSheet from './sheets/official/CharacterSheet';
-import SwadeCharacterSheet from './sheets/SwadeCharacterSheet';
 import SwadeNPCSheet from './sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import { createActionCardTable } from './util';
@@ -630,11 +629,7 @@ export default class SwadeHooks {
 
   public static async onDropActorSheetData(
     actor: SwadeActor,
-    sheet:
-      | SwadeCharacterSheet
-      | SwadeNPCSheet
-      | SwadeVehicleSheet
-      | CharacterSheet,
+    sheet: SwadeNPCSheet | SwadeVehicleSheet | CharacterSheet,
     data: any,
   ) {
     if (data.type === 'Actor' && actor.data.type === 'vehicle') {
