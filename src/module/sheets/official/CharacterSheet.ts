@@ -130,7 +130,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.attribute-label').on('click', (ev) => {
       const element = ev.currentTarget as Element;
       const attribute = element.parentElement.dataset.attribute;
-      this.actor.rollAttribute(attribute, { event: ev });
+      this.actor.rollAttribute(attribute);
     });
 
     //Toggle Equipment Card collapsible
@@ -145,7 +145,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.skill-card .skill-die').on('click', (ev) => {
       const element = ev.currentTarget as HTMLElement;
       const item = element.parentElement.dataset.itemId;
-      this.actor.rollSkill(item, { event: ev });
+      this.actor.rollSkill(item);
     });
 
     //Running Die
@@ -167,7 +167,7 @@ export default class CharacterSheet extends ActorSheet {
         rollFormula = rollFormula.concat(runningMod);
       }
 
-      new Roll(rollFormula).roll().toMessage({
+      new Roll(rollFormula).evaluate({ async: false }).toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: game.i18n.localize('SWADE.Running'),
       });
@@ -450,7 +450,7 @@ export default class CharacterSheet extends ActorSheet {
         modifier = '+' + modifier;
       }
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate()
+        .evaluate({ async: false })
         .toMessage({
           speaker: ChatMessage.getSpeaker(),
           flavor: statData.label,

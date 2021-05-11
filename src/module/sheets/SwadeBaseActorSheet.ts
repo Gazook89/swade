@@ -68,7 +68,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.attribute-label a').on('click', (event) => {
       const element = event.currentTarget as Element;
       const attribute = element.parentElement.parentElement.dataset.attribute;
-      this.actor.rollAttribute(attribute, { event: event });
+      this.actor.rollAttribute(attribute);
     });
 
     // Roll Damage
@@ -153,7 +153,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       const runningRoll = new Roll(rollFormula);
 
       if (ev.shiftKey) {
-        runningRoll.roll().toMessage({
+        runningRoll.evaluate({ async: false }).toMessage({
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           flavor: game.i18n.localize('SWADE.Running'),
         });
@@ -219,7 +219,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         modifier = '+' + modifier;
       }
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate()
+        .evaluate({ async: false })
         .toMessage({
           speaker: ChatMessage.getSpeaker(),
           flavor: statData.label,

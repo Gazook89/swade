@@ -172,10 +172,12 @@ export default class SwadeItemSheet extends ItemSheet {
         modifier = '+' + modifier;
       }
       const dieSides = statData.value || 4;
-      new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
-        speaker: ChatMessage.getSpeaker(),
-        flavor: `${this.item.name} - ${statData.label}`,
-      });
+      new Roll(`1d${dieSides}${modifier}`)
+        .evaluate({ async: false })
+        .toMessage({
+          speaker: ChatMessage.getSpeaker(),
+          flavor: `${this.item.name} - ${statData.label}`,
+        });
     });
   }
 

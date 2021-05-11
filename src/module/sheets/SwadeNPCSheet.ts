@@ -103,7 +103,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     html.find('.skill.item a').on('click', (event) => {
       const element = event.currentTarget as Element;
       const item = element.parentElement.dataset.itemId;
-      this.actor.rollSkill(item, { event: event });
+      this.actor.rollSkill(item);
     });
 
     // Add new object
