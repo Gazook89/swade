@@ -284,7 +284,7 @@ export default class SwadeHooks {
     for (let i = 0; i < found.length; i++) {
       const element = found[i];
       const enitityId = element.parentElement.dataset.entityId;
-      const wildcard = wildcards.find((a) => a._id === enitityId);
+      const wildcard = wildcards.find((a) => a.id === enitityId);
 
       if (wildcard) {
         element.innerHTML = `
