@@ -13,15 +13,15 @@
           name="data.attributes.agility.die.sides"
           id="attributes.agility"
           data-dtype="Number"
-          style="background-image:url('systems/swade/assets/dice/d{{data.attributes.agility.die.sides}}-grey.svg')"
+          style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.agility.die.sides}}-grey.svg')"
         >
-          {{#select data.attributes.agility.die.sides}} {{>
+          {{#select data.data.attributes.agility.die.sides}} {{>
           "systems/swade/templates/die-sides-options.html"}} {{/select}}
         </select>
         <input
           name="data.attributes.agility.die.modifier"
           type="text"
-          value="{{data.attributes.agility.die.modifier}}"
+          value="{{data.data.attributes.agility.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -31,7 +31,7 @@
       <div class="attribute-label">
         <a title="{{localize 'SWADE.Roll'}}"
           >{{ localize "SWADE.AttrSma" }} {{#if
-          data.attributes.smarts.animal}}(A){{/if}}</a
+          data.data.attributes.smarts.animal}}(A){{/if}}</a
         >
       </div>
       <div class="flexrow">
@@ -39,7 +39,7 @@
           name="data.attributes.smarts.die.sides"
           id="attributes.smarts"
           data-dtype="Number"
-          style="background-image:url('systems/swade/assets/dice/d{{data.attributes.smarts.die.sides}}-grey.svg')"
+          style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.smarts.die.sides}}-grey.svg')"
         >
           {{#select data.attributes.smarts.die.sides}} {{>
           "systems/swade/templates/die-sides-options.html"}} {{/select}}
@@ -47,7 +47,7 @@
         <input
           name="data.attributes.smarts.die.modifier"
           type="text"
-          value="{{data.attributes.smarts.die.modifier}}"
+          value="{{data.data.attributes.smarts.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -62,15 +62,15 @@
           name="data.attributes.spirit.die.sides"
           id="attributes.spirit"
           data-dtype="Number"
-          style="background-image:url('systems/swade/assets/dice/d{{data.attributes.spirit.die.sides}}-grey.svg')"
+          style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.spirit.die.sides}}-grey.svg')"
         >
-          {{#select data.attributes.spirit.die.sides}} {{>
+          {{#select data.data.attributes.spirit.die.sides}} {{>
           "systems/swade/templates/die-sides-options.html"}} {{/select}}
         </select>
         <input
           name="data.attributes.spirit.die.modifier"
           type="text"
-          value="{{data.attributes.spirit.die.modifier}}"
+          value="{{data.data.attributes.spirit.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -85,16 +85,16 @@
           name="data.attributes.strength.die.sides"
           id="attributes.strength"
           data-dtype="Number"
-          style="background-image:url('systems/swade/assets/dice/d{{data.attributes.strength.die.sides}}-grey.svg')"
+          style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.strength.die.sides}}-grey.svg')"
         >
-          {{#select data.attributes.strength.die.sides}}
+          {{#select data.data.attributes.strength.die.sides}}
           <option value="1">1</option>
           {{> "systems/swade/templates/die-sides-options.html"}} {{/select}}
         </select>
         <input
           name="data.attributes.strength.die.modifier"
           type="text"
-          value="{{data.attributes.strength.die.modifier}}"
+          value="{{data.data.attributes.strength.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -109,15 +109,15 @@
           name="data.attributes.vigor.die.sides"
           id="attributes.vigor"
           data-dtype="Number"
-          style="background-image:url('systems/swade/assets/dice/d{{data.attributes.vigor.die.sides}}-grey.svg')"
+          style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.vigor.die.sides}}-grey.svg')"
         >
-          {{#select data.attributes.vigor.die.sides}} {{>
+          {{#select data.data.attributes.vigor.die.sides}} {{>
           "systems/swade/templates/die-sides-options.html"}} {{/select}}
         </select>
         <input
           name="data.attributes.vigor.die.modifier"
           type="text"
-          value="{{data.attributes.vigor.die.modifier}}"
+          value="{{data.data.attributes.vigor.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
