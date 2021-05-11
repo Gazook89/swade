@@ -16,23 +16,24 @@
 Savage Worlds, all unique characters, creatures, and locations, artwork, logos, and the Pinnacle logo are © 2020 Great White Games, LLC; DBA Pinnacle Entertainment Group. Distributed by Studio 2 Publishing, Inc.
 Pinnacle Entertainment Group, Inc. reserves the rights for the following assets in this repository and any game system built from it. The assets are only to be used in Foundry VTT for the purpose of playing Savage Worlds Adventure Edition. Any removal, alteration, or additions to any logos or other trademarked images or materials is prohibited.
 
-d4.svg
-d6.svg
-d8.svg
-d10.svg
-d12.svg
-bennie.webp
-char-bg.webp
-circle_fatigue.webp
-circle_wounds.webp
-header_bg.webp
-main_bg.webp
-peg_logo.webp
-sheet_armor.svg
-sheet_parry.svg
-sheet_toughness.svg
-skills_bg.webp
-skills_footer.webp
-skills_header.webp
-swade_logo.webp
-benny-chip-front.png
+- d4.svg
+- d6.svg
+- d8.svg
+- d10.svg
+- d12.svg
+- bennie.webp
+- char-bg.webp
+- circle_fatigue.webp
+- circle_wounds.webp
+- header_bg.webp
+- main_bg.webp
+- peg_logo.webp
+- sheet_armor.svg
+- sheet_parry.svg
+- sheet_toughness.svg
+- skills_bg.webp
+- skills_footer.webp
+- skills_header.webp
+- swade_logo.webp
+- benny-chip-front.png
+
