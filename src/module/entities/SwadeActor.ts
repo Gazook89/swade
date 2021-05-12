@@ -211,6 +211,9 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     const pool = new DicePool({
       rolls: [attrRoll],
+      //FIXME
+      //@ts-ignore
+      terms: attrRoll.formula,
       modifiers: ['kh'],
     });
 
@@ -282,7 +285,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       return this.makeUnskilledAttempt(options);
     }
 
-    let skillRoll = null;
+    let skillRoll: [Roll, ITraitRollModifier[]] = null;
     let rollMods = [];
 
     skillRoll = this._handleComplexSkill(skill, options);
@@ -355,7 +358,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
-      const benny = new Roll('1dB').roll();
+      const benny = new Roll('1dB').evaluate({ async: false });
       game.dice3d.showForRoll(benny, game.user, true, null, false);
     }
   }
@@ -697,9 +700,10 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
-  ): [Roll, any[]] {
+  ): [Roll, ITraitRollModifier[]] {
     if (!options.rof) options.rof = 1;
-    const skillData = getProperty(skill, 'data.data');
+    if (skill.data.type !== 'skill') return;
+    const skillData = skill.data.data;
 
     const rolls: Roll[] = [];
 
@@ -721,6 +725,9 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
     const dicePool = new DicePool({
       rolls: rolls,
+      //FIXME
+      //@ts-ignore
+      terms: rolls.map((r) => r.formula),
       modifiers: [kh],
     });
 

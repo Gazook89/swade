@@ -137,6 +137,9 @@ export default class SwadeDice {
           wildRoll.terms = [...wildRoll.terms, ...pool.rolls[0].terms.slice(1)];
         }
         pool.rolls.push(wildRoll);
+        //FIXME
+        //@ts-ignore
+        pool.terms.push(wildRoll.formula);
       }
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
@@ -150,7 +153,7 @@ export default class SwadeDice {
         }),
       );
     }
-    const retVal = roll.evaluate();
+    const retVal = roll.evaluate({ async: false });
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
     for (const term of roll.terms) {
       if (term instanceof Die) continue;
