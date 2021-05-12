@@ -62,7 +62,7 @@ export async function createActionCardTable(
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-export async function createSwadeMacro(data: any, slot: number) {
+export async function createSwadeMacro(data: Hotbar.DropData, slot: string) {
   if (data.type !== 'Item') return;
   if (!('data' in data))
     return ui.notifications.warn(
