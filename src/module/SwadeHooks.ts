@@ -628,8 +628,8 @@ export default class SwadeHooks {
   }
 
   public static async onDropActorSheetData(
-    actor: SwadeActor,
-    sheet: SwadeNPCSheet | SwadeVehicleSheet | CharacterSheet,
+    actor: Actor,
+    sheet: ActorSheet,
     data: any,
   ) {
     if (data.type === 'Actor' && actor.data.type === 'vehicle') {

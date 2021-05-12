@@ -231,7 +231,7 @@ Hooks.on('dropActorSheetData', (actor, sheet, data) =>
 
 Hooks.on(
   'renderCombatantConfig',
-  async (app: FormApplication, html: JQuery<HTMLElement>, options: any) =>
+  (app: FormApplication, html: JQuery<HTMLElement>, options: any) =>
     SwadeHooks.onRenderCombatantConfig(app, html, options),
 );
 
