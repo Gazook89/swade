@@ -271,10 +271,9 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   rollSkill(
     skillId: string,
-    options: IRollOptions = {},
+    options: IRollOptions = { rof: 1 },
     tempSkill?: SwadeItem,
   ): Promise<Roll> | Roll {
-    if (!options.rof) options.rof = 1;
     let skill: SwadeItem;
     skill = this.items.find((i) => i.id == skillId);
     if (tempSkill) {
