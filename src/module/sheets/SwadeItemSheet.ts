@@ -123,7 +123,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.item['effects'].get(effectId) as any;
+      const effect = this.item.effects.get(effectId);
       const action = a.dataset.action;
       switch (action) {
         case 'edit':
@@ -146,7 +146,7 @@ export default class SwadeItemSheet extends ItemSheet {
           transfer: transfer,
         })
       )._id;
-      return new ActiveEffectConfig(this.item['effects'].get(id)).render(true);
+      return new ActiveEffectConfig(this.item.effects.get(id)).render(true);
     });
 
     html.find('.delete-embedded').on('click', (ev) => {
@@ -163,12 +163,9 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.additional-stats .roll').on('click', (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
-      const statData = getProperty(
-        this.item.data,
-        `data.additionalStats.${stat}`,
-      ) as AdditionalStat;
+      const statData = this.item.data.data.additionalStats[stat];
       let modifier = statData.modifier || '';
-      if (!!modifier && !modifier.match(/^[+-]/)) {
+      if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
       const dieSides = statData.value || 4;
