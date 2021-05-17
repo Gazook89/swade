@@ -96,6 +96,7 @@ SWADE.Berserk: Berserk
 SWADE.Defending: Defending
 SWADE.Flying: Flying
 SWADE.Holding: Holding
+SWADE.ToggleHold: Toggle Hold
 SWADE.Frightened: Frightened
 SWADE.Encumbered: Encumbered
 SWADE.Prone: Prone
