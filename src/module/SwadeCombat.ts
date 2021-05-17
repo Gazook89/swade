@@ -49,6 +49,26 @@ export default class SwadeCombat extends Combat {
         isRedraw = true;
       }
 
+      // Move holding combatants to top by setting initiative, card, and suit to high values
+      if (
+        c.defeated &&
+        c.actor.effects.find(
+          (effect) => effect.data.flags.core.statusId === 'holding',
+        )
+      ) {
+        await game.combat.updateCombatant({
+          _id: c._id,
+          initiative: 9999,
+          flags: {
+            swade: {
+              cardValue: 9999,
+              suitValue: 9999,
+              cardString: 'Hold',
+            },
+          },
+        });
+      }
+
       //Do not draw cards for defeated combatants
       if (c.defeated) continue;
 
@@ -133,7 +153,9 @@ export default class SwadeCombat extends Combat {
         cardValue: card.getFlag('swade', 'cardValue'),
         hasJoker: card.getFlag('swade', 'isJoker'),
         cardString: card['data']['content'],
+        isOnHold: false,
       };
+
       combatantUpdates.push({
         _id: c._id,
         initiative:
@@ -236,6 +258,7 @@ export default class SwadeCombat extends Combat {
             cardValue: null,
             hasJoker: false,
             cardString: null,
+            isOnHold: false,
           },
         },
       };
