@@ -50,12 +50,15 @@ export default class SwadeCombat extends Combat {
       }
 
       // Move holding combatants to top by setting initiative, card, and suit to high values
-      if (
-        c.defeated &&
-        c.actor.effects.find(
-          (effect) => effect.data.flags.core.statusId === 'holding',
-        )
-      ) {
+      const holdingActiveEffect = c.actor.data.effects.find(
+        (effect) => effect.flags.core.statusId === 'holding',
+      );
+
+      let holding = false;
+      if (typeof holdingActiveEffect !== 'undefined') {
+        holding = true;
+      }
+      if (holding) {
         await game.combat.updateCombatant({
           _id: c._id,
           initiative: 9999,
@@ -68,9 +71,8 @@ export default class SwadeCombat extends Combat {
           },
         });
       }
-
       //Do not draw cards for defeated combatants
-      if (c.defeated) continue;
+      if (c.defeated || c.flags.swade.cardString === 'Hold') continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -153,7 +155,6 @@ export default class SwadeCombat extends Combat {
         cardValue: card.getFlag('swade', 'cardValue'),
         hasJoker: card.getFlag('swade', 'isJoker'),
         cardString: card['data']['content'],
-        isOnHold: false,
       };
 
       combatantUpdates.push({
@@ -258,7 +259,6 @@ export default class SwadeCombat extends Combat {
             cardValue: null,
             hasJoker: false,
             cardString: null,
-            isOnHold: false,
           },
         },
       };
@@ -432,6 +432,7 @@ export default class SwadeCombat extends Combat {
         ui.notifications.info('Card Deck automatically reset');
       }
       const resetComs = this.data.combatants.map((c) => {
+        const originalCardString = c.flags.swade.originalCardString;
         c.initiative = null;
         c.flags = {
           swade: {
@@ -439,6 +440,7 @@ export default class SwadeCombat extends Combat {
             suitValue: null,
             hasJoker: null,
             cardString: null,
+            originalCardString: originalCardString,
           },
         };
         return c;
