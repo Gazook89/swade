@@ -393,19 +393,14 @@ export default class SwadeHooks {
 
     const jokersWild = game.settings.get('swade', 'jokersWild');
 
-    const holdingActiveEffect = combatant.actor.data.effects.find(
+    const isHolding = combatant.actor.data.effects.find(
       (effect) => effect.flags.core.statusId === 'holding',
     );
-
-    let holding = false;
-    if (typeof holdingActiveEffect !== 'undefined') {
-      holding = true;
-    }
 
     if (
       jokersWild &&
       getProperty(combatant, 'flags.swade.hasJoker') &&
-      !holding
+      !isHolding
     ) {
       const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
@@ -535,19 +530,16 @@ export default class SwadeHooks {
         );
 
         if (holdEffect) {
-          const currentCardValue = await getProperty(
+          const currentCardValue = getProperty(
               currentCombatant,
               'flags.swade.cardValue',
             ),
-            currentSuitValue = await getProperty(
+            currentSuitValue = getProperty(
               currentCombatant,
               'flags.swade.suitValue',
             ),
-            currentInitiative = await getProperty(
-              currentCombatant,
-              'initiative',
-            ),
-            originalCardString = await getProperty(
+            currentInitiative = getProperty(currentCombatant, 'initiative'),
+            originalCardString = getProperty(
               targetCombatant,
               'flags.swade.originalCardString',
             );
