@@ -72,7 +72,7 @@ export default class SwadeCombat extends Combat {
         });
       }
       //Do not draw cards for defeated combatants
-      if (c.defeated || c.flags.swade.cardString === 'Hold') continue;
+      if (c.defeated || c.flags?.swade?.cardString === 'Hold') continue;
 
       // Set up edges
       let cardsToDraw = 1;
