@@ -100,3 +100,29 @@ Pinnacle Entertainment Group, Inc. reserves the rights for the following assets 
 - skills_header.webp
 - swade_logo.webp
 - benny-chip-front.png
+
+
+## This is a FAQ style of clarifications about what is and what isn’t allowed by our license. To clarify, you may do any of the following in your private games at any point. This specifically applies to publicly distributing, through Github or other means, code to allow others to do this, which falls under “public use.”
+ 
+1. Can I sell a module that I have created for swade?
+    - _If the module in any way makes use of the protected assets listed in the Gitlab readme, including but not restricted to the trade dress or logos, you may NOT monetize the module. You can only publish monetized modules relating to the swade system through SWAG_.
+ 
+2. Can I bundle any of the protected assets in my own module?
+    - _No, you may NOT redistribute any of the protected assets listed in the readme with your own module_. 
+ 
+3. Can I use the trade dress through the use of the system image paths, instead of bundling it with my own module?
+    - _No, placing the protected logos or trade dress anywhere that isn’t explicitly defined by Pinnacle is not allowed, even if you’re not bundling the image with your module_.
+ 
+4. Can I publish a module that changes the Benny image?
+    - _YES! Modules that modify the benny image of the system are totally allowed_.
+ 
+5. Can I remove the PEG and/or SWADE logos from the official character sheet?
+    - _You may not publish a module that removes the PEG and SWADE logo on the official character sheet. You may, however, distribute your own custom sheet, without any of the Pinnacle trade dress or logos_.
+ 
+6. Can I change the look and feel of the official SWADE sheet with things such as adding a new tab, or modifying existing functionality?
+    - _YES, you may use modules to modify the look and feel of the SWADE character sheet._
+ 
+7. Can I publish a character sheet for a setting such as Deadlands, Weird Wars, Necessary Evil, etc. ?
+    - _No, you may NOT use any trademarked names, any official assets or trade dress bundled in your module for settings such as Deadlands, Weird Wars, Necessary Evil, etc). Neither does the license allow works based on licensed properties published by Pinnacle (such as Lankhmar, Flash Gordon, Rifts®, or any other)._      
+
+
