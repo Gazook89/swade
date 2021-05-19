@@ -68,9 +68,15 @@ Hooks.once('init', () => {
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
-  CONFIG.Actor.entityClass = SwadeActor;
-  CONFIG.Item.entityClass = SwadeItem;
-  CONFIG.Combat.entityClass = SwadeCombat;
+  //FIXME once new definitions come along
+  //@ts-ignore
+  CONFIG.Actor.documentClass = SwadeActor;
+  //FIXME once new definitions come along
+  //@ts-ignore
+  CONFIG.Item.documentClass = SwadeItem;
+  //FIXME once new definitions come along
+  //@ts-ignore
+  CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.statusEffects = SWADE.statusEffects;
 
   // Register custom system settings

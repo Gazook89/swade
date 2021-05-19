@@ -29,7 +29,9 @@ export default class SwadeHooks {
   public static async onReady() {
     const packChoices = {};
     game.packs
-      .filter((p) => p.entity === 'JournalEntry')
+      //FIXME once new definitions come along
+      //@ts-ignore
+      .filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
         packChoices[
           p.collection

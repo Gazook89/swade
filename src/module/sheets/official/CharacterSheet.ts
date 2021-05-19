@@ -42,7 +42,9 @@ export default class CharacterSheet extends ActorSheet {
     if (!this.options.editable) return;
 
     // Drag events for macros.
-    if (this.actor.owner) {
+    //FIXME once new definitions come along
+    //@ts-ignore
+    if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.
       html.find('li.item.skill').each((i, li) => {
