@@ -303,7 +303,6 @@ export default class SwadeItem extends Item<SysItemData> {
   }
 
   /**
-   *
    * @returns the power points for the AB that this power belongs to or null when the item is not a power
    */
   private _getPowerPoints(): { current: number; max: number } | null {
@@ -346,6 +345,37 @@ export default class SwadeItem extends Item<SysItemData> {
         //@ts-ignore
         this.data.update({ equipped: true });
       }
+    }
+  }
+
+  async _preDelete(options, user: User) {
+    //@ts-ignore
+    await super._preDelete(options, user);
+    //delete all transfered active effects from the actor
+    //@ts-ignore
+    if (this.parent) {
+      const updates = [];
+      for (const ae of this.actor.effects) {
+        if (ae.data.origin !== this.uuid) continue;
+        updates.push(ae.id);
+      }
+      //@ts-ignore
+      await this.actor.deleteEmbeddedDocuments('ActiveEffect', updates);
+    }
+  }
+
+  async _preUpdate(changed, options, user: User) {
+    //@ts-ignore
+    await super._preUpdate(changed, options, user);
+    //@ts-ignore
+    if (this.parent && hasProperty(changed, 'data.equipped')) {
+      const updates = [];
+      for (const ae of this.actor.effects) {
+        if (ae.data.origin !== this.uuid) continue;
+        updates.push({ _id: ae.id, disabled: !changed.data.equipped });
+      }
+      //@ts-ignore
+      await this.actor.updateEmbeddedDocuments('ActiveEffect', updates);
     }
   }
 }

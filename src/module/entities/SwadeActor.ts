@@ -863,4 +863,22 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     return [...mods.filter((m) => m.value)];
   }
+
+  async _preCreate(data, options, user: User) {
+    //@ts-ignore
+    super._preCreate(data, options, user);
+  }
+
+  //TODO change to onUpdate once TS behaves
+  //@ts-ignore
+  // async _onUpdate(changed, options, user: User) {
+  //   //@ts-ignore
+  //   super._onUpdate(changed, options, user);
+  //   if (this.data.type === 'npc') {
+  //     ui.actors.render(true);
+  //   }
+  //   if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
+  //     ui.players.render(true);
+  //   }
+  // }
 }

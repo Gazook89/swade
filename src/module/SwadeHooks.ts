@@ -296,6 +296,7 @@ export default class SwadeHooks {
     }
   }
 
+  //TODO remove later
   public static onUpdateActor(
     actor: SwadeActor,
     updateData: any,
@@ -306,8 +307,8 @@ export default class SwadeHooks {
       ui.actors.render();
     }
     // Update the player list to display new bennies values
-    if (updateData?.data?.bennies) {
-      ui['players'].render(true);
+    if (hasProperty(updateData, 'data.bennies') && actor.hasPlayerOwner) {
+      ui.players.render(true);
     }
   }
 
@@ -394,6 +395,7 @@ export default class SwadeHooks {
     }
   }
 
+  //TODO put into SwadeCombat class
   public static onDeleteCombat(combat: Combat, options: any, userId: string) {
     if (!game.user.isGM || !game.users.get(userId).isGM) {
       return;

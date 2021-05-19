@@ -66,13 +66,10 @@ Hooks.once('init', () => {
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
-  //FIXME once new definitions come along
   //@ts-ignore
   CONFIG.Actor.documentClass = SwadeActor;
-  //FIXME once new definitions come along
   //@ts-ignore
   CONFIG.Item.documentClass = SwadeItem;
-  //FIXME once new definitions come along
   //@ts-ignore
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.statusEffects = SWADE.statusEffects;
@@ -121,6 +118,7 @@ Hooks.once('setup', () => SwadeHooks.onSetup());
 
 Hooks.once('ready', async () => SwadeHooks.onReady());
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 Hooks.on('preCreateItem', (item, options, userId) => {
   if (
     item.parent &&
