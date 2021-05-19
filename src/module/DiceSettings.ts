@@ -175,10 +175,10 @@ export default class DiceSettings extends FormApplication {
   private _deepCopyColorsets(colorsets: any): any {
     const deepCopy = {};
     for (const [key, value] of Object.entries(colorsets)) {
-      deepCopy[duplicate(key)] = {
-        name: duplicate(value['name']),
-        category: duplicate(value['category']),
-        description: duplicate(value['description']),
+      deepCopy[deepClone(key)] = {
+        name: deepClone(value['name']),
+        category: deepClone(value['category']),
+        description: deepClone(value['description']),
       };
     }
     return deepCopy;

@@ -252,7 +252,7 @@ export default class SwadeItemSheet extends ItemSheet {
     }
 
     //prep item data
-    const itemData = duplicate(item.data);
+    const itemData = deepClone(item.data);
     delete itemData['_id'];
     delete itemData['permission'];
 

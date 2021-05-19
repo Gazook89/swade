@@ -156,7 +156,7 @@ export function migrateItemData(item) {
  * @return {Object}       The updateData to apply
  */
 export function migrateSceneData(scene: Scene.Data) {
-  const tokens = duplicate(scene.tokens);
+  const tokens = deepClone(scene.tokens);
   return {
     tokens: tokens.map((t) => {
       if (!t.actorId || t.actorLink || !t.actorData.data) {

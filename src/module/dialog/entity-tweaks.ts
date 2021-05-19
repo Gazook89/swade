@@ -113,7 +113,7 @@ export default class SwadeEntityTweaks extends FormApplication {
     const formFields =
       getProperty(expandedFormData, 'data.additionalStats') || {};
     const prototypeFields = this._getAppropriateSettingFields();
-    const newFields = duplicate(
+    const newFields = deepClone(
       getProperty(this.object.data, 'data.additionalStats'),
     );
     //handle setting specific fields

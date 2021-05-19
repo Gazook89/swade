@@ -98,7 +98,7 @@ export default class SwadeItem extends Item<SysItemData> {
   }
 
   getChatData(htmlOptions) {
-    const data = duplicate(this.data.data) as any;
+    const data = deepClone(this.data.data) as any;
 
     // Rich text description
     data.description = TextEditor.enrichHTML(data.description, htmlOptions);
