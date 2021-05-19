@@ -217,9 +217,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       rolls.push(wildRoll);
     }
 
-    //FIXME once new definitions come along
-    //@ts-ignore
-    const pool = DicePool.fromRolls(rolls) as DicePool;
+    const pool = PoolTerm.fromRolls(rolls);
     pool.modifiers.push('kh');
 
     const finalRoll = new Roll('');
@@ -233,17 +231,13 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      //FIXME once new definitions come along
-      //@ts-ignore
       finalRoll.terms.push(new OperatorTerm({ operator: '+' }));
       finalRoll.terms.push(convDie);
     }
 
     const rollMods = this._buildTraitRollModifiers(abl, options);
     rollMods.forEach((m) =>
-      //FIXME once new definitions come along
-      //@ts-ignore
-      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`)),
+      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
     );
 
     if (options.suppressChat) {
@@ -727,9 +721,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
-    //FIXME once new definitions come along
-    //@ts-ignore
-    const pool = DicePool.fromRolls(rolls) as DicePool;
+    const pool = PoolTerm.fromRolls(rolls);
     pool.modifiers.push(kh);
 
     //Conviction Modifier
@@ -744,15 +736,11 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     const rollMods = this._buildTraitRollModifiers(skillData, options);
     rollMods.forEach((m) =>
-      //FIXME once new definitions come along
-      //@ts-ignore
-      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`)),
+      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
     );
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      //FIXME once new definitions are available
-      //@ts-ignore
       finalRoll.terms.push(new OperatorTerm({ operator: '+' }));
       finalRoll.terms.push(convDie);
     }

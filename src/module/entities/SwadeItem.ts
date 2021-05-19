@@ -50,15 +50,9 @@ export default class SwadeItem extends Item<SysItemData> {
       if (term instanceof Die) {
         if (!term.modifiers.includes('x')) term.modifiers.push('x');
         newParts.push(term.formula);
-        //FIXME once the new definitions come along
-        //@ts-ignore
       } else if (term instanceof StringTerm) {
-        //FIXME once the new definitions come along
-        //@ts-ignore
         newParts.push(this._makeExplodable(term.term));
       } else {
-        //FIXME once the new definitions come along
-        //@ts-ignore
         newParts.push(term.expression);
       }
     }
