@@ -521,9 +521,11 @@ export default class SwadeHooks {
           (combatant) => combatant._id === targetCombatantId,
         );
 
-        if (!getProperty(targetCombatant, 'flags.swade.isOnHold')) {
+        if (
+          !getProperty(targetCombatant, 'flags.swade.isOnHold') &&
+          !getProperty(targetCombatant, 'flags.swade.turnLost')
+        ) {
           // Add flag for on hold to show icon on token
-
           await game.combat.updateCombatant({
             _id: targetCombatantId,
             flags: {
@@ -535,12 +537,19 @@ export default class SwadeHooks {
             },
           });
         } else {
-          await game.combat.updateCombatant({
-            _id: targetCombatantId,
-            flags: {
-              swade: getProperty(targetCombatant, 'flags.swadeStored'),
-            },
-          });
+          if (getProperty(targetCombatant, 'flags.swade.turnLost')) {
+            ui.notifications.warn(
+              `${targetCombatant.name} lost a turn for this round and cannot hold.`,
+            );
+          } else {
+            await game.combat.updateCombatant({
+              _id: targetCombatantId,
+              flags: {
+                swade: getProperty(targetCombatant, 'flags.swadeStored'),
+                'swade.isOnHold': false,
+              },
+            });
+          }
         }
       },
     });
@@ -562,13 +571,11 @@ export default class SwadeHooks {
           currentSuitValue = getProperty(
             currentCombatant,
             'flags.swade.suitValue',
-          ),
-          currentInitiative = getProperty(currentCombatant, 'initiative');
+          );
 
         if (getProperty(targetCombatant, 'flags.swade.isOnHold')) {
           await game.combat.updateCombatant({
             _id: targetCombatantId,
-            initiative: currentInitiative + 1,
             flags: {
               swade: {
                 cardValue: currentCardValue,
@@ -606,13 +613,11 @@ export default class SwadeHooks {
           currentSuitValue = getProperty(
             currentCombatant,
             'flags.swade.suitValue',
-          ),
-          currentInitiative = getProperty(currentCombatant, 'initiative');
+          );
 
         if (getProperty(targetCombatant, 'flags.swade.isOnHold')) {
           await game.combat.updateCombatant({
             _id: targetCombatantId,
-            initiative: currentInitiative - 1,
             flags: {
               swade: {
                 cardValue: currentCardValue,
@@ -625,8 +630,6 @@ export default class SwadeHooks {
               },
             },
           });
-
-          game.combat.previousTurn();
         } else {
           ui.notifications.warn(`${targetCombatant.name} is not on hold.`);
         }
