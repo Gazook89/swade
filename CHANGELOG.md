@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
+- Added compatability for Foundry VTT 0.8
 - When Equipping/unequipping a weapon, armor or shield _all_ Active Effects that come from that item are now toggled as well
 - Added the ability to migrate data models
 
