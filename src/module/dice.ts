@@ -115,22 +115,20 @@ export default class SwadeDice {
     allowGroup = false,
     flags,
   }: RollHandlerData): Roll {
-    let rollMode = game.settings.get('core', 'rollMode') as Const.DiceRollMode;
+    let rollMode = game.settings.get('core', 'rollMode') as string;
     const groupRoll = actor && raise;
     // Optionally include a situational bonus
     let bonus: string = null;
     if (form) bonus = form.find('#bonus').val();
     if (bonus) {
       if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;
-      //FIXME once the new definitions come along
-      //@ts-ignore
-      roll.terms.push(...Roll.parse(bonus));
+      roll.terms.push(...Roll.parse(bonus, {}));
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.SitMod')}: ${bonus}`;
     }
     if (groupRoll && allowGroup) {
       //Group roll
       const pool = roll.terms[0];
-      if (pool instanceof DicePool) {
+      if (pool instanceof PoolTerm) {
         const wildRoll = new Roll(
           `1d6x[${game.i18n.localize('SWADE.WildDie')}]`,
         );
@@ -139,51 +137,48 @@ export default class SwadeDice {
           wildRoll.terms = [...wildRoll.terms, ...pool.rolls[0].terms.slice(1)];
         }
         pool.rolls.push(wildRoll);
-        //FIXME once the new definitions come along
-        //@ts-ignore
         pool.terms.push(wildRoll.formula);
       }
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
       roll.terms.push(
-        //FIXME once the new definitions come along
-        //@ts-ignore
-        ...Roll.parse(`+1d6x[${game.i18n.localize('SWADE.BonusDamage')}]`),
+        ...Roll.parse(`+1d6x[${game.i18n.localize('SWADE.BonusDamage')}]`, {}),
       );
     }
-    const retVal = roll.evaluate({ async: false });
+    roll.evaluate({ async: false });
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
     for (const term of roll.terms) {
-      if (term instanceof DicePool) {
-        term.rolls.forEach((roll: Roll) => {
-          roll.terms.forEach((term: Die) => {
-            if (
-              term instanceof Die &&
-              !!game.dice3d &&
-              term.options.flavor === game.i18n.localize('SWADE.WildDie')
-            ) {
-              const colorPreset =
-                game.user.getFlag('swade', 'dsnWildDie') || 'none';
-              if (colorPreset !== 'none')
-                term.options['colorset'] = colorPreset;
-            }
-          });
-        });
+      if (term instanceof PoolTerm) {
+        for (const roll of term.rolls) {
+          if (roll instanceof Roll) {
+            roll.terms.forEach((term: Die) => {
+              if (
+                term instanceof Die &&
+                !!game.dice3d &&
+                term.options.flavor === game.i18n.localize('SWADE.WildDie')
+              ) {
+                const colorPreset =
+                  game.user.getFlag('swade', 'dsnWildDie') || 'none';
+                if (colorPreset !== 'none')
+                  term.options['colorset'] = colorPreset;
+              }
+            });
+          }
+        }
       }
     }
     //End of Workaround
     // Convert the roll to a chat message and return the roll
-    rollMode = form
-      ? (form.find('#rollMode').val() as Const.DiceRollMode)
-      : (rollMode as Const.DiceRollMode);
-    retVal.toMessage(
+    rollMode = form ? form.find('#rollMode').val() : rollMode;
+    roll.toMessage(
       {
         speaker: speaker,
         flavor: flavor,
         flags: flags,
       },
+      //@ts-ignore
       { rollMode },
     );
-    return retVal;
+    return roll;
   }
 }
