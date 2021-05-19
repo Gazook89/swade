@@ -12,9 +12,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade', 'sheet', 'actor', 'vehicle'],
       width: 600,
       height: 540,
@@ -25,7 +24,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {

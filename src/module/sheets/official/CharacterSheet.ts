@@ -8,9 +8,8 @@ import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade-official', 'sheet', 'actor'],
       width: 630,
       height: 700,
@@ -22,7 +21,7 @@ export default class CharacterSheet extends ActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {

@@ -5,9 +5,8 @@ import SwadeBaseActorSheet from './SwadeBaseActorSheet';
  */
 export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade', 'sheet', 'actor', 'npc'],
       width: 660,
       height: 600,
@@ -18,7 +17,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {

@@ -12,11 +12,10 @@ export default class SwadeItemSheet extends ItemSheet {
   }
 
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       width: 560,
-      height: 'auto',
+      height: 'auto' as 'auto',
       classes: ['swade', 'sheet', 'item'],
       tabs: [
         {
@@ -27,7 +26,7 @@ export default class SwadeItemSheet extends ItemSheet {
       ],
       scrollY: ['.actions-list'],
       resizable: true,
-    });
+    };
   }
 
   /**
