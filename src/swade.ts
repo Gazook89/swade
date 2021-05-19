@@ -38,8 +38,6 @@ import {
 
 const sockets: SwadeSocketHandler = null;
 export const swadeGame = {
-  SwadeActor,
-  SwadeItem,
   SwadeEntityTweaks,
   rollSkillMacro,
   rollWeaponMacro,

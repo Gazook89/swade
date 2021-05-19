@@ -91,20 +91,7 @@ export function rollSkillMacro(skillName) {
   ui.notifications.warn(
     'This type of macro will soon be removed. Please create a new one by dragging/dropping',
   );
-  const speaker = ChatMessage.getSpeaker();
-  let actor;
-  if (speaker.token) actor = game.actors.tokens[speaker.token];
-  if (!actor) actor = game.actors.get(speaker.actor);
-  const item: SwadeItem = actor
-    ? actor.items.find((i) => i.name === skillName)
-    : null;
-  if (!item)
-    return ui.notifications.warn(
-      `Your controlled Actor does not have the skill ${skillName}`,
-    );
-
-  // Trigger the item roll
-  return actor.rollSkill(item.id);
+  return rollItemMacro(skillName);
 }
 
 /**
@@ -119,19 +106,7 @@ export function rollWeaponMacro(weaponName) {
   ui.notifications.warn(
     'This type of macro will soon be removed. Please create a new one by dragging/dropping',
   );
-  const speaker = ChatMessage.getSpeaker();
-  let actor;
-  if (speaker.token) actor = game.actors.tokens[speaker.token];
-  if (!actor) actor = game.actors.get(speaker.actor);
-  const item: SwadeItem = actor
-    ? actor.items.find((i) => i.name === weaponName)
-    : null;
-  if (!item)
-    return ui.notifications.warn(
-      `Your controlled Actor does not have an item named ${weaponName}`,
-    );
-
-  return item.rollDamage();
+  return rollItemMacro(weaponName);
 }
 
 /**
@@ -143,23 +118,7 @@ export function rollPowerMacro(powerName) {
   ui.notifications.warn(
     'This type of macro will soon be removed. Please create a new one by dragging/dropping',
   );
-  const speaker = ChatMessage.getSpeaker();
-  let actor;
-  if (speaker.token) actor = game.actors.tokens[speaker.token];
-  if (!actor) actor = game.actors.get(speaker.actor);
-  const item: SwadeItem = actor
-    ? actor.items.find((i) => i.name === powerName)
-    : null;
-  if (!item)
-    return ui.notifications.warn(
-      `Your controlled Actor does not have an item named ${powerName}`,
-    );
-
-  // Trigger the item roll
-  if (item.data.data['damage']) {
-    return item.rollDamage();
-  }
-  return;
+  return rollItemMacro(powerName);
 }
 
 /**
