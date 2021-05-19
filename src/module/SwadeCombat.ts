@@ -43,7 +43,9 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-      const c = this.getCombatant(id);
+      //FIXME once new definitions come along
+      //@ts-ignore
+      const c = this.combatants.get(id);
       if (c.initiative !== null) {
         console.log('This must be a reroll');
         isRedraw = true;
@@ -63,8 +65,8 @@ export default class SwadeCombat extends Combat {
       let card: JournalEntry;
       if (isRedraw) {
         const oldCard = await this.findCard(
-          getProperty(c, 'flags.swade.cardValue') as number,
-          getProperty(c, 'flags.swade.suitValue') as number,
+          c.getFlag('swade', 'cardValue') as number,
+          c.getFlag('swade', 'suitValue') as number,
         );
         const cards = await this.drawCard();
         cards.push(oldCard);
@@ -132,7 +134,7 @@ export default class SwadeCombat extends Combat {
         suitValue: card.getFlag('swade', 'suitValue'),
         cardValue: card.getFlag('swade', 'cardValue'),
         hasJoker: card.getFlag('swade', 'isJoker'),
-        cardString: card['data']['content'],
+        cardString: card.data.content,
       };
       combatantUpdates.push({
         _id: c._id,
@@ -275,7 +277,7 @@ export default class SwadeCombat extends Combat {
     for (let i = 0; i < count; i++) {
       const drawResult = await actionCardDeck.draw({ displayChat: false });
       const lookUpCard = packIndex.find(
-        (c) => c.name === drawResult.results[0].text,
+        (c) => c.name === drawResult.results[0].data.text,
       );
       cards.push(
         (await actionCardPack.getEntity(lookUpCard._id)) as JournalEntry,
@@ -409,7 +411,9 @@ export default class SwadeCombat extends Combat {
         ui.notifications.info('Card Deck automatically reset');
       }
       const resetComs = this.data.combatants.map((c) => {
-        c.initiative = null;
+        //FIXME once new definitions come along
+        //@ts-ignore
+        c.data.initiative = null;
         c.flags = {
           swade: {
             cardValue: null,
@@ -424,7 +428,9 @@ export default class SwadeCombat extends Combat {
 
       //Init autoroll
       if (game.settings.get('swade', 'autoInit')) {
-        const combatantIds = this.combatants.map((c) => c._id);
+        //FIXME once new definitions come along
+        //@ts-ignore
+        const combatantIds = this.combatants.map((c) => c.id);
         await this.rollInitiative(combatantIds);
       }
     }

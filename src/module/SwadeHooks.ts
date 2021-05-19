@@ -364,7 +364,7 @@ export default class SwadeHooks {
       if (combatant.initiative && combatant.initiative !== 0) {
         const cardString = getProperty(
           combatant,
-          'flags.swade.cardString',
+          'data.flags.swade.cardString',
         ) as string;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
       } else if (!game.user.isGM) {
