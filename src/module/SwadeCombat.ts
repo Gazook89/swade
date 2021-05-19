@@ -147,8 +147,8 @@ export default class SwadeCombat extends Combat {
       }
 
       const newflags = {
-        suitValue: card.getFlag('swade', 'suitValue'),
         cardValue: card.getFlag('swade', 'cardValue'),
+        suitValue: card.getFlag('swade', 'suitValue'),
         hasJoker: card.getFlag('swade', 'isJoker'),
         cardString: card['data']['content'],
       };
@@ -255,12 +255,14 @@ export default class SwadeCombat extends Combat {
             cardValue: null,
             hasJoker: false,
             cardString: null,
+            isOnHold: null,
           },
           swadeStored: {
             suitValue: null,
             cardValue: null,
             hasJoker: false,
             cardString: null,
+            isOnHold: null,
           },
         },
       };
@@ -431,6 +433,13 @@ export default class SwadeCombat extends Combat {
         getProperty(v, 'flags.swade.hasJoker'),
       );
       if (jokerDrawn) {
+        // Reset hasJoker in swadeStored to avoid bonus being reapplied after coming off hold
+        for (const j of game.combat.combatants.filter(
+          (c) => c.flags?.swadeStored?.hasJoker === true,
+        )) {
+          j.flags.swadeStored.hasJoker = false;
+        }
+
         await game.tables.getName(SWADE.init.cardTable).reset();
         ui.notifications.info('Card Deck automatically reset');
       }
