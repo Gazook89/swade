@@ -11,6 +11,10 @@ export function getSwadeConeShape(
   let rays;
   let points;
 
+  const toRadians = function (degrees: number): number {
+    return degrees * (Math.PI / 180);
+  };
+
   // For round cones - approximate the shape with a ray every 3 degrees
   if (coneType === 'round') {
     const da = Math.min(angle, 3);
