@@ -171,20 +171,8 @@ Hooks.on(
 
 Hooks.on(
   'updateCombatant',
-  (
-    combat: Combat,
-    combatant: any,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) =>
-    SwadeHooks.onUpdateCombatant(
-      combat,
-      combatant,
-      updateData,
-      options,
-      userId,
-    ),
+  (combatant: any, updateData: any, options: any, userId: string) =>
+    SwadeHooks.onUpdateCombatant(combatant, updateData, options, userId),
 );
 
 Hooks.on('deleteCombat', (combat: Combat, options: any, userId: string) =>

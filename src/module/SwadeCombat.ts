@@ -208,13 +208,16 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants(a, b) {
-    if (hasProperty(a, 'flags.swade') && hasProperty(b, 'flags.swade')) {
-      const cardA = a.flags.swade.cardValue;
-      const cardB = b.flags.swade.cardValue;
+    if (
+      hasProperty(a, 'data.flags.swade') &&
+      hasProperty(b, 'data.flags.swade')
+    ) {
+      const cardA = a.getFlag('swade', 'cardValue') as number;
+      const cardB = b.getFlag('swade', 'cardValue') as number;
       const card = cardB - cardA;
       if (card !== 0) return card;
-      const suitA = a.flags.swade.suitValue;
-      const suitB = b.flags.swade.suitValue;
+      const suitA = a.getFlag('swade', 'suitValue') as number;
+      const suitB = b.getFlag('swade', 'suitValue') as number;
       const suit = suitB - suitA;
       return suit;
     }
@@ -228,20 +231,7 @@ export default class SwadeCombat extends Combat {
    * @override
    */
   async resetAll() {
-    const updates = this.data.combatants.map((c) => {
-      return {
-        _id: c._id,
-        initiative: null,
-        flags: {
-          swade: {
-            suitValue: null,
-            cardValue: null,
-            hasJoker: false,
-            cardString: null,
-          },
-        },
-      };
-    });
+    const updates = this._getInitResetUpdates();
     await this.updateEmbeddedEntity('Combatant', updates);
     return this.update({ turn: 0 });
   }
@@ -426,18 +416,19 @@ export default class SwadeCombat extends Combat {
 
   protected _getInitResetUpdates() {
     const updates = this.data.combatants.map((c) => {
-      c.initiative = null;
-      c.flags = {
-        swade: {
-          cardValue: null,
-          suitValue: null,
-          hasJoker: null,
-          cardString: null,
+      return {
+        _id: c._id,
+        initiative: null,
+        flags: {
+          swade: {
+            suitValue: null,
+            cardValue: null,
+            hasJoker: false,
+            cardString: null,
+          },
         },
       };
-      return c;
     });
-
     return updates;
   }
 }

@@ -374,8 +374,7 @@ export default class SwadeHooks {
   }
 
   public static async onUpdateCombatant(
-    combat: Combat,
-    combatant: Combat.Combatant,
+    combatant: any,
     updateData: any,
     options: any,
     userId: string,
@@ -389,38 +388,41 @@ export default class SwadeHooks {
 
     const jokersWild = game.settings.get('swade', 'jokersWild');
 
-    if (jokersWild && getProperty(combatant, 'flags.swade.hasJoker')) {
+    if (jokersWild && combatant.getFlag('swade', 'hasJoker')) {
       const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
       });
       const isCombHostile =
-        combatant.token.disposition === TOKEN_DISPOSITIONS.HOSTILE;
+        combatant.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
 
       //Give bennies to PCs
-      if (combatant.actor.data.type === 'character') {
+      if (combatant.actor.type === 'character') {
         await ChatMessage.create({ user: game.user, content: template });
         //filter combatants for PCs and give them bennies
-        const combatants = combat.combatants.filter(
+        const combatants = game.combat.combatants.filter(
           (c) => c.actor.data.type === 'character',
         );
         for (const combatant of combatants) {
           const actor = (combatant.actor as unknown) as SwadeActor;
           await actor.getBenny();
         }
-      } else if (combatant.actor.data.type === 'npc' && isCombHostile) {
+      } else if (combatant.actor.type === 'npc' && isCombHostile) {
         await ChatMessage.create({ user: game.user, content: template });
         //give all GMs a benny
         const gmUsers = game.users.filter((u) => u.active && u.isGM);
         for (const gm of gmUsers) {
           const currBennies = (gm.getFlag('swade', 'bennies') as number) || 0;
           await gm.setFlag('swade', 'bennies', currBennies + 1);
-          chat.createGmBennyAddMessage(gm, true);
+          await chat.createGmBennyAddMessage(gm, true);
         }
 
         //give all enemy wildcards a benny
-        const enemyWCs = combat.combatants.filter((c) => {
+        const enemyWCs = game.combat.combatants.filter((c) => {
           const a = (c.actor as unknown) as SwadeActor;
-          const hostile = c.token.disposition === TOKEN_DISPOSITIONS.HOSTILE;
+          const hostile =
+            //FIXME once the new definitions come along
+            //@ts-ignore
+            c.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
           return a.data.type === 'npc' && hostile && a.isWildcard;
         });
         for (const enemy of enemyWCs) {
@@ -458,7 +460,7 @@ export default class SwadeHooks {
     data: any,
   ) {
     if (message.isRoll && message.isContentVisible) {
-      //FIXME Refactor chat message formatting once new definitions are available
+      //FIXME once new definitions come along
       await chat.formatRoll(message, html, data);
     }
 
@@ -739,11 +741,14 @@ export default class SwadeHooks {
       const color =
         suitValue === 2 || suitValue === 3 ? 'color: red;' : 'color: black;';
       const isDealt =
-        options.object.flags.swade &&
-        options.object.flags.swade.cardValue === cardValue &&
-        options.object.flags.swade.suitValue === suitValue;
-      const isAvailable = cardTable.results.find((r) => r.text === card.name)
-        .drawn
+        options.document.data.flags.swade &&
+        options.document.getFlag('swade', 'cardValue') === cardValue &&
+        options.document.getFlag('swade', 'suitValue') === suitValue;
+      const isAvailable = cardTable.results.find(
+        //FIXME once new definitions come along
+        //@ts-ignore
+        (r) => r.data.text === card.name,
+      ).drawn
         ? 'text-decoration: line-through;'
         : '';
 
@@ -764,7 +769,7 @@ export default class SwadeHooks {
     //render and inject new HTML
     const path = 'systems/swade/templates/combatant-config-cardlist.html';
     $(await renderTemplate(path, { cardList, numberOfJokers })).insertBefore(
-      `#${options.options.id} footer`,
+      `#combatant-config-${options.document.id} footer`,
     );
 
     //Attach click event to button which will call the combatant update as we can't easily modify the submit function of the FormApplication
@@ -778,7 +783,7 @@ export default class SwadeHooks {
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as String;
       game.combat.updateEmbeddedEntity('Combatant', {
-        _id: options.object._id,
+        _id: options.document.id,
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
       });
