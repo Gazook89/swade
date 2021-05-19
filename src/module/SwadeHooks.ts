@@ -653,7 +653,7 @@ export default class SwadeHooks {
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data, {});
       } else {
-        item = game.items.get(data.id);
+        item = game.items.get(data.id) as SwadeItem;
       }
       const isRightItemTypeAndSubtype =
         item.data.type === 'ability' && item.data.data.subtype === 'race';
@@ -821,7 +821,7 @@ export default class SwadeHooks {
   }
 
   public static onDiceSoNiceReady(dice3d: any) {
-    //@ts-ignore
+    //@ts-expect-error Load the DiceColors file. This should work fine since the file can only be loaded in the same situation in which the hook is fired
     import('/modules/dice-so-nice/DiceColors.js')
       .then((obj) => {
         SWADE.dsnColorSets = obj.COLORSETS;
