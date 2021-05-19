@@ -117,15 +117,19 @@ Hooks.once('init', () => {
   });
 });
 
-/* ------------------------------------ */
-/* Setup system							            */
-/* ------------------------------------ */
 Hooks.once('setup', () => SwadeHooks.onSetup());
 
-/* ------------------------------------ */
-/* When ready						              	*/
-/* ------------------------------------ */
 Hooks.once('ready', async () => SwadeHooks.onReady());
+
+Hooks.on('preCreateItem', (item, options, userId) => {
+  if (
+    item.parent &&
+    item.data.type === 'ability' &&
+    item.data.data.subtype === 'race'
+  ) {
+    return false; //return early if we're doing race stuff
+  }
+});
 
 Hooks.on(
   'createActor',

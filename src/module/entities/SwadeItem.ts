@@ -338,10 +338,11 @@ export default class SwadeItem extends Item<SysItemData> {
       if (data.type === 'skill' && options.renderSheet !== null) {
         options.renderSheet = true;
       }
-      if (data.type === 'ability' && data.data.subtype === 'race') {
-        return; //return early if we're doing race stuff
-      }
-      if (this.type === 'npc' && getProperty(data, 'data.equippable')) {
+      if (
+        //@ts-ignore
+        this.parent.type === 'npc' &&
+        hasProperty(this.data, 'data.equippable')
+      ) {
         //@ts-ignore
         this.data.update({ equipped: true });
       }
