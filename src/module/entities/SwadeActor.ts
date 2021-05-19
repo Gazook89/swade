@@ -203,26 +203,25 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     const label = SWADE.attributes[abilityId].long;
     const actorData = this.data;
     const abl = actorData.data.attributes[abilityId];
+    const rolls = [];
 
     const attrRoll = new Roll('');
     attrRoll.terms.push(
       this._buildTraitDie(abl.die.sides, game.i18n.localize(label)),
     );
+    rolls.push(attrRoll);
 
-    const pool = new DicePool({
-      rolls: [attrRoll],
-      //FIXME
-      //@ts-ignore
-      terms: attrRoll.formula,
-      modifiers: ['kh'],
-    });
-
-    //If the Actor is a wildcard the build a dicepool, otherwise build a Roll
     if (this.isWildcard) {
       const wildRoll = new Roll('');
       wildRoll.terms.push(this._buildWildDie(abl['wild-die'].sides));
-      pool.rolls.push(wildRoll);
+      rolls.push(wildRoll);
     }
+
+    //FIXME once new definitions come along
+    //@ts-ignore
+    const pool = DicePool.fromRolls(rolls) as DicePool;
+    pool.modifiers.push('kh');
+
     const finalRoll = new Roll('');
     finalRoll.terms.push(pool);
 
@@ -234,12 +233,18 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalRoll.terms.push('+');
+      //FIXME once new definitions come along
+      //@ts-ignore
+      finalRoll.terms.push(new OperatorTerm({ operator: '+' }));
       finalRoll.terms.push(convDie);
     }
 
     const rollMods = this._buildTraitRollModifiers(abl, options);
-    rollMods.forEach((m) => finalRoll.terms.push(m.value));
+    rollMods.forEach((m) =>
+      //FIXME once new definitions come along
+      //@ts-ignore
+      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`)),
+    );
 
     if (options.suppressChat) {
       return finalRoll;
@@ -722,13 +727,10 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
-    const dicePool = new DicePool({
-      rolls: rolls,
-      //FIXME
-      //@ts-ignore
-      terms: rolls.map((r) => r.formula),
-      modifiers: [kh],
-    });
+    //FIXME once new definitions come along
+    //@ts-ignore
+    const pool = DicePool.fromRolls(rolls) as DicePool;
+    pool.modifiers.push(kh);
 
     //Conviction Modifier
     const useConviction =
@@ -738,18 +740,23 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       game.settings.get('swade', 'enableConviction');
 
     const finalRoll = new Roll('');
-    finalRoll.terms.push(dicePool);
+    finalRoll.terms.push(pool);
 
     const rollMods = this._buildTraitRollModifiers(skillData, options);
-    rollMods.forEach((v) => {
-      finalRoll.terms.push(v.value);
-    });
+    rollMods.forEach((m) =>
+      //FIXME once new definitions come along
+      //@ts-ignore
+      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`)),
+    );
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalRoll.terms.push('+');
+      //FIXME once new definitions are available
+      //@ts-ignore
+      finalRoll.terms.push(new OperatorTerm({ operator: '+' }));
       finalRoll.terms.push(convDie);
     }
+    console;
 
     return [finalRoll, rollMods];
   }
@@ -777,9 +784,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       faces: sides,
       modifiers: ['x', ...modifiers],
       options: {
-        flavor: game.i18n
-          .localize('SWADE.WildDie')
-          .replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, ''),
+        flavor: game.i18n.localize('SWADE.WildDie'),
       },
     });
     if (game.dice3d) {

@@ -2,7 +2,6 @@
 import { SysItemData } from '../interfaces/item-data';
 import Bennies from './bennies';
 import * as chat from './chat';
-import { formatRoll } from './chat';
 import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
 import SwadeActor from './entities/SwadeActor';
@@ -11,8 +10,6 @@ import SwadeTemplate from './entities/SwadeTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
-import CharacterSheet from './sheets/official/CharacterSheet';
-import SwadeNPCSheet from './sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import { createActionCardTable } from './util';
 
@@ -461,7 +458,8 @@ export default class SwadeHooks {
     data: any,
   ) {
     if (message.isRoll && message.isContentVisible) {
-      await formatRoll(message, html, data);
+      //FIXME Refactor chat message formatting once new definitions are available
+      await chat.formatRoll(message, html, data);
     }
 
     chat.hideChatActionButtons(message, html, data);

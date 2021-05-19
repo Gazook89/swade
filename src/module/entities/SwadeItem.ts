@@ -44,17 +44,22 @@ export default class SwadeItem extends Item<SysItemData> {
     }
 
     const roll = new Roll(rollParts.join(''), actor.getRollData());
-
+    console.log(roll);
     const newParts = [];
     for (const term of roll.terms) {
       if (term instanceof Die) {
-        newParts.push(`${term.number}d${term.faces}x`);
-      } else if (term instanceof Roll) {
+        if (!term.modifiers.includes('x')) term.modifiers.push('x');
         newParts.push(term.formula);
-      } else if (typeof term === 'string') {
-        newParts.push(this._makeExplodable(term));
+        //FIXME once the new definitions come along
+        //@ts-ignore
+      } else if (term instanceof StringTerm) {
+        //FIXME once the new definitions come along
+        //@ts-ignore
+        newParts.push(this._makeExplodable(term.term));
       } else {
-        newParts.push(term);
+        //FIXME once the new definitions come along
+        //@ts-ignore
+        newParts.push(term.expression);
       }
     }
 

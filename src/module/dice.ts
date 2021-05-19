@@ -122,7 +122,9 @@ export default class SwadeDice {
     if (form) bonus = form.find('#bonus').val();
     if (bonus) {
       if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;
-      roll.terms.push(bonus);
+      //FIXME once the new definitions come along
+      //@ts-ignore
+      roll.terms.push(...Roll.parse(bonus));
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.SitMod')}: ${bonus}`;
     }
     if (groupRoll && allowGroup) {
@@ -130,41 +132,35 @@ export default class SwadeDice {
       const pool = roll.terms[0];
       if (pool instanceof DicePool) {
         const wildRoll = new Roll(
-          `1d6x[${game.i18n.localize('SWADE.WildDie').replace(' ', '')}]`,
+          `1d6x[${game.i18n.localize('SWADE.WildDie')}]`,
         );
         if (pool.rolls[0] instanceof Roll) {
           //copy modifiers
           wildRoll.terms = [...wildRoll.terms, ...pool.rolls[0].terms.slice(1)];
         }
         pool.rolls.push(wildRoll);
-        //FIXME
+        //FIXME once the new definitions come along
         //@ts-ignore
         pool.terms.push(wildRoll.formula);
       }
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
-      roll.terms.push('+');
       roll.terms.push(
-        new Die({
-          number: 1,
-          faces: 6,
-          modifiers: ['x'],
-          options: { flavor: game.i18n.localize('SWADE.BonusDamage') },
-        }),
+        //FIXME once the new definitions come along
+        //@ts-ignore
+        ...Roll.parse(`+1d6x[${game.i18n.localize('SWADE.BonusDamage')}]`),
       );
     }
     const retVal = roll.evaluate({ async: false });
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
     for (const term of roll.terms) {
-      if (term instanceof Die) continue;
       if (term instanceof DicePool) {
         term.rolls.forEach((roll: Roll) => {
-          roll.terms.forEach((term: Die | string | number) => {
+          roll.terms.forEach((term: Die) => {
             if (
               term instanceof Die &&
               !!game.dice3d &&
-              term.options['flavor'] ===
-                game.i18n.localize('SWADE.WildDie').replace(' ', '')
+              term.options.flavor === game.i18n.localize('SWADE.WildDie')
             ) {
               const colorPreset =
                 game.user.getFlag('swade', 'dsnWildDie') || 'none';
