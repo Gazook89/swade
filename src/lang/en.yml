@@ -96,8 +96,10 @@ SWADE.Berserk: Berserk
 SWADE.Defending: Defending
 SWADE.Flying: Flying
 SWADE.Holding: Holding
-SWADE.ToggleHold: Toggle Hold
-SWADE.Interrupt: Interrupt
+SWADE.Hold: Hold
+SWADE.ActNow: Act Now
+SWADE.ActAfterCurrentCombatant: Act After Current Combatant
+SWADE.LoseTurn: Lose Turn
 SWADE.Frightened: Frightened
 SWADE.Encumbered: Encumbered
 SWADE.Prone: Prone
