@@ -93,8 +93,7 @@ export default class SwadeEntityTweaks extends FormApplication {
     );
 
     // Update the actor
-    //FIXME revisit later
-    //@ts-ignore
+    //@ts-expect-error This can update both Item and Actor Documents but I'm not sure how to make TS understand
     await this.object.update(expandedFormData);
     this.object.sheet.render(true);
   }
