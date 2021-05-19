@@ -279,7 +279,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     const itemData = {
       name: name ? name : `New ${type.capitalize()}`,
       type: type,
-      data: duplicate(header.dataset),
+      data: deepClone(header.dataset),
     };
     delete itemData.data['type'];
     return itemData;
