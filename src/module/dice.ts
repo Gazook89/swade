@@ -115,11 +115,11 @@ export default class SwadeDice {
     allowGroup = false,
     flags,
   }: RollHandlerData): Promise<Roll> {
-    let rollMode = game.settings.get(
-      'core',
-      'rollMode',
-    ) as foundry.CONST.DiceRollMode;
     const groupRoll = actor && raise;
+    //get the rollMode
+    const rollMode = form
+      ? (form.find('#rollMode').val() as foundry.CONST.DiceRollMode)
+      : (game.settings.get('core', 'rollMode') as foundry.CONST.DiceRollMode);
     // Optionally include a situational bonus
     let bonus: string = null;
     if (form) bonus = form.find('#bonus').val();
@@ -158,28 +158,25 @@ export default class SwadeDice {
     for (const term of roll.terms) {
       if (term instanceof PoolTerm) {
         for (const roll of term.rolls) {
-          if (roll instanceof Roll) {
-            roll.terms.forEach((term: Die) => {
-              if (
-                term instanceof Die &&
-                !!game.dice3d &&
-                term.options.flavor === game.i18n.localize('SWADE.WildDie')
-              ) {
-                const colorPreset =
-                  game.user.getFlag('swade', 'dsnWildDie') || 'none';
-                if (colorPreset !== 'none')
-                  term.options['colorset'] = colorPreset;
+          for (const term of roll.terms) {
+            if (
+              term instanceof Die &&
+              game.dice3d &&
+              term.flavor === game.i18n.localize('SWADE.WildDie')
+            ) {
+              const colorPreset =
+                game.user.getFlag('swade', 'dsnWildDie') || 'none';
+              if (colorPreset !== 'none') {
+                term.options['colorset'] = colorPreset;
               }
-            });
+            }
           }
         }
       }
     }
     //End of Workaround
     // Convert the roll to a chat message and return the roll
-    rollMode = form
-      ? (form.find('#rollMode').val() as foundry.CONST.DiceRollMode)
-      : rollMode;
+
     roll.toMessage(
       {
         speaker: speaker,

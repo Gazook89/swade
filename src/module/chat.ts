@@ -85,10 +85,11 @@ export async function formatRoll(
   for (const term of roll.terms) {
     if (term instanceof PoolTerm) {
       // Compute dice from the pool
-      term.rolls.forEach((roll: Roll, i) => {
+      term.rolls.forEach((roll, i) => {
         const faces = roll.terms[0]['faces'];
         if (!term.results[i].discarded) {
-          pushDice(results, roll.total, faces, colorMessage && rollIsRed(roll));
+          const color = colorMessage && rollIsRed(roll);
+          pushDice(results, roll.total, faces, color);
         }
       });
     } else if (term instanceof Die) {
@@ -107,6 +108,7 @@ export async function formatRoll(
   //add conviction modifier
   let mod = 0;
   const modString = `0+${modifiers.join('')}`
+    .replace(/\s*/g, '') //cut out the whitespace
     .replace(/\+{2,}/g, '+') //replace double plusses with single plus
     .replace(/[+-]*$/, '') //remove any plus or minus at the end of the string
     .replace('+-', '-'); //turn all +- into just minuses
