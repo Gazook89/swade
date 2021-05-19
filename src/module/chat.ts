@@ -49,7 +49,7 @@ export async function formatRoll(
   const chatData = { dice: [], modifiers: [] };
 
   for (const term of roll.terms) {
-    if (term instanceof DicePool) {
+    if (term instanceof PoolTerm) {
       // Compute dice from the pool
       term.rolls.forEach((roll: Roll) => {
         const faces = roll.terms[0]['faces'];
@@ -83,7 +83,7 @@ export async function formatRoll(
   let conviction = 0;
 
   for (const term of roll.terms) {
-    if (term instanceof DicePool) {
+    if (term instanceof PoolTerm) {
       // Compute dice from the pool
       term.rolls.forEach((roll: Roll, i) => {
         const faces = roll.terms[0]['faces'];
@@ -241,7 +241,10 @@ export async function createGmBennyAddMessage(
   ChatMessage.create(chatData);
 }
 
-export function rerollFromChat(li: JQuery<HTMLElement>, spendBenny: boolean) {
+export async function rerollFromChat(
+  li: JQuery<HTMLElement>,
+  spendBenny: boolean,
+) {
   const message = game.messages.get(li.data('messageId')) as ChatMessage;
   const flavor = new DOMParser().parseFromString(
     getProperty(message, 'data.flavor'),
@@ -276,8 +279,7 @@ export function rerollFromChat(li: JQuery<HTMLElement>, spendBenny: boolean) {
   };
 
   if (doSpendBenny) {
-    actor.spendBenny().then(() => roll.reroll().toMessage(newRollData));
-  } else {
-    roll.reroll().toMessage(newRollData);
+    await actor.spendBenny();
   }
+  roll.reroll().toMessage(newRollData);
 }
