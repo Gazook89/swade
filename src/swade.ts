@@ -64,7 +64,7 @@ Hooks.once('init', () => {
   registerCustomHelpers();
 
   //Overwrite method prototypes
-  //@ts-expect-error
+  //@ts-expect-error I'm not extending this class and just altering the shape so overwriting the prototype is the easiest way of doing things
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
