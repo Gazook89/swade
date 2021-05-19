@@ -821,14 +821,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         value: fatiguePenalties.signedString(),
       });
 
-    // Status penalties
-    const statusPenalties = this.calcStatusPenalties();
-    if (statusPenalties !== 0)
-      mods.push({
-        label: game.i18n.localize('SWADE.Status'),
-        value: statusPenalties.signedString(),
-      });
-
     //Additional Mods
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
@@ -848,6 +840,25 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         label: game.i18n.localize('SWADE.Joker'),
         value: '+2',
       });
+    }
+
+    //Status penalites
+    if (this.data.type !== 'vehicle') {
+      const isDistracted = this.data.data.status.isDistracted;
+      const isEntangled = this.data.data.status.isEntangled;
+      const entangled: ITraitRollModifier = {
+        label: game.i18n.localize('SWADE.Entangled'),
+        value: '-2',
+      };
+      const distracted: ITraitRollModifier = {
+        label: game.i18n.localize('SWADE.Distr'),
+        value: '-2',
+      };
+      if (isEntangled) {
+        mods.push(entangled);
+      } else if (isDistracted) {
+        mods.push(distracted);
+      }
     }
 
     return [...mods.filter((m) => m.value)];

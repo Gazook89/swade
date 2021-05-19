@@ -1,5 +1,5 @@
 import { VehicleCommon } from '../interfaces/actor-data';
-
+//TODO Come back and check on this code before release for the migrations
 export async function migrateWorld() {
   ui.notifications.info(
     `Applying SWADE System Migration for version ${game.system.data.version}. Please be patient and do not close your game or shut down your server.`,
@@ -89,7 +89,7 @@ export async function migrateCompendium(pack: Compendium) {
 
       // Save the entry, if data was changed
       updateData['_id'] = ent._id;
-      await pack.updateEntity(updateData as Data);
+      await pack.updateEntity(updateData);
       console.log(
         `Migrated ${entity} entity ${ent.name} in Compendium ${pack.collection}`,
       );

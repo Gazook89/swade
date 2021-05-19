@@ -66,7 +66,7 @@ export async function formatRoll(
     } else {
       chatData.dice.push({
         img: null,
-        result: term,
+        result: term.expression,
         color: 'black',
         dice: false,
       });
@@ -99,8 +99,8 @@ export async function formatRoll(
       }
     } else if (term instanceof Roll) {
       results.total += term.total;
-    } else if (typeof term === 'string' || typeof term === 'number') {
-      modifiers.push(term);
+    } else {
+      modifiers.push(term.expression);
     }
   }
 
@@ -109,7 +109,7 @@ export async function formatRoll(
   const modString = `0+${modifiers.join('')}`
     .replace(/\+{2,}/g, '+') //replace double plusses with single plus
     .replace(/[+-]*$/, '') //remove any plus or minus at the end of the string
-    .replace('+-', '-');
+    .replace('+-', '-'); //turn all +- into just minuses
   try {
     if (modString.length > 2) {
       mod = eval(modString) as number;
@@ -281,5 +281,5 @@ export async function rerollFromChat(
   if (doSpendBenny) {
     await actor.spendBenny();
   }
-  roll.reroll().toMessage(newRollData);
+  roll.reroll({ async: false }).toMessage(newRollData);
 }

@@ -49,8 +49,8 @@ export default class SwadeDice {
       ok: {
         label: game.i18n.localize('SWADE.Roll'),
         icon: '<i class="fas fa-dice"></i>',
-        callback: (html) => {
-          finalRoll = this._handleRoll({
+        callback: async (html) => {
+          finalRoll = await this._handleRoll({
             form: html,
             roll: roll,
             speaker,
@@ -62,8 +62,8 @@ export default class SwadeDice {
       extra: {
         label: '',
         icon: '<i class="far fa-plus-square"></i>',
-        callback: (html) => {
-          finalRoll = this._handleRoll({
+        callback: async (html) => {
+          finalRoll = await this._handleRoll({
             form: html,
             raise: true,
             actor: actor,
@@ -105,7 +105,7 @@ export default class SwadeDice {
     });
   }
 
-  static _handleRoll({
+  static async _handleRoll({
     form = null,
     raise = false,
     actor = null,
@@ -114,8 +114,11 @@ export default class SwadeDice {
     flavor = '',
     allowGroup = false,
     flags,
-  }: RollHandlerData): Roll {
-    let rollMode = game.settings.get('core', 'rollMode') as string;
+  }: RollHandlerData): Promise<Roll> {
+    let rollMode = game.settings.get(
+      'core',
+      'rollMode',
+    ) as foundry.CONST.DiceRollMode;
     const groupRoll = actor && raise;
     // Optionally include a situational bonus
     let bonus: string = null;
@@ -141,11 +144,16 @@ export default class SwadeDice {
       }
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
+      roll.terms.push(new OperatorTerm({ operator: '+' }));
       roll.terms.push(
-        ...Roll.parse(`+1d6x[${game.i18n.localize('SWADE.BonusDamage')}]`, {}),
+        new Die({
+          faces: 6,
+          modifiers: ['x'],
+          options: { flavor: game.i18n.localize('SWADE.BonusDamage') },
+        }),
       );
     }
-    roll.evaluate({ async: false });
+    await roll.evaluate({ async: true });
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
     for (const term of roll.terms) {
       if (term instanceof PoolTerm) {
@@ -169,14 +177,15 @@ export default class SwadeDice {
     }
     //End of Workaround
     // Convert the roll to a chat message and return the roll
-    rollMode = form ? form.find('#rollMode').val() : rollMode;
+    rollMode = form
+      ? (form.find('#rollMode').val() as foundry.CONST.DiceRollMode)
+      : rollMode;
     roll.toMessage(
       {
         speaker: speaker,
         flavor: flavor,
         flags: flags,
       },
-      //@ts-ignore
       { rollMode },
     );
     return roll;
