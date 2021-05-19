@@ -204,7 +204,9 @@ export default class SwadeItem extends Item<SysItemData> {
   async show() {
     // Basic template rendering data
     const token = this.actor.token;
-    const tokenId = token ? `${token.scene._id}.${token.id}` : null;
+    //FIXME once the new definitions come along
+    //@ts-ignore
+    const tokenId = token ? `${token.parent.id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const hasAmmoManagement =
       this.type === 'weapon' &&
