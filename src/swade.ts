@@ -127,16 +127,6 @@ Hooks.once('setup', () => SwadeHooks.onSetup());
 /* ------------------------------------ */
 Hooks.once('ready', async () => SwadeHooks.onReady());
 
-Hooks.on('preCreateItem', (createData: any, options: any, userId: string) =>
-  SwadeHooks.onPreCreateItem(createData, options, userId),
-);
-
-Hooks.on(
-  'preCreateOwnedItem',
-  (actor: SwadeActor, createData: any, options: any, userId: string) =>
-    SwadeHooks.onPreCreateOwnedItem(actor, createData, options, userId),
-);
-
 Hooks.on(
   'createActor',
   async (actor: SwadeActor, options: any, userId: string) =>

@@ -115,13 +115,6 @@ export default class SwadeHooks {
     migrations.migrateWorld();
   }
 
-  public static onPreCreateItem(createData: any, options: any, userId: string) {
-    //Set default image if no image already exists
-    if (!createData.img) {
-      createData.img = `systems/swade/assets/icons/${createData.type}.svg`;
-    }
-  }
-
   public static onPreCreateScene(
     createData: any,
     options: any,
@@ -129,30 +122,6 @@ export default class SwadeHooks {
   ) {
     if (!createData.gridType) {
       createData.gridType = CONST.GRID_TYPES.GRIDLESS;
-    }
-  }
-
-  public static onPreCreateOwnedItem(
-    actor: SwadeActor,
-    createData: any,
-    options: any,
-    userId: string,
-  ) {
-    //Set default image if no image already exists
-    if (!createData.img) {
-      createData.img = `systems/swade/assets/icons/${createData.type}.svg`;
-    }
-    if (createData.type === 'skill' && options.renderSheet !== null) {
-      options.renderSheet = true;
-    }
-    if (createData.type === 'ability' && createData.data.subtype === 'race') {
-      return false;
-    }
-    if (
-      actor.data.type === 'npc' &&
-      getProperty(createData, 'data.equippable')
-    ) {
-      createData.data.equipped = true;
     }
   }
 

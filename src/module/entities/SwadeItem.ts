@@ -324,4 +324,27 @@ export default class SwadeItem extends Item<SysItemData> {
     }
     return { current, max };
   }
+
+  async _preCreate(data, options, user: User) {
+    //@ts-ignore
+    await super._preCreate(data, options, user);
+    //Set default image if no image already exists
+    if (!data.img) {
+      //@ts-ignore
+      this.data.update({ img: `systems/swade/assets/icons/${data.type}.svg` });
+    }
+    //@ts-ignore
+    if (this.parent) {
+      if (data.type === 'skill' && options.renderSheet !== null) {
+        options.renderSheet = true;
+      }
+      if (data.type === 'ability' && data.data.subtype === 'race') {
+        return; //return early if we're doing race stuff
+      }
+      if (this.type === 'npc' && getProperty(data, 'data.equippable')) {
+        //@ts-ignore
+        this.data.update({ equipped: true });
+      }
+    }
+  }
 }
