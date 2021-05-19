@@ -115,16 +115,6 @@ export default class SwadeHooks {
     migrations.migrateWorld();
   }
 
-  public static onPreCreateScene(
-    createData: any,
-    options: any,
-    userId: string,
-  ) {
-    if (!createData.gridType) {
-      createData.gridType = CONST.GRID_TYPES.GRIDLESS;
-    }
-  }
-
   public static async onCreateActor(
     actor: SwadeActor,
     options: any,

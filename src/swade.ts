@@ -225,10 +225,6 @@ Hooks.once('diceSoNiceReady', (dice3d: any) => {
   SwadeHooks.onDiceSoNiceReady(dice3d);
 });
 
-Hooks.on('preCreateScene', (createData: any, options: any, userId: string) =>
-  SwadeHooks.onPreCreateScene(createData, options, userId),
-);
-
 Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
   SwadeHooks.onPreUpdateToken(scene, token, updateData, options, userId),
 );
