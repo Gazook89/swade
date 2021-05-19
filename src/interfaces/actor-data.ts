@@ -123,7 +123,7 @@ export interface CharacterCommon {
     hasImpLevelHeaded: boolean;
     hasQuick: boolean;
   };
-  powerPoints: any; //FIXME Find better type
+  powerPoints: any; //TODO Find better type
   additionalStats: Partial<Record<string, AdditionalStat>>;
   wildcard: boolean;
 }
