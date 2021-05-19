@@ -393,14 +393,10 @@ export default class SwadeHooks {
 
     const jokersWild = game.settings.get('swade', 'jokersWild');
 
-    const isHolding = combatant.actor.data.effects.find(
-      (effect) => effect.flags.core.statusId === 'holding',
-    );
-
     if (
       jokersWild &&
       getProperty(combatant, 'flags.swade.hasJoker') &&
-      !isHolding
+      getProperty(updateData, 'flags.swade.isOnHold') === undefined
     ) {
       const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
@@ -514,140 +510,166 @@ export default class SwadeHooks {
       options[index].name = 'SWADE.Redraw';
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
+
     options.push({
-      name: 'SWADE.ToggleHold',
-      icon: '<i class="fas fa-hand-paper"></i>',
+      name: 'SWADE.Hold',
+      icon: '<i class="fas fa-hand-rock"></i>',
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         const targetCombatant = game.combat.combatants.find(
           (combatant) => combatant._id === targetCombatantId,
         );
-        const holdActor = targetCombatant.actor;
-        const currentCombatant = game.combat.combatant;
-        const holdEffect = holdActor.effects.find(
-          (el) => el.data.flags.core.statusId === 'holding',
-        );
 
-        if (holdEffect) {
-          const currentCardValue = getProperty(
-              currentCombatant,
-              'flags.swade.cardValue',
-            ),
-            currentSuitValue = getProperty(
-              currentCombatant,
-              'flags.swade.suitValue',
-            ),
-            currentInitiative = getProperty(currentCombatant, 'initiative'),
-            originalCardString = getProperty(
-              targetCombatant,
-              'flags.swade.originalCardString',
-            );
-
-          // If the current Combatant is the holding combatant, just remove Hold status.
-          if (currentCombatant._id === targetCombatant._id) {
-            await game.combat.updateCombatant({
-              _id: targetCombatantId,
-              initiative: currentInitiative,
-              flags: {
-                swade: {
-                  cardValue: currentCardValue,
-                  suitValue: currentSuitValue,
-                  cardString: originalCardString,
-                  originalCardString: null,
-                },
-              },
-            });
-
-            // Remove on hold effect and unmark defeated character
-            await holdActor.deleteEmbeddedEntity('ActiveEffect', holdEffect.id);
-          } else {
-            let interruptPrompt = new Dialog({
-              title: 'SWADE.Interrupt',
-              content: `<p>Is ${holdActor.name} interrupting ${currentCombatant.name}?</p>`,
-              buttons: {
-                Yes: {
-                  icon: '',
-                  label: 'Yes',
-                  callback: async () => {
-                    await game.combat.updateCombatant({
-                      _id: targetCombatantId,
-                      initiative: currentInitiative + 1,
-                      flags: {
-                        swade: {
-                          cardValue: currentCardValue,
-                          suitValue: currentSuitValue + 1,
-                          cardString: originalCardString,
-                          originalCardString: null,
-                        },
-                      },
-                    });
-
-                    await holdActor.deleteEmbeddedEntity(
-                      'ActiveEffect',
-                      holdEffect.id,
-                    );
-
-                    game.combat.previousTurn();
-                  },
-                },
-                No: {
-                  icon: '',
-                  label: 'No',
-                  callback: async () => {
-                    await game.combat.updateCombatant({
-                      _id: targetCombatantId,
-                      initiative: currentInitiative - 1,
-                      flags: {
-                        swade: {
-                          cardValue: currentCardValue,
-                          suitValue: currentSuitValue - 1,
-                          cardString: originalCardString,
-                          originalCardString: null,
-                        },
-                      },
-                    });
-
-                    // Remove on hold effect and unmark defeated character
-                    await holdActor.deleteEmbeddedEntity(
-                      'ActiveEffect',
-                      holdEffect.id,
-                    );
-
-                    game.combat.previousTurn();
-                  },
-                },
-              },
-              default: 'No',
-            });
-
-            await interruptPrompt.render(true);
-          }
-        } else {
-          // Add active effect for on hold to show icon on token
-          await holdActor.createEmbeddedEntity('ActiveEffect', {
-            label: 'On Hold',
-            icon: `systems/swade/assets/icons/status/status_holding.svg`,
-            flags: {
-              core: {
-                statusId: 'holding',
-                overlay: true,
-              },
-            },
-          });
+        if (!getProperty(targetCombatant, 'flags.swade.isOnHold')) {
+          // Add flag for on hold to show icon on token
 
           await game.combat.updateCombatant({
             _id: targetCombatantId,
             flags: {
               swade: {
-                originalCardString: await getProperty(
+                cardString: '<i class="fas fa-hand-rock"></i>',
+                isOnHold: true,
+              },
+              swadeStored: getProperty(targetCombatant, 'flags.swade'),
+            },
+          });
+        } else {
+          await game.combat.updateCombatant({
+            _id: targetCombatantId,
+            flags: {
+              swade: getProperty(targetCombatant, 'flags.swadeStored'),
+            },
+          });
+        }
+      },
+    });
+
+    options.push({
+      name: 'SWADE.ActNow',
+      icon: '<i class="fas fa-long-arrow-alt-right"></i>',
+      callback: async (li) => {
+        // Attach click event to Toggle Hold context menu option
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (combatant) => combatant._id === targetCombatantId,
+        );
+        const currentCombatant = game.combat.combatant;
+        const currentCardValue = getProperty(
+            currentCombatant,
+            'flags.swade.cardValue',
+          ),
+          currentSuitValue = getProperty(
+            currentCombatant,
+            'flags.swade.suitValue',
+          ),
+          currentInitiative = getProperty(currentCombatant, 'initiative');
+
+        if (getProperty(targetCombatant, 'flags.swade.isOnHold')) {
+          await game.combat.updateCombatant({
+            _id: targetCombatantId,
+            initiative: currentInitiative + 1,
+            flags: {
+              swade: {
+                cardValue: currentCardValue,
+                suitValue: currentSuitValue + 1,
+                cardString: getProperty(
                   targetCombatant,
-                  'flags.swade.cardString',
+                  'flags.swadeStored.cardString',
                 ),
-                cardString: 'Hold',
+                isOnHold: false,
               },
             },
           });
+
+          game.combat.previousTurn();
+        } else {
+          ui.notifications.warn(`${targetCombatant.name} is not on hold.`);
+        }
+      },
+    });
+
+    options.push({
+      name: 'SWADE.ActAfterCurrentCombatant',
+      icon: '<i class="fas fa-level-down-alt"></i>',
+      callback: async (li) => {
+        // Attach click event to Toggle Hold context menu option
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (combatant) => combatant._id === targetCombatantId,
+        );
+        const currentCombatant = game.combat.combatant;
+        const currentCardValue = getProperty(
+            currentCombatant,
+            'flags.swade.cardValue',
+          ),
+          currentSuitValue = getProperty(
+            currentCombatant,
+            'flags.swade.suitValue',
+          ),
+          currentInitiative = getProperty(currentCombatant, 'initiative');
+
+        if (getProperty(targetCombatant, 'flags.swade.isOnHold')) {
+          await game.combat.updateCombatant({
+            _id: targetCombatantId,
+            initiative: currentInitiative - 1,
+            flags: {
+              swade: {
+                cardValue: currentCardValue,
+                suitValue: currentSuitValue - 1,
+                cardString: getProperty(
+                  targetCombatant,
+                  'flags.swadeStored.cardString',
+                ),
+                isOnHold: false,
+              },
+            },
+          });
+
+          game.combat.previousTurn();
+        } else {
+          ui.notifications.warn(`${targetCombatant.name} is not on hold.`);
+        }
+      },
+    });
+
+    options.push({
+      name: 'SWADE.LoseTurn',
+      icon: '<i class="fas fa-ban"></i>',
+      callback: async (li) => {
+        // Attach click event to Toggle Hold context menu option
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (combatant) => combatant._id === targetCombatantId,
+        );
+
+        if (getProperty(targetCombatant, 'flags.swade.isOnHold')) {
+          // If the current Combatant is the holding combatant, just remove Hold status.
+          await game.combat.updateCombatant({
+            _id: targetCombatantId,
+            flags: {
+              swade: {
+                cardString: '<i class="fas fa-ban"></i>',
+                isOnHold: false,
+                turnLost: true,
+              },
+            },
+          });
+        } else {
+          if (getProperty(targetCombatant, 'flags.swade.turnLost')) {
+            await game.combat.updateCombatant({
+              _id: targetCombatantId,
+              flags: {
+                swade: {
+                  cardString: '<i class="fas fa-hand-rock"></i>',
+                  isOnHold: true,
+                  turnLost: false,
+                },
+              },
+            });
+          } else {
+            ui.notifications.warn(`${targetCombatant.name} is not on hold.`);
+          }
         }
       },
     });
