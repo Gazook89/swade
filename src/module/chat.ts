@@ -2,7 +2,6 @@ import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import ItemChatCardHelper from './ItemChatCardHelper';
 
-//TODO Find a better way to format the rolls to make clear what is roll
 export async function formatRoll(
   chatMessage: ChatMessage,
   html: JQuery<HTMLElement>,
