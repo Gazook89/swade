@@ -1,5 +1,4 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
-import { SysItemData } from '../../../interfaces/item-data';
 import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
 import SwadeActor from '../../entities/SwadeActor';
@@ -281,11 +280,12 @@ export default class CharacterSheet extends ActorSheet {
       }
     });
 
-    html.find('.effect-action').on('click', (ev) => {
+    html.find('.effect-action').on('click', async (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
       const effect = this.actor.effects.get(effectId);
       const action = a.dataset.action;
+      let item: SwadeItem = null;
 
       switch (action) {
         case 'edit':
@@ -295,9 +295,8 @@ export default class CharacterSheet extends ActorSheet {
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
         case 'open-origin':
-          fromUuid(effect.data.origin).then((item: SysItemData) => {
-            if (item) this.actor.items.get(item._id).sheet.render(true);
-          });
+          item = (await fromUuid(effect.data.origin)) as SwadeItem;
+          if (item) this.actor.items.get(item.id).sheet.render(true);
           break;
         default:
           console.warn(`The action ${action} is not currently supported`);
