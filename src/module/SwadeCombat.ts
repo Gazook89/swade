@@ -423,6 +423,20 @@ export default class SwadeCombat extends Combat {
   /**
    * @override
    */
+  async startCombat() {
+    //Init autoroll
+    await super.startCombat();
+    if (game.settings.get('swade', 'autoInit')) {
+      if (this.combatants.find((c) => c.initiative === null) !== undefined) {
+        const combatantIds = this.combatants.map((c) => c._id);
+        await this.rollInitiative(combatantIds);
+      }
+    }
+  }
+
+  /**
+   * @override
+   */
   async nextRound() {
     if (!game.user.isGM) {
       game.socket.emit('system.swade', { type: 'newRound', combatId: this.id });
