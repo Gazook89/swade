@@ -41,7 +41,6 @@ export default class CharacterSheet extends ActorSheet {
     if (!this.options.editable) return;
 
     // Drag events for macros.
-    //FIXME once new definitions come along
     //@ts-ignore
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
@@ -188,12 +187,14 @@ export default class CharacterSheet extends ActorSheet {
         .slideToggle();
     });
 
+    //Edit Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 
+    //Show Item
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const item = this.actor.items.get(li.data('itemId'));
@@ -438,6 +439,8 @@ export default class CharacterSheet extends ActorSheet {
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
+      //return early if there's no data to roll
+      if (!statData.value) return;
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
         .evaluate({ async: false })
         .toMessage({
@@ -543,7 +546,7 @@ export default class CharacterSheet extends ActorSheet {
       data.currentBennies.push(i + 1);
     }
 
-    const additionalStats = data.data.additionalStats || {};
+    const additionalStats = data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }

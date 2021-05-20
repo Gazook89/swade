@@ -166,8 +166,9 @@ export default class SwadeItemSheet extends ItemSheet {
       if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
-      const dieSides = statData.value || 4;
-      new Roll(`1d${dieSides}${modifier}`)
+      //return of there's no value to roll
+      if (!statData.value) return;
+      new Roll(`1d${statData.value}${modifier}`)
         .evaluate({ async: false })
         .toMessage({
           speaker: ChatMessage.getSpeaker(),
@@ -189,7 +190,7 @@ export default class SwadeItemSheet extends ItemSheet {
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
     }
-    const additionalStats = data.data.additionalStats || {};
+    const additionalStats = data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
