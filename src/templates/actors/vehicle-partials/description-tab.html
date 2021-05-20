@@ -1,13 +1,13 @@
 <div id="opSkill">
   <label>{{localize "SWADE.OpSkill"}}</label>
   <select name="data.driver.skill">
-    {{#select data.driver.skill}} {{selectOptions opSkills}} {{/select}}
+    {{#select data.data.driver.skill}} {{selectOptions opSkills}} {{/select}}
   </select>
-  {{#if (isEmpty data.driver.skill)}}
+  {{#if (isEmpty data.data.driver.skill)}}
   <label>{{localize "SWADE.AltSkill"}}</label>
   <input
     type="text"
-    value="{{data.driver.skillAlternative}}"
+    value="{{data.data.driver.skillAlternative}}"
     name="data.driver.skillAlternative"
   />
   {{/if}}
@@ -18,7 +18,7 @@
     <span>{{ localize "SWADE.Desc" }}</span>
   </header>
   <span class="vehicle-editor">
-    {{editor content=data.description target="data.description" button=true
+    {{editor content=data.data.description target="data.description" button=true
     owner=owner editable=editable}}
   </span>
 </div>

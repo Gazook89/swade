@@ -1,5 +1,6 @@
 import IDriverData from '../../interfaces/IDriverData';
 import { SWADE } from '../config';
+import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
@@ -138,13 +139,6 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       await this._openDriverSheet();
     });
 
-    //Input Synchronization
-    html.find('.wound-input').on('keyup', (ev) => {
-      this.actor.update({
-        'data.wounds.value': $(ev.currentTarget).val() as number,
-      });
-    });
-
     //Maneuver Check
     html
       .find('#maneuverCheck')
@@ -262,9 +256,9 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     await this.actor.update({ 'data.driver.id': null });
   }
 
-  private _openDriverSheet() {
+  private async _openDriverSheet() {
     const driverId = getProperty(this.actor.data, 'data.driver.id');
-    const driver = game.actors.get(driverId);
+    const driver = (await fromUuid(driverId)) as SwadeActor;
     if (driver) {
       driver.sheet.render(true);
     }
@@ -279,6 +273,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     const itemData = {
       name: name ? name : `New ${type.capitalize()}`,
       type: type,
+      img: `systems/swade/assets/icons/${type}.svg`,
       data: deepClone(header.dataset),
     };
     delete itemData.data['type'];
