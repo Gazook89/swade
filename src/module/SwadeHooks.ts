@@ -200,13 +200,12 @@ export default class SwadeHooks {
       data.combats[data.currentIndex - 1] || data.combat;
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id');
-      const combatant = currentCombat.combatants.find((c) => c._id == combId);
+      //@ts-ignore
+      const combatant = currentCombat.combatants.find((c) => c.id == combId);
       const initdiv = el.getElementsByClassName('token-initiative');
       if (combatant.initiative && combatant.initiative !== 0) {
-        const cardString = getProperty(
-          combatant,
-          'data.flags.swade.cardString',
-        ) as string;
+        //@ts-ignore
+        const cardString = combatant.getFlag('swade', 'cardString') as string;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
       } else if (!game.user.isGM) {
         initdiv[0].innerHTML = '';
