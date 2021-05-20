@@ -850,11 +850,11 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     const tokenData = mergeObject(
       //@ts-ignore
-      this.token.data.toObject(),
+      this.data.token.toObject(),
       { actorLink: data.type === 'character', vision: true },
     );
     //@ts-ignore
-    this.token.data.update(tokenData);
+    this.data.token.update(tokenData);
 
     //only do this if this is a PC with no prior skills
     if (data.type === 'character' && this.itemTypes['skill'].length <= 0) {
@@ -921,7 +921,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       hasProperty(changed, 'data.wildcard')
     ) {
       //@ts-ignore
-      this.token.data.update({ actorlink: changed.data.wildcard });
+      this.data.token.update({ actorlink: changed.data.wildcard });
     }
   }
 
