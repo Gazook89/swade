@@ -514,11 +514,18 @@ export default class SwadeHooks {
     options.push({
       name: 'SWADE.Hold',
       icon: '<i class="fas fa-hand-rock"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (c) => c._id === targetCombatantId,
+        );
+        return !getProperty(targetCombatant, 'flags.swade.turnLost');
+      },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         const targetCombatant = game.combat.combatants.find(
-          (combatant) => combatant._id === targetCombatantId,
+          (c) => c._id === targetCombatantId,
         );
 
         if (
@@ -557,11 +564,18 @@ export default class SwadeHooks {
     options.push({
       name: 'SWADE.ActNow',
       icon: '<i class="fas fa-long-arrow-alt-right"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (c) => c._id === targetCombatantId,
+        );
+        return !!getProperty(targetCombatant, 'flags.swade.isOnHold');
+      },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         const targetCombatant = game.combat.combatants.find(
-          (combatant) => combatant._id === targetCombatantId,
+          (c) => c._id === targetCombatantId,
         );
         const currentCombatant = game.combat.combatant;
         const currentCardValue = getProperty(
@@ -599,11 +613,18 @@ export default class SwadeHooks {
     options.push({
       name: 'SWADE.ActAfterCurrentCombatant',
       icon: '<i class="fas fa-level-down-alt"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (c) => c._id === targetCombatantId,
+        );
+        return !!getProperty(targetCombatant, 'flags.swade.isOnHold');
+      },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         const targetCombatant = game.combat.combatants.find(
-          (combatant) => combatant._id === targetCombatantId,
+          (c) => c._id === targetCombatantId,
         );
         const currentCombatant = game.combat.combatant;
         const currentCardValue = getProperty(
@@ -639,11 +660,24 @@ export default class SwadeHooks {
     options.push({
       name: 'SWADE.LoseTurn',
       icon: '<i class="fas fa-ban"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        const targetCombatant = game.combat.combatants.find(
+          (c) => c._id === targetCombatantId,
+        );
+        if (
+          (getProperty(targetCombatant, 'flags.swade.isOnHold') &&
+            !getProperty(targetCombatant, 'flags.swade.turnLost')) ||
+          getProperty(targetCombatant, 'flags.swade.turnLost')
+        ) {
+          return true;
+        }
+      },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         const targetCombatant = game.combat.combatants.find(
-          (combatant) => combatant._id === targetCombatantId,
+          (c) => c._id === targetCombatantId,
         );
 
         if (getProperty(targetCombatant, 'flags.swade.isOnHold')) {
