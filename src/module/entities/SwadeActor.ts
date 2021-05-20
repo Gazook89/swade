@@ -170,26 +170,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
   }
 
-  /** @override */
-  static async create(data, options = {}) {
-    let link = false;
-
-    if (data.type === 'character') {
-      link = true;
-    }
-    data.token = data.token || {};
-    mergeObject(
-      data.token,
-      {
-        vision: true,
-        actorLink: link,
-      },
-      { overwrite: false },
-    );
-
-    return super.create(data, options);
-  }
-
   rollAttribute(
     abilityId: string,
     options: IRollOptions = {},
@@ -867,6 +847,15 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   async _preCreate(data, options, user: User) {
     //@ts-ignore
     await super._preCreate(data, options, user);
+
+    const tokenData = mergeObject(
+      //@ts-ignore
+      this.token.data.toObject(),
+      { actorLink: data.type === 'character', vision: true },
+    );
+    //@ts-ignore
+    this.token.data.update(tokenData);
+
     //only do this if this is a PC with no prior skills
     if (data.type === 'character' && this.itemTypes['skill'].length <= 0) {
       //Get list of core skills from settings
@@ -937,9 +926,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   }
 
   //TODO change to onUpdate once TS behaves
-  //@ts-ignore
   // async _onUpdate(changed, options, user: User) {
-  //   //@ts-ignore
   //   super._onUpdate(changed, options, user);
   //   if (this.data.type === 'npc') {
   //     ui.actors.render(true);
