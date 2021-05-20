@@ -159,10 +159,6 @@ Hooks.on(
     SwadeHooks.onUpdateCombatant(combatant, updateData, options, userId),
 );
 
-Hooks.on('deleteCombat', (combat: Combat, options: any, userId: string) =>
-  SwadeHooks.onDeleteCombat(combat, options, userId),
-);
-
 // Add roll data to the message for formatting of dice pools
 Hooks.on(
   'renderChatMessage',
@@ -214,10 +210,6 @@ Hooks.once('diceSoNiceInit', (dice3d: any) => {
 Hooks.once('diceSoNiceReady', (dice3d: any) => {
   SwadeHooks.onDiceSoNiceReady(dice3d);
 });
-
-Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
-  SwadeHooks.onPreUpdateToken(scene, token, updateData, options, userId),
-);
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 

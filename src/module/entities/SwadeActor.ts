@@ -917,7 +917,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
           },
         },
       });
-      console.log(skills);
       //Add the items to the creation data
       //@ts-ignore
       this.data.update({ items: skills });

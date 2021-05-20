@@ -274,28 +274,6 @@ export default class SwadeHooks {
     }
   }
 
-  //TODO put into SwadeCombat class
-  public static onDeleteCombat(combat: Combat, options: any, userId: string) {
-    if (!game.user.isGM || !game.users.get(userId).isGM) {
-      return;
-    }
-
-    const jokerDrawn = combat.combatants.some((v) =>
-      getProperty(v, 'flags.swade.hasJoker'),
-    );
-
-    //return early if no Jokers have been drawn
-    if (!jokerDrawn) return;
-
-    //reset the deck when combat is ended
-    game.tables
-      .getName(SWADE.init.cardTable)
-      .reset()
-      .then(() => {
-        ui.notifications.info('Card Deck automatically reset');
-      });
-  }
-
   public static async onRenderChatMessage(
     message: ChatMessage,
     html: JQuery<HTMLElement>,
@@ -633,24 +611,6 @@ export default class SwadeHooks {
     return false;
   }
 
-  public static onPreUpdateToken(
-    scene: Scene,
-    token: Token.Data,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    const actor = game.actors.get(token.actorId);
-    if (!!actor && actor.data.type === 'npc') {
-      const items = getProperty(updateData, 'actorData.items') || [];
-      for (const item of items) {
-        if (getProperty(item, 'data.equippable')) {
-          item.data.equipped = true;
-        }
-      }
-    }
-  }
-
   public static onDiceSoNiceInit(dice3d: any) {
     game.settings.registerMenu('swade', 'dice-config', {
       name: game.i18n.localize('SWADE.DiceConf'),
@@ -663,13 +623,13 @@ export default class SwadeHooks {
   }
 
   public static onDiceSoNiceReady(dice3d: any) {
-    //@ts-expect-error Load the DiceColors file. This should work fine since the file can only be loaded in the same situation in which the hook is fired
+    //@ts-expect-error Load the DiceColors file. This should work fine since the file is only present in the same situation in which the hook is fired
     import('/modules/dice-so-nice/DiceColors.js')
       .then((obj) => {
         SWADE.dsnColorSets = obj.COLORSETS;
         SWADE.dsnTextureList = obj.TEXTURELIST;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
 
     const customWilDieColors =
       game.user.getFlag('swade', 'dsnCustomWildDieColors') ||

@@ -343,7 +343,7 @@ export default class SwadeItem extends Item<SysItemData> {
         hasProperty(this.data, 'data.equippable')
       ) {
         //@ts-ignore
-        this.data.update({ equipped: true });
+        this.data.update({ 'data.equipped': true });
       }
     }
   }

@@ -43,7 +43,6 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-      //FIXME once new definitions come along
       //@ts-ignore
       const c = this.combatants.get(id);
       if (c.initiative !== null) {
@@ -395,7 +394,8 @@ export default class SwadeCombat extends Combat {
     } else {
       await super.nextRound();
       const jokerDrawn = this.combatants.some((v) =>
-        getProperty(v, 'flags.swade.hasJoker'),
+        //@ts-ignore
+        v.getFlag('swade', 'hasJoker'),
       );
       if (jokerDrawn) {
         await game.tables.getName(SWADE.init.cardTable).reset();
@@ -406,7 +406,6 @@ export default class SwadeCombat extends Combat {
 
       //Init autoroll
       if (game.settings.get('swade', 'autoInit')) {
-        //FIXME once new definitions come along
         //@ts-ignore
         const combatantIds = this.combatants.map((c) => c.id);
         await this.rollInitiative(combatantIds);
@@ -430,5 +429,21 @@ export default class SwadeCombat extends Combat {
       };
     });
     return updates;
+  }
+
+  async _preDelete(options, user: User) {
+    //@ts-ignore
+    await super._preDelete(options, user);
+
+    const jokerDrawn = this.combatants.some((v) =>
+      //@ts-ignore
+      v.getFlag('swade', 'hasJoker'),
+    );
+
+    //reset the deck when combat is ended
+    if (jokerDrawn) {
+      await game.tables.getName(SWADE.init.cardTable).reset();
+      ui.notifications.info('Card Deck automatically reset');
+    }
   }
 }
