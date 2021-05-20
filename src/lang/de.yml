@@ -306,8 +306,8 @@ SWADE.ParryBaseDesc: >-
   wird
 SWADE.AutoCalcParry: Automatisch Parade berechnen, inclusive Schilde
 SWADE.Subtype: Unterkategorie
-SWADE.SpecialAbility: Spezialeigenschaft
-SWADE.SpecialAbilities: Spezialeigenschaften
+SWADE.SpecialAbility: Spezialfähigkeit
+SWADE.SpecialAbilities: Spezialfähigkeiten
 SWADE.RacialAbilities: Volkseigenschaften
 SWADE.About: Beschreibung
 SWADE.EdgesHindrances: Talente & Handicaps
@@ -342,7 +342,7 @@ SWADE.CoreSkillsPackDesc: Wählen Sie aus welchem ​​Kompendium die Grundfert
 SWADE.Joker: Joker
 SWADE.DmgRolls: Schadenswürfe
 SWADE.SubtractPPDesc: MP Kosten von verfügbaren MP abziehen
-SWADE.AddPPDesc: MP Kosten zu den verfügbaren PP hinzurechnen
+SWADE.AddPPDesc: MP Kosten zu den verfügbaren MP hinzurechnen
 SWADE.RightClickZoom: Für eine größere Ansicht rechtsklicken
 SWADE.SysMigrationWarning: >-
   Ihre SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können
