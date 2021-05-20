@@ -115,110 +115,6 @@ export default class SwadeHooks {
     migrations.migrateWorld();
   }
 
-  public static async onCreateActor(
-    actor: SwadeActor,
-    options: any,
-    userId: string,
-  ) {
-    // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-    const user = game.users.get(userId) as User;
-    if (!game.user.isGM || (game.userId !== userId && user.isGM)) {
-      return;
-    }
-
-    // Return early if the actor is not a player character
-    if (actor.data.type !== 'character') {
-      return;
-    }
-
-    //return early if the actor already has skills
-    if (actor.itemTypes['skill'].length > 0) {
-      return;
-    }
-
-    //Get list of core skills from settings
-    const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
-      .split(',')
-      .map((s) => s.trim());
-
-    //Get and map the existing skills on the actor to an array of names
-    const existingSkills = actor.itemTypes['skill'].map((i) => i.name);
-
-    //Filter the expected
-    const skillsToAdd = coreSkills.filter((s) => !existingSkills.includes(s));
-
-    //Set compendium source
-    const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
-    const skillIndex = (await game.packs.get(pack).getContent()) as SwadeItem[];
-
-    // extract skill data
-    const skills = skillIndex
-      .filter((i) => skillsToAdd.includes(i.data.name))
-      .map((i) => i.data);
-
-    await actor.createOwnedItem(skills, { renderSheet: null });
-
-    // Create core skills not in compendium (for custom skill names entered by the user)
-    for (const skillName of coreSkills) {
-      if (
-        typeof skillIndex.find(
-          (skillItem) => skillName === skillItem.data.name,
-        ) === 'undefined'
-      ) {
-        actor.createOwnedItem(
-          {
-            type: 'skill',
-            name: skillName,
-            data: {
-              description: '',
-              notes: '',
-              additionalStats: {},
-              attribute: '',
-              die: {
-                sides: 4,
-                modifier: null,
-              },
-              'wild-die': {
-                sides: 6,
-              },
-            },
-          },
-          { renderSheet: null },
-        );
-      }
-    }
-
-    //Set skills as core skills
-    for (const item of actor.items) {
-      if (item.type === 'skill' && coreSkills.includes(item.name)) {
-        await item.update({ 'data.isCoreSkill': true });
-      }
-    }
-
-    // Create an Untrained skill that's not a core skill
-    actor.createOwnedItem(
-      {
-        type: 'skill',
-        name: 'Untrained',
-        data: {
-          description: '',
-          notes: '',
-          additionalStats: {},
-          attribute: '',
-          die: {
-            sides: 4,
-            modifier: -2,
-          },
-          'wild-die': {
-            sides: 6,
-          },
-          isCoreSkill: false,
-        },
-      },
-      { renderSheet: null },
-    );
-  }
-
   public static onRenderActorDirectory(
     app: ActorDirectory,
     html: JQuery<HTMLElement>,
@@ -276,23 +172,6 @@ export default class SwadeHooks {
           );
         }
       });
-      return false;
-    }
-  }
-
-  public static onPreUpdateActor(
-    actor: SwadeActor,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    //wildcards will be linked, extras unlinked
-    if (
-      updateData.data &&
-      typeof updateData.data.wildcard !== 'undefined' &&
-      game.settings.get('swade', 'autoLinkWildcards')
-    ) {
-      updateData.token = { actorLink: updateData.data.wildcard };
     }
   }
 

@@ -130,12 +130,6 @@ Hooks.on('preCreateItem', (item, options, userId) => {
 });
 
 Hooks.on(
-  'createActor',
-  async (actor: SwadeActor, options: any, userId: string) =>
-    SwadeHooks.onCreateActor(actor, options, userId),
-);
-
-Hooks.on(
   'renderActorDirectory',
   (app: ActorDirectory, html: JQuery<HTMLElement>, options: any) =>
     SwadeHooks.onRenderActorDirectory(app, html, options),
@@ -145,12 +139,6 @@ Hooks.on(
   'renderCompendium',
   async (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCompendium(app, html, data),
-);
-
-Hooks.on(
-  'preUpdateActor',
-  (actor: SwadeActor, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onPreUpdateActor(actor, updateData, options, userId),
 );
 
 Hooks.on(

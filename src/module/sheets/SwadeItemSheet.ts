@@ -233,7 +233,7 @@ export default class SwadeItemSheet extends ItemSheet {
         const pack = game.packs.get(data.pack) as Compendium;
         item = (await pack.getEntity(data.id)) as SwadeItem;
       } else if ('actorId' in data) {
-        item = new SwadeItem(data.data, {});
+        item = new SwadeItem(data.data);
       } else {
         item = game.items.get(data.id) as SwadeItem;
       }
@@ -252,7 +252,8 @@ export default class SwadeItemSheet extends ItemSheet {
     }
 
     //prep item data
-    const itemData = deepClone(item.data);
+    //@ts-ignore
+    const itemData = deepClone(item.data.toObject());
     delete itemData['_id'];
     delete itemData['permission'];
 

@@ -866,7 +866,75 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
   async _preCreate(data, options, user: User) {
     //@ts-ignore
-    super._preCreate(data, options, user);
+    await super._preCreate(data, options, user);
+    //only do this if this is a PC with no prior skills
+    if (data.type === 'character' && this.itemTypes['skill'].length <= 0) {
+      //Get list of core skills from settings
+      const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
+        .split(',')
+        .map((s) => s.trim());
+
+      //Set compendium source
+      const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
+      const skillIndex: SwadeItem[] = await game.packs
+        .get(pack)
+        //@ts-ignore
+        .getDocuments();
+
+      // extract skill data
+      const skills = skillIndex
+        .filter((i) => coreSkills.includes(i.data.name))
+        //@ts-ignore
+        .map((s) => s.data.toObject());
+
+      // Create core skills not in compendium (for custom skill names entered by the user)
+      for (const skillName of coreSkills) {
+        if (!skillIndex.find((skill) => skillName === skill.data.name)) {
+          skills.push({
+            name: skillName,
+            type: 'skill',
+            img: 'systems/swade/assets/icons/skill.svg',
+            data: {
+              attribute: '',
+            },
+          });
+        }
+      }
+
+      //set all the skills to be core skills
+      skills.forEach((s) => (s.data.isCoreSkill = true));
+
+      //Add the Untrained skill
+      skills.push({
+        name: 'Untrained',
+        type: 'skill',
+        img: 'systems/swade/assets/icons/skill.svg',
+        data: {
+          attribute: '',
+          die: {
+            sides: 4,
+            modifier: -2,
+          },
+        },
+      });
+      console.log(skills);
+      //Add the items to the creation data
+      //@ts-ignore
+      this.data.update({ items: skills });
+    }
+  }
+
+  async _preUpdate(changed, options, user: User) {
+    //@ts-ignore
+    await super._preUpdate(changed, options, user);
+    //wildcards will be linked, extras unlinked
+    if (
+      game.settings.get('swade', 'autoLinkWildcards') &&
+      hasProperty(changed, 'data.wildcard')
+    ) {
+      //@ts-ignore
+      this.token.data.update({ actorlink: changed.data.wildcard });
+    }
   }
 
   //TODO change to onUpdate once TS behaves
