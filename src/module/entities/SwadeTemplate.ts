@@ -29,7 +29,7 @@ export default class SwadeTemplate extends MeasuredTemplate {
 
     // Prepare template data
     const templateData = {
-      user: game.user._id,
+      user: game.user.id,
       direction: 0,
       x: 0,
       y: 0,
