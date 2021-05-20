@@ -166,8 +166,8 @@ export default class SwadeCombat extends Combat {
           },
           whisper:
             c.token.hidden || c.hidden
-              ? game.users.entities.filter((u: User) => u.isGM)
-              : '',
+              ? game.users.filter((u: User) => u.isGM)
+              : [],
           flavor: `${c.token.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           content: template,
         },
