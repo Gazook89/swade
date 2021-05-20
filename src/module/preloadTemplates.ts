@@ -1,18 +1,13 @@
 export const preloadHandlebarsTemplates = async function () {
   const templatePaths = [
     //Character Sheets
-    'systems/swade/templates/actors/character-sheet.html',
     'systems/swade/templates/actors/npc-sheet.html',
     'systems/swade/templates/actors/vehicle-sheet.html',
 
-    //Character/NPC partials
+    //NPC partials
     'systems/swade/templates/actors/partials/attributes.html',
-    'systems/swade/templates/actors/partials/summary-tab.html',
     'systems/swade/templates/actors/partials/npc-summary-tab.html',
-    'systems/swade/templates/actors/partials/edges-tab.html',
-    'systems/swade/templates/actors/partials/inventory-tab.html',
     'systems/swade/templates/actors/partials/powers-tab.html',
-    'systems/swade/templates/actors/partials/biography-tab.html',
     'systems/swade/templates/setting-fields.html',
     'systems/swade/templates/shared-partials/action-card.html',
 
