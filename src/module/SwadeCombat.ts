@@ -1,5 +1,4 @@
 import { SWADE } from './config';
-import { getCanvas } from './util';
 
 interface IPickACard {
   cards: JournalEntry[];
@@ -159,9 +158,9 @@ export default class SwadeCombat extends Combat {
       const messageData = mergeObject(
         {
           speaker: {
-            scene: getCanvas().scene._id,
-            actor: c.actor ? c.actor._id : null,
-            token: c.token._id,
+            scene: game.scenes.active?.id,
+            actor: c.actor ? c.actor.id : null,
+            token: c.token.id,
             alias: c.token.name,
           },
           whisper:

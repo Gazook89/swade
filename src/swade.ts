@@ -118,6 +118,9 @@ Hooks.once('setup', () => SwadeHooks.onSetup());
 
 Hooks.once('ready', async () => SwadeHooks.onReady());
 
+/**
+ * This hook only really exists to stop Races from being added to the actor as an item
+ */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 Hooks.on('preCreateItem', (item, options, userId) => {
   if (
@@ -137,7 +140,7 @@ Hooks.on(
 
 Hooks.on(
   'renderCompendium',
-  async (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
+  (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCompendium(app, html, data),
 );
 
@@ -153,6 +156,7 @@ Hooks.on(
     SwadeHooks.onRenderCombatTracker(app, html, data),
 );
 
+//TODO move to combatant class later?
 Hooks.on(
   'updateCombatant',
   (combatant: any, updateData: any, options: any, userId: string) =>
@@ -162,8 +166,8 @@ Hooks.on(
 // Add roll data to the message for formatting of dice pools
 Hooks.on(
   'renderChatMessage',
-  async (chatMessage: ChatMessage, html: JQuery<HTMLElement>, data: any) =>
-    SwadeHooks.onRenderChatMessage(chatMessage, html, data),
+  (message: ChatMessage, html: JQuery<HTMLElement>, data: any) =>
+    SwadeHooks.onRenderChatMessage(message, html, data),
 );
 
 Hooks.on(
