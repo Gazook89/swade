@@ -28,7 +28,8 @@ export async function createActionCardTable(
   if (rebuild) {
     //@ts-ignore
     const deletions = cardTable.results.map((i) => i.id) as string[];
-    await cardTable.deleteEmbeddedEntity('TableResult', deletions);
+    //@ts-ignore
+    await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
   }
 
   const createData = Array.from(cardPack.index.values()).map((c, i) => {
@@ -42,7 +43,8 @@ export async function createActionCardTable(
       range: [i + 1, i + 1],
     };
   });
-  await cardTable.createEmbeddedEntity('TableResult', createData);
+  //@ts-ignore
+  await cardTable.createEmbeddedDocuments('TableResult', createData);
   await cardTable.normalize();
   ui.tables.render();
 }
@@ -139,7 +141,7 @@ export function rollItemMacro(itemName: string) {
   }
   //Roll the skill
   if (item.type === 'skill') {
-    return actor.rollSkill(item.id, {}) as Promise<Roll>;
+    return actor.rollSkill(item.id) as Promise<Roll>;
   } else {
     // Show the item
     return item.show();

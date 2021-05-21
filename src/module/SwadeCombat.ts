@@ -235,41 +235,31 @@ export default class SwadeCombat extends Combat {
   }
 
   /**
-   * Draws cards
+   * Draws cards from the Action Cards table
    * @param count number of cards to draw
+   * @returns an array with the drawn cards
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
-    let actionCardPack = game.packs.get(
-      game.settings.get('swade', 'cardDeck') as string,
-    );
-    if (
-      actionCardPack === null ||
-      (await actionCardPack.getIndex()).length === 0
-    ) {
-      console.log(
-        'Something went wrong with the card compendium, switching back to default',
-      );
+    const packName = game.settings.get('swade', 'cardDeck') as string;
+    let actionCardPack = game.packs.get(packName);
+
+    if (!actionCardPack || actionCardPack.index.length === 0) {
+      console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
       await game.settings.set(
         'swade',
         'cardDeck',
         SWADE.init.defaultCardCompendium,
       );
-      actionCardPack = game.packs.get(
-        game.settings.get('swade', 'cardDeck') as string,
-      ) as Compendium;
+      actionCardPack = game.packs.get(SWADE.init.defaultCardCompendium);
     }
-    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
-    const packIndex = await actionCardPack.getIndex();
     const cards: JournalEntry[] = [];
+    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
+    const draw = await actionCardDeck.drawMany(count, { displayChat: false });
 
-    for (let i = 0; i < count; i++) {
-      const drawResult = await actionCardDeck.draw({ displayChat: false });
-      const lookUpCard = packIndex.find(
-        (c) => c.name === drawResult.results[0].data.text,
-      );
-      cards.push(
-        (await actionCardPack.getEntity(lookUpCard._id)) as JournalEntry,
-      );
+    for (const result of draw.results) {
+      const resultID = result.data.resultId;
+      const card = (await actionCardPack.getEntity(resultID)) as JournalEntry;
+      cards.push(card);
     }
     return cards;
   }
