@@ -437,6 +437,33 @@ export default class SwadeCombat extends Combat {
   /**
    * @override
    */
+  async nextTurn() {
+    let turn = this.turn;
+    let skip = this.settings.skipDefeated;
+    // Determine the next turn number
+    let next = null;
+    if (skip) {
+      for (let [i, t] of this.turns.entries()) {
+        if (i <= turn) continue;
+        if (!t.defeated && !t.flags.swade.turnLost) {
+          next = i;
+          break;
+        }
+      }
+    } else next = turn + 1;
+    // Maybe advance to the next round
+    let round = this.round;
+    if (this.round === 0 || next === null || next >= this.turns.length) {
+      return this.nextRound();
+    }
+    // Update the encounter
+    const advanceTime = CONFIG.time.turnTime;
+    this.update({ round: round, turn: next }, { advanceTime });
+  }
+
+  /**
+   * @override
+   */
   async nextRound() {
     if (!game.user.isGM) {
       game.socket.emit('system.swade', { type: 'newRound', combatId: this.id });
