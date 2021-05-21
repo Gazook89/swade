@@ -10,8 +10,7 @@ export async function createActionCardTable(
   if (cardpack) {
     packName = cardpack;
   }
-  const cardPack = game.packs.get(packName) as Compendium;
-  const cardPackIndex = await cardPack.getIndex();
+  const cardPack = game.packs.get(packName);
   let cardTable = game.tables.getName(SWADE.init.cardTable);
 
   //If the table doesn't exist, create it
@@ -22,30 +21,27 @@ export async function createActionCardTable(
       replacement: false,
       displayRoll: false,
     };
-    const tableOptions = { temporary: false, renderSheet: false };
-    cardTable = (await RollTable.create(tableData, tableOptions)) as RollTable;
+    cardTable = await RollTable.create(tableData, { renderSheet: false });
   }
 
   //If it's a rebuild call, delete all entries and then repopulate them
   if (rebuild) {
-    const deletions = cardTable.results.map((i) => i._id) as string[];
+    //@ts-ignore
+    const deletions = cardTable.results.map((i) => i.id) as string[];
     await cardTable.deleteEmbeddedEntity('TableResult', deletions);
   }
 
-  const createData = [];
-  for (let i = 0; i < cardPackIndex.length; i++) {
-    const c = cardPackIndex[i] as any;
-    const resultData = {
-      type: 2, //Set type to compendium
+  const createData = Array.from(cardPack.index.values()).map((c, i) => {
+    return {
+      type: CONST.TABLE_RESULT_TYPES.COMPENDIUM,
       text: c.name,
       img: c.img,
       collection: packName, // Name of the compendium
-      resultId: c.id, //Id of the entry inside the compendium
+      resultId: c._id, //Id of the entry inside the compendium
       weight: 1,
       range: [i + 1, i + 1],
     };
-    createData.push(resultData);
-  }
+  });
   await cardTable.createEmbeddedEntity('TableResult', createData);
   await cardTable.normalize();
   ui.tables.render();
