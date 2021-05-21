@@ -511,6 +511,7 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
+    // Hold
     options.push({
       name: 'SWADE.Hold',
       icon: '<i class="fas fa-hand-rock"></i>',
@@ -555,6 +556,7 @@ export default class SwadeHooks {
       },
     });
 
+    // Act Now
     options.push({
       name: 'SWADE.ActNow',
       icon: '<i class="fas fa-long-arrow-alt-right"></i>',
@@ -596,10 +598,13 @@ export default class SwadeHooks {
           },
         });
 
-        game.combat.previousTurn();
+        if (currentCombatant._id !== targetCombatantId) {
+          game.combat.previousTurn();
+        }
       },
     });
 
+    // Act After Current Combatant
     options.push({
       name: 'SWADE.ActAfterCurrentCombatant',
       icon: '<i class="fas fa-level-down-alt"></i>',
@@ -643,6 +648,7 @@ export default class SwadeHooks {
       },
     });
 
+    // Lost Turn
     options.push({
       name: 'SWADE.LoseTurn',
       icon: '<i class="fas fa-ban"></i>',
