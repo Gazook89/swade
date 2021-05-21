@@ -1,7 +1,7 @@
 <form class="card-dialog">
   {{#each data.cards as |card|}}
   <div class="radio-card">
-    <label for="{{card._id}}">
+    <label for="{{card.id}}">
       <input
         type="radio"
         name="card"
@@ -9,7 +9,7 @@
         data-card-id="{{card.id}}"
       />
       <img src="{{card.data.img}}" />
-      {{card.name}} {{#if (eq card._id ../data.oldCard)}}
+      {{card.name}} {{#if (eq card.id ../data.oldCard)}}
       <div><strong>({{localize "SWADE.OldCard"}})</strong></div>
       {{/if}}
     </label>
