@@ -200,8 +200,8 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     const pool = PoolTerm.fromRolls(rolls);
     pool.modifiers.push('kh');
 
-    const finalRoll = new Roll('');
-    finalRoll.terms.push(pool);
+    const finalTerms = [];
+    finalTerms.push(pool);
 
     //Conviction Modifier
     const useConviction =
@@ -211,14 +211,16 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalRoll.terms.push(new OperatorTerm({ operator: '+' }));
-      finalRoll.terms.push(convDie);
+      finalTerms.push(new OperatorTerm({ operator: '+' }));
+      finalTerms.push(convDie);
     }
 
     const rollMods = this._buildTraitRollModifiers(abl, options);
     rollMods.forEach((m) =>
-      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
+      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
     );
+
+    const finalRoll = Roll.fromTerms(finalTerms);
 
     if (options.suppressChat) {
       return finalRoll;
@@ -711,22 +713,21 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       this.data.data.details.conviction.active &&
       game.settings.get('swade', 'enableConviction');
 
-    const finalRoll = new Roll('');
-    finalRoll.terms.push(pool);
+    const finalTerms = [];
+    finalTerms.push(pool);
 
     const rollMods = this._buildTraitRollModifiers(skillData, options);
     rollMods.forEach((m) =>
-      finalRoll.terms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
+      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
     );
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalRoll.terms.push(new OperatorTerm({ operator: '+' }));
-      finalRoll.terms.push(convDie);
+      finalTerms.push(new OperatorTerm({ operator: '+' }));
+      finalTerms.push(convDie);
     }
-    console;
 
-    return [finalRoll, rollMods];
+    return [Roll.fromTerms(finalTerms), rollMods];
   }
 
   /**

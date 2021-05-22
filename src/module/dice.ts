@@ -132,9 +132,10 @@ export default class SwadeDice {
       //Group roll
       const pool = roll.terms[0];
       if (pool instanceof PoolTerm) {
-        const wildRoll = new Roll(
-          `1d6x[${game.i18n.localize('SWADE.WildDie')}]`,
-        );
+        const wildDie = new Die({
+          options: { flavor: game.i18n.localize('SWADE.WildDie') },
+        });
+        const wildRoll = Roll.fromTerms([wildDie]);
         if (pool.rolls[0] instanceof Roll) {
           //copy modifiers
           wildRoll.terms = [...wildRoll.terms, ...pool.rolls[0].terms.slice(1)];
@@ -144,14 +145,17 @@ export default class SwadeDice {
       }
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
-      roll.terms.push(new OperatorTerm({ operator: '+' }));
-      roll.terms.push(
+      const newTerms = roll.terms;
+
+      newTerms.push(new OperatorTerm({ operator: '+' }));
+      newTerms.push(
         new Die({
           faces: 6,
           modifiers: ['x'],
           options: { flavor: game.i18n.localize('SWADE.BonusDamage') },
         }),
       );
+      roll = Roll.fromTerms(newTerms);
     }
     await roll.evaluate({ async: true });
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved

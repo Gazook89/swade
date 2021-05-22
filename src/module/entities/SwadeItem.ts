@@ -43,10 +43,9 @@ export default class SwadeItem extends Item<SysItemData> {
       rollParts = rollParts.concat(options.additionalMods);
     }
 
-    const roll = new Roll(rollParts.join(''), actor.getRollData());
-    console.log(roll);
+    const terms = Roll.parse(rollParts.join(''), actor.getRollData());
     const newParts = [];
-    for (const term of roll.terms) {
+    for (const term of terms) {
       if (term instanceof Die) {
         if (!term.modifiers.includes('x')) term.modifiers.push('x');
         newParts.push(term.formula);
@@ -69,7 +68,7 @@ export default class SwadeItem extends Item<SysItemData> {
     //Joker Modifier
     let joker = '';
     if (actor.hasJoker) {
-      newParts.push('+2');
+      newParts.push(`+2[${game.i18n.localize('SWADE.Joker')}]`);
       joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
     }
 
