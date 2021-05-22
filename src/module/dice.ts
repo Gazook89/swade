@@ -4,7 +4,7 @@ import SwadeItem from './entities/SwadeItem';
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
-  speaker?: any;
+  speaker?: ChatMessage.SpeakerData;
   flavor?: string;
   title?: string;
   item?: SwadeItem;
@@ -16,7 +16,7 @@ interface RollHelperData {
 interface RollHandlerData {
   form: any;
   roll: Roll;
-  speaker: any;
+  speaker: ChatMessage.SpeakerData;
   flavor: string;
   raise?: boolean;
   actor?: SwadeActor;
@@ -115,6 +115,7 @@ export default class SwadeDice {
     allowGroup = false,
     flags,
   }: RollHandlerData): Promise<Roll> {
+    const terms = roll.terms;
     const groupRoll = actor && raise;
     //get the rollMode
     const rollMode = form
@@ -125,41 +126,37 @@ export default class SwadeDice {
     if (form) bonus = form.find('#bonus').val();
     if (bonus) {
       if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;
-      roll.terms.push(...Roll.parse(bonus, {}));
+      terms.push(...Roll.parse(bonus, {}));
       flavor = `${flavor}<br>${game.i18n.localize('SWADE.SitMod')}: ${bonus}`;
     }
+
+    //Group roll and raises
     if (groupRoll && allowGroup) {
-      //Group roll
-      const pool = roll.terms[0];
-      if (pool instanceof PoolTerm) {
+      const traitPool = terms[0];
+      if (traitPool instanceof PoolTerm) {
         const wildDie = new Die({
+          faces: 6,
+          modifiers: ['x'],
           options: { flavor: game.i18n.localize('SWADE.WildDie') },
         });
         const wildRoll = Roll.fromTerms([wildDie]);
-        if (pool.rolls[0] instanceof Roll) {
-          //copy modifiers
-          wildRoll.terms = [...wildRoll.terms, ...pool.rolls[0].terms.slice(1)];
-        }
-        pool.rolls.push(wildRoll);
-        pool.terms.push(wildRoll.formula);
+        traitPool.rolls.push(wildRoll);
+        traitPool.terms.push(wildRoll.formula);
+        flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
       }
-      flavor = `${flavor}<br>${game.i18n.localize('SWADE.GroupRoll')}`;
     } else if (raise) {
-      const newTerms = roll.terms;
-
-      newTerms.push(new OperatorTerm({ operator: '+' }));
-      newTerms.push(
+      terms.push(new OperatorTerm({ operator: '+' }));
+      terms.push(
         new Die({
           faces: 6,
           modifiers: ['x'],
           options: { flavor: game.i18n.localize('SWADE.BonusDamage') },
         }),
       );
-      roll = Roll.fromTerms(newTerms);
     }
-    await roll.evaluate({ async: true });
+    //recreate the roll
     //This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
-    for (const term of roll.terms) {
+    for (const term of terms) {
       if (term instanceof PoolTerm) {
         for (const roll of term.rolls) {
           for (const term of roll.terms) {
@@ -180,8 +177,8 @@ export default class SwadeDice {
     }
     //End of Workaround
     // Convert the roll to a chat message and return the roll
-
-    roll.toMessage(
+    const newRoll = Roll.fromTerms(terms, roll.options);
+    await newRoll.evaluate({ async: false }).toMessage(
       {
         speaker: speaker,
         flavor: flavor,
@@ -189,6 +186,6 @@ export default class SwadeDice {
       },
       { rollMode },
     );
-    return roll;
+    return newRoll;
   }
 }
