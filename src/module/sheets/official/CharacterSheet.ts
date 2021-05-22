@@ -561,9 +561,6 @@ export default class CharacterSheet extends ActorSheet {
     ]);
     data.maxCarryCapacity = this.actor.calcMaxCarryCapacity();
 
-    //Checks if the Actor has an Arcane Background
-    data.hasArcaneBackground = this.actor.hasArcaneBackground;
-
     //Deal with ABs and Powers
     const powers = {
       arcanes: {},

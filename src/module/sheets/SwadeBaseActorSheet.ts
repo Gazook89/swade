@@ -247,9 +247,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       ]);
       data.maxCarryCapacity = this.actor.calcMaxCarryCapacity();
 
-      //Checks if an Actor has a Arcane Background
-      data.hasArcaneBackground = this.actor.hasArcaneBackground;
-
       if (this.actor.data.type === 'character') {
         data.powersOptions =
           'class="powers-list resizable" data-base-size="560"';

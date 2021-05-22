@@ -141,13 +141,12 @@ export default class SwadeCombat extends Combat {
       });
 
       // Construct chat message data
-      const cardPack = game.settings.get('swade', 'cardDeck') as string;
       const template = `
           <div class="table-draw">
               <ol class="table-results">
                   <li class="table-result flexrow">
                       <img class="result-image" src="${card.data.img}">
-                      <h4 class="result-text">@Compendium[${cardPack}.${card.id}]{${card.name}}</h4>
+                      <h4 class="result-text">@Compendium[${card['pack']}.${card.id}]{${card.name}}</h4>
                   </li>
               </ol>
           </div>
@@ -254,7 +253,8 @@ export default class SwadeCombat extends Combat {
 
     for (const result of draw.results) {
       const resultID = result.data.resultId;
-      const card = (await actionCardPack.getEntity(resultID)) as JournalEntry;
+      //@ts-ignore
+      const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
       cards.push(card);
     }
     return cards;
@@ -339,7 +339,7 @@ export default class SwadeCombat extends Combat {
             if (oldCardId) {
               card = cards.find((c) => c.id === oldCardId);
             } else {
-              console.log('no card selected');
+              console.log('No card was selected');
               card = cards[0]; //If no card was selected, assign the first card that was drawn
             }
           }
@@ -395,7 +395,8 @@ export default class SwadeCombat extends Combat {
   protected _getInitResetUpdates() {
     const updates = this.data.combatants.map((c) => {
       return {
-        _id: c._id,
+        //@ts-ignore
+        _id: c.id,
         initiative: null,
         flags: {
           swade: {
