@@ -6,13 +6,13 @@
       <label for="die">{{localize "SWADE.Die"}}</label>
       <span class="form-fields">
         <select name="data.die.sides" id="die" data-dtype="Number">
-          {{#select item.data.die.sides}} {{>
+          {{#select data.data.die.sides}} {{>
           "systems/swade/templates/die-sides-options.html"}} {{/select}}
         </select>
         <input
           name="data.die.modifier"
           type="text"
-          value="{{item.data.die.modifier}}"
+          value="{{data.data.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -22,17 +22,17 @@
       <label for="attribute">{{localize "SWADE.LinkAttr"}}</label>
       <span class="form-fields">
         <select name="data.attribute" id="attribute" data-dtype="String">
-          {{#select item.data.attribute}} {{>
+          {{#select data.data.attribute}} {{>
           "systems/swade/templates/attribute-select.html"}} {{/select}}
         </select>
       </span>
     </div>
-    {{#if item.data.ownerIsWildcard}}
+    {{#if data.data.ownerIsWildcard}}
     <div class="form-group">
       <label for="wild-die">{{localize "SWADE.WildDie"}}</label>
       <span class="form-fields">
         <select name="data.wild-die.sides" id="wild-die" data-dtype="Number">
-          {{#select item.data.wild-die.sides}} {{>
+          {{#select data.data.wild-die.sides}} {{>
           "systems/swade/templates/die-sides-options.html"}} {{/select}}
         </select>
       </span>
@@ -46,7 +46,7 @@
           name="data.isCoreSkill"
           id="core-skill"
           {{checked
-          item.data.isCoreSkill}}
+          data.data.isCoreSkill}}
           data-dtype="boolean"
         />
       </span>

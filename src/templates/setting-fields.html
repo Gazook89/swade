@@ -3,7 +3,7 @@
   <span>{{localize "SWADE.AddStats"}}</span>
 </header>
 <div class="additional-stats">
-  {{#each data.additionalStats as |attr key|}}
+  {{#each data.data.additionalStats as |attr key|}}
   <div class="form-group">
     {{#unless (eq attr.dtype "Die")}} {{#if attr.isCheckbox}}
     <label class="check-container"

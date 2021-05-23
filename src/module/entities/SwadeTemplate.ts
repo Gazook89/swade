@@ -25,41 +25,45 @@ export default class SwadeTemplate extends MeasuredTemplate {
    * @returns SwadeTemplate | null
    */
   static fromPreset(preset: TemplatePreset) {
-    if (!preset) return null;
-
     // Prepare template data
-    const templateData = {
-      user: game.user._id,
+    const templateData: Partial<MeasuredTemplate.Data> = {
+      user: game.user.id,
+      distance: 0,
       direction: 0,
       x: 0,
       y: 0,
-      fillColor: game.user['color'],
+      fillColor: game.user.color,
     };
 
     //Set template data based on preset option
     switch (preset) {
       case TemplatePreset.CONE:
-        templateData['t'] = 'cone';
-        templateData['distance'] = 9;
+        templateData.t = 'cone';
+        templateData.distance = 9;
         break;
       case TemplatePreset.SBT:
-        templateData['t'] = 'circle';
-        templateData['distance'] = 1;
+        templateData.t = 'circle';
+        templateData.distance = 1;
         break;
       case TemplatePreset.MBT:
-        templateData['t'] = 'circle';
-        templateData['distance'] = 2;
+        templateData.t = 'circle';
+        templateData.distance = 2;
         break;
       case TemplatePreset.LBT:
-        templateData['t'] = 'circle';
-        templateData['distance'] = 3;
+        templateData.t = 'circle';
+        templateData.distance = 3;
         break;
       default:
         return null;
     }
 
-    // Return the constructed template
-    return new this(templateData);
+    // Return the template constructed from the item data
+    //@ts-ignore
+    const cls = CONFIG.MeasuredTemplate.documentClass;
+    //@ts-ignore
+    const template = new cls(templateData, { parent: canvas.scene });
+    const object = new this(template);
+    return object;
   }
 
   /* -------------------------------------------- */
@@ -117,16 +121,17 @@ export default class SwadeTemplate extends MeasuredTemplate {
 
       // Confirm final snapped position
       const destination = getCanvas().grid.getSnappedPosition(
-        this.x,
-        this.y,
+        this.data.x,
+        this.data.y,
         2,
       );
-      this.data.x = destination.x;
-      this.data.y = destination.y;
+      //@ts-ignore
+      this.data.update(destination);
 
       // Create the template
       getCanvas()
-        .scene.createEmbeddedEntity('MeasuredTemplate', this.data)
+        //@ts-ignore
+        .scene.createEmbeddedDocuments('MeasuredTemplate', [this.data])
         .then(() => this.destroy());
     };
 
@@ -136,7 +141,10 @@ export default class SwadeTemplate extends MeasuredTemplate {
       event.stopPropagation();
       const delta = getCanvas().grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
       const snap = event.shiftKey ? delta : 5;
-      this.data.direction += snap * Math.sign(event.deltaY);
+      //@ts-ignore
+      this.data.update({
+        direction: this.data.direction + snap * Math.sign(event.deltaY),
+      });
       this.refresh();
     };
 

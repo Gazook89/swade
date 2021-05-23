@@ -1,5 +1,4 @@
 import { SWADE } from './config';
-import { getCanvas } from './util';
 
 interface IPickACard {
   cards: JournalEntry[];
@@ -43,7 +42,8 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-      const c = this.getCombatant(id);
+      //@ts-ignore
+      const c = this.combatants.get(id);
       if (c.initiative !== null) {
         console.log('This must be a reroll');
         isRedraw = true;
@@ -81,8 +81,8 @@ export default class SwadeCombat extends Combat {
       let card: JournalEntry;
       if (isRedraw) {
         const oldCard = await this.findCard(
-          getProperty(c, 'flags.swade.cardValue') as number,
-          getProperty(c, 'flags.swade.suitValue') as number,
+          c.getFlag('swade', 'cardValue') as number,
+          c.getFlag('swade', 'suitValue') as number,
         );
         const cards = await this.drawCard();
         cards.push(oldCard);
@@ -94,67 +94,65 @@ export default class SwadeCombat extends Combat {
         if (card === oldCard) {
           skipMessage = true;
         }
-      } else {
-        if (hasHesitant) {
-          // Hesitant
-          const cards = await this.drawCard(2);
-          if (cards.filter((c) => c.getFlag('swade', 'isJoker')).length > 0) {
-            card = await this.pickACard({
-              cards: cards,
-              combatantName: c.name,
-            });
-          } else {
-            //sort cards to pick the lower one
-            cards.sort((a: JournalEntry, b: JournalEntry) => {
-              const cardA = a.getFlag('swade', 'cardValue') as number;
-              const cardB = b.getFlag('swade', 'cardValue') as number;
-              const card = cardA - cardB;
-              if (card !== 0) return card;
-              const suitA = a.getFlag('swade', 'suitValue') as number;
-              const suitB = b.getFlag('swade', 'suitValue') as number;
-              const suit = suitA - suitB;
-              return suit;
-            });
-            card = cards[0];
-          }
-        } else if (cardsToDraw > 1) {
-          //Level Headed
-          const cards = await this.drawCard(cardsToDraw);
+      } else if (hasHesitant) {
+        // Hesitant
+        const cards = await this.drawCard(2);
+        if (cards.some((c) => c.getFlag('swade', 'isJoker'))) {
           card = await this.pickACard({
             cards: cards,
             combatantName: c.name,
-            enableRedraw: hasQuick,
-            isQuickDraw: hasQuick,
           });
-        } else if (hasQuick) {
-          const cards = await this.drawCard();
-          card = cards[0];
-          const cardValue = card.getFlag('swade', 'cardValue') as number;
-          //if the card value is less than 5 then pick a card otherwise use the card
-          if (cardValue <= 5) {
-            card = await this.pickACard({
-              cards: [card],
-              combatantName: c.name,
-              enableRedraw: true,
-              isQuickDraw: true,
-            });
-          }
         } else {
-          //normal card draw
-          const cards = await this.drawCard();
+          //sort cards to pick the lower one
+          cards.sort((a: JournalEntry, b: JournalEntry) => {
+            const cardA = a.getFlag('swade', 'cardValue') as number;
+            const cardB = b.getFlag('swade', 'cardValue') as number;
+            const card = cardA - cardB;
+            if (card !== 0) return card;
+            const suitA = a.getFlag('swade', 'suitValue') as number;
+            const suitB = b.getFlag('swade', 'suitValue') as number;
+            const suit = suitA - suitB;
+            return suit;
+          });
           card = cards[0];
         }
+      } else if (cardsToDraw > 1) {
+        //Level Headed
+        const cards = await this.drawCard(cardsToDraw);
+        card = await this.pickACard({
+          cards: cards,
+          combatantName: c.name,
+          enableRedraw: hasQuick,
+          isQuickDraw: hasQuick,
+        });
+      } else if (hasQuick) {
+        const cards = await this.drawCard();
+        card = cards[0];
+        const cardValue = card.getFlag('swade', 'cardValue') as number;
+        //if the card value is less than 5 then pick a card otherwise use the card
+        if (cardValue <= 5) {
+          card = await this.pickACard({
+            cards: [card],
+            combatantName: c.name,
+            enableRedraw: true,
+            isQuickDraw: true,
+          });
+        }
+      } else {
+        //normal card draw
+        const cards = await this.drawCard();
+        card = cards[0];
       }
 
       const newflags = {
         cardValue: card.getFlag('swade', 'cardValue'),
         suitValue: card.getFlag('swade', 'suitValue'),
         hasJoker: card.getFlag('swade', 'isJoker'),
-        cardString: card['data']['content'],
+        cardString: card.data.content,
       };
 
       combatantUpdates.push({
-        _id: c._id,
+        _id: c.id,
         initiative:
           (card.getFlag('swade', 'suitValue') as number) +
           (card.getFlag('swade', 'cardValue') as number),
@@ -162,13 +160,12 @@ export default class SwadeCombat extends Combat {
       });
 
       // Construct chat message data
-      const cardPack = game.settings.get('swade', 'cardDeck') as string;
       const template = `
           <div class="table-draw">
               <ol class="table-results">
                   <li class="table-result flexrow">
                       <img class="result-image" src="${card.data.img}">
-                      <h4 class="result-text">@Compendium[${cardPack}.${card._id}]{${card.name}}</h4>
+                      <h4 class="result-text">@Compendium[${card['pack']}.${card.id}]{${card.name}}</h4>
                   </li>
               </ol>
           </div>
@@ -177,15 +174,15 @@ export default class SwadeCombat extends Combat {
       const messageData = mergeObject(
         {
           speaker: {
-            scene: getCanvas().scene._id,
-            actor: c.actor ? c.actor._id : null,
-            token: c.token._id,
+            scene: game.scenes.active?.id,
+            actor: c.actor ? c.actor.id : null,
+            token: c.token.id,
             alias: c.token.name,
           },
           whisper:
             c.token.hidden || c.hidden
-              ? game.users.entities.filter((u: User) => u.isGM)
-              : '',
+              ? game.users.filter((u: User) => u.isGM)
+              : [],
           flavor: `${c.token.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           content: template,
         },
@@ -225,13 +222,16 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants(a, b) {
-    if (hasProperty(a, 'flags.swade') && hasProperty(b, 'flags.swade')) {
-      const cardA = a.flags.swade.cardValue;
-      const cardB = b.flags.swade.cardValue;
+    if (
+      hasProperty(a, 'data.flags.swade') &&
+      hasProperty(b, 'data.flags.swade')
+    ) {
+      const cardA = a.getFlag('swade', 'cardValue') as number;
+      const cardB = b.getFlag('swade', 'cardValue') as number;
       const card = cardB - cardA;
       if (card !== 0) return card;
-      const suitA = a.flags.swade.suitValue;
-      const suitB = b.flags.swade.suitValue;
+      const suitA = a.getFlag('swade', 'suitValue') as number;
+      const suitB = b.getFlag('swade', 'suitValue') as number;
       const suit = suitB - suitA;
       return suit;
     }
@@ -241,72 +241,40 @@ export default class SwadeCombat extends Combat {
     return a.tokenId - b.tokenId;
   }
 
-  /**
-   * @override
-   */
+  /** @override */
   async resetAll() {
-    const updates = this.data.combatants.map((c) => {
-      return {
-        _id: c._id,
-        initiative: null,
-        flags: {
-          swade: {
-            suitValue: null,
-            cardValue: null,
-            hasJoker: false,
-            cardString: null,
-            isOnHold: null,
-          },
-          swadeStored: {
-            suitValue: null,
-            cardValue: null,
-            hasJoker: false,
-            cardString: null,
-            isOnHold: null,
-          },
-        },
-      };
-    });
+    const updates = this._getInitResetUpdates();
     await this.updateEmbeddedEntity('Combatant', updates);
     return this.update({ turn: 0 });
   }
 
   /**
-   * Draws cards
+   * Draws cards from the Action Cards table
    * @param count number of cards to draw
+   * @returns an array with the drawn cards
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
-    let actionCardPack = game.packs.get(
-      game.settings.get('swade', 'cardDeck') as string,
-    );
-    if (
-      actionCardPack === null ||
-      (await actionCardPack.getIndex()).length === 0
-    ) {
-      console.log(
-        'Something went wrong with the card compendium, switching back to default',
-      );
+    const packName = game.settings.get('swade', 'cardDeck') as string;
+    let actionCardPack = game.packs.get(packName);
+
+    if (!actionCardPack || actionCardPack.index.length === 0) {
+      console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
       await game.settings.set(
         'swade',
         'cardDeck',
         SWADE.init.defaultCardCompendium,
       );
-      actionCardPack = game.packs.get(
-        game.settings.get('swade', 'cardDeck') as string,
-      ) as Compendium;
+      actionCardPack = game.packs.get(SWADE.init.defaultCardCompendium);
     }
-    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
-    const packIndex = await actionCardPack.getIndex();
     const cards: JournalEntry[] = [];
+    const actionCardDeck = game.tables.getName(SWADE.init.cardTable);
+    const draw = await actionCardDeck.drawMany(count, { displayChat: false });
 
-    for (let i = 0; i < count; i++) {
-      const drawResult = await actionCardDeck.draw({ displayChat: false });
-      const lookUpCard = packIndex.find(
-        (c) => c.name === drawResult.results[0].text,
-      );
-      cards.push(
-        (await actionCardPack.getEntity(lookUpCard._id)) as JournalEntry,
-      );
+    for (const result of draw.results) {
+      const resultID = result.data.resultId;
+      //@ts-ignore
+      const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
+      cards.push(card);
     }
     return cards;
   }
@@ -352,9 +320,7 @@ export default class SwadeCombat extends Combat {
         callback: (html: JQuery<HTMLElement>) => {
           const choice = html.find('input[name=card]:checked');
           const cardId = choice.data('card-id') as string;
-          if (typeof cardId !== 'undefined') {
-            card = cards.find((c) => c._id === cardId);
-          }
+          if (!cardId) card = cards.find((c) => c.id === cardId);
         },
       },
       redraw: {
@@ -378,10 +344,9 @@ export default class SwadeCombat extends Combat {
         default: 'ok',
         close: async () => {
           if (immedeateRedraw) {
-            const newCard = await this.drawCard();
-            const newCards = [...cards, ...newCard];
+            const newCards = await this.drawCard();
             card = await this.pickACard({
-              cards: newCards,
+              cards: [...cards, ...newCards],
               combatantName,
               oldCardId,
               enableRedraw,
@@ -389,11 +354,11 @@ export default class SwadeCombat extends Combat {
             });
           }
           //if no card has been chosen then choose first in array
-          if (card === null || typeof card === 'undefined') {
+          if (!card) {
             if (oldCardId) {
-              card = cards.find((c) => c._id === oldCardId);
+              card = cards.find((c) => c.id === oldCardId);
             } else {
-              console.log('no card selected');
+              console.log('No card was selected');
               card = cards[0]; //If no card was selected, assign the first card that was drawn
             }
           }
@@ -409,9 +374,8 @@ export default class SwadeCombat extends Combat {
    * @param cardSuit
    */
   async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
-    const actionCardPack = game.packs.get(
-      game.settings.get('swade', 'cardDeck') as string,
-    );
+    const packName = game.settings.get('swade', 'cardDeck') as string;
+    const actionCardPack = game.packs.get(packName);
     const content = (await actionCardPack.getContent()) as JournalEntry[];
     return content.find(
       (c) =>
@@ -461,9 +425,7 @@ export default class SwadeCombat extends Combat {
     this.update({ round: round, turn: next }, { advanceTime });
   }
 
-  /**
-   * @override
-   */
+  /** @override */
   async nextRound() {
     if (!game.user.isGM) {
       game.socket.emit('system.swade', { type: 'newRound', combatId: this.id });
@@ -471,7 +433,8 @@ export default class SwadeCombat extends Combat {
     } else {
       await super.nextRound();
       const jokerDrawn = this.combatants.some((v) =>
-        getProperty(v, 'flags.swade.hasJoker'),
+        //@ts-ignore
+        v.getFlag('swade', 'hasJoker'),
       );
       if (jokerDrawn) {
         // Reset hasJoker in swadeStored to avoid bonus being reapplied after coming off hold
@@ -490,7 +453,8 @@ export default class SwadeCombat extends Combat {
 
       //Init autoroll
       if (game.settings.get('swade', 'autoInit')) {
-        const combatantIds = this.combatants.map((c) => c._id);
+        //@ts-ignore
+        const combatantIds = this.combatants.map((c) => c.id);
         await this.rollInitiative(combatantIds);
       }
     }
@@ -498,20 +462,38 @@ export default class SwadeCombat extends Combat {
 
   protected _getInitResetUpdates() {
     const updates = this.data.combatants.map((c) => {
-      c.initiative = null;
-      c.flags = {
-        swade: {
-          cardValue: null,
-          suitValue: null,
-          hasJoker: null,
-          cardString: null,
-          isOnHold: c.flags.swade.isOnHold,
+      return {
+        //@ts-ignore
+        _id: c.id,
+        initiative: null,
+        flags: {
+          swade: {
+            suitValue: null,
+            cardValue: null,
+            hasJoker: false,
+            cardString: null,
+            isOnHold: c.flags.swade.isOnHold,
+          },
         },
         swadeStored: c.flags.swadeStored,
       };
-      return c;
     });
-
     return updates;
+  }
+
+  async _preDelete(options, user: User) {
+    //@ts-ignore
+    await super._preDelete(options, user);
+
+    const jokerDrawn = this.combatants.some((v) =>
+      //@ts-ignore
+      v.getFlag('swade', 'hasJoker'),
+    );
+
+    //reset the deck when combat is ended
+    if (jokerDrawn) {
+      await game.tables.getName(SWADE.init.cardTable).reset();
+      ui.notifications.info('Card Deck automatically reset');
+    }
   }
 }

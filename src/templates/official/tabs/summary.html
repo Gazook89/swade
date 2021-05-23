@@ -5,8 +5,8 @@
       <input
         type="number"
         name="data.fatigue.value"
-        value="{{actor.data.fatigue.value}}"
-      />/{{data.fatigue.max}}
+        value="{{data.data.fatigue.value}}"
+      />/{{data.data.fatigue.max}}
     </span>
   </div>
 </div>
@@ -17,8 +17,8 @@
       <input
         type="number"
         name="data.wounds.value"
-        value="{{actor.data.wounds.value}}"
-      />/{{data.wounds.max}}
+        value="{{data.data.wounds.value}}"
+      />/{{data.data.wounds.max}}
     </span>
   </div>
 </div>
@@ -29,7 +29,7 @@
       type="checkbox"
       name="data.status.isShaken"
       {{checked
-      actor.data.status.isShaken}}
+      data.data.status.isShaken}}
     />
     <span class="checkmark"></span>
   </label>
@@ -39,7 +39,7 @@
       type="checkbox"
       name="data.status.isDistracted"
       {{checked
-      actor.data.status.isDistracted}}
+      data.data.status.isDistracted}}
     />
     <span class="checkmark"></span>
   </label>
@@ -49,7 +49,7 @@
       type="checkbox"
       name="data.status.isVulnerable"
       {{checked
-      actor.data.status.isVulnerable}}
+      data.data.status.isVulnerable}}
     />
     <span class="checkmark"></span>
   </label>
@@ -61,7 +61,7 @@
       type="checkbox"
       name="data.status.isStunned"
       {{checked
-      actor.data.status.isStunned}}
+      data.data.status.isStunned}}
     />
     <span class="checkmark"></span>
   </label>
@@ -71,7 +71,7 @@
       type="checkbox"
       name="data.status.isEntangled"
       {{checked
-      actor.data.status.isEntangled}}
+      data.data.status.isEntangled}}
     />
     <span class="checkmark"></span>
   </label>
@@ -81,7 +81,7 @@
       type="checkbox"
       name="data.status.isBound"
       {{checked
-      actor.data.status.isBound}}
+      data.data.status.isBound}}
     />
     <span class="checkmark"></span>
   </label>
@@ -102,7 +102,7 @@
     class="spend-benny current-bennies"
     title="{{localize 'SWADE.CurrentBennies'}}"
   >
-    {{actor.data.bennies.value}}
+    {{data.data.bennies.value}}
   </button>
 </div>
 
@@ -118,7 +118,7 @@
         <input
           name="data.stats.size"
           type="text"
-          value="{{data.stats.size}}"
+          value="{{data.data.stats.size}}"
           data-dtype="Number"
         />
       </span>
@@ -129,7 +129,7 @@
         <input
           name="data.stats.speed.value"
           type="text"
-          value="{{data.stats.speed.value}}"
+          value="{{data.data.stats.speed.value}}"
           data-dtype="Number"
           placeholder="{{ localize 'SWADE.Pace' }}"
         />
@@ -137,7 +137,7 @@
           type="button"
           class="running-die"
           title="{{localize 'SWADE.Roll'}} {{localize 'SWADE.RunningDie'}}"
-          style="background-image: url(systems/swade/assets/official/dice/d{{data.stats.speed.runningDie}}.svg);"
+          style="background-image: url(systems/swade/assets/official/dice/d{{data.data.stats.speed.runningDie}}.svg);"
         >
           <span class="sr-only"
             >d{{data.stats.speed.runningDie}} {{localize
@@ -151,15 +151,15 @@
       <span class="stat-value flexrow">
         <input
           name="data.stats.parry.value"
-          value="{{data.stats.parry.value}}"
+          value="{{data.data.stats.parry.value}}"
           type="text"
           placeholder="{{ localize 'SWADE.Parry' }}"
           data-dtype="Number"
           {{disabled
-          data.details.autoCalcParry}}
+          data.data.details.autoCalcParry}}
         />
         <button type="button" class="parry-display">
-          {{signedString data.stats.parry.modifier}}
+          {{signedString data.data.stats.parry.modifier}}
         </button>
       </span>
     </div>
@@ -170,19 +170,19 @@
           id="toughness"
           name="data.stats.toughness.value"
           type="text"
-          value="{{data.stats.toughness.value}}"
+          value="{{data.data.stats.toughness.value}}"
           placeholder="{{localize 'SWADE.Tough'}}"
           data-dtype="Number"
           {{disabled
-          data.details.autoCalcToughness}}
+          data.data.details.autoCalcToughness}}
         />
         <button
           type="button"
           class="armor-display"
           {{disabled
-          data.details.autoCalcToughness}}
+          data.data.details.autoCalcToughness}}
         >
-          {{data.stats.toughness.armor}}
+          {{data.data.stats.toughness.armor}}
         </button>
       </span>
     </div>
@@ -223,7 +223,7 @@
       </button>
     </header>
     <ul class="effects-list">
-      {{#each entity.effects}}
+      {{#each data.effects}}
       <li
         class="flexrow {{#unless origin}}active-effect{{/unless}} {{#if disabled}}disabled-effect{{/if}}"
         data-effect-id="{{_id}}"
@@ -255,7 +255,7 @@
       "systems/swade/templates/official/partials/item-card.html"}} {{/if}}
       {{/each}}
     </ol>
-    {{#if hasArcaneBackground}}
+    {{#if actor.hasArcaneBackground}}
     <ol class="quick-list">
       {{#each itemsByType.power as |power|}} {{#if power.data.equipped}} {{>
       "systems/swade/templates/official/partials/item-card.html"}} {{/if}}

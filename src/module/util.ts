@@ -10,8 +10,7 @@ export async function createActionCardTable(
   if (cardpack) {
     packName = cardpack;
   }
-  const cardPack = game.packs.get(packName) as Compendium;
-  const cardPackIndex = await cardPack.getIndex();
+  const cardPack = game.packs.get(packName);
   let cardTable = game.tables.getName(SWADE.init.cardTable);
 
   //If the table doesn't exist, create it
@@ -22,31 +21,30 @@ export async function createActionCardTable(
       replacement: false,
       displayRoll: false,
     };
-    const tableOptions = { temporary: false, renderSheet: false };
-    cardTable = (await RollTable.create(tableData, tableOptions)) as RollTable;
+    cardTable = await RollTable.create(tableData, { renderSheet: false });
   }
 
   //If it's a rebuild call, delete all entries and then repopulate them
   if (rebuild) {
-    const deletions = cardTable.results.map((i) => i._id) as string[];
-    await cardTable.deleteEmbeddedEntity('TableResult', deletions);
+    //@ts-ignore
+    const deletions = cardTable.results.map((i) => i.id) as string[];
+    //@ts-ignore
+    await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
   }
 
-  const createData = [];
-  for (let i = 0; i < cardPackIndex.length; i++) {
-    const c = cardPackIndex[i] as any;
-    const resultData = {
-      type: 2, //Set type to compendium
+  const createData = Array.from(cardPack.index.values()).map((c, i) => {
+    return {
+      type: CONST.TABLE_RESULT_TYPES.COMPENDIUM,
       text: c.name,
       img: c.img,
       collection: packName, // Name of the compendium
-      resultId: c.id, //Id of the entry inside the compendium
+      resultId: c._id, //Id of the entry inside the compendium
       weight: 1,
       range: [i + 1, i + 1],
     };
-    createData.push(resultData);
-  }
-  await cardTable.createEmbeddedEntity('TableResult', createData);
+  });
+  //@ts-ignore
+  await cardTable.createEmbeddedDocuments('TableResult', createData);
   await cardTable.normalize();
   ui.tables.render();
 }
@@ -91,20 +89,7 @@ export function rollSkillMacro(skillName) {
   ui.notifications.warn(
     'This type of macro will soon be removed. Please create a new one by dragging/dropping',
   );
-  const speaker = ChatMessage.getSpeaker();
-  let actor;
-  if (speaker.token) actor = game.actors.tokens[speaker.token];
-  if (!actor) actor = game.actors.get(speaker.actor);
-  const item: SwadeItem = actor
-    ? actor.items.find((i) => i.name === skillName)
-    : null;
-  if (!item)
-    return ui.notifications.warn(
-      `Your controlled Actor does not have the skill ${skillName}`,
-    );
-
-  // Trigger the item roll
-  return actor.rollSkill(item.id);
+  return rollItemMacro(skillName);
 }
 
 /**
@@ -119,19 +104,7 @@ export function rollWeaponMacro(weaponName) {
   ui.notifications.warn(
     'This type of macro will soon be removed. Please create a new one by dragging/dropping',
   );
-  const speaker = ChatMessage.getSpeaker();
-  let actor;
-  if (speaker.token) actor = game.actors.tokens[speaker.token];
-  if (!actor) actor = game.actors.get(speaker.actor);
-  const item: SwadeItem = actor
-    ? actor.items.find((i) => i.name === weaponName)
-    : null;
-  if (!item)
-    return ui.notifications.warn(
-      `Your controlled Actor does not have an item named ${weaponName}`,
-    );
-
-  return item.rollDamage();
+  return rollItemMacro(weaponName);
 }
 
 /**
@@ -143,23 +116,7 @@ export function rollPowerMacro(powerName) {
   ui.notifications.warn(
     'This type of macro will soon be removed. Please create a new one by dragging/dropping',
   );
-  const speaker = ChatMessage.getSpeaker();
-  let actor;
-  if (speaker.token) actor = game.actors.tokens[speaker.token];
-  if (!actor) actor = game.actors.get(speaker.actor);
-  const item: SwadeItem = actor
-    ? actor.items.find((i) => i.name === powerName)
-    : null;
-  if (!item)
-    return ui.notifications.warn(
-      `Your controlled Actor does not have an item named ${powerName}`,
-    );
-
-  // Trigger the item roll
-  if (item.data.data['damage']) {
-    return item.rollDamage();
-  }
-  return;
+  return rollItemMacro(powerName);
 }
 
 /**
@@ -171,7 +128,7 @@ export function rollItemMacro(itemName: string) {
   const speaker = ChatMessage.getSpeaker();
   let actor: SwadeActor = null;
   if (speaker.token) actor = game.actors.tokens[speaker.token] as SwadeActor;
-  if (!actor) actor = game.actors.get(speaker.actor);
+  if (!actor) actor = game.actors.get(speaker.actor) as SwadeActor;
   if (!actor || !actor.owner) {
     return null;
   }
@@ -184,7 +141,7 @@ export function rollItemMacro(itemName: string) {
   }
   //Roll the skill
   if (item.type === 'skill') {
-    return actor.rollSkill(item.id, {}) as Promise<Roll>;
+    return actor.rollSkill(item.id) as Promise<Roll>;
   } else {
     // Show the item
     return item.show();

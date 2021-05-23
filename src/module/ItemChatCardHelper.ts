@@ -35,7 +35,7 @@ export default class ItemChatCardHelper {
     if (!actor) return;
 
     // Get the Item
-    const item = actor.getOwnedItem(card.dataset.itemId);
+    const item = actor.items.get(card.dataset.itemId);
     if (!item) {
       ui.notifications.error(
         `The requested item ${card.dataset.itemId} does not exist on Actor ${actor.name}`,
@@ -265,8 +265,9 @@ export default class ItemChatCardHelper {
     actor: SwadeActor,
     options: IRollOptions,
   ): Promise<Roll> {
-    if (trait instanceof SwadeItem || trait === null) {
-      const id = trait ? trait['id'] : null;
+    if (trait instanceof SwadeItem || !trait) {
+      //get the id from the item or null if there was no trait
+      const id = !!trait && trait instanceof SwadeItem ? trait.id : null;
       return actor.rollSkill(id, options) as Promise<Roll>;
     } else {
       return actor.rollAttribute(trait, options) as Promise<Roll>;
@@ -276,7 +277,7 @@ export default class ItemChatCardHelper {
   static async subtractShots(
     actor: SwadeActor,
     itemId: string,
-    shotsUsed?: number,
+    shotsUsed = 1,
   ): Promise<void> {
     const item = actor.items.get(itemId) as SwadeItem;
     const currentShots = parseInt(getProperty(item.data, 'data.currentShots'));
@@ -292,7 +293,7 @@ export default class ItemChatCardHelper {
       );
       if (!ammo && !doReload) return;
       const current = getProperty(ammo.data, 'data.quantity');
-      const newQuantity = current - (shotsUsed || 1);
+      const newQuantity = current - shotsUsed;
 
       await actor.updateOwnedItem({
         _id: ammo.id,
@@ -391,7 +392,7 @@ export default class ItemChatCardHelper {
       .first()
       .data();
 
-    const item = actor.getOwnedItem(messageData.itemId);
+    const item = actor.items.get(messageData.itemId);
     if (item.type === 'weapon') {
       const currentShots = getProperty(item.data, 'data.currentShots');
       const maxShots = getProperty(item.data, 'data.shots');

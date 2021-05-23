@@ -9,7 +9,7 @@
     </div>
   </header>
   <div class="card-content" style="display: none">
-    {{#if (eq type 'gear')}} {{{enrich data.description}}} {{else}} {{>
+    {{#if (eq type 'gear')}} {{{enrich data.data.description}}} {{else}} {{>
     "systems/swade/templates/shared-partials/action-card.html"}} {{/if}}
   </div>
 </li>

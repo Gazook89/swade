@@ -355,3 +355,4 @@ SWADE.SysMigrationWarning: >-
   Your SWADE system data is from too old a Foundry version and cannot be
   reliably migrated to the latest version. The process will be attempted, but
   errors may occur.
+SWADE.SomethingWrongWithCardComp: Something went wrong with the card compendium, switching back to default

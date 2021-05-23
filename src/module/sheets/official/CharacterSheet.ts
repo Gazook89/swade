@@ -1,5 +1,4 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
-import { SysItemData } from '../../../interfaces/item-data';
 import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
 import SwadeActor from '../../entities/SwadeActor';
@@ -8,9 +7,8 @@ import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade-official', 'sheet', 'actor'],
       width: 630,
       height: 700,
@@ -22,7 +20,7 @@ export default class CharacterSheet extends ActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {
@@ -43,7 +41,8 @@ export default class CharacterSheet extends ActorSheet {
     if (!this.options.editable) return;
 
     // Drag events for macros.
-    if (this.actor.owner) {
+    //@ts-ignore
+    if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.
       html.find('li.item.skill').each((i, li) => {
@@ -130,7 +129,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.attribute-label').on('click', (ev) => {
       const element = ev.currentTarget as Element;
       const attribute = element.parentElement.dataset.attribute;
-      this.actor.rollAttribute(attribute, { event: ev });
+      this.actor.rollAttribute(attribute);
     });
 
     //Toggle Equipment Card collapsible
@@ -145,7 +144,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.skill-card .skill-die').on('click', (ev) => {
       const element = ev.currentTarget as HTMLElement;
       const item = element.parentElement.dataset.itemId;
-      this.actor.rollSkill(item, { event: ev });
+      this.actor.rollSkill(item);
     });
 
     //Running Die
@@ -167,7 +166,7 @@ export default class CharacterSheet extends ActorSheet {
         rollFormula = rollFormula.concat(runningMod);
       }
 
-      new Roll(rollFormula).roll().toMessage({
+      new Roll(rollFormula).evaluate({ async: false }).toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: game.i18n.localize('SWADE.Running'),
       });
@@ -176,7 +175,7 @@ export default class CharacterSheet extends ActorSheet {
     // Roll Damage
     html.find('.damage-roll').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       return item.rollDamage();
     });
 
@@ -188,22 +187,24 @@ export default class CharacterSheet extends ActorSheet {
         .slideToggle();
     });
 
+    //Edit Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 
+    //Show Item
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.show();
     });
 
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.getOwnedItem(li.data('itemId'));
+      const ownedItem = this.actor.items.get(li.data('itemId'));
       const template = `
       <form>
         <div style="text-align: center;">
@@ -265,26 +266,16 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.item-toggle').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const itemID = li.data('itemId');
-      const item = this.actor.getOwnedItem(itemID);
+      const item = this.actor.items.get(itemID);
       await this.actor.updateOwnedItem(this._toggleEquipped(itemID, item));
-      //filter active effects
-      const effects = this.actor.effects.filter(
-        (ae) => ae.data.origin === item.uuid,
-      );
-      //toggle all active effects so they correspond with the status of the item
-      for (const ae of effects) {
-        await this.actor.updateEmbeddedEntity('ActiveEffect', {
-          _id: ae.id,
-          disabled: !item.data.data['equipped'],
-        });
-      }
     });
 
-    html.find('.effect-action').on('click', (ev) => {
+    html.find('.effect-action').on('click', async (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
       const effect = this.actor.effects.get(effectId);
       const action = a.dataset.action;
+      let item: SwadeItem = null;
 
       switch (action) {
         case 'edit':
@@ -294,9 +285,8 @@ export default class CharacterSheet extends ActorSheet {
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
         case 'open-origin':
-          fromUuid(effect.data.origin).then((item: SysItemData) => {
-            if (item) this.actor.items.get(item._id).sheet.render(true);
-          });
+          item = (await fromUuid(effect.data.origin)) as SwadeItem;
+          if (item) this.actor.items.get(item.id).sheet.render(true);
           break;
         default:
           console.warn(`The action ${action} is not currently supported`);
@@ -391,7 +381,7 @@ export default class CharacterSheet extends ActorSheet {
       const button = ev.currentTarget;
       const action = button.dataset['action'];
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      const item = this.actor.getOwnedItem(itemId);
+      const item = this.actor.items.get(itemId);
       const additionalMods = [];
       const ppToAdjust = $(button)
         .parents('.chat-card.item-card')
@@ -423,7 +413,7 @@ export default class CharacterSheet extends ActorSheet {
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
         const adjustment = button.getAttribute('data-adjust') as string;
-        const power = this.actor.getOwnedItem(itemId);
+        const power = this.actor.items.get(itemId);
         let key = 'data.powerPoints.value';
         const arcane = getProperty(power.data, 'data.arcane');
         if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -449,8 +439,10 @@ export default class CharacterSheet extends ActorSheet {
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
+      //return early if there's no data to roll
+      if (!statData.value) return;
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate()
+        .evaluate({ async: false })
         .toMessage({
           speaker: ChatMessage.getSpeaker(),
           flavor: statData.label,
@@ -554,7 +546,7 @@ export default class CharacterSheet extends ActorSheet {
       data.currentBennies.push(i + 1);
     }
 
-    const additionalStats = data.data.additionalStats || {};
+    const additionalStats = data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -568,9 +560,6 @@ export default class CharacterSheet extends ActorSheet {
       ...data.itemsByType['shield'],
     ]);
     data.maxCarryCapacity = this.actor.calcMaxCarryCapacity();
-
-    //Checks if the Actor has an Arcane Background
-    data.hasArcaneBackground = this.actor.hasArcaneBackground;
 
     //Deal with ABs and Powers
     const powers = {

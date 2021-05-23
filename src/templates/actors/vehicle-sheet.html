@@ -28,7 +28,7 @@
             name="data.size"
             id="size"
             type="text"
-            value="{{data.size}}"
+            value="{{data.data.size}}"
             data-dtype="Number"
             placeholder="0"
           />
@@ -39,7 +39,7 @@
             name="data.scale"
             id="scale"
             type="text"
-            value="{{data.scale}}"
+            value="{{data.data.scale}}"
             data-dtype="Number"
             placeholder="0"
           />
@@ -50,7 +50,7 @@
             id="handling"
             name="data.handling"
             type="text"
-            value="{{data.handling}}"
+            value="{{data.data.handling}}"
             data-dtype="Number"
             placeholder="{{localize 'SWADE.Handling'}}"
           />
@@ -58,14 +58,14 @@
       </section>
       <section class="header-stats flexrow">
         <div class="form-group">
-          <label for="topspeed" style="white-space: nowrap;"
+          <label for="topspeed" style="white-space: nowrap"
             >{{localize "SWADE.Topspeed"}}</label
           >
           <input
             name="data.topspeed"
             id="topspeed"
             type="text"
-            value="{{data.topspeed}}"
+            value="{{data.data.topspeed}}"
             data-dtype="String"
             placeholder="0"
           />
@@ -76,7 +76,7 @@
             name="data.toughness.total"
             id="toughness"
             type="text"
-            value="{{data.toughness.total}}"
+            value="{{data.data.toughness.total}}"
             data-dtype="String"
             placeholder="0"
           />
@@ -87,7 +87,7 @@
             name="data.toughness.armor"
             id="armor"
             type="text"
-            value="{{data.toughness.armor}}"
+            value="{{data.data.toughness.armor}}"
             data-dtype="String"
             placeholder="0"
           />
@@ -99,7 +99,7 @@
             name="data.classification"
             id="classification"
             type="text"
-            value="{{data.classification}}"
+            value="{{data.data.classification}}"
             data-dtype="String"
             placeholder="{{localize 'SWADE.Class'}}"
           />
@@ -110,9 +110,9 @@
             <input
               type="checkbox"
               name="data.status.isOutOfControl"
-              {{checked
-              actor.data.status.isOutOfControl}}
               data-dtype="Boolean"
+              {{checked
+              data.data.status.isOutOfControl}}
             />
             <span class="checkmark"></span>
           </label>
@@ -123,9 +123,9 @@
             <input
               type="checkbox"
               name="data.status.isWrecked"
-              {{checked
-              actor.data.status.isWrecked}}
               data-dtype="Boolean"
+              {{checked
+              data.data.status.isWrecked}}
             />
             <span class="checkmark"></span>
           </label>

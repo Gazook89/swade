@@ -170,26 +170,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
   }
 
-  /** @override */
-  static async create(data, options = {}) {
-    let link = false;
-
-    if (data.type === 'character') {
-      link = true;
-    }
-    data.token = data.token || {};
-    mergeObject(
-      data.token,
-      {
-        vision: true,
-        actorLink: link,
-      },
-      { overwrite: false },
-    );
-
-    return super.create(data, options);
-  }
-
   rollAttribute(
     abilityId: string,
     options: IRollOptions = {},
@@ -203,25 +183,25 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     const label = SWADE.attributes[abilityId].long;
     const actorData = this.data;
     const abl = actorData.data.attributes[abilityId];
+    const rolls = [];
 
     const attrRoll = new Roll('');
     attrRoll.terms.push(
       this._buildTraitDie(abl.die.sides, game.i18n.localize(label)),
     );
+    rolls.push(attrRoll);
 
-    const pool = new DicePool({
-      rolls: [attrRoll],
-      modifiers: ['kh'],
-    });
-
-    //If the Actor is a wildcard the build a dicepool, otherwise build a Roll
     if (this.isWildcard) {
       const wildRoll = new Roll('');
       wildRoll.terms.push(this._buildWildDie(abl['wild-die'].sides));
-      pool.rolls.push(wildRoll);
+      rolls.push(wildRoll);
     }
-    const finalRoll = new Roll('');
-    finalRoll.terms.push(pool);
+
+    const pool = PoolTerm.fromRolls(rolls);
+    pool.modifiers.push('kh');
+
+    const finalTerms = [];
+    finalTerms.push(pool);
 
     //Conviction Modifier
     const useConviction =
@@ -231,12 +211,16 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalRoll.terms.push('+');
-      finalRoll.terms.push(convDie);
+      finalTerms.push(new OperatorTerm({ operator: '+' }));
+      finalTerms.push(convDie);
     }
 
     const rollMods = this._buildTraitRollModifiers(abl, options);
-    rollMods.forEach((m) => finalRoll.terms.push(m.value));
+    rollMods.forEach((m) =>
+      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
+    );
+
+    const finalRoll = Roll.fromTerms(finalTerms);
 
     if (options.suppressChat) {
       return finalRoll;
@@ -281,7 +265,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       return this.makeUnskilledAttempt(options);
     }
 
-    let skillRoll = null;
+    let skillRoll: [Roll, ITraitRollModifier[]] = null;
     let rollMods = [];
 
     skillRoll = this._handleComplexSkill(skill, options);
@@ -354,7 +338,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
-      const benny = new Roll('1dB').roll();
+      const benny = new Roll('1dB').evaluate({ async: false });
       game.dice3d.showForRoll(benny, game.user, true, null, false);
     }
   }
@@ -696,9 +680,10 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
-  ): [Roll, any[]] {
+  ): [Roll, ITraitRollModifier[]] {
     if (!options.rof) options.rof = 1;
-    const skillData = getProperty(skill, 'data.data');
+    if (skill.data.type !== 'skill') return;
+    const skillData = skill.data.data;
 
     const rolls: Roll[] = [];
 
@@ -718,10 +703,8 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
-    const dicePool = new DicePool({
-      rolls: rolls,
-      modifiers: [kh],
-    });
+    const pool = PoolTerm.fromRolls(rolls);
+    pool.modifiers.push(kh);
 
     //Conviction Modifier
     const useConviction =
@@ -730,21 +713,21 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       this.data.data.details.conviction.active &&
       game.settings.get('swade', 'enableConviction');
 
-    const finalRoll = new Roll('');
-    finalRoll.terms.push(dicePool);
+    const finalTerms = [];
+    finalTerms.push(pool);
 
     const rollMods = this._buildTraitRollModifiers(skillData, options);
-    rollMods.forEach((v) => {
-      finalRoll.terms.push(v.value);
-    });
+    rollMods.forEach((m) =>
+      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
+    );
 
     if (useConviction) {
       const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalRoll.terms.push('+');
-      finalRoll.terms.push(convDie);
+      finalTerms.push(new OperatorTerm({ operator: '+' }));
+      finalTerms.push(convDie);
     }
 
-    return [finalRoll, rollMods];
+    return [Roll.fromTerms(finalTerms), rollMods];
   }
 
   /**
@@ -770,9 +753,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       faces: sides,
       modifiers: ['x', ...modifiers],
       options: {
-        flavor: game.i18n
-          .localize('SWADE.WildDie')
-          .replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, ''),
+        flavor: game.i18n.localize('SWADE.WildDie'),
       },
     });
     if (game.dice3d) {
@@ -821,14 +802,6 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         value: fatiguePenalties.signedString(),
       });
 
-    // Status penalties
-    const statusPenalties = this.calcStatusPenalties();
-    if (statusPenalties !== 0)
-      mods.push({
-        label: game.i18n.localize('SWADE.Status'),
-        value: statusPenalties.signedString(),
-      });
-
     //Additional Mods
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
@@ -850,6 +823,117 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       });
     }
 
+    //Status penalites
+    if (this.data.type !== 'vehicle') {
+      const isDistracted = this.data.data.status.isDistracted;
+      const isEntangled = this.data.data.status.isEntangled;
+      const entangled: ITraitRollModifier = {
+        label: game.i18n.localize('SWADE.Entangled'),
+        value: '-2',
+      };
+      const distracted: ITraitRollModifier = {
+        label: game.i18n.localize('SWADE.Distr'),
+        value: '-2',
+      };
+      if (isEntangled) {
+        mods.push(entangled);
+      } else if (isDistracted) {
+        mods.push(distracted);
+      }
+    }
+
     return [...mods.filter((m) => m.value)];
   }
+
+  async _preCreate(data, options, user: User) {
+    //@ts-ignore
+    await super._preCreate(data, options, user);
+
+    const tokenData = mergeObject(
+      //@ts-ignore
+      this.data.token.toObject(),
+      { actorLink: data.type === 'character', vision: true },
+    );
+    //@ts-ignore
+    this.data.token.update(tokenData);
+
+    //only do this if this is a PC with no prior skills
+    if (data.type === 'character' && this.itemTypes['skill'].length <= 0) {
+      //Get list of core skills from settings
+      const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
+        .split(',')
+        .map((s) => s.trim());
+
+      //Set compendium source
+      const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
+      const skillIndex: SwadeItem[] = await game.packs
+        .get(pack)
+        //@ts-ignore
+        .getDocuments();
+
+      // extract skill data
+      const skills = skillIndex
+        .filter((i) => coreSkills.includes(i.data.name))
+        //@ts-ignore
+        .map((s) => s.data.toObject());
+
+      // Create core skills not in compendium (for custom skill names entered by the user)
+      for (const skillName of coreSkills) {
+        if (!skillIndex.find((skill) => skillName === skill.data.name)) {
+          skills.push({
+            name: skillName,
+            type: 'skill',
+            img: 'systems/swade/assets/icons/skill.svg',
+            data: {
+              attribute: '',
+            },
+          });
+        }
+      }
+
+      //set all the skills to be core skills
+      skills.forEach((s) => (s.data.isCoreSkill = true));
+
+      //Add the Untrained skill
+      skills.push({
+        name: 'Untrained',
+        type: 'skill',
+        img: 'systems/swade/assets/icons/skill.svg',
+        data: {
+          attribute: '',
+          die: {
+            sides: 4,
+            modifier: -2,
+          },
+        },
+      });
+      //Add the items to the creation data
+      //@ts-ignore
+      this.data.update({ items: skills });
+    }
+  }
+
+  async _preUpdate(changed, options, user: User) {
+    //@ts-ignore
+    await super._preUpdate(changed, options, user);
+    //wildcards will be linked, extras unlinked
+    if (
+      game.settings.get('swade', 'autoLinkWildcards') &&
+      hasProperty(changed, 'data.wildcard')
+    ) {
+      //@ts-ignore
+      this.data.token.update({ actorlink: changed.data.wildcard });
+    }
+  }
+
+  //TODO change to onUpdate once TS behaves
+  // async _onUpdate(changed, options, user: User) {
+  //   super._onUpdate(changed, options, user);
+  //   if (this.data.type === 'npc') {
+  //     ui.actors.render(true);
+  //   }
+  //   if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
+  //     ui.players.render(true);
+  //   }
+  // }
 }

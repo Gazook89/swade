@@ -12,7 +12,7 @@ const through2 = require('through2');
 
 const ts = require('gulp-typescript');
 const less = require('gulp-less');
-const sass = require('gulp-sass');
+const sass = require('gulp-dart-sass');
 const git = require('gulp-git');
 const gyaml = require('gulp-yaml');
 const concat = require('gulp-concat');
