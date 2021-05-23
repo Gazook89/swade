@@ -578,7 +578,7 @@ export default class SwadeHooks {
         color,
         isAvailable,
         name: card.name,
-        cardString: getProperty(card, 'data.content'),
+        cardString: card.data.content,
         isJoker: card.getFlag('swade', 'isJoker'),
       });
     }
