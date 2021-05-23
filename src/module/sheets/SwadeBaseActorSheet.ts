@@ -267,8 +267,13 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           ) {
             data.arcanes.push(pow.data.arcane);
             // Add powerpoints data relevant to the detected arcane
-            if (data.data.powerPoints[pow.data.arcane] === undefined) {
-              data.data.powerPoints[pow.data.arcane] = { value: 0, max: 0 };
+            if (
+              !hasProperty(data, `data.data.powerPoints.${pow.data.arcane}`)
+            ) {
+              data.data.data.powerPoints[pow.data.arcane] = {
+                value: 0,
+                max: 0,
+              };
             }
           }
         });
@@ -281,7 +286,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       };
     }
 
-    const additionalStats = data.data.additionalStats || {};
+    const additionalStats = data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -297,8 +302,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     let buttons = super._getHeaderButtons();
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner;
-    if (this.options.editable && canConfigure) {
+    if (this.options.editable && this.actor.owner) {
       buttons = [
         {
           label: game.i18n.localize('SWADE.Tweaks'),
