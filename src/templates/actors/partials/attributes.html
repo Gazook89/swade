@@ -21,7 +21,7 @@
         <input
           name="data.attributes.agility.die.modifier"
           type="text"
-          value="{{data.data.attributes.agility.die.modifier}}"
+          value="{{signedString data.data.attributes.agility.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -30,7 +30,7 @@
     <div class="attribute" data-attribute="smarts">
       <div class="attribute-label">
         <a title="{{localize 'SWADE.Roll'}}"
-          >{{ localize "SWADE.AttrSma" }} {{#if
+          >{{ localize "SWADE.AttrSma" }}&nbsp;{{#if
           data.data.attributes.smarts.animal}}(A){{/if}}</a
         >
       </div>
@@ -47,7 +47,7 @@
         <input
           name="data.attributes.smarts.die.modifier"
           type="text"
-          value="{{data.data.attributes.smarts.die.modifier}}"
+          value="{{signedString data.data.attributes.smarts.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -70,7 +70,7 @@
         <input
           name="data.attributes.spirit.die.modifier"
           type="text"
-          value="{{data.data.attributes.spirit.die.modifier}}"
+          value="{{signedString data.data.attributes.spirit.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -94,7 +94,7 @@
         <input
           name="data.attributes.strength.die.modifier"
           type="text"
-          value="{{data.data.attributes.strength.die.modifier}}"
+          value="{{signedString data.data.attributes.strength.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />
@@ -117,7 +117,7 @@
         <input
           name="data.attributes.vigor.die.modifier"
           type="text"
-          value="{{data.data.attributes.vigor.die.modifier}}"
+          value="{{signedString data.data.attributes.vigor.die.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}"
           data-dtype="Number"
         />

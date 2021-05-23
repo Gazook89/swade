@@ -23,7 +23,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
-    if (this.actor.owner) {
+    //@ts-ignore
+    if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       html.find('li.active-effect').each((i, li) => {
         // Add draggable attribute and dragstart listener.
@@ -302,7 +303,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     let buttons = super._getHeaderButtons();
 
     // Token Configuration
-    if (this.options.editable && this.actor.owner) {
+    //@ts-ignore
+    if (this.actor.isOwner) {
       buttons = [
         {
           label: game.i18n.localize('SWADE.Tweaks'),
