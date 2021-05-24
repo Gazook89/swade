@@ -415,7 +415,7 @@ export default class SwadeCombat extends Combat {
       for (let [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
         //@ts-ignore
-        if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
+        if (!t.defeated && !t.getFlag('swade', 'turnLost') && !t.getFlag('swade', 'isOnHold')) {
           next = i;
           break;
         }
