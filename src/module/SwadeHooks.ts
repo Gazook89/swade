@@ -334,7 +334,8 @@ export default class SwadeHooks {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return !targetCombatant.getFlag('swade', 'turnLost');
+        //@ts-ignore
+        return !targetCombatant.getFlag('swade', 'isOnHold') || (targetCombatantId === game.combat.combatant.id && targetCombatant.getFlag('swade', 'roundHeld') === game.combat.round);
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
@@ -349,6 +350,7 @@ export default class SwadeHooks {
               swade: {
                 cardString: '<i class="fas fa-hand-rock"></i>',
                 isOnHold: true,
+                roundHeld: game.combat.round,
                 stored: targetCombatant.data.flags.swade,
               },
             },
@@ -364,15 +366,16 @@ export default class SwadeHooks {
       },
     });
 
-    // Act Now
+    // Act Before Current Combatant
     options.push({
-      name: 'SWADE.ActNow',
-      icon: '<i class="fas fa-long-arrow-alt-right"></i>',
+      name: 'SWADE.ActBeforeCurrentCombatant',
+      icon: '<i class="fas fa-level-up-alt"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return !!targetCombatant.getFlag('swade', 'isOnHold');
+        //@ts-ignore
+        return targetCombatant.getFlag('swade', 'isOnHold') && targetCombatantId !== game.combat.combatant.id;
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
@@ -394,10 +397,7 @@ export default class SwadeHooks {
             },
           },
         });
-        //@ts-ignore
-        if (currentCombatant.id !== targetCombatantId) {
-          game.combat.previousTurn();
-        }
+        game.combat.previousTurn();
       },
     });
 
@@ -409,7 +409,8 @@ export default class SwadeHooks {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return !!targetCombatant.getFlag('swade', 'isOnHold');
+        //@ts-ignore
+        return targetCombatant.getFlag('swade', 'isOnHold') && targetCombatantId !== game.combat.combatant.id;
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
@@ -431,6 +432,7 @@ export default class SwadeHooks {
             },
           },
         });
+        game.combat.previousTurn();
       },
     });
 
