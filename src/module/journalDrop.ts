@@ -3,7 +3,7 @@ import { getCanvas } from './util';
 
 export function listenJournalDrop() {
   // Grabbing the image url from the journal entry
-  function _onDragStart(event: any) {
+  function _onDragStart(event) {
     event.stopPropagation();
     const url = event.srcElement.style.backgroundImage
       .slice(4, -1)
@@ -13,7 +13,7 @@ export function listenJournalDrop() {
   }
 
   // Create the tile with the gathered informations
-  async function _onDropImage(event, data) {
+  async function _onDropImage(event, data: { type: string; src: string }) {
     if (data.type == 'image') {
       // Projecting screen coords to the canvas
       const t = getCanvas().tiles.worldTransform;
