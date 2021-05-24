@@ -332,17 +332,13 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-hand-rock"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !targetCombatant.getFlag('swade', 'turnLost');
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
 
         if (!targetCombatant.getFlag('swade', 'isOnHold')) {
           // Add flag for on hold to show icon on token
@@ -372,17 +368,13 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-long-arrow-alt-right"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !!targetCombatant.getFlag('swade', 'isOnHold');
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         const currentCombatant = game.combat.combatant;
         const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
           currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
@@ -409,17 +401,13 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-level-down-alt"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !!targetCombatant.getFlag('swade', 'isOnHold');
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         const currentCombatant = game.combat.combatant;
         const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
           currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
@@ -442,9 +430,7 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-ban"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         if (
           (targetCombatant.getFlag('swade', 'isOnHold') &&
             !targetCombatant.getFlag('swade', 'turnLost')) ||
@@ -456,9 +442,7 @@ export default class SwadeHooks {
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
-        const targetCombatant = game.combat.combatants.find(
-          (c) => c.id === targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         if (targetCombatant.getFlag('swade', 'isOnHold')) {
           // If the current Combatant is the holding combatant, just remove Hold status.
           await targetCombatant.update({
@@ -696,7 +680,7 @@ export default class SwadeHooks {
     const cardPack = game.packs.get(
       game.settings.get('swade', 'cardDeck') as string,
     ) as Compendium;
-    const cards = (await cardPack.getContent()).sort(
+    const cards = (await cardPack.getDocuments()).sort(
       (a: JournalEntry, b: JournalEntry) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
         const cardB = b.getFlag('swade', 'cardValue') as number;
@@ -759,8 +743,7 @@ export default class SwadeHooks {
       const suitValue = selectedCard.data().suitValue as number;
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as String;
-      game.combat.updateEmbeddedDocuments('Combatant', {
-        _id: options.document.id,
+      game.combat.combatants.get(options.document.id).update({
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
       });
