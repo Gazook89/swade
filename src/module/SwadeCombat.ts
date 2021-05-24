@@ -390,7 +390,7 @@ export default class SwadeCombat extends Combat {
     //Init autoroll
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
-      if (this.combatants.find((c) => c.initiative === null) !== undefined) {
+      if (this.combatants.some((c) => c.initiative === null)) {
         const combatantIds = this.combatants.map((c) => c.id);
         await this.rollInitiative(combatantIds);
       }
@@ -470,8 +470,7 @@ export default class SwadeCombat extends Combat {
             suitValue: null,
             cardValue: null,
             hasJoker: false,
-            cardString: null,
-            isOnHold: c.getFlag('swade', 'isOnHold'),
+            cardString: null
           },
         },
       };
