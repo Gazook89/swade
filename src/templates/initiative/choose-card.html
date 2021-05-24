@@ -9,11 +9,13 @@
           id="{{card.id}}"
           data-card-id="{{card.id}}"
         />
-        <img src="{{card.data.img}}" />
-        <span class="card-name" alt="{{card.name}}">
-          {{card.name}} <wbr />{{#if (eq card.id ../data.oldCard)}}({{localize
-          "SWADE.OldCard"}}){{/if}}
-        </span>
+        <figure>
+          <img src="{{card.data.img}}" />
+          <figcaption>
+            {{card.name}} {{#if (eq card.id ../data.oldCard)}}<br />({{localize
+            "SWADE.OldCard"}}){{/if}}
+          </figcaption>
+        </figure>
       </label>
     </li>
     {{/each}}

@@ -48,6 +48,7 @@
   justify-content: space-evenly;
   flex-wrap: wrap;
   padding: 0;
+  margin: 0;
   list-style-type: none;
   .card {
     min-width: 125px;
@@ -57,6 +58,9 @@
     padding: $medium-spacing;
     margin-bottom: 5px;
     text-align: center;
+    figure {
+      margin: 0;
+    }
     img {
       height: 100px;
       display: block;
@@ -71,18 +75,18 @@
       height: 0;
     }
     /* IMAGE STYLES */
-    [type='radio'] + img {
+    [type='radio'] + figure img {
       cursor: pointer;
       &:hover {
         transform: translateY(-$medium-spacing) scale(1.2);
       }
     }
     /* CHECKED STYLES */
-    [type='radio']:checked ~ img {
+    [type='radio']:checked ~ figure img {
       transform: translateY(-$medium-spacing) scale(1.2);
       box-shadow: 0 0 5px red;
     }
-    [type='radio']:checked ~ .card-name {
+    [type='radio']:checked ~ figure figcaption {
       font-weight: bold;
     }
   }
