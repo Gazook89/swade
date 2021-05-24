@@ -32,11 +32,11 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    * @returns true when the actor has an arcane background or a special ability that grants powers.
    */
   get hasArcaneBackground(): boolean {
-    const abEdges = this.items.filter(
-      (i) => i.type === 'edge' && i.data.data['isArcaneBackground'] === true,
+    const abEdges = this.itemTypes.edge.filter((i) =>
+      getProperty(i, '.data.data.isArcaneBackground'),
     );
-    const abAbilities = this.items.filter(
-      (i) => i.type === 'ability' && i.data.data['grantsPowers'] === true,
+    const abAbilities = this.itemTypes.ability.filter((i) =>
+      getProperty(i, 'data.data.grantsPowers'),
     );
     return abEdges.length > 0 || abAbilities.length > 0;
   }
@@ -60,7 +60,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         (c) => c.tokenId === this.token.id,
       );
     }
-    return combatant && getProperty(combatant, 'flags.swade.hasJoker');
+    return combatant && combatant.getFlag('swade', 'hasJoker');
   }
 
   /**
@@ -455,7 +455,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     if (this.data.type === 'vehicle') {
       retVal['topspeed'] = this.data.data.topspeed || 0;
     } else {
-      const skills = this.itemTypes['skill'];
+      const skills = this.itemTypes.skill;
       for (const skill of skills) {
         const skillDie = getProperty(skill.data, 'data.die.sides');
         let skillMod = getProperty(skill.data, 'data.die.modifier');
@@ -481,7 +481,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     let totalArmorVal = 0;
 
     //get armor items and retieve their data
-    const armors = this.itemTypes['armor'].map((i) =>
+    const armors = this.itemTypes.armor.map((i) =>
       i.data.type === 'armor' ? i.data : null,
     );
     const armorList = armors.filter((i) => {
@@ -853,12 +853,13 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       //@ts-ignore
       this.data.token.toObject(),
       { actorLink: data.type === 'character', vision: true },
+      { overwrite: false },
     );
     //@ts-ignore
     this.data.token.update(tokenData);
 
     //only do this if this is a PC with no prior skills
-    if (data.type === 'character' && this.itemTypes['skill'].length <= 0) {
+    if (data.type === 'character' && this.itemTypes.skill.length <= 0) {
       //Get list of core skills from settings
       const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
         .split(',')

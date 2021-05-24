@@ -40,7 +40,7 @@
           <button type="button">{{name}}</button>
         </span>
         <div class="item-controls">
-          {{#if ../isOwner}}
+          {{#if ../owner}}
           <button
             type="button"
             class="item-toggle {{#unless data.equipped}}item-unequipped{{/unless}}"
@@ -111,7 +111,7 @@
           <button type="button">{{name}}</button>
         </span>
         <div class="item-controls">
-          {{#if ../../isOwner}}
+          {{#if ../../owner}}
           <button
             type="button"
             class="item-toggle {{#unless data.equipped}}item-unequipped{{/unless}}"
