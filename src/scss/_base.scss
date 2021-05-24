@@ -92,25 +92,21 @@
   }
 }
 
-.sbt {
-  &::before {
-    content: 'S';
-  }
+.text-icon {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-style: normal;
 }
-.mbt {
-  &::before {
-    content: 'M';
-  }
+.cone::before {
+  content: 'C';
 }
-.lbt {
-  &::before {
-    content: 'L';
-  }
+.sbt::before {
+  content: 'S';
 }
-.cone {
-  &::before {
-    content: 'C';
-  }
+.mbt::before {
+  content: 'M';
+}
+.lbt::before {
+  content: 'L';
 }
 
 .scrollable {

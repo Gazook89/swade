@@ -20,8 +20,7 @@ export function listenJournalDrop() {
       // Determine the tile size
       const tex = await loadTexture(data.src);
 
-      //TODO why no work without explicit type?
-      const tileData: DeepPartial<Tile.Data> = {
+      const tileData = {
         img: data.src as string,
         width: (SWADE.imagedrop.height * tex.width) / tex.height,
         height: SWADE.imagedrop.height,
