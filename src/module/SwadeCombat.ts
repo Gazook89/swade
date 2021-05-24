@@ -16,6 +16,7 @@ export default class SwadeCombat extends Combat {
    * @param {Object} messageOptions   Additional options with which to customize created Chat Messages
    * @return {Promise.<Combat>}       A promise which resolves to the updated Combat entity once updates are complete.
    */
+
   async rollInitiative(
     ids: string[] | string,
     {
@@ -49,8 +50,25 @@ export default class SwadeCombat extends Combat {
         isRedraw = true;
       }
 
+      // Move holding combatants to top by setting initiative, card, and suit to high values
+      const isOnHold = c.getFlag('swade', 'isOnHold');
+
+      if (isOnHold) {
+        await c.update({
+          initiative: 9999,
+          flags: {
+            swade: {
+              cardValue: 9999,
+              suitValue: 9999,
+              cardString: '<i class="fas fa-hand-rock"></i>',
+              isOnHold: isOnHold,
+            },
+          },
+        });
+      }
+
       //Do not draw cards for defeated combatants
-      if (c.defeated) continue;
+      if (c.defeated || isOnHold) continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -127,11 +145,12 @@ export default class SwadeCombat extends Combat {
       }
 
       const newflags = {
-        suitValue: card.getFlag('swade', 'suitValue'),
         cardValue: card.getFlag('swade', 'cardValue'),
+        suitValue: card.getFlag('swade', 'suitValue'),
         hasJoker: card.getFlag('swade', 'isJoker'),
         cardString: card.data.content,
       };
+
       combatantUpdates.push({
         _id: c.id,
         initiative:
@@ -174,7 +193,8 @@ export default class SwadeCombat extends Combat {
     if (!combatantUpdates.length) return this;
 
     // Update multiple combatants
-    await this.updateEmbeddedEntity('Combatant', combatantUpdates);
+    //@ts-ignore
+    await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
       AudioHelper.play(
@@ -225,7 +245,8 @@ export default class SwadeCombat extends Combat {
   /** @override */
   async resetAll() {
     const updates = this._getInitResetUpdates();
-    await this.updateEmbeddedEntity('Combatant', updates);
+    //@ts-ignore
+    await this.updateEmbeddedDocuments('Combatant', updates);
     return this.update({ turn: 0 });
   }
 
@@ -357,12 +378,57 @@ export default class SwadeCombat extends Combat {
   async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
     const packName = game.settings.get('swade', 'cardDeck') as string;
     const actionCardPack = game.packs.get(packName);
-    const content = (await actionCardPack.getContent()) as JournalEntry[];
+    //@ts-ignore
+    const content = (await actionCardPack.getDocuments()) as JournalEntry[];
     return content.find(
       (c) =>
         c.getFlag('swade', 'cardValue') === cardValue &&
         c.getFlag('swade', 'suitValue') === cardSuit,
     );
+  }
+
+  /**
+   * @override
+   */
+  async startCombat() {
+    //Init autoroll
+    await super.startCombat();
+    if (game.settings.get('swade', 'autoInit')) {
+      if (this.combatants.some((c) => c.initiative === null)) {
+        //@ts-ignore
+        const combatantIds = this.combatants.map((c) => c.id);
+        await this.rollInitiative(combatantIds);
+      }
+    }
+    return this;
+  }
+
+  /**
+   * @override
+   */
+  async nextTurn() {
+    let turn = this.turn;
+    let skip = this.settings.skipDefeated;
+    // Determine the next turn number
+    let next = null;
+    if (skip) {
+      for (let [i, t] of this.turns.entries()) {
+        if (i <= turn) continue;
+        //@ts-ignore
+        if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
+          next = i;
+          break;
+        }
+      }
+    } else next = turn + 1;
+    // Maybe advance to the next round
+    let round = this.round;
+    if (this.round === 0 || next === null || next >= this.turns.length) {
+      return this.nextRound();
+    }
+    // Update the encounter
+    const advanceTime = CONFIG.time.turnTime;
+    this.update({ round: round, turn: next }, { advanceTime });
   }
 
   /** @override */
@@ -377,9 +443,19 @@ export default class SwadeCombat extends Combat {
         v.getFlag('swade', 'hasJoker'),
       );
       if (jokerDrawn) {
+        // Reset hasJoker in swade.stored to avoid bonus being reapplied after coming off hold
+        for (const j of game.combat.combatants.filter(
+          //@ts-ignore
+          (c) => c.getFlag('swade', 'hasJoker') === true,
+        )) {
+          //@ts-ignore
+          j.setFlag('swade', 'stored.hasJoker', false);
+        }
+
         await game.tables.getName(SWADE.init.cardTable).reset();
         ui.notifications.info('Card Deck automatically reset');
       }
+
       const resetComs = this._getInitResetUpdates();
       await this.update({ combatants: resetComs });
 
@@ -403,7 +479,7 @@ export default class SwadeCombat extends Combat {
             suitValue: null,
             cardValue: null,
             hasJoker: false,
-            cardString: null,
+            cardString: null
           },
         },
       };
