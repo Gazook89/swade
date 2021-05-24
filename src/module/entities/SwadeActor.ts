@@ -60,7 +60,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
         (c) => c.tokenId === this.token.id,
       );
     }
-    return combatant && getProperty(combatant, 'flags.swade.hasJoker');
+    return combatant && combatant.getFlag('swade', 'hasJoker');
   }
 
   /**
