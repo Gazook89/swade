@@ -400,6 +400,7 @@ export default class SwadeCombat extends Combat {
         await this.rollInitiative(combatantIds);
       }
     }
+    return this;
   }
 
   /**
