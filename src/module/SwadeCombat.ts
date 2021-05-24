@@ -50,11 +50,10 @@ export default class SwadeCombat extends Combat {
       }
 
       // Move holding combatants to top by setting initiative, card, and suit to high values
-      const isOnHold = c.flags?.swade?.isOnHold;
+      const isOnHold = c.getFlag('swade', 'isOnHold');
 
       if (isOnHold) {
-        await game.combat.updateCombatant({
-          _id: c._id,
+        await c.update({
           initiative: 9999,
           flags: {
             swade: {
@@ -193,7 +192,7 @@ export default class SwadeCombat extends Combat {
     if (!combatantUpdates.length) return this;
 
     // Update multiple combatants
-    await this.updateEmbeddedEntity('Combatant', combatantUpdates);
+    await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
       AudioHelper.play(
@@ -244,7 +243,7 @@ export default class SwadeCombat extends Combat {
   /** @override */
   async resetAll() {
     const updates = this._getInitResetUpdates();
-    await this.updateEmbeddedEntity('Combatant', updates);
+    await this.updateEmbeddedDocuments('Combatant', updates);
     return this.update({ turn: 0 });
   }
 
@@ -376,7 +375,7 @@ export default class SwadeCombat extends Combat {
   async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
     const packName = game.settings.get('swade', 'cardDeck') as string;
     const actionCardPack = game.packs.get(packName);
-    const content = (await actionCardPack.getContent()) as JournalEntry[];
+    const content = (await actionCardPack.getDocuments()) as JournalEntry[];
     return content.find(
       (c) =>
         c.getFlag('swade', 'cardValue') === cardValue &&
@@ -392,7 +391,7 @@ export default class SwadeCombat extends Combat {
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
       if (this.combatants.find((c) => c.initiative === null) !== undefined) {
-        const combatantIds = this.combatants.map((c) => c._id);
+        const combatantIds = this.combatants.map((c) => c.id);
         await this.rollInitiative(combatantIds);
       }
     }
@@ -409,7 +408,7 @@ export default class SwadeCombat extends Combat {
     if (skip) {
       for (let [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
-        if (!t.defeated && !t.flags.swade.turnLost) {
+        if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
           next = i;
           break;
         }
@@ -437,11 +436,11 @@ export default class SwadeCombat extends Combat {
         v.getFlag('swade', 'hasJoker'),
       );
       if (jokerDrawn) {
-        // Reset hasJoker in swadeStored to avoid bonus being reapplied after coming off hold
+        // Reset hasJoker in swade.stored to avoid bonus being reapplied after coming off hold
         for (const j of game.combat.combatants.filter(
-          (c) => c.flags?.swadeStored?.hasJoker === true,
+          (c) => c.getFlag('swade', 'hasJoker') === true,
         )) {
-          j.flags.swadeStored.hasJoker = false;
+          j.setFlag('swade', 'stored.hasJoker', false);
         }
 
         await game.tables.getName(SWADE.init.cardTable).reset();
@@ -472,10 +471,9 @@ export default class SwadeCombat extends Combat {
             cardValue: null,
             hasJoker: false,
             cardString: null,
-            isOnHold: c.flags.swade.isOnHold,
+            isOnHold: c.getFlag('swade', 'isOnHold'),
           },
         },
-        swadeStored: c.flags.swadeStored,
       };
     });
     return updates;
