@@ -47,17 +47,21 @@
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  .radio-card {
+  padding: 0;
+  list-style-type: none;
+  .card {
     min-width: 125px;
     max-width: 125px;
     flex-basis: auto;
     flex-grow: 1;
-    text-align: center;
+    padding: $medium-spacing;
     margin-bottom: 5px;
+    text-align: center;
     img {
       height: 100px;
       display: block;
-      margin: auto;
+      margin: $medium-spacing auto;
+      transition: all 0.2s ease-out;
     }
     /* HIDE RADIO */
     [type='radio'] {
@@ -66,18 +70,20 @@
       width: 0;
       height: 0;
     }
-
     /* IMAGE STYLES */
     [type='radio'] + img {
       cursor: pointer;
       &:hover {
-        box-shadow: 0 0 5px red;
+        transform: translateY(-$medium-spacing) scale(1.2);
       }
     }
-
     /* CHECKED STYLES */
-    [type='radio']:checked + img {
+    [type='radio']:checked ~ img {
+      transform: translateY(-$medium-spacing) scale(1.2);
       box-shadow: 0 0 5px red;
+    }
+    [type='radio']:checked ~ .card-name {
+      font-weight: bold;
     }
   }
 }
