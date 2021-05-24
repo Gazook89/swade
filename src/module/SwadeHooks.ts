@@ -29,7 +29,6 @@ export default class SwadeHooks {
   public static async onReady() {
     const packChoices = {};
     game.packs
-      //FIXME once new definitions come along
       //@ts-ignore
       .filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
@@ -264,7 +263,6 @@ export default class SwadeHooks {
         const enemyWCs = game.combat.combatants.filter((c) => {
           const a = (c.actor as unknown) as SwadeActor;
           const hostile =
-            //FIXME once the new definitions come along
             //@ts-ignore
             c.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
           return a.data.type === 'npc' && hostile && a.isWildcard;
@@ -283,7 +281,6 @@ export default class SwadeHooks {
     data: any,
   ) {
     if (message.isRoll && message.isContentVisible) {
-      //FIXME once new definitions come along
       await chat.formatRoll(message, html, data);
     }
 
@@ -552,14 +549,14 @@ export default class SwadeHooks {
     );
   }
 
-  public static onGetSceneControlButtons(sceneControlButtons: any[]) {
+  public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
     const measure = sceneControlButtons.find((a) => a.name === 'measure');
     let template: SwadeTemplate = null;
-    const newButtons = [
+    const newButtons: SceneControlTool[] = [
       {
         name: 'swcone',
         title: 'SWADE.Cone',
-        icon: 'cone far fa-circle',
+        icon: 'text-icon cone',
         visible: true,
         button: true,
         onClick: () => {
@@ -571,7 +568,7 @@ export default class SwadeHooks {
       {
         name: 'sbt',
         title: 'SWADE.SBT',
-        icon: 'sbt far fa-circle',
+        icon: 'text-icon sbt',
         visible: true,
         button: true,
         onClick: () => {
@@ -583,7 +580,7 @@ export default class SwadeHooks {
       {
         name: 'mbt',
         title: 'SWADE.MBT',
-        icon: 'mbt far fa-circle',
+        icon: 'text-icon mbt',
         visible: true,
         button: true,
         onClick: () => {
@@ -595,7 +592,7 @@ export default class SwadeHooks {
       {
         name: 'lbt',
         title: 'SWADE.LBT',
-        icon: 'lbt far fa-circle',
+        icon: 'text-icon lbt',
         visible: true,
         button: true,
         onClick: () => {
@@ -726,7 +723,6 @@ export default class SwadeHooks {
         options.document.getFlag('swade', 'cardValue') === cardValue &&
         options.document.getFlag('swade', 'suitValue') === suitValue;
       const isAvailable = cardTable.results.find(
-        //FIXME once new definitions come along
         //@ts-ignore
         (r) => r.data.text === card.name,
       ).drawn

@@ -319,7 +319,7 @@ export default class SwadeCombat extends Combat {
         callback: (html: JQuery<HTMLElement>) => {
           const choice = html.find('input[name=card]:checked');
           const cardId = choice.data('card-id') as string;
-          if (!cardId) card = cards.find((c) => c.id === cardId);
+          card = cards.find((c) => c.id === cardId);
         },
       },
       redraw: {
