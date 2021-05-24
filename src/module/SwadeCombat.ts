@@ -16,6 +16,7 @@ export default class SwadeCombat extends Combat {
    * @param {Object} messageOptions   Additional options with which to customize created Chat Messages
    * @return {Promise.<Combat>}       A promise which resolves to the updated Combat entity once updates are complete.
    */
+
   async rollInitiative(
     ids: string[] | string,
     {
@@ -192,6 +193,7 @@ export default class SwadeCombat extends Combat {
     if (!combatantUpdates.length) return this;
 
     // Update multiple combatants
+    //@ts-ignore
     await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
@@ -243,6 +245,7 @@ export default class SwadeCombat extends Combat {
   /** @override */
   async resetAll() {
     const updates = this._getInitResetUpdates();
+    //@ts-ignore
     await this.updateEmbeddedDocuments('Combatant', updates);
     return this.update({ turn: 0 });
   }
@@ -375,6 +378,7 @@ export default class SwadeCombat extends Combat {
   async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
     const packName = game.settings.get('swade', 'cardDeck') as string;
     const actionCardPack = game.packs.get(packName);
+    //@ts-ignore
     const content = (await actionCardPack.getDocuments()) as JournalEntry[];
     return content.find(
       (c) =>
@@ -391,6 +395,7 @@ export default class SwadeCombat extends Combat {
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
       if (this.combatants.some((c) => c.initiative === null)) {
+        //@ts-ignore
         const combatantIds = this.combatants.map((c) => c.id);
         await this.rollInitiative(combatantIds);
       }
@@ -408,6 +413,7 @@ export default class SwadeCombat extends Combat {
     if (skip) {
       for (let [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
+        //@ts-ignore
         if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
           next = i;
           break;
@@ -438,8 +444,10 @@ export default class SwadeCombat extends Combat {
       if (jokerDrawn) {
         // Reset hasJoker in swade.stored to avoid bonus being reapplied after coming off hold
         for (const j of game.combat.combatants.filter(
+          //@ts-ignore
           (c) => c.getFlag('swade', 'hasJoker') === true,
         )) {
+          //@ts-ignore
           j.setFlag('swade', 'stored.hasJoker', false);
         }
 

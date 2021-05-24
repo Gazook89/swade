@@ -332,12 +332,14 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-hand-rock"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !targetCombatant.getFlag('swade', 'turnLost');
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
 
         if (!targetCombatant.getFlag('swade', 'isOnHold')) {
@@ -368,15 +370,19 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-long-arrow-alt-right"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !!targetCombatant.getFlag('swade', 'isOnHold');
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         const currentCombatant = game.combat.combatant;
+        //@ts-ignore
         const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
+          //@ts-ignore
           currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
         await targetCombatant.update({
           flags: {
@@ -388,7 +394,7 @@ export default class SwadeHooks {
             },
           },
         });
-
+        //@ts-ignore
         if (currentCombatant.id !== targetCombatantId) {
           game.combat.previousTurn();
         }
@@ -401,15 +407,19 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-level-down-alt"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !!targetCombatant.getFlag('swade', 'isOnHold');
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         const currentCombatant = game.combat.combatant;
+        //@ts-ignore
         const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
+          //@ts-ignore
           currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
         await targetCombatant.update({
           flags: {
@@ -430,6 +440,7 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-ban"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         if (
           (targetCombatant.getFlag('swade', 'isOnHold') &&
@@ -442,6 +453,7 @@ export default class SwadeHooks {
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         if (targetCombatant.getFlag('swade', 'isOnHold')) {
           // If the current Combatant is the holding combatant, just remove Hold status.
@@ -680,6 +692,7 @@ export default class SwadeHooks {
     const cardPack = game.packs.get(
       game.settings.get('swade', 'cardDeck') as string,
     ) as Compendium;
+    //@ts-ignore
     const cards = (await cardPack.getDocuments()).sort(
       (a: JournalEntry, b: JournalEntry) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
@@ -743,6 +756,7 @@ export default class SwadeHooks {
       const suitValue = selectedCard.data().suitValue as number;
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as String;
+      //@ts-ignore
       game.combat.combatants.get(options.document.id).update({
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
