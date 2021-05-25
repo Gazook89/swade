@@ -226,11 +226,10 @@ export default class SwadeHooks {
     if (!getProperty(updateData, 'flags.swade')) return;
 
     const jokersWild = game.settings.get('swade', 'jokersWild');
-
     if (
       jokersWild &&
       combatant.getFlag('swade', 'hasJoker') &&
-      combatant.getFlag('swade', 'isOnHold') === undefined
+      getProperty(updateData, 'flags.swade.isOnHold') === undefined
     ) {
       const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
@@ -335,7 +334,7 @@ export default class SwadeHooks {
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         //@ts-ignore
-        return !targetCombatant.getFlag('swade', 'isOnHold') || (targetCombatantId === game.combat.combatant.id && targetCombatant.getFlag('swade', 'roundHeld') === game.combat.round);
+        return (!targetCombatant.getFlag('swade', 'isOnHold') && targetCombatantId === game.combat.combatant.id) || (targetCombatantId === game.combat.combatant.id && targetCombatant.getFlag('swade', 'roundHeld') === game.combat.round);
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
