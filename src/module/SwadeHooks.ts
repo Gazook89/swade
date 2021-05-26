@@ -195,6 +195,12 @@ export default class SwadeHooks {
     html: JQuery<HTMLElement>,
     data: any,
   ) {
+    // TODO: Get this to stick after nextTurn()
+    html
+      .find(
+        '#combat #combat-controls .combat-control[data-control="previousRound"]',
+      )
+      .remove();
     const currentCombat: Combat =
       data.combats[data.currentIndex - 1] || data.combat;
     html.find('.combatant').each((i, el) => {
@@ -202,7 +208,18 @@ export default class SwadeHooks {
       //@ts-ignore
       const combatant = currentCombat.combatants.find((c) => c.id == combId);
       const initdiv = el.getElementsByClassName('token-initiative');
-      if (combatant.initiative && combatant.initiative !== 0) {
+      //@ts-ignore
+      if (hasProperty(combatant, 'data.flags.swade.turnLost') as boolean) {
+        initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-ban"></i></span>`;
+        //@ts-ignore
+      } else if (
+        hasProperty(combatant, 'data.flags.swade.roundHeld') as boolean
+      ) {
+        initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-hand-rock"></i></span>`;
+        //@ts-ignore
+      } else if (
+        hasProperty(combatant, 'data.flags.swade.cardString') as boolean
+      ) {
         //@ts-ignore
         const cardString = combatant.getFlag('swade', 'cardString') as string;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
@@ -226,12 +243,7 @@ export default class SwadeHooks {
     if (!getProperty(updateData, 'flags.swade')) return;
 
     const jokersWild = game.settings.get('swade', 'jokersWild');
-
-    if (
-      jokersWild &&
-      combatant.getFlag('swade', 'hasJoker') &&
-      combatant.getFlag('swade', 'isOnHold') === undefined
-    ) {
+    if (jokersWild && getProperty(updateData, 'flags.swade.hasJoker')) {
       const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
       });
@@ -326,15 +338,21 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    // Hold
-    options.push({
+    // Toggle Hold when it's the holder's turn and only on the round in which they went on hold
+    options.splice(1, 0, {
       name: 'SWADE.Hold',
       icon: '<i class="fas fa-hand-rock"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return !targetCombatant.getFlag('swade', 'turnLost');
+        //@ts-ignore
+        return (
+          //@ts-ignore
+          targetCombatantId === game.combat.combatant.id &&
+          (!hasProperty(targetCombatant, 'data.flags.swade.roundHeld') ||
+            targetCombatant.getFlag('swade', 'roundHeld') === game.combat.round)
+        );
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
@@ -342,37 +360,39 @@ export default class SwadeHooks {
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
 
-        if (!targetCombatant.getFlag('swade', 'isOnHold')) {
+        if (!hasProperty(targetCombatant, 'data.flags.swade.roundHeld')) {
           // Add flag for on hold to show icon on token
           await targetCombatant.update({
             flags: {
               swade: {
-                cardString: '<i class="fas fa-hand-rock"></i>',
-                isOnHold: true,
-                stored: targetCombatant.data.flags.swade,
+                roundHeld: game.combat.round,
               },
             },
           });
         } else {
-          await targetCombatant.update({
-            flags: {
-              swade: targetCombatant.getFlag('swade', 'stored'),
-              'swade.isOnHold': false,
-            },
-          });
+          await targetCombatant.unsetFlag('swade', 'roundHeld');
         }
       },
     });
 
     // Act Now
-    options.push({
+    options.splice(2, 0, {
       name: 'SWADE.ActNow',
       icon: '<i class="fas fa-long-arrow-alt-right"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return !!targetCombatant.getFlag('swade', 'isOnHold');
+        //@ts-ignore
+        return (
+          hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+          //@ts-ignore
+          (targetCombatantId !== game.combat.combatant.id ||
+            //@ts-ignore
+            (targetCombatantId === game.combat.combatant.id &&
+              targetCombatant.getFlag('swade', 'roundHeld') !==
+                game.combat.round))
+        );
       },
       callback: async (li) => {
         // Attach click event to Toggle Hold context menu option
@@ -381,38 +401,69 @@ export default class SwadeHooks {
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         const currentCombatant = game.combat.combatant;
         //@ts-ignore
-        const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
+        if (targetCombatantId !== currentCombatant.id) {
           //@ts-ignore
-          currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
-        await targetCombatant.update({
-          flags: {
-            swade: {
-              cardValue: currentCardValue,
-              suitValue: currentSuitValue + 1,
-              cardString: targetCombatant.getFlag('swade', 'stored.cardString'),
-              isOnHold: false,
+          const currentCardValue = currentCombatant.getFlag(
+              'swade',
+              'cardValue',
+            ),
+            //@ts-ignore
+            currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                cardValue: currentCardValue,
+                suitValue: currentSuitValue + 1,
+              },
             },
-          },
-        });
+          });
+        } else {
+          const nextActiveCombatant = game.combat.turns.find(
+            (c) => !hasProperty(c, 'data.flags.swade.roundHeld'),
+          );
+          //@ts-ignore
+          const nextActiveCardValue = nextActiveCombatant.getFlag(
+              'swade',
+              'cardValue',
+            ),
+            //@ts-ignore
+            nextActiveSuitValue = nextActiveCombatant.getFlag(
+              'swade',
+              'suitValue',
+            );
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                cardValue: nextActiveCardValue,
+                suitValue: nextActiveSuitValue + 1,
+              },
+            },
+          });
+        }
+        await targetCombatant.unsetFlag('swade', 'roundHeld');
         //@ts-ignore
-        if (currentCombatant.id !== targetCombatantId) {
+        if (targetCombatantId !== game.combat.combatant.id) {
           game.combat.previousTurn();
         }
       },
     });
 
     // Act After Current Combatant
-    options.push({
+    options.splice(3, 0, {
       name: 'SWADE.ActAfterCurrentCombatant',
       icon: '<i class="fas fa-level-down-alt"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return !!targetCombatant.getFlag('swade', 'isOnHold');
+        //@ts-ignore
+        return (
+          hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+          //@ts-ignore
+          targetCombatantId !== game.combat.combatant.id
+        );
       },
       callback: async (li) => {
-        // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
@@ -426,16 +477,17 @@ export default class SwadeHooks {
             swade: {
               cardValue: currentCardValue,
               suitValue: currentSuitValue - 1,
-              cardString: targetCombatant.getFlag('swade', 'stored.cardString'),
-              isOnHold: false,
             },
           },
         });
+        await targetCombatant.unsetFlag('swade', 'roundHeld');
+        // Go back to previous turn because technically it's still their turn and the holder is going after them.
+        game.combat.previousTurn();
       },
     });
 
-    // Lost Turn
-    options.push({
+    // Lost Turn if the combatant was on hold and became Shaken or Stunned
+    options.splice(4, 0, {
       name: 'SWADE.LoseTurn',
       icon: '<i class="fas fa-ban"></i>',
       condition: (li) => {
@@ -443,39 +495,29 @@ export default class SwadeHooks {
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         if (
-          (targetCombatant.getFlag('swade', 'isOnHold') &&
-            !targetCombatant.getFlag('swade', 'turnLost')) ||
-          targetCombatant.getFlag('swade', 'turnLost')
+          (hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+            //@ts-ignore
+            targetCombatantId !== game.combat.combatant.id) ||
+          hasProperty(targetCombatant, 'data.flags.swade.turnLost')
         ) {
           return true;
         }
       },
       callback: async (li) => {
-        // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        if (targetCombatant.getFlag('swade', 'isOnHold')) {
+        if (hasProperty(targetCombatant, 'data.flags.swade.roundHeld')) {
           // If the current Combatant is the holding combatant, just remove Hold status.
-          await targetCombatant.update({
-            flags: {
-              swade: {
-                cardString: '<i class="fas fa-ban"></i>',
-                isOnHold: false,
-                turnLost: true,
-              },
-            },
-          });
+          await targetCombatant.unsetFlag('swade', 'roundHeld');
+          await targetCombatant.setFlag('swade', 'turnLost', true);
         } else {
-          await targetCombatant.update({
-            flags: {
-              swade: {
-                cardString: '<i class="fas fa-hand-rock"></i>',
-                isOnHold: true,
-                turnLost: false,
-              },
-            },
-          });
+          await targetCombatant.unsetFlag('swade', 'turnLost');
+          await targetCombatant.setFlag(
+            'swade',
+            'roundHeld',
+            game.combat.round,
+          );
         }
       },
     });

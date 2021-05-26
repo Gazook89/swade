@@ -50,25 +50,8 @@ export default class SwadeCombat extends Combat {
         isRedraw = true;
       }
 
-      // Move holding combatants to top by setting initiative, card, and suit to high values
-      const isOnHold = c.getFlag('swade', 'isOnHold');
-
-      if (isOnHold) {
-        await c.update({
-          initiative: 9999,
-          flags: {
-            swade: {
-              cardValue: 9999,
-              suitValue: 9999,
-              cardString: '<i class="fas fa-hand-rock"></i>',
-              isOnHold: isOnHold,
-            },
-          },
-        });
-      }
-
-      //Do not draw cards for defeated combatants
-      if (c.defeated || isOnHold) continue;
+      //Do not draw cards for defeated or holding combatants
+      if (c.defeated || hasProperty(c, 'data.flags.swade.roundHeld')) continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -222,11 +205,22 @@ export default class SwadeCombat extends Combat {
    * @param a Combatant A
    * @param b Combatant B
    */
-  _sortCombatants(a, b) {
+  _sortCombatants = (a, b) => {
+    const currentRound = this.round;
     if (
       hasProperty(a, 'data.flags.swade') &&
       hasProperty(b, 'data.flags.swade')
     ) {
+      const isOnHoldA = (hasProperty(a, 'data.flags.swade.roundHeld') &&
+        a.getFlag('swade', 'roundHeld') !== currentRound) as boolean;
+      const isOnHoldB = (hasProperty(b, 'data.flags.swade.roundHeld') &&
+        b.getFlag('swade', 'roundHeld') !== currentRound) as boolean;
+      if (isOnHoldA && !isOnHoldB) {
+        return -1;
+      }
+      if (!isOnHoldA && isOnHoldB) {
+        return 1;
+      }
       const cardA = a.getFlag('swade', 'cardValue') as number;
       const cardB = b.getFlag('swade', 'cardValue') as number;
       const card = cardB - cardA;
@@ -240,7 +234,7 @@ export default class SwadeCombat extends Combat {
     const cn = an.localeCompare(bn);
     if (cn !== 0) return cn;
     return a.tokenId - b.tokenId;
-  }
+  };
 
   /** @override */
   async resetAll() {
@@ -415,7 +409,7 @@ export default class SwadeCombat extends Combat {
       for (let [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
         //@ts-ignore
-        if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
+        if (!t.defeated && !hasProperty(t, 'data.flags.swade.turnLost')) {
           next = i;
           break;
         }
@@ -432,6 +426,11 @@ export default class SwadeCombat extends Combat {
   }
 
   /** @override */
+  async previousRound() {
+    return null;
+  }
+
+  /** @override */
   async nextRound() {
     if (!game.user.isGM) {
       game.socket.emit('system.swade', { type: 'newRound', combatId: this.id });
@@ -443,15 +442,6 @@ export default class SwadeCombat extends Combat {
         v.getFlag('swade', 'hasJoker'),
       );
       if (jokerDrawn) {
-        // Reset hasJoker in swade.stored to avoid bonus being reapplied after coming off hold
-        for (const j of game.combat.combatants.filter(
-          //@ts-ignore
-          (c) => c.getFlag('swade', 'hasJoker') === true,
-        )) {
-          //@ts-ignore
-          j.setFlag('swade', 'stored.hasJoker', false);
-        }
-
         await game.tables.getName(SWADE.init.cardTable).reset();
         ui.notifications.info('Card Deck automatically reset');
       }
@@ -470,19 +460,39 @@ export default class SwadeCombat extends Combat {
 
   protected _getInitResetUpdates() {
     const updates = this.data.combatants.map((c) => {
-      return {
-        //@ts-ignore
-        _id: c.id,
-        initiative: null,
-        flags: {
-          swade: {
-            suitValue: null,
-            cardValue: null,
-            hasJoker: false,
-            cardString: null
+      //@ts-ignore
+      if (hasProperty(c, 'data.flags.swade.roundHeld')) {
+        return {
+          //@ts-ignore
+          _id: c.id,
+          initiative: null,
+          flags: {
+            swade: {
+              //@ts-ignore
+              hasJoker: false,
+            },
           },
-        },
-      };
+        };
+      } else if (
+        !hasProperty(c, 'data.flags.swade.roundHeld') ||
+        hasProperty(c, 'data.flags.swade.turnLost')
+      ) {
+        //@ts-ignore
+        c.unsetFlag('swade', 'turnLost');
+        return {
+          //@ts-ignore
+          _id: c.id,
+          initiative: null,
+          flags: {
+            swade: {
+              suitValue: null,
+              cardValue: null,
+              hasJoker: false,
+              cardString: null,
+            },
+          },
+        };
+      }
     });
     return updates;
   }

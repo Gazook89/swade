@@ -259,8 +259,8 @@ SWADE.General: Generell
 SWADE.HeartAttack: Herzinfarkt
 SWADE.Holding: Aufgespart
 SWADE.Invisible: Unsichtbar
-SWADE.Hold: Abwarten umschalten
-SWADE.ActNow: Jetzt handeln
+SWADE.Hold: Abwarten
+SWADE.ActBeforeCurrentCombatant: Jetzt handeln
 SWADE.ActAfterCurrentCombatant: Nach aktuellem Teilnehmer handeln
 SWADE.LoseTurn: Zug aussetzen umschalten
 SWADE.NPCAmmoFromInventory: NSCs laden Munition aus ihrem Inventar nach
