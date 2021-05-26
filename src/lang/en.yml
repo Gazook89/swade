@@ -97,7 +97,7 @@ SWADE.Defending: Defending
 SWADE.Flying: Flying
 SWADE.Holding: Holding
 SWADE.Hold: Hold
-SWADE.ActBeforeCurrentCombatant: Act Before Current Combatant
+SWADE.ActNow: Act Now
 SWADE.ActAfterCurrentCombatant: Act After Current Combatant
 SWADE.LoseTurn: Toggle Lose Turn
 SWADE.Frightened: Frightened
