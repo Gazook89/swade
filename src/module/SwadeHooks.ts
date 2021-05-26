@@ -365,8 +365,6 @@ export default class SwadeHooks {
           await targetCombatant.update({
             flags: {
               swade: {
-                //cardString: '<i class="fas fa-hand-rock"></i>',
-                // Potentially remove isOnHold
                 roundHeld: game.combat.round,
               },
             },
@@ -403,19 +401,44 @@ export default class SwadeHooks {
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         const currentCombatant = game.combat.combatant;
         //@ts-ignore
-        const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
-          //@ts-ignore
-          currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
-        //@ts-ignore
         if (targetCombatantId !== currentCombatant.id) {
-          /* await targetCombatant.update({
+          //@ts-ignore
+          const currentCardValue = currentCombatant.getFlag(
+              'swade',
+              'cardValue',
+            ),
+            //@ts-ignore
+            currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
+          await targetCombatant.update({
             flags: {
               swade: {
                 cardValue: currentCardValue,
                 suitValue: currentSuitValue + 1,
               },
             },
-          }); */
+          });
+        } else {
+          const nextActiveCombatant = game.combat.turns.find(
+            (c) => !hasProperty(c, 'data.flags.swade.roundHeld'),
+          );
+          //@ts-ignore
+          const nextActiveCardValue = nextActiveCombatant.getFlag(
+              'swade',
+              'cardValue',
+            ),
+            //@ts-ignore
+            nextActiveSuitValue = nextActiveCombatant.getFlag(
+              'swade',
+              'suitValue',
+            );
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                cardValue: nextActiveCardValue,
+                suitValue: nextActiveSuitValue + 1,
+              },
+            },
+          });
         }
         await targetCombatant.unsetFlag('swade', 'roundHeld');
         //@ts-ignore
@@ -436,11 +459,11 @@ export default class SwadeHooks {
         //@ts-ignore
         return (
           hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+          //@ts-ignore
           targetCombatantId !== game.combat.combatant.id
         );
       },
       callback: async (li) => {
-        // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
@@ -457,7 +480,9 @@ export default class SwadeHooks {
             },
           },
         });
-        //game.combat.previousTurn();
+        await targetCombatant.unsetFlag('swade', 'roundHeld');
+        // Go back to previous turn because technically it's still their turn and the holder is going after them.
+        game.combat.previousTurn();
       },
     });
 
@@ -479,7 +504,6 @@ export default class SwadeHooks {
         }
       },
       callback: async (li) => {
-        // Attach click event to Toggle Hold context menu option
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
