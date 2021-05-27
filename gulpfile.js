@@ -11,7 +11,6 @@ const mergeStream = require('merge-stream');
 const through2 = require('through2');
 
 const ts = require('gulp-typescript');
-const less = require('gulp-less');
 const sass = require('gulp-dart-sass');
 const git = require('gulp-git');
 const gyaml = require('gulp-yaml');
@@ -170,13 +169,6 @@ function buildYaml() {
     .src(['src/**/*.yml', '!src/packs/**/*.yml'])
     .pipe(gyaml({ space: 2, safe: true }))
     .pipe(gulp.dest('dist'));
-}
-
-/**
- * Build Less
- */
-function buildLess() {
-  return gulp.src('src/*.less').pipe(less()).pipe(gulp.dest('dist'));
 }
 
 /**
@@ -566,7 +558,6 @@ const execGit = gulp.series(gitAdd, gitCommit, gitTag);
 
 const execBuild = gulp.parallel(
   buildTS,
-  buildLess,
   buildSASS,
   buildYaml,
   copyFiles,
