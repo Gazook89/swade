@@ -31,3 +31,7 @@
 #combat li.combatant .token-initiative .initiative {
   font-size: 20px;
 }
+
+#combat #combat-controls .combat-control[data-control='previousRound'] {
+  display: none;
+}
