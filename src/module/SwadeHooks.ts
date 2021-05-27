@@ -195,12 +195,6 @@ export default class SwadeHooks {
     html: JQuery<HTMLElement>,
     data: any,
   ) {
-    // TODO: Get this to stick after nextTurn()
-    html
-      .find(
-        '#combat #combat-controls .combat-control[data-control="previousRound"]',
-      )
-      .remove();
     const currentCombat: Combat =
       data.combats[data.currentIndex - 1] || data.combat;
     html.find('.combatant').each((i, el) => {
