@@ -338,8 +338,10 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
+    let optionIndex = 0;
+
     // Toggle Hold when it's the holder's turn and only on the round in which they went on hold
-    options.splice(1, 0, {
+    options.splice(optionIndex++, 0, {
       name: 'SWADE.Hold',
       icon: '<i class="fas fa-hand-rock"></i>',
       condition: (li) => {
@@ -376,7 +378,7 @@ export default class SwadeHooks {
     });
 
     // Act Now
-    options.splice(2, 0, {
+    options.splice(optionIndex++, 0, {
       name: 'SWADE.ActNow',
       icon: '<i class="fas fa-long-arrow-alt-right"></i>',
       condition: (li) => {
@@ -449,7 +451,7 @@ export default class SwadeHooks {
     });
 
     // Act After Current Combatant
-    options.splice(3, 0, {
+    options.splice(optionIndex++, 0, {
       name: 'SWADE.ActAfterCurrentCombatant',
       icon: '<i class="fas fa-level-down-alt"></i>',
       condition: (li) => {
@@ -487,7 +489,7 @@ export default class SwadeHooks {
     });
 
     // Lost Turn if the combatant was on hold and became Shaken or Stunned
-    options.splice(4, 0, {
+    options.splice(optionIndex++, 0, {
       name: 'SWADE.LoseTurn',
       icon: '<i class="fas fa-ban"></i>',
       condition: (li) => {
@@ -521,6 +523,130 @@ export default class SwadeHooks {
         }
       },
     });
+
+    // Set as group leader
+    options.splice(optionIndex++, 0, {
+      name: 'SWADE.MakeGroupLeader',
+      icon: '<i class="fas fa-users"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        return (
+          !game.combat.started &&
+          !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
+        );
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        await targetCombatant.setFlag('swade', 'isGroupLeader', true);
+      },
+    });
+
+    // Remove Group Leader
+    options.splice(optionIndex++, 0, {
+      name: 'SWADE.RemoveGroupLeader',
+      icon: '<i class="fas fa-users-slash"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        return (
+          !game.combat.started &&
+          hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
+        );
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        // Remove combatants from this leader's group.
+        if (game.combat) {
+          //@ts-ignore
+          const followers = game.combat.combatants.filter(
+            (f) => f.getFlag('swade', 'groupId') === targetCombatantId,
+          );
+          for (const f of followers) {
+            //@ts-ignore
+            await f.unsetFlag('swade', 'groupId');
+          }
+        }
+        // Remove as group leader
+        await targetCombatant.unsetFlag('swade', 'isGroupLeader');
+      },
+    });
+
+    // If a combat exists...
+    if (game.combat) {
+      // Get group leaders
+      const groupLeaders = game.combat.combatants.filter((c) =>
+        hasProperty(c, 'data.flags.swade.isGroupLeader'),
+      );
+
+      // Loop through leaders
+      for (const gl of groupLeaders) {
+        // Follow a leader
+        options.splice(optionIndex++, 0, {
+          name: game.i18n.format('SWADE.Follow', { name: gl.name }),
+          icon: '<i class="fas fa-user-friends"></i>',
+          condition: (li) => {
+            const targetCombatantId = li.attr('data-combatant-id');
+            //@ts-ignore
+            const targetCombatant = game.combat.combatants.get(
+              targetCombatantId,
+            );
+            return (
+              !game.combat.started &&
+              targetCombatant.getFlag('swade', 'groupId') !==
+                getProperty(gl, 'id') &&
+              !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
+            );
+          },
+          callback: async (li) => {
+            const targetCombatantId = li.attr('data-combatant-id');
+            //@ts-ignore
+            const targetCombatant = game.combat.combatants.get(
+              targetCombatantId,
+            );
+            //@ts-ignore
+            const groupId = getProperty(gl, 'id');
+            //@ts-ignore
+            await targetCombatant.setFlag('swade', 'groupId', groupId);
+            li.css({ 'margin-left': '1em' });
+          },
+        });
+
+        // Unfollow a leader
+        options.splice(optionIndex++, 0, {
+          name: game.i18n.format('SWADE.Unfollow', { name: gl.name }),
+          icon: '<i class="fas fa-user-friends"></i>',
+          condition: (li) => {
+            const targetCombatantId = li.attr('data-combatant-id');
+            //@ts-ignore
+            const targetCombatant = game.combat.combatants.get(
+              targetCombatantId,
+            );
+            return (
+              !game.combat.started &&
+              targetCombatant.getFlag('swade', 'groupId') ===
+                getProperty(gl, 'id') &&
+              !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
+            );
+          },
+          callback: async (li) => {
+            const targetCombatantId = li.attr('data-combatant-id');
+            //@ts-ignore
+            const targetCombatant = game.combat.combatants.get(
+              targetCombatantId,
+            );
+            // If the current Combatant is the holding combatant, just remove Hold status.
+            await targetCombatant.unsetFlag('swade', 'groupId');
+          },
+        });
+      }
+    }
   }
 
   public static async onRenderPlayerList(
