@@ -95,6 +95,10 @@ SWADE.Aiming: Aiming
 SWADE.Berserk: Berserk
 SWADE.Defending: Defending
 SWADE.Flying: Flying
+SWADE.Follow: Follow {name} as Group Leader
+SWADE.Unfollow: Unfollow {name} as Group Leader
+SWADE.MakeGroupLeader: Make Group Leader
+SWADE.RemoveGroupLeader: Remove Group Leader
 SWADE.Holding: Holding
 SWADE.Hold: Hold
 SWADE.ActNow: Act Now
