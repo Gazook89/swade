@@ -389,10 +389,10 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    let optionIndex = 0;
+    const newOptions = [];
     if (game.combat?.started) {
       // Toggle Hold when it's the holder's turn and only on the round in which they went on hold
-      options.splice(optionIndex++, 0, {
+      newOptions.push({
         name: 'SWADE.Hold',
         icon: '<i class="fas fa-hand-rock"></i>',
         condition: (li) => {
@@ -427,10 +427,11 @@ export default class SwadeHooks {
             if (
               hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
             ) {
-              for (const f of game.combat.combatants.filter(
+              const followers = game.combat.combatants.filter(
                 //@ts-ignore
                 (c) => c.getFlag('swade', 'groupId') === targetCombatantId,
-              )) {
+              );
+              for (const f of followers) {
                 //@ts-ignore
                 f.setFlag('swade', 'roundHeld', game.combat.round);
               }
@@ -442,7 +443,7 @@ export default class SwadeHooks {
       });
 
       // Act Now
-      options.splice(optionIndex++, 0, {
+      newOptions.push({
         name: 'SWADE.ActNow',
         icon: '<i class="fas fa-long-arrow-alt-right"></i>',
         condition: (li) => {
@@ -486,10 +487,11 @@ export default class SwadeHooks {
             if (
               hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
             ) {
-              for (const f of game.combat.combatants.filter(
+              const followers = game.combat.combatants.filter(
                 //@ts-ignore
                 (c) => c.getFlag('swade', 'groupId') === targetCombatantId,
-              )) {
+              );
+              for (const f of followers) {
                 //@ts-ignore
                 f.unsetFlag('swade', 'roundHeld', game.combat.round);
                 //@ts-ignore
@@ -530,10 +532,11 @@ export default class SwadeHooks {
             if (
               hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
             ) {
-              for (const f of game.combat.combatants.filter(
+              const followers = game.combat.combatants.filter(
                 //@ts-ignore
                 (c) => c.getFlag('swade', 'groupId') === targetCombatantId,
-              )) {
+              );
+              for (const f of followers) {
                 //@ts-ignore
                 f.unsetFlag('swade', 'roundHeld', game.combat.round);
                 //@ts-ignore
@@ -558,7 +561,7 @@ export default class SwadeHooks {
       });
 
       // Act After Current Combatant
-      options.splice(optionIndex++, 0, {
+      newOptions.push({
         name: 'SWADE.ActAfterCurrentCombatant',
         icon: '<i class="fas fa-level-down-alt"></i>',
         condition: (li) => {
@@ -594,10 +597,11 @@ export default class SwadeHooks {
           });
           await targetCombatant.unsetFlag('swade', 'roundHeld');
           if (hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')) {
-            for (const f of game.combat.combatants.filter(
+            const followers = game.combat.combatants.filter(
               //@ts-ignore
               (c) => c.getFlag('swade', 'groupId') === targetCombatantId,
-            )) {
+            );
+            for (const f of followers) {
               //@ts-ignore
               f.unsetFlag('swade', 'roundHeld', game.combat.round);
               //@ts-ignore
@@ -619,7 +623,7 @@ export default class SwadeHooks {
       });
 
       // Lost Turn if the combatant was on hold and became Shaken or Stunned
-      options.splice(optionIndex++, 0, {
+      newOptions.push({
         name: 'SWADE.LoseTurn',
         icon: '<i class="fas fa-ban"></i>',
         condition: (li) => {
@@ -656,7 +660,7 @@ export default class SwadeHooks {
     }
 
     // Set as group leader
-    options.splice(optionIndex++, 0, {
+    newOptions.push({
       name: 'SWADE.MakeGroupLeader',
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
@@ -677,7 +681,7 @@ export default class SwadeHooks {
     });
 
     // Remove Group Leader
-    options.splice(optionIndex++, 0, {
+    newOptions.push({
       name: 'SWADE.RemoveGroupLeader',
       icon: '<i class="fas fa-users-slash"></i>',
       condition: (li) => {
@@ -714,7 +718,7 @@ export default class SwadeHooks {
       // Loop through leaders
       for (const gl of groupLeaders) {
         // Follow a leader
-        options.splice(optionIndex++, 0, {
+        newOptions.push({
           name: game.i18n.format('SWADE.Follow', { name: gl.name }),
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
@@ -743,7 +747,7 @@ export default class SwadeHooks {
         });
 
         // Unfollow a leader
-        options.splice(optionIndex++, 0, {
+        newOptions.push({
           name: game.i18n.format('SWADE.Unfollow', { name: gl.name }),
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
@@ -770,6 +774,8 @@ export default class SwadeHooks {
         });
       }
     }
+    console.log(newOptions);
+    options.splice(0, 0, ...newOptions);
   }
 
   public static async onRenderPlayerList(
