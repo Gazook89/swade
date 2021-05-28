@@ -510,7 +510,7 @@ export default class SwadeCombat extends Combat {
         hasProperty(c, 'data.flags.swade.turnLost')
       ) {
         //@ts-ignore
-        await c.unsetFlag('swade', 'turnLost');
+        c.unsetFlag('swade', 'turnLost');
         return {
           //@ts-ignore
           _id: c.id,
