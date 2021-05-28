@@ -27,7 +27,7 @@ export async function createActionCardTable(
   //If it's a rebuild call, delete all entries and then repopulate them
   if (rebuild) {
     //@ts-ignore
-    const deletions = cardTable.results.map((i) => i.id) as string[];
+    const deletions = cardTable.results.map((i) => i.id);
     //@ts-ignore
     await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
   }

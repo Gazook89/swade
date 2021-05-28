@@ -673,7 +673,6 @@ export default class SwadeHooks {
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         await targetCombatant.setFlag('swade', 'isGroupLeader', true);
-        await targetCombatant.setFlag('swade', 'memberOrder', 1);
       },
     });
 
@@ -700,12 +699,10 @@ export default class SwadeHooks {
           for (const f of followers) {
             //@ts-ignore
             await f.unsetFlag('swade', 'groupId');
-            await targetCombatant.unsetFlag('swade', 'memberOrder');
           }
         }
         // Remove as group leader
         await targetCombatant.unsetFlag('swade', 'isGroupLeader');
-        await targetCombatant.unsetFlag('swade', 'memberOrder');
       },
     });
     // Get group leaders

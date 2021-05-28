@@ -45,7 +45,10 @@ export default class SwadeCombat extends Combat {
       // Get Combatant data
       //@ts-ignore
       const c = this.combatants.get(id);
-      if (c.initiative !== null) {
+      if (
+        c.initiative !== null &&
+        !hasProperty(c, 'data.flags.swade.roundHeld')
+      ) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
@@ -438,14 +441,13 @@ export default class SwadeCombat extends Combat {
    * @override
    */
   async nextTurn() {
-    let turn = this.turn;
-    let skip = this.settings.skipDefeated;
+    const turn = this.turn;
+    const skip = this.settings.skipDefeated;
     // Determine the next turn number
     let next = null;
     if (skip) {
-      for (let [i, t] of this.turns.entries()) {
+      for (const [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
-        //@ts-ignore
         if (!t.defeated && !hasProperty(t, 'data.flags.swade.turnLost')) {
           next = i;
           break;
@@ -453,18 +455,13 @@ export default class SwadeCombat extends Combat {
       }
     } else next = turn + 1;
     // Maybe advance to the next round
-    let round = this.round;
+    const round = this.round;
     if (this.round === 0 || next === null || next >= this.turns.length) {
       return this.nextRound();
     }
     // Update the encounter
     const advanceTime = CONFIG.time.turnTime;
     this.update({ round: round, turn: next }, { advanceTime });
-  }
-
-  /** @override */
-  async previousRound() {
-    return null;
   }
 
   /** @override */
@@ -497,7 +494,6 @@ export default class SwadeCombat extends Combat {
 
   protected _getInitResetUpdates() {
     const updates = this.data.combatants.map((c) => {
-      //@ts-ignore
       if (hasProperty(c, 'data.flags.swade.roundHeld')) {
         return {
           //@ts-ignore
@@ -505,7 +501,6 @@ export default class SwadeCombat extends Combat {
           initiative: null,
           flags: {
             swade: {
-              //@ts-ignore
               hasJoker: false,
             },
           },
@@ -515,7 +510,7 @@ export default class SwadeCombat extends Combat {
         hasProperty(c, 'data.flags.swade.turnLost')
       ) {
         //@ts-ignore
-        c.unsetFlag('swade', 'turnLost');
+        await c.unsetFlag('swade', 'turnLost');
         return {
           //@ts-ignore
           _id: c.id,
@@ -525,7 +520,7 @@ export default class SwadeCombat extends Combat {
               suitValue: null,
               cardValue: null,
               hasJoker: false,
-              cardString: null,
+              cardString: '',
             },
           },
         };
