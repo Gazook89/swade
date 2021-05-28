@@ -51,7 +51,12 @@ export default class SwadeCombat extends Combat {
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c.defeated || hasProperty(c, 'data.flags.swade.roundHeld')) continue;
+      if (
+        c.defeated ||
+        hasProperty(c, 'data.flags.swade.roundHeld') ||
+        hasProperty(c, 'data.flags.swade.groupId')
+      )
+        continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -134,13 +139,28 @@ export default class SwadeCombat extends Combat {
         cardString: card.data.content,
       };
 
+      const initiative =
+        (card.getFlag('swade', 'suitValue') as number) +
+        (card.getFlag('swade', 'cardValue') as number);
+
       combatantUpdates.push({
         _id: c.id,
-        initiative:
-          (card.getFlag('swade', 'suitValue') as number) +
-          (card.getFlag('swade', 'cardValue') as number),
+        initiative: initiative,
         'flags.swade': newflags,
       });
+      if (hasProperty(c, 'data.flags.swade.isGroupLeader')) {
+        //@ts-ignore
+        for (const follower of game.combat.combatants.filter(
+          (f) => f.getFlag('swade', 'groupId') === c.id,
+        )) {
+          combatantUpdates.push({
+            //@ts-ignore
+            _id: follower.id,
+            initiative: initiative,
+            'flags.swade': newflags,
+          });
+        }
+      }
 
       // Construct chat message data
       const template = `
