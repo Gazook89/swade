@@ -443,7 +443,7 @@ export default class SwadeHooks {
         await targetCombatant.unsetFlag('swade', 'roundHeld');
         //@ts-ignore
         if (targetCombatantId !== game.combat.combatant.id) {
-          game.combat.previousTurn();
+          await game.combat.previousTurn();
         }
       },
     });
@@ -482,7 +482,7 @@ export default class SwadeHooks {
         });
         await targetCombatant.unsetFlag('swade', 'roundHeld');
         // Go back to previous turn because technically it's still their turn and the holder is going after them.
-        game.combat.previousTurn();
+        await game.combat.previousTurn();
       },
     });
 
