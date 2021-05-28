@@ -151,6 +151,7 @@ export default class SwadeCombat extends Combat {
       if (hasProperty(c, 'data.flags.swade.isGroupLeader')) {
         //@ts-ignore
         for (const follower of game.combat.combatants.filter(
+          //@ts-ignore
           (f) => f.getFlag('swade', 'groupId') === c.id,
         )) {
           combatantUpdates.push({
@@ -239,6 +240,22 @@ export default class SwadeCombat extends Combat {
         return -1;
       }
       if (!isOnHoldA && isOnHoldB) {
+        return 1;
+      }
+      const isGroupLeaderA = hasProperty(
+        a,
+        'data.flags.swade.isGroupLeader',
+      ) as boolean;
+      const isGroupLeaderB = hasProperty(
+        b,
+        'data.flags.swade.isGroupLeader',
+      ) as boolean;
+      const isInGroupA = a.getFlag('swade', 'groupId') === (b.id as boolean);
+      const isInGroupB = b.getFlag('swade', 'groupId') === (a.id as boolean);
+      if (isGroupLeaderA && isInGroupB) {
+        return -1;
+      }
+      if (isGroupLeaderB && isInGroupA) {
         return 1;
       }
       const cardA = a.getFlag('swade', 'cardValue') as number;
