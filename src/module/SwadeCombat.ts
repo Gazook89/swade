@@ -45,7 +45,10 @@ export default class SwadeCombat extends Combat {
       // Get Combatant data
       //@ts-ignore
       const c = this.combatants.get(id);
-      if (c.initiative !== null) {
+      if (
+        c.initiative !== null &&
+        !hasProperty(c, 'data.flags.swade.roundHeld')
+      ) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
@@ -488,7 +491,7 @@ export default class SwadeCombat extends Combat {
               suitValue: null,
               cardValue: null,
               hasJoker: false,
-              cardString: null,
+              cardString: '',
             },
           },
         };
