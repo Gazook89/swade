@@ -236,7 +236,7 @@ export default class SwadeHooks {
         el.style.marginLeft = '48px';
       }
     });
-    var draggedEl, draggedId;
+    let draggedEl, draggedId;
 
     document.addEventListener(
       'dragstart',
@@ -710,7 +710,7 @@ export default class SwadeHooks {
       hasProperty(c, 'data.flags.swade.isGroupLeader'),
     );
     // Check if there is a combat and combatants before looking for group leaders.
-    if (!!groupLeaders) {
+    if (groupLeaders) {
       // Loop through leaders
       for (const gl of groupLeaders) {
         // Follow a leader
