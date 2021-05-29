@@ -356,3 +356,4 @@ SWADE.SysMigrationWarning: >-
   reliably migrated to the latest version. The process will be attempted, but
   errors may occur.
 SWADE.SomethingWrongWithCardComp: Something went wrong with the card compendium, switching back to default
+SWADE.DeckShuffled: Card Deck automatically shuffled
