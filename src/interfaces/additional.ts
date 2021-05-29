@@ -1,5 +1,5 @@
 export interface AdditionalStat {
-  dType: string;
+  dtype: string;
   hasMaxValue: boolean;
   label: string;
   useField?: boolean;

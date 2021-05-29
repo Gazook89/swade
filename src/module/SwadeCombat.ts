@@ -45,21 +45,14 @@ export default class SwadeCombat extends Combat {
       // Get Combatant data
       //@ts-ignore
       const c = this.combatants.get(id);
-      if (
-        c.initiative !== null &&
-        !hasProperty(c, 'data.flags.swade.roundHeld')
-      ) {
+      const roundHeld = hasProperty(c, 'data.flags.swade.roundHeld');
+      if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (
-        c.defeated ||
-        hasProperty(c, 'data.flags.swade.roundHeld') ||
-        hasProperty(c, 'data.flags.swade.groupId')
-      )
-        continue;
+      if (c.defeated || roundHeld) continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -429,8 +422,8 @@ export default class SwadeCombat extends Combat {
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
       if (this.combatants.some((c) => c.initiative === null)) {
-        //@ts-ignore
-        const combatantIds = this.combatants.map((c) => c.id);
+        //FIXME remove any later
+        const combatantIds = this.combatants.map((c: any) => c.id);
         await this.rollInitiative(combatantIds);
       }
     }
@@ -448,12 +441,15 @@ export default class SwadeCombat extends Combat {
     if (skip) {
       for (const [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
-        if (!t.defeated && !hasProperty(t, 'data.flags.swade.turnLost')) {
+        //@ts-ignore
+        if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
           next = i;
           break;
         }
       }
-    } else next = turn + 1;
+    } else {
+      next = turn + 1;
+    }
     // Maybe advance to the next round
     const round = this.round;
     if (this.round === 0 || next === null || next >= this.turns.length) {
@@ -471,57 +467,51 @@ export default class SwadeCombat extends Combat {
       return;
     } else {
       await super.nextRound();
-      const jokerDrawn = this.combatants.some((v) =>
-        //@ts-ignore
-        v.getFlag('swade', 'hasJoker'),
+
+      //FIXME remove any later
+      const jokerDrawn = this.combatants.some((c: any) =>
+        c.getFlag('swade', 'hasJoker'),
       );
+
       if (jokerDrawn) {
         await game.tables.getName(SWADE.init.cardTable).reset();
-        ui.notifications.info('Card Deck automatically reset');
+        ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
 
-      const resetComs = this._getInitResetUpdates();
-      await this.update({ combatants: resetComs });
+      const updates = this._getInitResetUpdates();
+      //@ts-ignore
+      await this.updateEmbeddedDocuments('Combatant', updates);
 
       //Init autoroll
       if (game.settings.get('swade', 'autoInit')) {
-        //@ts-ignore
-        const combatantIds = this.combatants.map((c) => c.id);
+        //FIXME remove any later
+        const combatantIds = this.combatants.map((c: any) => c.id);
         await this.rollInitiative(combatantIds);
       }
     }
   }
 
   protected _getInitResetUpdates() {
-    const updates = this.data.combatants.map((c) => {
-      if (hasProperty(c, 'data.flags.swade.roundHeld')) {
+    //FIXME remove any later
+    const updates = this.combatants.map((c: any) => {
+      const roundHeld = c.getFlag('swade', 'roundHeld') as boolean;
+      const turnLost = c.getFlag('swade', 'turnLost') as number;
+      if (roundHeld) {
         return {
-          //@ts-ignore
           _id: c.id,
           initiative: null,
-          flags: {
-            swade: {
-              hasJoker: false,
-            },
-          },
+          'flags.swade.hasJoker': false,
         };
-      } else if (
-        !hasProperty(c, 'data.flags.swade.roundHeld') ||
-        hasProperty(c, 'data.flags.swade.turnLost')
-      ) {
-        //@ts-ignore
-        c.unsetFlag('swade', 'turnLost');
+      } else if (!roundHeld || turnLost) {
         return {
-          //@ts-ignore
           _id: c.id,
           initiative: null,
-          flags: {
-            swade: {
-              suitValue: null,
-              cardValue: null,
-              hasJoker: false,
-              cardString: '',
-            },
+          'flags.swade': {
+            suitValue: null,
+            cardValue: null,
+            hasJoker: false,
+            cardString: '',
+            '-=turnLost': null,
           },
         };
       }
@@ -532,16 +522,15 @@ export default class SwadeCombat extends Combat {
   async _preDelete(options, user: User) {
     //@ts-ignore
     await super._preDelete(options, user);
-
-    const jokerDrawn = this.combatants.some((v) =>
-      //@ts-ignore
+    //FIXME remove any later
+    const jokerDrawn = this.combatants.some((v: any) =>
       v.getFlag('swade', 'hasJoker'),
     );
 
     //reset the deck when combat is ended
     if (jokerDrawn) {
       await game.tables.getName(SWADE.init.cardTable).reset();
-      ui.notifications.info('Card Deck automatically reset');
+      ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
     }
   }
 }

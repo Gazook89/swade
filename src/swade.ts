@@ -181,7 +181,7 @@ Hooks.on('renderChatLog', (app, html: JQuery<HTMLElement>, data) =>
 );
 
 // Add benny management to the player list
-Hooks.on('renderPlayerList', async (list: any, html: JQuery, options: any) =>
+Hooks.on('renderPlayerList', (list: any, html: JQuery, options: any) =>
   SwadeHooks.onRenderPlayerList(list, html, options),
 );
 

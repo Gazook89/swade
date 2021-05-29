@@ -36,6 +36,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Improved performance of the action card drawing by reducing the number of asynchronous operations
 - Disabled autocomplete on roll dialogs
 
+### Fixed
+
+- Fixed a styling issue which on the character sheet
+
 ## [v0.18.4]
 
 ### Fixed
