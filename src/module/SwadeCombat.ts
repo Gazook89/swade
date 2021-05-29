@@ -417,7 +417,9 @@ export default class SwadeCombat extends Combat {
           break;
         }
       }
-    } else next = turn + 1;
+    } else {
+      next = turn + 1;
+    }
     // Maybe advance to the next round
     const round = this.round;
     if (this.round === 0 || next === null || next >= this.turns.length) {
