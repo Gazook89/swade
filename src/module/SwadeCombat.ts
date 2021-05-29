@@ -392,8 +392,8 @@ export default class SwadeCombat extends Combat {
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
       if (this.combatants.some((c) => c.initiative === null)) {
-        //@ts-ignore
-        const combatantIds = this.combatants.map((c) => c.id);
+        //FIXME remove any later
+        const combatantIds = this.combatants.map((c: any) => c.id);
         await this.rollInitiative(combatantIds);
       }
     }
@@ -439,8 +439,8 @@ export default class SwadeCombat extends Combat {
       await super.nextRound();
 
       //FIXME remove any later
-      const jokerDrawn = this.combatants.some((v: any) =>
-        v.getFlag('swade', 'hasJoker'),
+      const jokerDrawn = this.combatants.some((c: any) =>
+        c.getFlag('swade', 'hasJoker'),
       );
 
       if (jokerDrawn) {
@@ -448,7 +448,9 @@ export default class SwadeCombat extends Combat {
         ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
 
-      await this.updateEmbeddedEntity('Combatant', this._getInitResetUpdates());
+      const updates = this._getInitResetUpdates();
+      //@ts-ignore
+      await this.updateEmbeddedDocuments('Combatant', updates);
 
       //Init autoroll
       if (game.settings.get('swade', 'autoInit')) {
