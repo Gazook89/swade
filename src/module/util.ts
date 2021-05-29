@@ -2,6 +2,9 @@ import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import SwadeItem from './entities/SwadeItem';
 
+const warningString =
+  'This type of macro will be removed in version 0.20.0. Please create a new one by dragging/dropping';
+
 export async function createActionCardTable(
   rebuild?: boolean,
   cardpack?: string,
@@ -46,7 +49,7 @@ export async function createActionCardTable(
   //@ts-ignore
   await cardTable.createEmbeddedDocuments('TableResult', createData);
   await cardTable.normalize();
-  ui.tables.render();
+  await ui.tables.render(true);
 }
 
 /* -------------------------------------------- */
@@ -86,9 +89,7 @@ export async function createSwadeMacro(data: Hotbar.DropData, slot: string) {
  * @return {Promise}
  */
 export function rollSkillMacro(skillName) {
-  ui.notifications.warn(
-    'This type of macro will soon be removed. Please create a new one by dragging/dropping',
-  );
+  ui.notifications.warn(warningString);
   return rollItemMacro(skillName);
 }
 
@@ -101,9 +102,7 @@ export function rollSkillMacro(skillName) {
  */
 
 export function rollWeaponMacro(weaponName) {
-  ui.notifications.warn(
-    'This type of macro will soon be removed. Please create a new one by dragging/dropping',
-  );
+  ui.notifications.warn(warningString);
   return rollItemMacro(weaponName);
 }
 
@@ -113,9 +112,7 @@ export function rollWeaponMacro(weaponName) {
  * @returns
  */
 export function rollPowerMacro(powerName) {
-  ui.notifications.warn(
-    'This type of macro will soon be removed. Please create a new one by dragging/dropping',
-  );
+  ui.notifications.warn(warningString);
   return rollItemMacro(powerName);
 }
 

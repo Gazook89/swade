@@ -45,16 +45,14 @@ export default class SwadeCombat extends Combat {
       // Get Combatant data
       //@ts-ignore
       const c = this.combatants.get(id);
-      if (
-        c.initiative !== null &&
-        !hasProperty(c, 'data.flags.swade.roundHeld')
-      ) {
+      const roundHeld = hasProperty(c, 'data.flags.swade.roundHeld');
+      if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c.defeated || hasProperty(c, 'data.flags.swade.roundHeld')) continue;
+      if (c.defeated || roundHeld) continue;
 
       // Set up edges
       let cardsToDraw = 1;
