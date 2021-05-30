@@ -84,4 +84,16 @@ export const registerCustomHelpers = function () {
     if (typeof str !== 'string') return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
   });
+
+  Handlebars.registerHelper('isOnHold', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    return c.getFlag('swade', 'roundHeld');
+  });
+
+  Handlebars.registerHelper('turnLost', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    return c.getFlag('swade', 'turnLost');
+  });
 };
