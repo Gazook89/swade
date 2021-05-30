@@ -3,7 +3,6 @@ import { getCanvas } from '../util';
 
 /**
  * A helper class for building MeasuredTemplates for SWADE Burst Templates
- * @extends {MeasuredTemplate}
  * @noInheritDoc
  */
 export default class SwadeTemplate extends MeasuredTemplate {
@@ -98,8 +97,8 @@ export default class SwadeTemplate extends MeasuredTemplate {
         center.y,
         2,
       );
-      this.data.x = snapped.x;
-      this.data.y = snapped.y;
+      //@ts-ignore
+      this.data.update({ x: snapped.x, y: snapped.y });
       this.refresh();
       this.moveTime = now;
     };
