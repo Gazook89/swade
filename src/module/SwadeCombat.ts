@@ -512,6 +512,7 @@ export default class SwadeCombat extends Combat {
             hasJoker: false,
             cardString: '',
             '-=turnLost': null,
+            isOnHold: false,
           },
         };
       }

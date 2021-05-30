@@ -24,6 +24,7 @@ import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
+import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import {
   createSwadeMacro,
   rollItemMacro,
@@ -73,7 +74,7 @@ Hooks.once('init', () => {
   //@ts-ignore
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.statusEffects = SWADE.statusEffects;
-
+  CONFIG.ui.combat = SwadeCombatTracker;
   // Register custom system settings
   registerSettings();
   registerSettingRules();
@@ -152,7 +153,7 @@ Hooks.on(
 
 Hooks.on(
   'renderCombatTracker',
-  (app: CombatTracker, html: JQuery<HTMLElement>, data: any) =>
+  (app: SwadeCombatTracker, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCombatTracker(app, html, data),
 );
 
@@ -181,7 +182,7 @@ Hooks.on('renderChatLog', (app, html: JQuery<HTMLElement>, data) =>
 );
 
 // Add benny management to the player list
-Hooks.on('renderPlayerList', (list: any, html: JQuery, options: any) =>
+Hooks.on('renderPlayerList', async (list: any, html: JQuery, options: any) =>
   SwadeHooks.onRenderPlayerList(list, html, options),
 );
 
@@ -217,6 +218,6 @@ Hooks.once('diceSoNiceReady', (dice3d: any) => {
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 
-Hooks.on('getCombatTrackerEntryContext', (html, options) =>
-  SwadeHooks.onGetCombatTrackerEntryContext(html, options),
-);
+Hooks.on('getCombatTrackerEntryContext', (html, options) => {
+  SwadeHooks.onGetCombatTrackerEntryContext(html, options);
+});
