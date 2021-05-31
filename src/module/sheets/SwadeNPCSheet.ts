@@ -5,9 +5,8 @@ import SwadeBaseActorSheet from './SwadeBaseActorSheet';
  */
 export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade', 'sheet', 'actor', 'npc'],
       width: 660,
       height: 600,
@@ -18,7 +17,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {
@@ -63,7 +62,8 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     super.activateListeners(html);
 
     // Drag events for macros.
-    if (this.actor.owner) {
+    //@ts-ignore
+    if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.
       html.find('span.item.skill').each((i, li) => {
@@ -89,7 +89,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     // Update Item via right-click
     html.find('.contextmenu-edit').on('contextmenu', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 
@@ -103,7 +103,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     html.find('.skill.item a').on('click', (event) => {
       const element = event.currentTarget as Element;
       const item = element.parentElement.dataset.itemId;
-      this.actor.rollSkill(item, { event: event });
+      this.actor.rollSkill(item);
     });
 
     // Add new object
@@ -120,7 +120,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         const itemData = {
           name: name ? name : `New ${type.capitalize()}`,
           type: type,
-          data: duplicate(header.dataset),
+          data: deepClone(header.dataset),
         };
         delete itemData.data['type'];
         return itemData;

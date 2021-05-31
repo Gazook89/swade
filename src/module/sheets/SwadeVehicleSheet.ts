@@ -1,5 +1,6 @@
 import IDriverData from '../../interfaces/IDriverData';
 import { SWADE } from '../config';
+import SwadeActor from '../entities/SwadeActor';
 import SwadeItem from '../entities/SwadeItem';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
@@ -12,9 +13,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade', 'sheet', 'actor', 'vehicle'],
       width: 600,
       height: 540,
@@ -25,7 +25,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {
@@ -66,7 +66,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.getOwnedItem(li.data('itemId'));
+      const ownedItem = this.actor.items.get(li.data('itemId'));
       const template = `
           <form>
             <div>
@@ -137,13 +137,6 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     // Open driver sheet
     html.find('.driver-img').on('click', async () => {
       await this._openDriverSheet();
-    });
-
-    //Input Synchronization
-    html.find('.wound-input').on('keyup', (ev) => {
-      this.actor.update({
-        'data.wounds.value': $(ev.currentTarget).val() as number,
-      });
     });
 
     //Maneuver Check
@@ -263,9 +256,9 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     await this.actor.update({ 'data.driver.id': null });
   }
 
-  private _openDriverSheet() {
+  private async _openDriverSheet() {
     const driverId = getProperty(this.actor.data, 'data.driver.id');
-    const driver = game.actors.get(driverId);
+    const driver = (await fromUuid(driverId)) as SwadeActor;
     if (driver) {
       driver.sheet.render(true);
     }
@@ -280,7 +273,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     const itemData = {
       name: name ? name : `New ${type.capitalize()}`,
       type: type,
-      data: duplicate(header.dataset),
+      img: `systems/swade/assets/icons/${type}.svg`,
+      data: deepClone(header.dataset),
     };
     delete itemData.data['type'];
     return itemData;

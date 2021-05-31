@@ -23,7 +23,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
-    if (this.actor.owner) {
+    //@ts-ignore
+    if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       html.find('li.active-effect').each((i, li) => {
         // Add draggable attribute and dragstart listener.
@@ -35,19 +36,19 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     // Update Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'));
       item.sheet.render(true);
     });
 
     html.find('.item .item-controls .item-show').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.items.get(li.data('itemId')) as SwadeItem;
       item.show();
     });
 
     html.find('.item .item-name .item-image').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.getOwnedItem(li.data('itemId')) as SwadeItem;
+      const item = this.actor.items.get(li.data('itemId')) as SwadeItem;
       item.show();
     });
 
@@ -68,14 +69,14 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.attribute-label a').on('click', (event) => {
       const element = event.currentTarget as Element;
       const attribute = element.parentElement.parentElement.dataset.attribute;
-      this.actor.rollAttribute(attribute, { event: event });
+      this.actor.rollAttribute(attribute);
     });
 
     // Roll Damage
     html.find('.damage-roll').on('click', (event) => {
       const element = event.currentTarget as Element;
       const itemId = $(element).parents('[data-item-id]').attr('data-item-id');
-      const item = this.actor.getOwnedItem(itemId) as SwadeItem;
+      const item = this.actor.items.get(itemId) as SwadeItem;
       return item.rollDamage();
     });
 
@@ -153,7 +154,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       const runningRoll = new Roll(rollFormula);
 
       if (ev.shiftKey) {
-        runningRoll.roll().toMessage({
+        runningRoll.evaluate({ async: false }).toMessage({
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           flavor: game.i18n.localize('SWADE.Running'),
         });
@@ -219,7 +220,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         modifier = '+' + modifier;
       }
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate()
+        .evaluate({ async: false })
         .toMessage({
           speaker: ChatMessage.getSpeaker(),
           flavor: statData.label,
@@ -247,9 +248,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       ]);
       data.maxCarryCapacity = this.actor.calcMaxCarryCapacity();
 
-      //Checks if an Actor has a Arcane Background
-      data.hasArcaneBackground = this.actor.hasArcaneBackground;
-
       if (this.actor.data.type === 'character') {
         data.powersOptions =
           'class="powers-list resizable" data-base-size="560"';
@@ -270,8 +268,13 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           ) {
             data.arcanes.push(pow.data.arcane);
             // Add powerpoints data relevant to the detected arcane
-            if (data.data.powerPoints[pow.data.arcane] === undefined) {
-              data.data.powerPoints[pow.data.arcane] = { value: 0, max: 0 };
+            if (
+              !hasProperty(data, `data.data.powerPoints.${pow.data.arcane}`)
+            ) {
+              data.data.data.powerPoints[pow.data.arcane] = {
+                value: 0,
+                max: 0,
+              };
             }
           }
         });
@@ -284,7 +287,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       };
     }
 
-    const additionalStats = data.data.additionalStats || {};
+    const additionalStats = data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -300,8 +303,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     let buttons = super._getHeaderButtons();
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner;
-    if (this.options.editable && canConfigure) {
+    //@ts-ignore
+    if (this.actor.isOwner) {
       buttons = [
         {
           label: game.i18n.localize('SWADE.Tweaks'),

@@ -13,7 +13,7 @@
             <input
               name="data.rank"
               type="text"
-              value="{{item.data.rank}}"
+              value="{{data.data.rank}}"
               placeholder="{{localize 'SWADE.Rank'}}"
               data-dtype="String"
           /></span>
@@ -24,7 +24,7 @@
             <input
               name="data.pp"
               type="text"
-              value="{{item.data.pp}}"
+              value="{{data.data.pp}}"
               placeholder="{{localize 'SWADE.PP'}}"
               data-dtype="String"
           /></span>
@@ -35,7 +35,7 @@
             <input
               name="data.range"
               type="text"
-              value="{{item.data.range}}"
+              value="{{data.data.range}}"
               placeholder="{{localize 'SWADE.Rng'}}"
               data-dtype="String"
           /></span>
@@ -46,7 +46,7 @@
             <input
               name="data.duration"
               type="text"
-              value="{{item.data.duration}}"
+              value="{{data.data.duration}}"
               placeholder="{{localize 'SWADE.Dur'}}"
               data-dtype="String"
           /></span>
@@ -57,7 +57,7 @@
             <input
               name="data.damage"
               type="text"
-              value="{{item.data.damage}}"
+              value="{{data.data.damage}}"
               placeholder="{{localize 'SWADE.Dmg'}}"
               data-dtype="String"
           /></span>
@@ -68,7 +68,7 @@
             <input
               name="data.arcane"
               type="text"
-              value="{{item.data.arcane}}"
+              value="{{data.data.arcane}}"
               placeholder="{{localize 'SWADE.Arcane'}}"
               data-dtype="String"
           /></span>
@@ -81,13 +81,13 @@
         <input
           name="data.trapping"
           type="text"
-          value="{{item.data.trapping}}"
+          value="{{data.data.trapping}}"
           placeholder="{{localize 'SWADE.Trap'}}"
           data-dtype="String"
-          style="margin: 2px 0;"
+          style="margin: 2px 0"
         />
         {{> "systems/swade/templates/setting-fields.html"}} {{editor
-        content=data.description target="data.description" button=true
+        content=data.data.description target="data.description" button=true
         owner=owner editable=editable}}
       </section>
     </div>

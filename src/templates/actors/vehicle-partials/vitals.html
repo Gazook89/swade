@@ -14,7 +14,8 @@
       <span class="flexrow">
         <input
           type="number"
-          value="{{data.wounds.value}}"
+          value="{{data.data.wounds.value}}"
+          name="data.wounds.value"
           data-dtype="Number"
           class="wound-input"
           maxlength="4"
@@ -24,7 +25,8 @@
         <span class="seperator">/</span>
         <input
           type="number"
-          value="{{data.wounds.max}}"
+          value="{{data.data.wounds.max}}"
+          name="data.wounds.max"
           data-dtype="Number"
           class="wound-input"
           maxlength="4"
@@ -41,7 +43,7 @@
     <div id="modBox">
       <div class="bar-container">
         <span class="text"
-          >{{mods.used}}/{{data.maxMods}} {{localize "SWADE.Mods"}}</span
+          >{{mods.used}}/{{data.data.maxMods}} {{localize "SWADE.Mods"}}</span
         >
         <div class="bar" style="width: {{mods.percentage}}%;"></div>
       </div>
@@ -54,13 +56,13 @@
   <div class="crew-input">
     <input
       type="text"
-      value="{{data.crew.required.value}}"
+      value="{{data.data.crew.required.value}}"
       name="data.crew.required.value"
     />
     <span>/</span>
     <input
       type="text"
-      value="{{data.crew.required.max}}"
+      value="{{data.data.crew.required.max}}"
       name="data.crew.required.max"
     />
   </div>
@@ -68,13 +70,13 @@
   <div class="crew-input">
     <input
       type="text"
-      value="{{data.crew.optional.value}}"
+      value="{{data.data.crew.optional.value}}"
       name="data.crew.optional.value"
     />
     <span>/</span>
     <input
       type="text"
-      value="{{data.crew.optional.max}}"
+      value="{{data.data.crew.optional.max}}"
       name="data.crew.optional.max"
     />
   </div>

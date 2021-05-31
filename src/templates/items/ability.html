@@ -5,14 +5,14 @@
     <div class="form-group">
       <label>{{localize "SWADE.Subtype"}}</label>
       <select name="data.subtype">
-        {{#select item.data.subtype}}
+        {{#select data.data.subtype}}
         <option value="special">{{localize "SWADE.SpecialAbility"}}</option>
         {{#unless data.isOwned}}
         <option value="race">{{localize config.raceLocalizationKey}}</option>
         {{/unless}} {{/select}}
       </select>
     </div>
-    {{#if (eq item.data.subtype "special")}}
+    {{#if (eq data.data.subtype "special")}}
     <div class="form-group">
       <label class="check-container">
         {{localize "SWADE.GrantsPowers"}}
@@ -20,7 +20,7 @@
           type="checkbox"
           name="data.grantsPowers"
           {{checked
-          item.data.grantsPowers}}
+          data.data.grantsPowers}}
           data-dtype="Boolean"
         />
         <span class="checkmark"></span>
@@ -28,11 +28,11 @@
     </div>
     {{/if}} {{> "systems/swade/templates/items/partials/description.html"}}
     <br />
-    {{#if (eq item.data.subtype "race")}}
+    {{#if (eq data.data.subtype "race")}}
     <header class="header-field flexrow">
       <span>{{localize "SWADE.RacialAbilities"}}</span>
     </header>
-    {{{displayEmbedded item.flags.swade.embeddedAbilities}}} {{/if}} {{>
+    {{{displayEmbedded data.flags.swade.embeddedAbilities}}} {{/if}} {{>
     "systems/swade/templates/setting-fields.html"}} {{>
     "systems/swade/templates/items/partials/ae-header.html"}} {{>
     "systems/swade/templates/effect-list.html"}}

@@ -2,7 +2,6 @@
 import { SysItemData } from '../interfaces/item-data';
 import Bennies from './bennies';
 import * as chat from './chat';
-import { formatRoll } from './chat';
 import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
 import SwadeActor from './entities/SwadeActor';
@@ -11,9 +10,6 @@ import SwadeTemplate from './entities/SwadeTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
-import CharacterSheet from './sheets/official/CharacterSheet';
-import SwadeCharacterSheet from './sheets/SwadeCharacterSheet';
-import SwadeNPCSheet from './sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import { createActionCardTable } from './util';
 
@@ -33,7 +29,8 @@ export default class SwadeHooks {
   public static async onReady() {
     const packChoices = {};
     game.packs
-      .filter((p) => p.entity === 'JournalEntry')
+      //@ts-ignore
+      .filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
         packChoices[
           p.collection
@@ -117,151 +114,6 @@ export default class SwadeHooks {
     migrations.migrateWorld();
   }
 
-  public static onPreCreateItem(createData: any, options: any, userId: string) {
-    //Set default image if no image already exists
-    if (!createData.img) {
-      createData.img = `systems/swade/assets/icons/${createData.type}.svg`;
-    }
-  }
-
-  public static onPreCreateScene(
-    createData: any,
-    options: any,
-    userId: string,
-  ) {
-    if (!createData.gridType) {
-      createData.gridType = CONST.GRID_TYPES.GRIDLESS;
-    }
-  }
-
-  public static onPreCreateOwnedItem(
-    actor: SwadeActor,
-    createData: any,
-    options: any,
-    userId: string,
-  ) {
-    //Set default image if no image already exists
-    if (!createData.img) {
-      createData.img = `systems/swade/assets/icons/${createData.type}.svg`;
-    }
-    if (createData.type === 'skill' && options.renderSheet !== null) {
-      options.renderSheet = true;
-    }
-    if (createData.type === 'ability' && createData.data.subtype === 'race') {
-      return false;
-    }
-    if (
-      actor.data.type === 'npc' &&
-      getProperty(createData, 'data.equippable')
-    ) {
-      createData.data.equipped = true;
-    }
-  }
-
-  public static async onCreateActor(
-    actor: SwadeActor,
-    options: any,
-    userId: string,
-  ) {
-    // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-    const user = game.users.get(userId) as User;
-    if (!game.user.isGM || (game.userId !== userId && user.isGM)) {
-      return;
-    }
-
-    // Return early if the actor is not a player character
-    if (actor.data.type !== 'character') {
-      return;
-    }
-
-    //return early if the actor already has skills
-    if (actor.itemTypes['skill'].length > 0) {
-      return;
-    }
-
-    //Get list of core skills from settings
-    const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
-      .split(',')
-      .map((s) => s.trim());
-
-    //Get and map the existing skills on the actor to an array of names
-    const existingSkills = actor.itemTypes['skill'].map((i) => i.name);
-
-    //Filter the expected
-    const skillsToAdd = coreSkills.filter((s) => !existingSkills.includes(s));
-
-    //Set compendium source
-    const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
-    const skillIndex = (await game.packs.get(pack).getContent()) as SwadeItem[];
-
-    // extract skill data
-    const skills = skillIndex
-      .filter((i) => skillsToAdd.includes(i.data.name))
-      .map((i) => i.data);
-
-    await actor.createOwnedItem(skills, { renderSheet: null });
-
-    // Create core skills not in compendium (for custom skill names entered by the user)
-    for (const skillName of coreSkills) {
-      if (
-        typeof skillIndex.find(
-          (skillItem) => skillName === skillItem.data.name,
-        ) === 'undefined'
-      ) {
-        actor.createOwnedItem(
-          {
-            type: 'skill',
-            name: skillName,
-            data: {
-              description: '',
-              notes: '',
-              additionalStats: {},
-              attribute: '',
-              die: {
-                sides: 4,
-                modifier: null,
-              },
-              'wild-die': {
-                sides: 6,
-              },
-            },
-          },
-          { renderSheet: null },
-        );
-      }
-    }
-
-    //Set skills as core skills
-    for (const item of actor.items) {
-      if (item.type === 'skill' && coreSkills.includes(item.name)) {
-        await item.update({ 'data.isCoreSkill': true });
-      }
-    }
-
-    // Create an Untrained skill that's not a core skill
-    actor.createOwnedItem(
-      {
-        type: 'skill',
-        name: 'Untrained',
-        data: {
-          description: '',
-          notes: '',
-          additionalStats: {},
-          attribute: '',
-          die: {
-            sides: 4,
-            modifier: -2,
-          },
-          'wild-die': {
-            sides: 6,
-          },
-          isCoreSkill: false,
-        },
-      },
-      { renderSheet: null },
-    );
-  }
-
   public static onRenderActorDirectory(
     app: ActorDirectory,
     html: JQuery<HTMLElement>,
@@ -285,7 +137,7 @@ export default class SwadeHooks {
     for (let i = 0; i < found.length; i++) {
       const element = found[i];
       const enitityId = element.parentElement.dataset.entityId;
-      const wildcard = wildcards.find((a) => a._id === enitityId);
+      const wildcard = wildcards.find((a) => a.id === enitityId);
 
       if (wildcard) {
         element.innerHTML = `
@@ -306,7 +158,7 @@ export default class SwadeHooks {
       const wildcards = content.filter(
         (entity: SwadeActor) => entity.isWildcard,
       );
-      const ids: string[] = wildcards.map((e) => e._id);
+      const ids: string[] = wildcards.map((e) => e.id);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {
@@ -319,26 +171,10 @@ export default class SwadeHooks {
           );
         }
       });
-      return false;
     }
   }
 
-  public static onPreUpdateActor(
-    actor: SwadeActor,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    //wildcards will be linked, extras unlinked
-    if (
-      updateData.data &&
-      typeof updateData.data.wildcard !== 'undefined' &&
-      game.settings.get('swade', 'autoLinkWildcards')
-    ) {
-      updateData.token = { actorLink: updateData.data.wildcard };
-    }
-  }
-
+  //TODO remove later
   public static onUpdateActor(
     actor: SwadeActor,
     updateData: any,
@@ -349,8 +185,8 @@ export default class SwadeHooks {
       ui.actors.render();
     }
     // Update the player list to display new bennies values
-    if (updateData?.data?.bennies) {
-      ui['players'].render(true);
+    if (hasProperty(updateData, 'data.bennies') && actor.hasPlayerOwner) {
+      ui.players.render(true);
     }
   }
 
@@ -363,13 +199,23 @@ export default class SwadeHooks {
       data.combats[data.currentIndex - 1] || data.combat;
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id');
-      const combatant = currentCombat.combatants.find((c) => c._id == combId);
+      //@ts-ignore
+      const combatant = currentCombat.combatants.find((c) => c.id == combId);
       const initdiv = el.getElementsByClassName('token-initiative');
-      if (combatant.initiative && combatant.initiative !== 0) {
-        const cardString = getProperty(
-          combatant,
-          'flags.swade.cardString',
-        ) as string;
+      //@ts-ignore
+      if (hasProperty(combatant, 'data.flags.swade.turnLost') as boolean) {
+        initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-ban"></i></span>`;
+        //@ts-ignore
+      } else if (
+        hasProperty(combatant, 'data.flags.swade.roundHeld') as boolean
+      ) {
+        initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-hand-rock"></i></span>`;
+        //@ts-ignore
+      } else if (
+        hasProperty(combatant, 'data.flags.swade.cardString') as boolean
+      ) {
+        //@ts-ignore
+        const cardString = combatant.getFlag('swade', 'cardString') as string;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
       } else if (!game.user.isGM) {
         initdiv[0].innerHTML = '';
@@ -378,8 +224,7 @@ export default class SwadeHooks {
   }
 
   public static async onUpdateCombatant(
-    combat: Combat,
-    combatant: Combat.Combatant,
+    combatant: any,
     updateData: any,
     options: any,
     userId: string,
@@ -392,39 +237,40 @@ export default class SwadeHooks {
     if (!getProperty(updateData, 'flags.swade')) return;
 
     const jokersWild = game.settings.get('swade', 'jokersWild');
-
-    if (jokersWild && getProperty(combatant, 'flags.swade.hasJoker')) {
+    if (jokersWild && getProperty(updateData, 'flags.swade.hasJoker')) {
       const template = await renderTemplate(SWADE.bennies.templates.joker, {
         speaker: game.user,
       });
       const isCombHostile =
-        combatant.token.disposition === TOKEN_DISPOSITIONS.HOSTILE;
+        combatant.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
 
       //Give bennies to PCs
-      if (combatant.actor.data.type === 'character') {
+      if (combatant.actor.type === 'character') {
         await ChatMessage.create({ user: game.user, content: template });
         //filter combatants for PCs and give them bennies
-        const combatants = combat.combatants.filter(
+        const combatants = game.combat.combatants.filter(
           (c) => c.actor.data.type === 'character',
         );
         for (const combatant of combatants) {
           const actor = (combatant.actor as unknown) as SwadeActor;
           await actor.getBenny();
         }
-      } else if (combatant.actor.data.type === 'npc' && isCombHostile) {
+      } else if (combatant.actor.type === 'npc' && isCombHostile) {
         await ChatMessage.create({ user: game.user, content: template });
         //give all GMs a benny
         const gmUsers = game.users.filter((u) => u.active && u.isGM);
         for (const gm of gmUsers) {
           const currBennies = (gm.getFlag('swade', 'bennies') as number) || 0;
           await gm.setFlag('swade', 'bennies', currBennies + 1);
-          chat.createGmBennyAddMessage(gm, true);
+          await chat.createGmBennyAddMessage(gm, true);
         }
 
         //give all enemy wildcards a benny
-        const enemyWCs = combat.combatants.filter((c) => {
+        const enemyWCs = game.combat.combatants.filter((c) => {
           const a = (c.actor as unknown) as SwadeActor;
-          const hostile = c.token.disposition === TOKEN_DISPOSITIONS.HOSTILE;
+          const hostile =
+            //@ts-ignore
+            c.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
           return a.data.type === 'npc' && hostile && a.isWildcard;
         });
         for (const enemy of enemyWCs) {
@@ -435,34 +281,13 @@ export default class SwadeHooks {
     }
   }
 
-  public static onDeleteCombat(combat: Combat, options: any, userId: string) {
-    if (!game.user.isGM || !game.users.get(userId).isGM) {
-      return;
-    }
-
-    const jokerDrawn = combat.combatants.some((v) =>
-      getProperty(v, 'flags.swade.hasJoker'),
-    );
-
-    //return early if no Jokers have been drawn
-    if (!jokerDrawn) return;
-
-    //reset the deck when combat is ended
-    game.tables
-      .getName(SWADE.init.cardTable)
-      .reset()
-      .then(() => {
-        ui.notifications.info('Card Deck automatically reset');
-      });
-  }
-
   public static async onRenderChatMessage(
     message: ChatMessage,
     html: JQuery<HTMLElement>,
     data: any,
   ) {
     if (message.isRoll && message.isContentVisible) {
-      await formatRoll(message, html, data);
+      await chat.formatRoll(message, html, data);
     }
 
     chat.hideChatActionButtons(message, html, data);
@@ -497,7 +322,7 @@ export default class SwadeHooks {
     );
   }
 
-  public static onGetCombatTrackerEntryContext(
+  public static async onGetCombatTrackerEntryContext(
     html: JQuery<HTMLElement>,
     options: any[],
   ) {
@@ -506,6 +331,190 @@ export default class SwadeHooks {
       options[index].name = 'SWADE.Redraw';
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
+
+    // Toggle Hold when it's the holder's turn and only on the round in which they went on hold
+    options.splice(1, 0, {
+      name: 'SWADE.Hold',
+      icon: '<i class="fas fa-hand-rock"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        //@ts-ignore
+        return (
+          //@ts-ignore
+          targetCombatantId === game.combat.combatant.id &&
+          (!hasProperty(targetCombatant, 'data.flags.swade.roundHeld') ||
+            targetCombatant.getFlag('swade', 'roundHeld') === game.combat.round)
+        );
+      },
+      callback: async (li) => {
+        // Attach click event to Toggle Hold context menu option
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+
+        if (!hasProperty(targetCombatant, 'data.flags.swade.roundHeld')) {
+          // Add flag for on hold to show icon on token
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                roundHeld: game.combat.round,
+              },
+            },
+          });
+        } else {
+          await targetCombatant.unsetFlag('swade', 'roundHeld');
+        }
+      },
+    });
+
+    // Act Now
+    options.splice(2, 0, {
+      name: 'SWADE.ActNow',
+      icon: '<i class="fas fa-long-arrow-alt-right"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        //@ts-ignore
+        return (
+          hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+          //@ts-ignore
+          (targetCombatantId !== game.combat.combatant.id ||
+            //@ts-ignore
+            (targetCombatantId === game.combat.combatant.id &&
+              targetCombatant.getFlag('swade', 'roundHeld') !==
+                game.combat.round))
+        );
+      },
+      callback: async (li) => {
+        // Attach click event to Toggle Hold context menu option
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        const currentCombatant = game.combat.combatant;
+        //@ts-ignore
+        if (targetCombatantId !== currentCombatant.id) {
+          //@ts-ignore
+          const currentCardValue = currentCombatant.getFlag(
+              'swade',
+              'cardValue',
+            ),
+            //@ts-ignore
+            currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                cardValue: currentCardValue,
+                suitValue: currentSuitValue + 1,
+              },
+            },
+          });
+        } else {
+          const nextActiveCombatant = game.combat.turns.find(
+            (c) => !hasProperty(c, 'data.flags.swade.roundHeld'),
+          );
+          //@ts-ignore
+          const nextActiveCardValue = nextActiveCombatant.getFlag(
+              'swade',
+              'cardValue',
+            ),
+            //@ts-ignore
+            nextActiveSuitValue = nextActiveCombatant.getFlag(
+              'swade',
+              'suitValue',
+            );
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                cardValue: nextActiveCardValue,
+                suitValue: nextActiveSuitValue + 1,
+              },
+            },
+          });
+        }
+        await targetCombatant.unsetFlag('swade', 'roundHeld');
+        //@ts-ignore
+        if (targetCombatantId !== game.combat.combatant.id) {
+          await game.combat.previousTurn();
+        }
+      },
+    });
+
+    // Act After Current Combatant
+    options.splice(3, 0, {
+      name: 'SWADE.ActAfterCurrentCombatant',
+      icon: '<i class="fas fa-level-down-alt"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        //@ts-ignore
+        return (
+          hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+          //@ts-ignore
+          targetCombatantId !== game.combat.combatant.id
+        );
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        const currentCombatant = game.combat.combatant;
+        //@ts-ignore
+        const currentCardValue = currentCombatant.getFlag('swade', 'cardValue'),
+          //@ts-ignore
+          currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
+        await targetCombatant.update({
+          flags: {
+            swade: {
+              cardValue: currentCardValue,
+              suitValue: currentSuitValue - 1,
+            },
+          },
+        });
+        await targetCombatant.unsetFlag('swade', 'roundHeld');
+        // Go back to previous turn because technically it's still their turn and the holder is going after them.
+        await game.combat.previousTurn();
+      },
+    });
+
+    // Lost Turn if the combatant was on hold and became Shaken or Stunned
+    options.splice(4, 0, {
+      name: 'SWADE.LoseTurn',
+      icon: '<i class="fas fa-ban"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        if (
+          (hasProperty(targetCombatant, 'data.flags.swade.roundHeld') &&
+            //@ts-ignore
+            targetCombatantId !== game.combat.combatant.id) ||
+          hasProperty(targetCombatant, 'data.flags.swade.turnLost')
+        ) {
+          return true;
+        }
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        if (hasProperty(targetCombatant, 'data.flags.swade.roundHeld')) {
+          // If the current Combatant is the holding combatant, just remove Hold status.
+          await targetCombatant.unsetFlag('swade', 'roundHeld');
+          await targetCombatant.setFlag('swade', 'turnLost', true);
+        } else {
+          await targetCombatant.unsetFlag('swade', 'turnLost');
+          await targetCombatant.setFlag(
+            'swade',
+            'roundHeld',
+            game.combat.round,
+          );
+        }
+      },
+    });
   }
 
   public static async onRenderPlayerList(
@@ -572,14 +581,14 @@ export default class SwadeHooks {
     );
   }
 
-  public static onGetSceneControlButtons(sceneControlButtons: any[]) {
+  public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
     const measure = sceneControlButtons.find((a) => a.name === 'measure');
     let template: SwadeTemplate = null;
-    const newButtons = [
+    const newButtons: SceneControlTool[] = [
       {
         name: 'swcone',
         title: 'SWADE.Cone',
-        icon: 'cone far fa-circle',
+        icon: 'text-icon cone',
         visible: true,
         button: true,
         onClick: () => {
@@ -591,7 +600,7 @@ export default class SwadeHooks {
       {
         name: 'sbt',
         title: 'SWADE.SBT',
-        icon: 'sbt far fa-circle',
+        icon: 'text-icon sbt',
         visible: true,
         button: true,
         onClick: () => {
@@ -603,7 +612,7 @@ export default class SwadeHooks {
       {
         name: 'mbt',
         title: 'SWADE.MBT',
-        icon: 'mbt far fa-circle',
+        icon: 'text-icon mbt',
         visible: true,
         button: true,
         onClick: () => {
@@ -615,7 +624,7 @@ export default class SwadeHooks {
       {
         name: 'lbt',
         title: 'SWADE.LBT',
-        icon: 'lbt far fa-circle',
+        icon: 'text-icon lbt',
         visible: true,
         button: true,
         onClick: () => {
@@ -654,7 +663,7 @@ export default class SwadeHooks {
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data, {});
       } else {
-        item = game.items.get(data.id);
+        item = game.items.get(data.id) as SwadeItem;
       }
       const isRightItemTypeAndSubtype =
         item.data.type === 'ability' && item.data.data.subtype === 'race';
@@ -719,7 +728,8 @@ export default class SwadeHooks {
     const cardPack = game.packs.get(
       game.settings.get('swade', 'cardDeck') as string,
     ) as Compendium;
-    const cards = (await cardPack.getContent()).sort(
+    //@ts-ignore
+    const cards = (await cardPack.getDocuments()).sort(
       (a: JournalEntry, b: JournalEntry) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
         const cardB = b.getFlag('swade', 'cardValue') as number;
@@ -742,11 +752,13 @@ export default class SwadeHooks {
       const color =
         suitValue === 2 || suitValue === 3 ? 'color: red;' : 'color: black;';
       const isDealt =
-        options.object.flags.swade &&
-        options.object.flags.swade.cardValue === cardValue &&
-        options.object.flags.swade.suitValue === suitValue;
-      const isAvailable = cardTable.results.find((r) => r.text === card.name)
-        .drawn
+        options.document.data.flags.swade &&
+        options.document.getFlag('swade', 'cardValue') === cardValue &&
+        options.document.getFlag('swade', 'suitValue') === suitValue;
+      const isAvailable = cardTable.results.find(
+        //@ts-ignore
+        (r) => r.data.text === card.name,
+      ).drawn
         ? 'text-decoration: line-through;'
         : '';
 
@@ -757,7 +769,7 @@ export default class SwadeHooks {
         color,
         isAvailable,
         name: card.name,
-        cardString: getProperty(card, 'data.content'),
+        cardString: card.data.content,
         isJoker: card.getFlag('swade', 'isJoker'),
       });
     }
@@ -767,7 +779,7 @@ export default class SwadeHooks {
     //render and inject new HTML
     const path = 'systems/swade/templates/combatant-config-cardlist.html';
     $(await renderTemplate(path, { cardList, numberOfJokers })).insertBefore(
-      `#${options.options.id} footer`,
+      `#combatant-config-${options.document.id} footer`,
     );
 
     //Attach click event to button which will call the combatant update as we can't easily modify the submit function of the FormApplication
@@ -780,31 +792,13 @@ export default class SwadeHooks {
       const suitValue = selectedCard.data().suitValue as number;
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as String;
-      game.combat.updateEmbeddedEntity('Combatant', {
-        _id: options.object._id,
+      //@ts-ignore
+      game.combat.combatants.get(options.document.id).update({
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
       });
     });
     return false;
-  }
-
-  public static onPreUpdateToken(
-    scene: Scene,
-    token: Token.Data,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    const actor = game.actors.get(token.actorId);
-    if (!!actor && actor.data.type === 'npc') {
-      const items = getProperty(updateData, 'actorData.items') || [];
-      for (const item of items) {
-        if (getProperty(item, 'data.equippable')) {
-          item.data.equipped = true;
-        }
-      }
-    }
   }
 
   public static onDiceSoNiceInit(dice3d: any) {
@@ -819,13 +813,13 @@ export default class SwadeHooks {
   }
 
   public static onDiceSoNiceReady(dice3d: any) {
-    //@ts-ignore
+    //@ts-expect-error Load the DiceColors file. This should work fine since the file is only present in the same situation in which the hook is fired
     import('/modules/dice-so-nice/DiceColors.js')
       .then((obj) => {
         SWADE.dsnColorSets = obj.COLORSETS;
         SWADE.dsnTextureList = obj.TEXTURELIST;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
 
     const customWilDieColors =
       game.user.getFlag('swade', 'dsnCustomWildDieColors') ||

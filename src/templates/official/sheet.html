@@ -33,8 +33,8 @@
   {{#if settingrules.conviction}}
   <div id="conviction" class="gridcell">
     <button type="button" class="conviction-toggle">
-      <strong class="{{#if data.details.conviction.active}}pulse{{/if}}">
-        {{~#if data.details.conviction.active~}} {{localize
+      <strong class="{{#if data.data.details.conviction.active}}pulse{{/if}}">
+        {{~#if data.data.details.conviction.active~}} {{localize
         "SWADE.ConvictionActive"}} {{~else~}} {{localize "SWADE.Conv"}} {{/if}}
       </strong>
     </button>
@@ -43,7 +43,7 @@
         type="Number"
         class="conviction-counter"
         name="data.details.conviction.value"
-        value="{{data.details.conviction.value}}"
+        value="{{data.data.details.conviction.value}}"
         class="character-detail"
         data-dtype="Number"
       />
@@ -56,7 +56,7 @@
     <input
       type="text"
       name="data.details.species.name"
-      value="{{actor.data.details.species.name}}"
+      value="{{data.data.details.species.name}}"
       placeholder="{{localize 'SWADE.Race'}}"
     />
   </label>
@@ -65,7 +65,7 @@
     <input
       type="text"
       name="data.advances.rank"
-      value="{{actor.data.advances.rank}}"
+      value="{{data.data.data.advances.rank}}"
       placeholder="{{localize 'SWADE.Rank'}}"
     />
   </label>
@@ -74,7 +74,7 @@
     <input
       type="number"
       name="data.advances.value"
-      value="{{actor.data.advances.value}}"
+      value="{{data.data.advances.value}}"
     />
   </label>
 
@@ -83,7 +83,7 @@
     <a class="item" data-tab="summary">{{localize "SWADE.Summary"}}</a>
     <a class="item" data-tab="edges">{{localize "SWADE.EdgesHindrances"}}</a>
     <a class="item" data-tab="inventory">{{localize "SWADE.Inv"}}</a>
-    {{#if hasArcaneBackground}}
+    {{#if actor.hasArcaneBackground}}
     <a class="item" data-tab="powers">{{localize "SWADE.Pow"}}</a>
     {{/if}}
     <a class="item" data-tab="description">{{localize "SWADE.About"}}</a>
@@ -106,7 +106,7 @@
       {{> "systems/swade/templates/official/tabs/inventory.html"}}
     </section>
 
-    {{!-- Powers Tab --}} {{#if hasArcaneBackground}}
+    {{!-- Powers Tab --}} {{#if actor.hasArcaneBackground}}
     <section class="tab powers" data-group="primary" data-tab="powers">
       {{> "systems/swade/templates/official/tabs/powers.html"}}
     </section>

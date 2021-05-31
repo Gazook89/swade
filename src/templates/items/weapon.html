@@ -14,7 +14,7 @@
               type="checkbox"
               name="data.equipped"
               {{checked
-              item.data.equipped}}
+              data.data.equipped}}
               data-dtype="Boolean"
             />
             <span class="checkmark"></span>
@@ -27,7 +27,7 @@
               type="checkbox"
               name="data.isVehicular"
               {{checked
-              item.data.isVehicular}}
+              data.data.isVehicular}}
               data-dtype="Boolean"
             />
             <span class="checkmark"></span>
@@ -40,7 +40,7 @@
               type="checkbox"
               name="data.autoReload"
               {{checked
-              item.data.autoReload}}
+              data.data.autoReload}}
               data-dtype="Boolean"
             />
             <span class="checkmark"></span>
@@ -52,7 +52,7 @@
             <input
               name="data.quantity"
               type="text"
-              value="{{item.data.quantity}}"
+              value="{{data.data.quantity}}"
               placeholder="{{localize 'SWADE.Quantity'}}"
               data-dtype="Number"
           /></span>
@@ -63,7 +63,7 @@
             <input
               name="data.range"
               type="text"
-              value="{{item.data.range}}"
+              value="{{data.data.range}}"
               placeholder="{{localize 'SWADE.Rng'}}"
               data-dtype="String"
           /></span>
@@ -74,7 +74,7 @@
             <input
               name="data.damage"
               type="text"
-              value="{{item.data.damage}}"
+              value="{{data.data.damage}}"
               placeholder="{{localize 'SWADE.Dmg'}}"
               data-dtype="String"
           /></span>
@@ -85,7 +85,7 @@
             <input
               name="data.ap"
               type="text"
-              value="{{item.data.ap}}"
+              value="{{data.data.ap}}"
               placeholder="{{localize 'SWADE.Ap'}}"
               data-dtype="String"
           /></span>
@@ -96,7 +96,7 @@
             <input
               name="data.rof"
               type="text"
-              value="{{item.data.rof}}"
+              value="{{data.data.rof}}"
               placeholder="{{localize 'SWADE.RoF'}}"
               data-dtype="String"
           /></span>
@@ -107,14 +107,14 @@
             <input
               name="data.currentShots"
               type="text"
-              value="{{item.data.currentShots}}"
+              value="{{data.data.currentShots}}"
               placeholder="{{localize 'SWADE.Mag'}}"
               data-dtype="String"
             />
             <input
               name="data.shots"
               type="text"
-              value="{{item.data.shots}}"
+              value="{{data.data.shots}}"
               placeholder="0"
               data-dtype="String"
             />
@@ -126,7 +126,7 @@
             <input
               name="data.minStr"
               type="text"
-              value="{{item.data.minStr}}"
+              value="{{data.data.minStr}}"
               placeholder="{{localize 'SWADE.MinStr'}}"
               data-dtype="String"
           /></span>
@@ -137,7 +137,7 @@
             <input
               name="data.weight"
               type="text"
-              value="{{item.data.weight}}"
+              value="{{data.data.weight}}"
               placeholder="{{localize 'SWADE.Weight'}}"
               data-dtype="Number"
           /></span>
@@ -148,7 +148,7 @@
             <input
               name="data.price"
               type="text"
-              value="{{item.data.price}}"
+              value="{{data.data.price}}"
               placeholder="{{localize 'SWADE.Price'}}"
               data-dtype="Number"
           /></span>
@@ -159,19 +159,19 @@
             <input
               type="text"
               name="data.notes"
-              value="{{item.data.notes}}"
+              value="{{data.data.notes}}"
               placeholder="{{localize 'SWADE.Notes'}}"
               data-dtype="String"
           /></span>
         </div>
-        {{#if item.data.isVehicular}} {{#if settingrules.modSlots}}
+        {{#if data.data.isVehicular}} {{#if settingrules.modSlots}}
         <div class="form-group">
           <label for="data.mods">{{localize "SWADE.ModSlots"}}</label>
           <span class="form-fields">
             <input
               name="data.mods"
               type="text"
-              value="{{item.data.mods}}"
+              value="{{data.data.mods}}"
               placeholder="{{localize 'SWADE.ModSlots'}}"
               data-dtype="Number"
           /></span>

@@ -20,17 +20,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
-## [Unreleased]
+## [v0.19.0]
 
 ### Added
 
-- When Equipping/unequipping a weapon, armor or shield _all_ Active Effects that come from that item are now toggled as well
+- Added compatability for Foundry VTT 0.8
+- When Equipping/unequipping an equippable item _all_ Active Effects that come from that item are now toggled as well
 - Added the ability to migrate data models
+- Added the ability to set Combatants on Hold in the Combat Tracker. This is done by right-clicking the combatant. You can also set Combatants who are on hold to Act Now and Act after the current combatant, as well as the ability to mark a combatant to have lost their turn.
+- Added additional translation strings
 
 ### Changed
 
 - Vehicles now save the UUID instead of the ID of their operator. As a result you can now use operators from compendiums directly. Existing vehicles will be migrated
 - Hostile NPC Wildcards and GMs now recieve a benny each when an NPC Wildcard with a hostile token dispostion draws a Joker in combat
+- Improved performance of the action card drawing by reducing the number of asynchronous operations
+- Disabled autocomplete on roll dialogs
+- Moved the pace input to the tweaks on PCs and NPCs. The pace that is adjusted by wounds can now be found in `data.stats.speed.adjusted`.
+
+### Removed
+
+- Removed the Legacy character sheet.
+
+### Fixed
+
+- Fixed a styling issue which on the character sheet
 
 ## [v0.18.4]
 
