@@ -357,3 +357,4 @@ SWADE.SysMigrationWarning: >-
   errors may occur.
 SWADE.SomethingWrongWithCardComp: Something went wrong with the card compendium, switching back to default
 SWADE.DeckShuffled: Card Deck automatically shuffled
+SWADE.BasePace: Base Pace

@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
-## [Unreleased]
+## [v0.19.0]
 
 ### Added
 
@@ -36,6 +36,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Hostile NPC Wildcards and GMs now recieve a benny each when an NPC Wildcard with a hostile token dispostion draws a Joker in combat
 - Improved performance of the action card drawing by reducing the number of asynchronous operations
 - Disabled autocomplete on roll dialogs
+- Moved the pace input to the tweaks on PCs and NPCs. The pace that is adjusted by wounds can now be found in `data.stats.speed.adjusted`.
+
+### Removed
+
+- Removed the Legacy character sheet.
 
 ### Fixed
 

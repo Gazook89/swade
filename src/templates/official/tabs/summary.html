@@ -124,14 +124,14 @@
       </span>
     </div>
     <div class="stat">
-      <span class="stat-label">{{ localize "SWADE.Pace" }}</span>
+      <span class="stat-label">{{localize "SWADE.Pace"}}</span>
       <span class="stat-value flexrow">
         <input
-          name="data.stats.speed.value"
           type="text"
-          value="{{data.data.stats.speed.value}}"
+          value="{{data.data.stats.speed.adjusted}}"
           data-dtype="Number"
           placeholder="{{ localize 'SWADE.Pace' }}"
+          disabled
         />
         <button
           type="button"
