@@ -13,9 +13,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       classes: ['swade', 'sheet', 'actor', 'vehicle'],
       width: 600,
       height: 540,
@@ -26,7 +25,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
           initial: 'summary',
         },
       ],
-    });
+    };
   }
 
   get template() {
@@ -67,7 +66,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.getOwnedItem(li.data('itemId'));
+      const ownedItem = this.actor.items.get(li.data('itemId'));
       const template = `
           <form>
             <div>
@@ -140,20 +139,16 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       await this._openDriverSheet();
     });
 
-    //Input Synchronization
-    html.find('.wound-input').on('keyup', (ev) => {
-      this.actor.update({
-        'data.wounds.value': $(ev.currentTarget).val() as number,
-      });
-    });
-
     //Maneuver Check
     html
       .find('#maneuverCheck')
       .on('click', (event) => this.actor.rollManeuverCheck(event));
   }
 
-  getData() {
+  /**
+   * @override
+   */
+  async getData() {
     const data = super.getData();
 
     data.config = SWADE;
@@ -180,12 +175,12 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     });
 
     data.inventoryWeight = 0;
-    data.inventory.forEach((i: SwadeItem) => {
-      data.inventoryWeight += i.data['weight'] * i.data['quantity'];
+    data.inventory.forEach((i) => {
+      data.inventoryWeight += i.data.weight * i.data.quantity;
     });
 
     //Fetch Driver data
-    data.driver = this._fetchDriver();
+    data.driver = await this._fetchDriver();
 
     // Check for enabled optional rules
     data.settingrules = {
@@ -227,9 +222,11 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     }
   }
 
-  private _fetchDriver() {
-    const driverId = getProperty(this.actor.data, 'data.driver.id');
-    const driver = game.actors.get(driverId) as SwadeActor;
+  private async _fetchDriver() {
+    if (this.actor.data.type !== 'vehicle') return null;
+
+    const driverId = this.actor.data.data.driver.id;
+    const driver = await this.actor.getDriver();
     const userCanViewDriver =
       game.user.isGM ||
       (driver && driver.permission >= CONST.ENTITY_PERMISSIONS.LIMITED);
@@ -256,12 +253,12 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   }
 
   private async _resetDriver() {
-    await this.actor.update({ 'data.driver.id': '' });
+    await this.actor.update({ 'data.driver.id': null });
   }
 
-  private _openDriverSheet() {
+  private async _openDriverSheet() {
     const driverId = getProperty(this.actor.data, 'data.driver.id');
-    const driver = game.actors.get(driverId);
+    const driver = (await fromUuid(driverId)) as SwadeActor;
     if (driver) {
       driver.sheet.render(true);
     }
@@ -276,7 +273,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     const itemData = {
       name: name ? name : `New ${type.capitalize()}`,
       type: type,
-      data: duplicate(header.dataset),
+      img: `systems/swade/assets/icons/${type}.svg`,
+      data: deepClone(header.dataset),
     };
     delete itemData.data['type'];
     return itemData;

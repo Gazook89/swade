@@ -25,7 +25,7 @@ export default class Bennies {
           !!game.dice3d &&
           game.settings.get('swade', 'dsnShowBennyAnimation')
         ) {
-          const benny = new Roll('1dB').roll();
+          const benny = new Roll('1dB').evaluate({ async: false });
           game.dice3d.showForRoll(benny, game.user, true, null, false);
         }
       });

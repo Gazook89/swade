@@ -2,7 +2,6 @@ import { SWADE } from './config';
 import SwadeActor from './entities/SwadeActor';
 import ItemChatCardHelper from './ItemChatCardHelper';
 
-//TODO Find a better way to format the rolls to make clear what is roll
 export async function formatRoll(
   chatMessage: ChatMessage,
   html: JQuery<HTMLElement>,
@@ -50,7 +49,7 @@ export async function formatRoll(
   const chatData = { dice: [], modifiers: [] };
 
   for (const term of roll.terms) {
-    if (term instanceof DicePool) {
+    if (term instanceof PoolTerm) {
       // Compute dice from the pool
       term.rolls.forEach((roll: Roll) => {
         const faces = roll.terms[0]['faces'];
@@ -67,7 +66,7 @@ export async function formatRoll(
     } else {
       chatData.dice.push({
         img: null,
-        result: term,
+        result: term.expression,
         color: 'black',
         dice: false,
       });
@@ -84,12 +83,13 @@ export async function formatRoll(
   let conviction = 0;
 
   for (const term of roll.terms) {
-    if (term instanceof DicePool) {
+    if (term instanceof PoolTerm) {
       // Compute dice from the pool
-      term.rolls.forEach((roll: Roll, i) => {
+      term.rolls.forEach((roll, i) => {
         const faces = roll.terms[0]['faces'];
         if (!term.results[i].discarded) {
-          pushDice(results, roll.total, faces, colorMessage && rollIsRed(roll));
+          const color = colorMessage && rollIsRed(roll);
+          pushDice(results, roll.total, faces, color);
         }
       });
     } else if (term instanceof Die) {
@@ -100,17 +100,18 @@ export async function formatRoll(
       }
     } else if (term instanceof Roll) {
       results.total += term.total;
-    } else if (typeof term === 'string' || typeof term === 'number') {
-      modifiers.push(term);
+    } else {
+      modifiers.push(term.expression);
     }
   }
 
   //add conviction modifier
   let mod = 0;
   const modString = `0+${modifiers.join('')}`
+    .replace(/\s*/g, '') //cut out the whitespace
     .replace(/\+{2,}/g, '+') //replace double plusses with single plus
     .replace(/[+-]*$/, '') //remove any plus or minus at the end of the string
-    .replace('+-', '-');
+    .replace('+-', '-'); //turn all +- into just minuses
   try {
     if (modString.length > 2) {
       mod = eval(modString) as number;
@@ -163,7 +164,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
         .find('input.pp-adjust')
         .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
-      const power = actor.getOwnedItem(itemId);
+      const power = actor.items.get(itemId);
       let key = 'data.powerPoints.value';
       const arcane = getProperty(power.data, 'data.arcane');
       if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -242,7 +243,10 @@ export async function createGmBennyAddMessage(
   ChatMessage.create(chatData);
 }
 
-export function rerollFromChat(li: JQuery<HTMLElement>, spendBenny: boolean) {
+export async function rerollFromChat(
+  li: JQuery<HTMLElement>,
+  spendBenny: boolean,
+) {
   const message = game.messages.get(li.data('messageId')) as ChatMessage;
   const flavor = new DOMParser().parseFromString(
     getProperty(message, 'data.flavor'),
@@ -277,8 +281,7 @@ export function rerollFromChat(li: JQuery<HTMLElement>, spendBenny: boolean) {
   };
 
   if (doSpendBenny) {
-    actor.spendBenny().then(() => roll.reroll().toMessage(newRollData));
-  } else {
-    roll.reroll().toMessage(newRollData);
+    await actor.spendBenny();
   }
+  roll.reroll({ async: false }).toMessage(newRollData);
 }

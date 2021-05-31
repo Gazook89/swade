@@ -38,7 +38,7 @@ SWADE.Bound: Gebunden
 SWADE.TraitMod: Trait Mod
 SWADE.SkillTest: Fertigkeitsprobe
 SWADE.AttributeTest: Attributssprobe
-SWADE.Attributes: Atrribute
+SWADE.Attributes: Attribute
 SWADE.Derived: Abgeleitete Werte
 SWADE.AttrAgi: Geschick
 SWADE.AttrSma: Verstand
@@ -115,8 +115,8 @@ SWADE.Misc: Sonstiges
 SWADE.QuickAccess: Schnellzugriff
 SWADE.Effects: Aktive Effekte
 SWADE.Hindrances: Handicaps
-SWADE.MajHind: Starkes Handicap
-SWADE.Major: (Stark)
+SWADE.MajHind: Schweres Handicap
+SWADE.Major: (Schwer)
 SWADE.Minor: (Leicht)
 SWADE.Edges: Talente
 SWADE.ArcBack: Arkaner Hintergrund
@@ -259,6 +259,10 @@ SWADE.General: Generell
 SWADE.HeartAttack: Herzinfarkt
 SWADE.Holding: Aufgespart
 SWADE.Invisible: Unsichtbar
+SWADE.Hold: Abwarten
+SWADE.ActBeforeCurrentCombatant: Jetzt handeln
+SWADE.ActAfterCurrentCombatant: Nach aktuellem Teilnehmer handeln
+SWADE.LoseTurn: Zug aussetzen umschalten
 SWADE.NPCAmmoFromInventory: NSCs laden Munition aus ihrem Inventar nach
 SWADE.NoAmmoSet: Keine Munition ausgewählt
 SWADE.NotEnoughAmmo: Du hast nicht genug Munition für diese Aktion
@@ -306,8 +310,8 @@ SWADE.ParryBaseDesc: >-
   wird
 SWADE.AutoCalcParry: Automatisch Parade berechnen, inclusive Schilde
 SWADE.Subtype: Unterkategorie
-SWADE.SpecialAbility: Spezialeigenschaft
-SWADE.SpecialAbilities: Spezialeigenschaften
+SWADE.SpecialAbility: Spezialfähigkeit
+SWADE.SpecialAbilities: Spezialfähigkeiten
 SWADE.RacialAbilities: Volkseigenschaften
 SWADE.About: Beschreibung
 SWADE.EdgesHindrances: Talente & Handicaps
@@ -342,5 +346,12 @@ SWADE.CoreSkillsPackDesc: Wählen Sie aus welchem ​​Kompendium die Grundfert
 SWADE.Joker: Joker
 SWADE.DmgRolls: Schadenswürfe
 SWADE.SubtractPPDesc: MP Kosten von verfügbaren MP abziehen
-SWADE.AddPPDesc: MP Kosten zu den verfügbaren PP hinzurechnen
+SWADE.AddPPDesc: MP Kosten zu den verfügbaren MP hinzurechnen
 SWADE.RightClickZoom: Für eine größere Ansicht rechtsklicken
+SWADE.SysMigrationWarning: >-
+  Ihre SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können
+  nicht zuverlässig auf die neueste Version migriert werden.
+
+  Der Vorgang wird versucht, es können jedoch Fehler auftreten.
+SWADE.DeckShuffled: Kartens automatisch gemischt
+SWADE.BasePace: Basisbewegung

@@ -16,7 +16,7 @@
         <input
           type="number"
           name="data.powerPoints.value"
-          value="{{data.powerPoints.value}}"
+          value="{{data.data.powerPoints.value}}"
         />
       </label>
       /
@@ -25,7 +25,7 @@
         <input
           type="number"
           name="data.powerPoints.max"
-          value="{{data.powerPoints.max}}"
+          value="{{data.data.powerPoints.max}}"
         />
       </label>
     </span>
@@ -57,21 +57,25 @@
         </div>
       </span>
       <div class="description">
-        <span class="power-details">
-          {{#if data.damage}}
-          <button type="button" class="damage-roll">
-            {{localize "SWADE.Dmg"}}: {{data.damage}}
-          </button>
-          {{/if}}
-          <span>{{localize "SWADE.Rank"}}: {{data.rank}}&nbsp;</span>
-          <span>{{localize "SWADE.PP"}}: {{data.pp}}&nbsp;</span>
-          <span>{{localize "SWADE.Rng"}}: {{data.range}}&nbsp;</span>
-          <span>{{localize "SWADE.Dur"}}: {{data.duration}}&nbsp;</span>
-        </span>
-        <div class="trapping">
-          {{localize "SWADE.Trapping"}}: {{data.trapping}}
+        <div class="description-grid">
+          <span class="power-details">
+            {{#if data.damage}}
+            <button type="button" class="damage-roll">
+              {{localize "SWADE.Dmg"}}: {{data.damage}}
+            </button>
+            {{/if}}
+            <span>{{localize "SWADE.Rank"}}: {{data.rank}}&nbsp;</span>
+            <span>{{localize "SWADE.PP"}}: {{data.pp}}&nbsp;</span>
+            <span>{{localize "SWADE.Rng"}}: {{data.range}}&nbsp;</span>
+            <span>{{localize "SWADE.Dur"}}: {{data.duration}}&nbsp;</span>
+          </span>
+          <div class="trapping">
+            {{localize "SWADE.Trapping"}}: {{data.trapping}}
+          </div>
+          <div class="enriched-description">{{enrich data.description}}</div>
+          {{> "systems/swade/templates/shared-partials/action-card.html"
+          powersTab=true}}
         </div>
-        {{enrich data.description}}
       </div>
     </li>
     {{/unless}} {{/each}}

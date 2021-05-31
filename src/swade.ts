@@ -14,10 +14,10 @@ import SwadeItem from './module/entities/SwadeItem';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
+import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import { registerSettingRules, registerSettings } from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
-import SwadeCharacterSheet from './module/sheets/SwadeCharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
@@ -38,8 +38,6 @@ import {
 
 const sockets: SwadeSocketHandler = null;
 export const swadeGame = {
-  SwadeActor,
-  SwadeItem,
   SwadeEntityTweaks,
   rollSkillMacro,
   rollWeaponMacro,
@@ -47,6 +45,7 @@ export const swadeGame = {
   rollItemMacro,
   sockets: sockets,
   itemChatCardHelper: ItemChatCardHelper,
+  migrations: migrations,
 };
 Hooks.once('init', () => {
   console.log(
@@ -63,13 +62,16 @@ Hooks.once('init', () => {
   registerCustomHelpers();
 
   //Overwrite method prototypes
-  //@ts-expect-error
+  //@ts-expect-error I'm not extending this class and just altering the shape so overwriting the prototype is the easiest way of doing things
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
-  CONFIG.Actor.entityClass = SwadeActor;
-  CONFIG.Item.entityClass = SwadeItem;
-  CONFIG.Combat.entityClass = SwadeCombat;
+  //@ts-ignore
+  CONFIG.Actor.documentClass = SwadeActor;
+  //@ts-ignore
+  CONFIG.Item.documentClass = SwadeItem;
+  //@ts-ignore
+  CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.statusEffects = SWADE.statusEffects;
 
   // Register custom system settings
@@ -84,11 +86,6 @@ Hooks.once('init', () => {
     types: ['character'],
     makeDefault: true,
     label: game.i18n.localize('SWADE.OfficialSheet'),
-  });
-
-  Actors.registerSheet('swade', SwadeCharacterSheet, {
-    types: ['character'],
-    label: 'SWADE.CommunityCharSheet',
   });
 
   Actors.registerSheet('swade', SwadeNPCSheet, {
@@ -117,31 +114,23 @@ Hooks.once('init', () => {
   });
 });
 
-/* ------------------------------------ */
-/* Setup system							            */
-/* ------------------------------------ */
 Hooks.once('setup', () => SwadeHooks.onSetup());
 
-/* ------------------------------------ */
-/* When ready						              	*/
-/* ------------------------------------ */
 Hooks.once('ready', async () => SwadeHooks.onReady());
 
-Hooks.on('preCreateItem', (createData: any, options: any, userId: string) =>
-  SwadeHooks.onPreCreateItem(createData, options, userId),
-);
-
-Hooks.on(
-  'preCreateOwnedItem',
-  (actor: SwadeActor, createData: any, options: any, userId: string) =>
-    SwadeHooks.onPreCreateOwnedItem(actor, createData, options, userId),
-);
-
-Hooks.on(
-  'createActor',
-  async (actor: SwadeActor, options: any, userId: string) =>
-    SwadeHooks.onCreateActor(actor, options, userId),
-);
+/**
+ * This hook only really exists to stop Races from being added to the actor as an item
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+Hooks.on('preCreateItem', (item, options, userId) => {
+  if (
+    item.parent &&
+    item.data.type === 'ability' &&
+    item.data.data.subtype === 'race'
+  ) {
+    return false; //return early if we're doing race stuff
+  }
+});
 
 Hooks.on(
   'renderActorDirectory',
@@ -151,14 +140,8 @@ Hooks.on(
 
 Hooks.on(
   'renderCompendium',
-  async (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
+  (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCompendium(app, html, data),
-);
-
-Hooks.on(
-  'preUpdateActor',
-  (actor: SwadeActor, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onPreUpdateActor(actor, updateData, options, userId),
 );
 
 Hooks.on(
@@ -173,33 +156,18 @@ Hooks.on(
     SwadeHooks.onRenderCombatTracker(app, html, data),
 );
 
+//TODO move to combatant class later?
 Hooks.on(
   'updateCombatant',
-  (
-    combat: Combat,
-    combatant: any,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) =>
-    SwadeHooks.onUpdateCombatant(
-      combat,
-      combatant,
-      updateData,
-      options,
-      userId,
-    ),
-);
-
-Hooks.on('deleteCombat', (combat: Combat, options: any, userId: string) =>
-  SwadeHooks.onDeleteCombat(combat, options, userId),
+  (combatant: any, updateData: any, options: any, userId: string) =>
+    SwadeHooks.onUpdateCombatant(combatant, updateData, options, userId),
 );
 
 // Add roll data to the message for formatting of dice pools
 Hooks.on(
   'renderChatMessage',
-  async (chatMessage: ChatMessage, html: JQuery<HTMLElement>, data: any) =>
-    SwadeHooks.onRenderChatMessage(chatMessage, html, data),
+  (message: ChatMessage, html: JQuery<HTMLElement>, data: any) =>
+    SwadeHooks.onRenderChatMessage(message, html, data),
 );
 
 Hooks.on(
@@ -213,7 +181,7 @@ Hooks.on('renderChatLog', (app, html: JQuery<HTMLElement>, data) =>
 );
 
 // Add benny management to the player list
-Hooks.on('renderPlayerList', async (list: any, html: JQuery, options: any) =>
+Hooks.on('renderPlayerList', (list: any, html: JQuery, options: any) =>
   SwadeHooks.onRenderPlayerList(list, html, options),
 );
 
@@ -235,7 +203,7 @@ Hooks.on('dropActorSheetData', (actor, sheet, data) =>
 
 Hooks.on(
   'renderCombatantConfig',
-  async (app: FormApplication, html: JQuery<HTMLElement>, options: any) =>
+  (app: FormApplication, html: JQuery<HTMLElement>, options: any) =>
     SwadeHooks.onRenderCombatantConfig(app, html, options),
 );
 
@@ -246,14 +214,6 @@ Hooks.once('diceSoNiceInit', (dice3d: any) => {
 Hooks.once('diceSoNiceReady', (dice3d: any) => {
   SwadeHooks.onDiceSoNiceReady(dice3d);
 });
-
-Hooks.on('preCreateScene', (createData: any, options: any, userId: string) =>
-  SwadeHooks.onPreCreateScene(createData, options, userId),
-);
-
-Hooks.on('preUpdateToken', (scene, token, updateData, options, userId) =>
-  SwadeHooks.onPreUpdateToken(scene, token, updateData, options, userId),
-);
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 

@@ -1,4 +1,3 @@
-import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
 import SwadeActor from '../entities/SwadeActor';
@@ -13,11 +12,10 @@ export default class SwadeItemSheet extends ItemSheet {
   }
 
   static get defaultOptions() {
-    //TODO Revisit once mergeObject is typed correctly
-    //@ts-ignore
-    return mergeObject(super.defaultOptions, {
+    return {
+      ...super.defaultOptions,
       width: 560,
-      height: 'auto',
+      height: 'auto' as 'auto',
       classes: ['swade', 'sheet', 'item'],
       tabs: [
         {
@@ -28,7 +26,7 @@ export default class SwadeItemSheet extends ItemSheet {
       ],
       scrollY: ['.actions-list'],
       resizable: true,
-    });
+    };
   }
 
   /**
@@ -123,7 +121,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.item['effects'].get(effectId) as any;
+      const effect = this.item.effects.get(effectId);
       const action = a.dataset.action;
       switch (action) {
         case 'edit':
@@ -146,7 +144,7 @@ export default class SwadeItemSheet extends ItemSheet {
           transfer: transfer,
         })
       )._id;
-      return new ActiveEffectConfig(this.item['effects'].get(id)).render(true);
+      return new ActiveEffectConfig(this.item.effects.get(id)).render(true);
     });
 
     html.find('.delete-embedded').on('click', (ev) => {
@@ -163,19 +161,19 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.additional-stats .roll').on('click', (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
-      const statData = getProperty(
-        this.item.data,
-        `data.additionalStats.${stat}`,
-      ) as AdditionalStat;
+      const statData = this.item.data.data.additionalStats[stat];
       let modifier = statData.modifier || '';
-      if (!!modifier && !modifier.match(/^[+-]/)) {
+      if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
-      const dieSides = statData.value || 4;
-      new Roll(`1d${dieSides}${modifier}`).roll().toMessage({
-        speaker: ChatMessage.getSpeaker(),
-        flavor: `${this.item.name} - ${statData.label}`,
-      });
+      //return of there's no value to roll
+      if (!statData.value) return;
+      new Roll(`1d${statData.value}${modifier}`)
+        .evaluate({ async: false })
+        .toMessage({
+          speaker: ChatMessage.getSpeaker(),
+          flavor: `${this.item.name} - ${statData.label}`,
+        });
     });
   }
 
@@ -192,7 +190,7 @@ export default class SwadeItemSheet extends ItemSheet {
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
     }
-    const additionalStats = data.data.additionalStats || {};
+    const additionalStats = data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -236,7 +234,7 @@ export default class SwadeItemSheet extends ItemSheet {
         const pack = game.packs.get(data.pack) as Compendium;
         item = (await pack.getEntity(data.id)) as SwadeItem;
       } else if ('actorId' in data) {
-        item = new SwadeItem(data.data, {});
+        item = new SwadeItem(data.data);
       } else {
         item = game.items.get(data.id) as SwadeItem;
       }
@@ -255,7 +253,8 @@ export default class SwadeItemSheet extends ItemSheet {
     }
 
     //prep item data
-    const itemData = duplicate(item.data);
+    //@ts-ignore
+    const itemData = deepClone(item.data.toObject());
     delete itemData['_id'];
     delete itemData['permission'];
 

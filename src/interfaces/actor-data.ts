@@ -1,7 +1,7 @@
 import { AdditionalStat } from './additional';
 import { SysItemData } from './item-data';
 
-interface CharacterCommon {
+export interface CharacterCommon {
   attributes: {
     agility: {
       die: {
@@ -123,12 +123,15 @@ interface CharacterCommon {
     hasImpLevelHeaded: boolean;
     hasQuick: boolean;
   };
-  powerPoints: any; //FIXME Find better type
+  powerPoints: {
+    value: number;
+    max: number;
+  } & Record<string, { value: number; max: number }>;
   additionalStats: Partial<Record<string, AdditionalStat>>;
   wildcard: boolean;
 }
 
-interface VehicleCommon {
+export interface VehicleCommon {
   size: number;
   scale: number;
   classification: string;

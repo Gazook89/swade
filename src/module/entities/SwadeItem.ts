@@ -43,18 +43,16 @@ export default class SwadeItem extends Item<SysItemData> {
       rollParts = rollParts.concat(options.additionalMods);
     }
 
-    const roll = new Roll(rollParts.join(''), actor.getRollData());
-
+    const terms = Roll.parse(rollParts.join(''), actor.getRollData());
     const newParts = [];
-    for (const term of roll.terms) {
+    for (const term of terms) {
       if (term instanceof Die) {
-        newParts.push(`${term.number}d${term.faces}x`);
-      } else if (term instanceof Roll) {
+        if (!term.modifiers.includes('x')) term.modifiers.push('x');
         newParts.push(term.formula);
-      } else if (typeof term === 'string') {
-        newParts.push(this._makeExplodable(term));
+      } else if (term instanceof StringTerm) {
+        newParts.push(this._makeExplodable(term.term));
       } else {
-        newParts.push(term);
+        newParts.push(term.expression);
       }
     }
 
@@ -70,7 +68,7 @@ export default class SwadeItem extends Item<SysItemData> {
     //Joker Modifier
     let joker = '';
     if (actor.hasJoker) {
-      newParts.push('+2');
+      newParts.push(`+2[${game.i18n.localize('SWADE.Joker')}]`);
       joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
     }
 
@@ -99,7 +97,7 @@ export default class SwadeItem extends Item<SysItemData> {
   }
 
   getChatData(htmlOptions) {
-    const data = duplicate(this.data.data) as any;
+    const data = deepClone(this.data.data) as any;
 
     // Rich text description
     data.description = TextEditor.enrichHTML(data.description, htmlOptions);
@@ -199,7 +197,8 @@ export default class SwadeItem extends Item<SysItemData> {
   async show() {
     // Basic template rendering data
     const token = this.actor.token;
-    const tokenId = token ? `${token.scene._id}.${token.id}` : null;
+    //@ts-ignore
+    const tokenId = token ? `${token.parent.id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const hasAmmoManagement =
       this.type === 'weapon' &&
@@ -302,7 +301,6 @@ export default class SwadeItem extends Item<SysItemData> {
   }
 
   /**
-   *
    * @returns the power points for the AB that this power belongs to or null when the item is not a power
    */
   private _getPowerPoints(): { current: number; max: number } | null {
@@ -322,5 +320,60 @@ export default class SwadeItem extends Item<SysItemData> {
       max = getProperty(this.actor.data, `data.powerPoints.${arcane}.max`);
     }
     return { current, max };
+  }
+
+  async _preCreate(data, options, user: User) {
+    //@ts-ignore
+    await super._preCreate(data, options, user);
+    //Set default image if no image already exists
+    if (!data.img) {
+      //@ts-ignore
+      this.data.update({ img: `systems/swade/assets/icons/${data.type}.svg` });
+    }
+    //@ts-ignore
+    if (this.parent) {
+      if (data.type === 'skill' && options.renderSheet !== null) {
+        options.renderSheet = true;
+      }
+      if (
+        //@ts-ignore
+        this.parent.type === 'npc' &&
+        hasProperty(this.data, 'data.equippable')
+      ) {
+        //@ts-ignore
+        this.data.update({ 'data.equipped': true });
+      }
+    }
+  }
+
+  async _preDelete(options, user: User) {
+    //@ts-ignore
+    await super._preDelete(options, user);
+    //delete all transfered active effects from the actor
+    //@ts-ignore
+    if (this.parent) {
+      const updates = [];
+      for (const ae of this.actor.effects) {
+        if (ae.data.origin !== this.uuid) continue;
+        updates.push(ae.id);
+      }
+      //@ts-ignore
+      await this.actor.deleteEmbeddedDocuments('ActiveEffect', updates);
+    }
+  }
+
+  async _preUpdate(changed, options, user: User) {
+    //@ts-ignore
+    await super._preUpdate(changed, options, user);
+    //@ts-ignore
+    if (this.parent && hasProperty(changed, 'data.equipped')) {
+      const updates = [];
+      for (const ae of this.actor.effects) {
+        if (ae.data.origin !== this.uuid) continue;
+        updates.push({ _id: ae.id, disabled: !changed.data.equipped });
+      }
+      //@ts-ignore
+      await this.actor.updateEmbeddedDocuments('ActiveEffect', updates);
+    }
   }
 }
