@@ -91,9 +91,37 @@ export const registerCustomHelpers = function () {
     return c.getFlag('swade', 'roundHeld');
   });
 
+  Handlebars.registerHelper('isNotOnHold', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    if (!c.getFlag('swade', 'roundHeld')) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
   Handlebars.registerHelper('turnLost', (id) => {
     //@ts-ignore
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'turnLost');
+  });
+
+  Handlebars.registerHelper('isGroupLeader', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    return c.getFlag('swade', 'isGroupLeader');
+  });
+
+  Handlebars.registerHelper('isInGroup', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    return c.getFlag('swade', 'groupId');
+  });
+
+  Handlebars.registerHelper('roundHeld', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    return c.getFlag('swade', 'roundHeld');
   });
 };
