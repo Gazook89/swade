@@ -1,4 +1,3 @@
-import { VehicleCommon } from '../interfaces/actor-data';
 //TODO Come back and check on this code before release for the migrations
 export async function migrateWorld() {
   ui.notifications.info(
@@ -82,7 +81,7 @@ export async function migrateCompendium(pack: Compendium) {
           updateData = migrateItemData(ent.data);
           break;
         case 'Scene':
-          updateData = migrateSceneData(ent.data as Scene.Data);
+          updateData = migrateSceneData(ent.data);
           break;
       }
       if (isObjectEmpty(updateData)) continue;
@@ -114,19 +113,19 @@ export async function migrateCompendium(pack: Compendium) {
 /**
  * Migrate a single Actor entity to incorporate latest data model changes
  * Return an Object of updateData to be applied
- * @param {object} actor    The actor data object to update
+ * @param {object} actorData    The actor data object to update
  * @return {Object}         The updateData to apply
  */
-export function migrateActorData(actor) {
+export function migrateActorData(actorData) {
   const updateData = {};
 
   // Actor Data Updates
-  _migrateVehicleOperator(actor, updateData);
+  _migrateVehicleOperator(actorData, updateData);
 
   // Migrate Owned Items
-  if (!actor.items) return updateData;
+  if (!actorData.items) return updateData;
   let hasItemUpdates = false;
-  const items = actor.items.map((i) => {
+  const items = actorData.items.map((i) => {
     // Migrate the Owned Item
     const itemUpdate = migrateItemData(i);
 
@@ -143,8 +142,8 @@ export function migrateActorData(actor) {
   return updateData;
 }
 
-export function migrateItemData(item) {
-  console.log(item);
+export function migrateItemData(itemData) {
+  console.log(itemData);
   const updateData = {};
   return updateData;
 }
@@ -152,28 +151,36 @@ export function migrateItemData(item) {
 /**
  * Migrate a single Scene entity to incorporate changes to the data model of it's actor data overrides
  * Return an Object of updateData to be applied
- * @param {Object} scene  The Scene data to Update
+ * @param {Object} sceneData  The Scene data to Update
  * @return {Object}       The updateData to apply
  */
-export function migrateSceneData(scene: Scene.Data) {
-  const tokens = deepClone(scene.tokens);
-  return {
-    tokens: tokens.map((t) => {
-      if (!t.actorId || t.actorLink || !t.actorData.data) {
-        t.actorData = {};
-        return t;
-      }
-      const token = new Token(t);
-      if (!token.actor) {
-        t.actorId = null;
-        t.actorData = {};
-      } else if (!t.actorLink) {
-        const updateData = migrateActorData(token.data.actorData);
-        t.actorData = mergeObject(token.data.actorData, updateData);
-      }
-      return t;
-    }),
-  };
+export function migrateSceneData(sceneData) {
+  const tokens = sceneData.tokens.map((token) => {
+    const t = token.toJSON();
+    if (!t.actorId || t.actorLink) {
+      t.actorData = {};
+    } else if (!game.actors.has(t.actorId)) {
+      t.actorId = null;
+      t.actorData = {};
+    } else if (!t.actorLink) {
+      const actorData = duplicate(t.actorData);
+      actorData.type = token.actor?.type;
+      const update = migrateActorData(actorData);
+      ['items', 'effects'].forEach((embeddedName) => {
+        if (!update[embeddedName]?.length) return;
+        const updates = new Map(update[embeddedName].map((u) => [u._id, u]));
+        t.actorData[embeddedName].forEach((original) => {
+          const update = updates.get(original._id);
+          if (update) mergeObject(original, update);
+        });
+        delete update[embeddedName];
+      });
+
+      mergeObject(t.actorData, update);
+    }
+    return t;
+  });
+  return { tokens };
 }
 
 /**
@@ -193,10 +200,7 @@ export function removeDeprecatedObjects(data) {
   return data;
 }
 
-function _migrateVehicleOperator(
-  actorData: Actor.Data<VehicleCommon>,
-  updateData,
-) {
+function _migrateVehicleOperator(actorData, updateData) {
   if (actorData.type !== 'vehicle') return updateData;
   const driverId = actorData.data.driver.id;
   const hasOldID = !!driverId && driverId.split('.').length === 1;

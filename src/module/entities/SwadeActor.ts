@@ -70,9 +70,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     return this.data.data.status;
   }
 
-  /**
-   * @override
-   */
+  /** @override */
   prepareBaseData() {
     if (this.data.type === 'vehicle') return;
     //auto calculations
@@ -85,6 +83,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       //if we calculate the toughness then we set the values to 0 beforehand so the active effects can be applies
       const toughnessKey = 'data.stats.toughness.value';
       const armorKey = 'data.stats.toughness.armor';
+      this.data.data;
       setProperty(this.data, toughnessKey, 0);
       setProperty(this.data, armorKey, 0);
     }
@@ -99,51 +98,37 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
   }
 
-  /**
-   * @override
-   */
+  /** @override */
   prepareDerivedData() {
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
 
     //modify pace with wounds
     if (game.settings.get('swade', 'enableWoundPace')) {
-      const wounds = parseInt(getProperty(this.data, 'data.wounds.value'));
-      const pace = parseInt(getProperty(this.data, 'data.stats.speed.value'));
       //bound maximum wound penalty to -3
-      const woundsToUse = Math.min(wounds, 3);
-
-      let adjustedPace = pace - woundsToUse;
-      if (adjustedPace < 1) adjustedPace = 1;
-
-      setProperty(this.data, 'data.stats.speed.value', adjustedPace);
+      const wounds = Math.min(this.data.data.wounds.value, 3);
+      const pace = this.data.data.stats.speed.value;
+      //make sure the pace doesn't go below 1
+      const adjustedPace = Math.max(pace - wounds, 1);
+      setProperty(this.data, 'data.stats.speed.adjusted', adjustedPace);
     }
 
     //die type bounding for attributes
-    const attributes = getProperty(this.data, 'data.attributes');
-    for (const attribute in attributes) {
-      const sides = getProperty(
-        this.data,
-        `data.attributes.${attribute}.die.sides`,
-      );
+    for (const attribute in this.data.data.attributes) {
+      const key = `data.attributes.${attribute}.die.sides`;
+      const sides = getProperty(this.data, key);
       if (sides < 4 && sides !== 1) {
-        setProperty(this.data, `data.attributes.${attribute}.die.sides`, 4);
+        setProperty(this.data, key, 4);
       } else if (sides > 12) {
-        setProperty(this.data, `data.attributes.${attribute}.die.sides`, 12);
+        setProperty(this.data, key, 12);
       }
     }
 
     // Toughness calculation
-    const shouldAutoCalcToughness = getProperty(
-      this.data,
-      'data.details.autoCalcToughness',
-    );
-
+    const shouldAutoCalcToughness = this.data.data.details.autoCalcToughness;
     if (shouldAutoCalcToughness) {
-      const toughKey = 'data.stats.toughness.value';
-      const armorKey = 'data.stats.toughness.armor';
-      const adjustedTough = getProperty(this.data, toughKey);
-      const adjustedArmor = getProperty(this.data, armorKey);
+      const adjustedTough = this.data.data.stats.toughness.value;
+      const adjustedArmor = this.data.data.stats.toughness.armor;
 
       //add some sensible lower limits
       let completeArmor = this.calcArmor() + adjustedArmor;
@@ -151,22 +136,16 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       let completeTough =
         this.calcToughness(false) + adjustedTough + completeArmor;
       if (completeTough < 1) completeTough = 1;
-
-      setProperty(this.data, toughKey, completeTough);
-      setProperty(this.data, armorKey, completeArmor);
+      this.data.data.stats.toughness.value = completeTough;
+      this.data.data.stats.toughness.armor = completeArmor;
     }
 
-    const shouldAutoCalcParry = getProperty(
-      this.data,
-      'data.details.autoCalcParry',
-    );
-
+    const shouldAutoCalcParry = this.data.data.details.autoCalcParry;
     if (shouldAutoCalcParry) {
-      const parryKey = 'data.stats.parry.value';
-      const adjustedParry = getProperty(this.data, parryKey);
+      const adjustedParry = this.data.data.stats.parry.value;
       let completeParry = this.calcParry() + adjustedParry;
       if (completeParry < 0) completeParry = 0;
-      setProperty(this.data, parryKey, completeParry);
+      this.data.data.stats.parry.value = completeParry;
     }
   }
 
