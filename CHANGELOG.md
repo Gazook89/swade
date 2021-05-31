@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added compatability for Foundry VTT 0.8
 - When Equipping/unequipping an equippable item _all_ Active Effects that come from that item are now toggled as well
 - Added the ability to migrate data models
-- Added the ability to set Combatants on Hold in the Combat Tracker. This is done by right-clicking the combatant. You can also set Combatants who are on hold to Act Now and Act after the current combatant, as well as the ability to mark a combatant to have lost their turn.
+- Added the ability to set Combatants on Hold in the Combat Tracker. This is done by right-clicking the combatant. You can also set Combatants who are on hold to Act Now and Act after the current combatant, as well as the ability to mark a combatant to have lost their turn until the next round. Thanks to Kristian Serrano for submitting this.
 - Added additional translation strings
 
 ### Changed
