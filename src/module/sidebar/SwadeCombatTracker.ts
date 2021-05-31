@@ -89,9 +89,13 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
   // Act Now
   async _onActNow(c) {
-    const currentCombatant = game.combat.combatant;
-
     const cId = c.id;
+    const currentCombatant = game.combat.combatant;
+    const nextActiveCombatant = game.combat.turns.find(
+      (c) =>
+        //@ts-ignore
+        !c.getFlag('swade', 'roundHeld'),
+    );
     //@ts-ignore
     if (c.id !== currentCombatant.id) {
       //@ts-ignore
@@ -174,7 +178,10 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
     await c.unsetFlag('swade', 'roundHeld');
     //@ts-ignore
-    if (cId !== currentCombatant.id) {
+    if (
+      cId !== currentCombatant.id &&
+      currentCombatant.id != nextActiveCombatant.id
+    ) {
       await game.combat.previousTurn();
     }
   }
