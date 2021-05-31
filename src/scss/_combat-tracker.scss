@@ -1,0 +1,14 @@
+#combat.swade {
+  li.combatant {
+    .token-initiative {
+      flex: 0 0 53px;
+      padding: 3px;
+    }
+  }
+  li.combatant.is-in-group {
+    padding-left: 24px;
+    .token-image {
+      flex: 0 0 36px;
+    }
+  }
+}
