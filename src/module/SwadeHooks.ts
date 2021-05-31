@@ -223,27 +223,29 @@ export default class SwadeHooks {
         initdiv[0].innerHTML = '';
       }
     });
-    let draggedEl, draggedId;
+
+    // Drag and drop listeners
+    let draggedEl, draggedId, draggedCombatant;
 
     document.addEventListener(
       'dragstart',
       function (e) {
         // store the dragged item
         draggedEl = e.target;
+        draggedId = draggedEl.getAttribute('data-combatant-id');
+        //@ts-ignore
+        draggedCombatant = game.combat.combatants.get(draggedId);
       },
       false,
     );
 
     document.addEventListener(
       'drop',
-      async function (e) {
+      function (e) {
         e.preventDefault();
-        draggedId = await draggedEl.getAttribute('data-combatant-id');
-        //@ts-ignore
-        const draggedCombatant = game.combat.combatants.get(draggedId);
         const leaderId = e.target
           //@ts-ignore
-          .closest('li[data-combatant-id]')
+          .closest('li.combatant')
           .getAttribute('data-combatant-id');
         //@ts-ignore
         const leader = game.combat.combatants.get(leaderId);
@@ -252,10 +254,10 @@ export default class SwadeHooks {
           !hasProperty(draggedCombatant, 'data.flags.swade.isGroupLeader')
         ) {
           if (!hasProperty(leader, 'data.flags.swade.groupId')) {
-            await leader.setFlag('swade', 'isGroupLeader', true);
+            leader.setFlag('swade', 'isGroupLeader', true);
             // Set groupId of dragged combatant to the selected target's id
             //@ts-ignore
-            await draggedCombatant.setFlag('swade', 'groupId', leader.id);
+            draggedCombatant.setFlag('swade', 'groupId', leader.id);
           }
         }
       },
