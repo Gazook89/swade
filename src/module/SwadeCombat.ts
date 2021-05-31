@@ -46,13 +46,14 @@ export default class SwadeCombat extends Combat {
       //@ts-ignore
       const c = this.combatants.get(id);
       const roundHeld = hasProperty(c, 'data.flags.swade.roundHeld');
+      const inGroup = hasProperty(c, 'data.flags.swade.groupId');
       if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c.defeated || roundHeld) continue;
+      if (c.defeated || roundHeld || inGroup) continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -144,17 +145,22 @@ export default class SwadeCombat extends Combat {
         initiative: initiative,
         'flags.swade': newflags,
       });
-      if (hasProperty(c, 'data.flags.swade.isGroupLeader')) {
+      if (c.getFlag('swade', 'isGroupLeader')) {
+        const followers = game.combat.combatants.filter(
+          (f) =>
+            //@ts-ignore
+            f.getFlag('swade', 'groupId') === c.id,
+        );
         //@ts-ignore
-        for (const follower of game.combat.combatants.filter(
+        const fSuitValue = newflags.suitValue - 0.01;
+        for (const follower of followers) {
           //@ts-ignore
-          (f) => f.getFlag('swade', 'groupId') === c.id,
-        )) {
           combatantUpdates.push({
             //@ts-ignore
             _id: follower.id,
             initiative: initiative,
             'flags.swade': newflags,
+            'flags.swade.suitValue': fSuitValue,
           });
         }
       }
@@ -223,7 +229,7 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants = (a, b) => {
-    const currentRound = this.round;
+    const currentRound = game.combat.round;
     if (
       hasProperty(a, 'data.flags.swade') &&
       hasProperty(b, 'data.flags.swade')
@@ -238,31 +244,37 @@ export default class SwadeCombat extends Combat {
       if (!isOnHoldA && isOnHoldB) {
         return 1;
       }
-      const isGroupLeaderA = hasProperty(
-        a,
-        'data.flags.swade.isGroupLeader',
-      ) as boolean;
-      const isGroupLeaderB = hasProperty(
-        b,
-        'data.flags.swade.isGroupLeader',
-      ) as boolean;
-      const isInGroupA = a.getFlag('swade', 'groupId') === (b.id as boolean);
-      const isInGroupB = b.getFlag('swade', 'groupId') === (a.id as boolean);
-      if (isGroupLeaderA && isInGroupB) {
-        return -1;
-      }
-      if (isGroupLeaderB && isInGroupA) {
-        return 1;
-      }
       const cardA = a.getFlag('swade', 'cardValue') as number;
       const cardB = b.getFlag('swade', 'cardValue') as number;
       const card = cardB - cardA;
       if (card !== 0) return card;
       const suitA = a.getFlag('swade', 'suitValue') as number;
       const suitB = b.getFlag('swade', 'suitValue') as number;
-      const suit = suitB - suitA;
-      return suit;
+      //const suit = suitB - suitA;
+      //return suit;
+      if (suitA > suitB) {
+        return -1;
+      }
+      if (suitA < suitB) {
+        return 1;
+      }
+      if (suitA === suitB) {
+        return 1;
+      }
     }
+    /*
+    const isGroupLeaderA = a.getFlag('swade', 'isGroupLeader') as boolean;
+    const isGroupLeaderB = b.getFlag('swade', 'isGroupLeader') as boolean;
+    const isInGroupA = a.getFlag('swade', 'groupId') === (b.id as boolean);
+    const isInGroupB = b.getFlag('swade', 'groupId') === (a.id as boolean);
+    console.log(isGroupLeaderA)
+    if (isGroupLeaderA && isInGroupB) {
+      return -1;
+    }
+    if (isGroupLeaderB && isInGroupA) {
+      return 1;
+    }
+ */
     const [an, bn] = [a.token.name || '', b.token.name || ''];
     const cn = an.localeCompare(bn);
     if (cn !== 0) return cn;
