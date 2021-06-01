@@ -203,11 +203,10 @@ export default class SwadeHooks {
       const combId = el.getAttribute('data-combatant-id');
       //@ts-ignore
       const combatant = currentCombat.combatants.find((c) => c.id == combId);
-
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
       if (combatant.getFlag('swade', 'groupId') as boolean) {
-        initdiv[0].innerHTML = '';
+        initdiv[0].innerHTML = ``;
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'roundHeld') as boolean) {
         initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-hand-rock"></span>`;
@@ -249,16 +248,46 @@ export default class SwadeHooks {
           .getAttribute('data-combatant-id');
         //@ts-ignore
         const leader = game.combat.combatants.get(leaderId);
-        if (
-          draggedId !== leaderId &&
-          !hasProperty(draggedCombatant, 'data.flags.swade.isGroupLeader')
-        ) {
-          if (!hasProperty(leader, 'data.flags.swade.groupId')) {
-            leader.setFlag('swade', 'isGroupLeader', true);
-            // Set groupId of dragged combatant to the selected target's id
+        leader.setFlag('swade', 'isGroupLeader', true);
+        const fInitiative = getProperty(leader, 'data.initiative');
+        const fCardValue = leader.getFlag('swade', 'cardValue');
+        const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
+        const fHasJoker = leader.getFlag('swade', 'hasJoker');
+        // Set groupId of dragged combatant to the selected target's id
+        //@ts-ignore
+        draggedCombatant.update({
+          initiative: fInitiative,
+          flags: {
+            swade: {
+              cardValue: fCardValue,
+              suitValue: fSuitValue,
+              hasJoker: fHasJoker,
+              groupId: leaderId,
+            },
+          },
+        });
+        if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
+          const followers = game.combat.combatants.filter(
+            (f) =>
+              //@ts-ignore
+              f.getFlag('swade', 'groupId') === draggedCombatant.id,
+          );
+          //@ts-ignore
+          for (const follower of followers) {
             //@ts-ignore
-            draggedCombatant.setFlag('swade', 'groupId', leader.id);
+            follower.update({
+              initiative: fInitiative,
+              flags: {
+                swade: {
+                  cardValue: fCardValue,
+                  suitValue: fSuitValue,
+                  hasJoker: fHasJoker,
+                  groupId: leaderId,
+                },
+              },
+            });
           }
+          draggedCombatant.unsetFlag('swade', 'isGroupLeader');
         }
       },
       false,
@@ -388,10 +417,7 @@ export default class SwadeHooks {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return (
-          !hasProperty(targetCombatant, 'data.flags.swade.groupId') &&
-          !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader')
-        );
+        return !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader');
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
@@ -430,12 +456,13 @@ export default class SwadeHooks {
         await targetCombatant.unsetFlag('swade', 'isGroupLeader');
       },
     });
+
     // Get group leaders
     const groupLeaders = game.combat?.combatants?.filter((c) =>
       //@ts-ignore
       c.getFlag('swade', 'isGroupLeader'),
     );
-    // Check if there is a combat and combatants before looking for group leaders.
+    // Enable follow and unfollow if there are group leaders.
     if (groupLeaders) {
       // Loop through leaders
       for (const gl of groupLeaders) {
@@ -464,7 +491,51 @@ export default class SwadeHooks {
             //@ts-ignore
             const groupId = getProperty(gl, 'id');
             //@ts-ignore
-            await targetCombatant.setFlag('swade', 'groupId', groupId);
+            gl.setFlag('swade', 'isGroupLeader', true);
+            //@ts-ignore
+            const fInitiative = getProperty(gl, 'data.initiative');
+            //@ts-ignore
+            const fCardValue = gl.getFlag('swade', 'cardValue');
+            //@ts-ignore
+            const fSuitValue = gl.getFlag('swade', 'suitValue') - 0.01;
+            //@ts-ignore
+            const fHasJoker = gl.getFlag('swade', 'hasJoker');
+            // Set groupId of dragged combatant to the selected target's id
+            //@ts-ignore
+            targetCombatant.update({
+              initiative: fInitiative,
+              flags: {
+                swade: {
+                  cardValue: fCardValue,
+                  suitValue: fSuitValue,
+                  hasJoker: fHasJoker,
+                  groupId: groupId,
+                },
+              },
+            });
+            if (targetCombatant.getFlag('swade', 'isGroupLeader')) {
+              const followers = game.combat.combatants.filter(
+                (f) =>
+                  //@ts-ignore
+                  f.getFlag('swade', 'groupId') === targetCombatant.id,
+              );
+              //@ts-ignore
+              for (const follower of followers) {
+                //@ts-ignore
+                follower.update({
+                  initiative: fInitiative,
+                  flags: {
+                    swade: {
+                      cardValue: fCardValue,
+                      suitValue: fSuitValue,
+                      hasJoker: fHasJoker,
+                      groupId: groupId,
+                    },
+                  },
+                });
+              }
+              targetCombatant.unsetFlag('swade', 'isGroupLeader');
+            }
           },
         });
 
@@ -480,8 +551,7 @@ export default class SwadeHooks {
             );
             return (
               targetCombatant.getFlag('swade', 'groupId') ===
-                getProperty(gl, 'id') &&
-              !targetCombatant.getFlag('swade', 'isGroupLeader')
+              getProperty(gl, 'id')
             );
           },
           callback: async (li) => {
