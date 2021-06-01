@@ -9,8 +9,6 @@ export default class SwadeCombatTracker extends CombatTracker {
 
   activateListeners(html) {
     super.activateListeners(html);
-    const tracker = html.find('#combat-tracker');
-    const combatants = tracker.find('.combatant');
     html.find('.combatant-control').click(this._onCombatantControl.bind(this));
   }
 
@@ -24,6 +22,8 @@ export default class SwadeCombatTracker extends CombatTracker {
 
     // Switch control action
     switch (btn.dataset.control) {
+      case 'rollInitiative':
+        return this._onDrawInitiative(c);
       // Toggle combatant roundHeld flag
       case 'toggleHold':
         return this._onToggleHoldStatus(c);
@@ -39,6 +39,9 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
   }
 
+  async _onDrawInitiative(c) {
+    game.combat.rollInitiative([c.id]);
+  }
   // Toggle Hold
   async _onToggleHoldStatus(c) {
     //@ts-ignore
@@ -177,9 +180,10 @@ export default class SwadeCombatTracker extends CombatTracker {
       }
     }
     await c.unsetFlag('swade', 'roundHeld');
-    //@ts-ignore
     if (
+      //@ts-ignore
       cId !== currentCombatant.id &&
+      //@ts-ignore
       currentCombatant.id != nextActiveCombatant.id
     ) {
       await game.combat.previousTurn();
