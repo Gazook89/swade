@@ -124,4 +124,29 @@ export const registerCustomHelpers = function () {
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'roundHeld');
   });
+
+  Handlebars.registerHelper('leaderColor', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    const leaderId = c.getFlag('swade', 'groupId');
+    //@ts-ignore
+    const leaderOwner = game.combat.combatants.get(leaderId);
+    if (leaderOwner?.players?.length) {
+      return leaderOwner.players[0].data.color;
+    } else {
+      return game.users.find((u) => u.isGM === true).data.color;
+    }
+  });
+
+  Handlebars.registerHelper('ownerColor', (id) => {
+    //@ts-ignore
+    const c = game.combat.combatants.get(id);
+    //@ts-ignore
+    if (c?.players?.length) {
+      return c.players[0].data.color;
+    } else {
+      const gm = game.users.find((u) => u.isGM === true);
+      return gm.data.color;
+    }
+  });
 };
