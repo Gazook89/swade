@@ -189,6 +189,7 @@ SWADE.Fatigue: Fatigue
 SWADE.FatigueMax: Max Fatigue
 SWADE.Incap: Incapacitated
 SWADE.Init: Initiative
+SWADE.DrawInit: Draw Initiative
 SWADE.InitDraw: draws for Initiative!
 SWADE.JokersWild: Joker's Wild
 SWADE.General: General
