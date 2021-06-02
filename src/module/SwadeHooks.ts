@@ -198,7 +198,7 @@ export default class SwadeHooks {
   ) {
     const currentCombat: Combat =
       data.combats[data.currentIndex - 1] || data.combat;
-
+    let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id');
       //@ts-ignore
@@ -221,91 +221,95 @@ export default class SwadeHooks {
       } else if (!game.user.isGM) {
         initdiv[0].innerHTML = '';
       }
-    });
 
-    // Drag and drop listeners
-    let draggedEl, draggedId, draggedCombatant;
-
-    document.addEventListener(
-      'dragstart',
-      function (e) {
-        // store the dragged item
-        draggedEl = e.target;
-        draggedId = draggedEl.getAttribute('data-combatant-id');
+      // Drag and drop listeners
+      el.addEventListener(
+        'dragstart',
+        function (e) {
+          // store the dragged item
+          draggedEl = e.target;
+          draggedId = draggedEl.getAttribute('data-combatant-id');
+          //@ts-ignore
+          draggedCombatant = game.combat.combatants.get(draggedId);
+        },
+        false,
+      );
+      el.addEventListener('dragover', function (e) {
+        const dropTargetEl = e.target
+          //@ts-ignore
+          .closest('li.combatant');
+        const dropTargetId = dropTargetEl.getAttribute('data-combatant-id');
         //@ts-ignore
-        draggedCombatant = game.combat.combatants.get(draggedId);
-      },
-      false,
-    );
-    document.addEventListener('dragover', function (e) {
-      e.target
-        //@ts-ignore
-        .closest('li.combatant')
-        .classList.add('dropTarget');
-    });
-    document.addEventListener('dragleave', function (e) {
-      e.target
-        //@ts-ignore
-        .closest('li.combatant')
-        .classList.remove('dropTarget');
-    });
-    document.addEventListener(
-      'drop',
-      function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        const leaderId = e.target
+        const dropTargetCombatant = game.combat.combatants.get(dropTargetId);
+        if (!dropTargetCombatant.getFlag('swade', 'groupId')) {
+          dropTargetEl.classList.add('dropTarget');
+        }
+      });
+      el.addEventListener('dragleave', function (e) {
+        e.target
           //@ts-ignore
           .closest('li.combatant')
-          .getAttribute('data-combatant-id');
-        //@ts-ignore
-        const leader = game.combat.combatants.get(leaderId);
-        if (!leader.getFlag('swade', 'groupId')) {
-          leader.setFlag('swade', 'isGroupLeader', true);
-          const fInitiative = getProperty(leader, 'data.initiative');
-          const fCardValue = leader.getFlag('swade', 'cardValue');
-          const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
-          const fHasJoker = leader.getFlag('swade', 'hasJoker');
-          // Set groupId of dragged combatant to the selected target's id
-          //@ts-ignore
-          draggedCombatant.update({
-            initiative: fInitiative,
-            flags: {
-              swade: {
-                cardValue: fCardValue,
-                suitValue: fSuitValue,
-                hasJoker: fHasJoker,
-                groupId: leaderId,
-              },
-            },
-          });
-          if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
-            const followers = game.combat.combatants.filter(
-              (f) =>
-                //@ts-ignore
-                f.getFlag('swade', 'groupId') === draggedCombatant.id,
-            );
+          .classList.remove('dropTarget');
+      });
+      el.addEventListener(
+        'drop',
+        function (e) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          const leaderId = e.target
             //@ts-ignore
-            for (const follower of followers) {
-              //@ts-ignore
-              follower.update({
-                initiative: fInitiative,
-                flags: {
-                  swade: {
-                    cardValue: fCardValue,
-                    suitValue: fSuitValue,
-                    hasJoker: fHasJoker,
-                    groupId: leaderId,
-                  },
+            .closest('li.combatant')
+            .getAttribute('data-combatant-id');
+          //@ts-ignore
+          const leader = game.combat.combatants.get(leaderId);
+          if (!leader.getFlag('swade', 'groupId')) {
+            leader.setFlag('swade', 'isGroupLeader', true);
+            const fInitiative = getProperty(leader, 'data.initiative');
+            const fCardValue = leader.getFlag('swade', 'cardValue');
+            const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
+            const fHasJoker = leader.getFlag('swade', 'hasJoker');
+            // Set groupId of dragged combatant to the selected target's id
+            //@ts-ignore
+            draggedCombatant.update({
+              initiative: fInitiative,
+              flags: {
+                swade: {
+                  cardValue: fCardValue,
+                  suitValue: fSuitValue,
+                  hasJoker: fHasJoker,
+                  groupId: leaderId,
                 },
-              });
+              },
+            });
+            // If a leader, update its followers
+            if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
+              const followers = game.combat.combatants.filter(
+                (f) =>
+                  //@ts-ignore
+                  f.getFlag('swade', 'groupId') === draggedCombatant.id,
+              );
+              //@ts-ignore
+              for (const follower of followers) {
+                //@ts-ignore
+                follower.update({
+                  initiative: fInitiative,
+                  flags: {
+                    swade: {
+                      cardValue: fCardValue,
+                      suitValue: fSuitValue,
+                      hasJoker: fHasJoker,
+                      groupId: leaderId,
+                    },
+                  },
+                });
+              }
+              draggedCombatant.unsetFlag('swade', 'isGroupLeader');
             }
-            draggedCombatant.unsetFlag('swade', 'isGroupLeader');
           }
-        }
-      },
-      false,
-    );
+        },
+        false,
+      );
+    });
   }
 
   public static async onUpdateCombatant(
