@@ -1,4 +1,8 @@
 #combat.swade {
+  #combat-round .encounters h3 {
+    text-align: left;
+    padding: 0 5px;
+  }
   li.combatant {
     .roll {
       background: url(../../systems/swade/assets/ui/ace-white.svg) no-repeat 50%
