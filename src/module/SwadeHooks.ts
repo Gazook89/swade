@@ -237,57 +237,71 @@ export default class SwadeHooks {
       },
       false,
     );
-
+    document.addEventListener('dragover', function (e) {
+      e.target
+        //@ts-ignore
+        .closest('li.combatant')
+        .classList.add('dropTarget');
+    });
+    document.addEventListener('dragleave', function (e) {
+      e.target
+        //@ts-ignore
+        .closest('li.combatant')
+        .classList.remove('dropTarget');
+    });
     document.addEventListener(
       'drop',
       function (e) {
         e.preventDefault();
+        e.stopImmediatePropagation();
         const leaderId = e.target
           //@ts-ignore
           .closest('li.combatant')
           .getAttribute('data-combatant-id');
         //@ts-ignore
         const leader = game.combat.combatants.get(leaderId);
-        leader.setFlag('swade', 'isGroupLeader', true);
-        const fInitiative = getProperty(leader, 'data.initiative');
-        const fCardValue = leader.getFlag('swade', 'cardValue');
-        const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
-        const fHasJoker = leader.getFlag('swade', 'hasJoker');
-        // Set groupId of dragged combatant to the selected target's id
-        //@ts-ignore
-        draggedCombatant.update({
-          initiative: fInitiative,
-          flags: {
-            swade: {
-              cardValue: fCardValue,
-              suitValue: fSuitValue,
-              hasJoker: fHasJoker,
-              groupId: leaderId,
-            },
-          },
-        });
-        if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
-          const followers = game.combat.combatants.filter(
-            (f) =>
-              //@ts-ignore
-              f.getFlag('swade', 'groupId') === draggedCombatant.id,
-          );
+        if (!leader.getFlag('swade', 'groupId')) {
+          leader.setFlag('swade', 'isGroupLeader', true);
+          const fInitiative = getProperty(leader, 'data.initiative');
+          const fCardValue = leader.getFlag('swade', 'cardValue');
+          const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
+          const fHasJoker = leader.getFlag('swade', 'hasJoker');
+          // Set groupId of dragged combatant to the selected target's id
           //@ts-ignore
-          for (const follower of followers) {
-            //@ts-ignore
-            follower.update({
-              initiative: fInitiative,
-              flags: {
-                swade: {
-                  cardValue: fCardValue,
-                  suitValue: fSuitValue,
-                  hasJoker: fHasJoker,
-                  groupId: leaderId,
-                },
+          draggedCombatant.update({
+            initiative: fInitiative,
+            flags: {
+              swade: {
+                cardValue: fCardValue,
+                suitValue: fSuitValue,
+                hasJoker: fHasJoker,
+                groupId: leaderId,
               },
-            });
+            },
+          });
+          if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
+            const followers = game.combat.combatants.filter(
+              (f) =>
+                //@ts-ignore
+                f.getFlag('swade', 'groupId') === draggedCombatant.id,
+            );
+            //@ts-ignore
+            for (const follower of followers) {
+              //@ts-ignore
+              follower.update({
+                initiative: fInitiative,
+                flags: {
+                  swade: {
+                    cardValue: fCardValue,
+                    suitValue: fSuitValue,
+                    hasJoker: fHasJoker,
+                    groupId: leaderId,
+                  },
+                },
+              });
+            }
+            draggedCombatant.unsetFlag('swade', 'isGroupLeader');
           }
-          draggedCombatant.unsetFlag('swade', 'isGroupLeader');
         }
       },
       false,

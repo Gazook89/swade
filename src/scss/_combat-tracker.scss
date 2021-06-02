@@ -13,5 +13,12 @@
       border-right-width: 3px;
       border-right-style: solid;
     }
+    &.dropTarget {
+      background-color: #666;
+      .token-name h4 {
+        text-shadow: 1px 1px 3px #000;
+        font-size: 1.2em;
+      }
+    }
   }
 }
