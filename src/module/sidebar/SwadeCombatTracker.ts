@@ -22,17 +22,30 @@ export default class SwadeCombatTracker extends CombatTracker {
 
     // Switch control action
     switch (btn.dataset.control) {
+      // Toggle combatant visibility
+      case 'toggleHidden':
+        return c.update({ hidden: !c.hidden });
+
+      // Toggle combatant defeated flag
+      case 'toggleDefeated':
+        return this._onToggleDefeatedStatus(c);
+
+      // Roll combatant initiative
       case 'rollInitiative':
         return this._onDrawInitiative(c);
+
       // Toggle combatant roundHeld flag
       case 'toggleHold':
         return this._onToggleHoldStatus(c);
+
       // Toggle combatant turnLost flag
       case 'toggleLostTurn':
         return this._onToggleTurnLostStatus(c);
+
       // Toggle combatant turnLost flag
       case 'actNow':
         return this._onActNow(c);
+
       // Toggle combatant turnLost flag
       case 'actAfter':
         return this._onActAfterCurrentCombatant(c);
