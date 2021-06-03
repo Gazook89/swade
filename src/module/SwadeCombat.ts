@@ -45,8 +45,8 @@ export default class SwadeCombat extends Combat {
       // Get Combatant data
       //@ts-ignore
       const c = this.combatants.get(id);
-      const roundHeld = hasProperty(c, 'data.flags.swade.roundHeld');
-      const inGroup = hasProperty(c, 'data.flags.swade.groupId');
+      const roundHeld = c.getFlag('swade', 'roundHeld');
+      const inGroup = c.getFlag('swade', 'groupId');
       if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
@@ -229,15 +229,15 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants = (a, b) => {
-    const currentRound = game.combat.round;
+    const currentRound = this.round;
     if (
       hasProperty(a, 'data.flags.swade') &&
       hasProperty(b, 'data.flags.swade')
     ) {
       const isOnHoldA = (hasProperty(a, 'data.flags.swade.roundHeld') &&
-        a.getFlag('swade', 'roundHeld') !== currentRound) as boolean;
+        a.getFlag('swade', 'roundHeld') !== currentRound);
       const isOnHoldB = (hasProperty(b, 'data.flags.swade.roundHeld') &&
-        b.getFlag('swade', 'roundHeld') !== currentRound) as boolean;
+        b.getFlag('swade', 'roundHeld') !== currentRound);
       if (isOnHoldA && !isOnHoldB) {
         return -1;
       }
@@ -262,19 +262,6 @@ export default class SwadeCombat extends Combat {
         return 1;
       }
     }
-    /*
-    const isGroupLeaderA = a.getFlag('swade', 'isGroupLeader') as boolean;
-    const isGroupLeaderB = b.getFlag('swade', 'isGroupLeader') as boolean;
-    const isInGroupA = a.getFlag('swade', 'groupId') === (b.id as boolean);
-    const isInGroupB = b.getFlag('swade', 'groupId') === (a.id as boolean);
-    console.log(isGroupLeaderA)
-    if (isGroupLeaderA && isInGroupB) {
-      return -1;
-    }
-    if (isGroupLeaderB && isInGroupA) {
-      return 1;
-    }
- */
     const [an, bn] = [a.token.name || '', b.token.name || ''];
     const cn = an.localeCompare(bn);
     if (cn !== 0) return cn;
@@ -433,11 +420,12 @@ export default class SwadeCombat extends Combat {
     //Init autoroll
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
-      if (this.combatants.some((c) => c.initiative === null)) {
-        //FIXME remove any later
-        const combatantIds = this.combatants.map((c: any) => c.id);
-        await this.rollInitiative(combatantIds);
+      const combatantIds = []
+      for (const c of this.combatants.filter((c) => c.initiative === null)) {
+        //@ts-ignore
+        combatantIds.push(c.id);
       }
+      await this.rollInitiative(combatantIds);
     }
     return this;
   }
@@ -523,7 +511,7 @@ export default class SwadeCombat extends Combat {
             cardValue: null,
             hasJoker: false,
             cardString: '',
-            '-=turnLost': null,
+            turnLost: false,
             isOnHold: false,
           },
         };
