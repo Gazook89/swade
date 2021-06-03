@@ -205,13 +205,13 @@ export default class SwadeHooks {
       const combatant = currentCombat.combatants.find((c) => c.id == combId);
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
-      if (combatant.getFlag('swade', 'groupId') as boolean) {
+      if (combatant.getFlag('swade', 'groupId')) {
         initdiv[0].innerHTML = ``;
         //@ts-ignore
-      } else if (combatant.getFlag('swade', 'roundHeld') as boolean) {
+      } else if (combatant.getFlag('swade', 'roundHeld')) {
         initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-hand-rock"></span>`;
         //@ts-ignore
-      } else if (combatant.getFlag('swade', 'turnLost') as boolean) {
+      } else if (combatant.getFlag('swade', 'turnLost')) {
         initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-ban"></span>`;
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'cardString')) {
