@@ -13,6 +13,7 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
 
   async _onCombatantControl(event) {
+    super._onCombatantControl(event);
     event.preventDefault();
     event.stopPropagation();
     const btn = event.currentTarget;
@@ -22,18 +23,6 @@ export default class SwadeCombatTracker extends CombatTracker {
 
     // Switch control action
     switch (btn.dataset.control) {
-      // Toggle combatant visibility
-      case 'toggleHidden':
-        return c.update({ hidden: !c.hidden });
-
-      // Toggle combatant defeated flag
-      case 'toggleDefeated':
-        return this._onToggleDefeatedStatus(c);
-
-      // Roll combatant initiative
-      case 'rollInitiative':
-        return this._onDrawInitiative(c);
-
       // Toggle combatant roundHeld flag
       case 'toggleHold':
         return this._onToggleHoldStatus(c);
@@ -52,9 +41,6 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
   }
 
-  async _onDrawInitiative(c) {
-    game.combat.rollInitiative([c.id]);
-  }
   // Toggle Hold
   async _onToggleHoldStatus(c) {
     //@ts-ignore
@@ -88,7 +74,7 @@ export default class SwadeCombatTracker extends CombatTracker {
         flags: {
           swade: {
             turnLost: true,
-            '-=roundHeld': null,
+            roundHeld: null,
           },
         },
       });
@@ -97,7 +83,7 @@ export default class SwadeCombatTracker extends CombatTracker {
         flags: {
           swade: {
             roundHeld: game.combat.round,
-            '-=turnLost': null,
+            turnLost: false,
           },
         },
       });
@@ -139,7 +125,7 @@ export default class SwadeCombatTracker extends CombatTracker {
               swade: {
                 cardValue: currentCardValue,
                 suitValue: c.getFlag('swade', 'suitValue') - 0.01,
-                '-=roundHeld': null,
+                roundHeld: null,
               },
             },
           });
@@ -184,7 +170,7 @@ export default class SwadeCombatTracker extends CombatTracker {
               swade: {
                 cardValue: nextActiveCardValue,
                 suitValue: c.getFlag('swade', 'suitValue') - 0.01,
-                '-=roundHeld': null,
+                roundHeld: null,
               },
             },
           });
@@ -232,7 +218,7 @@ export default class SwadeCombatTracker extends CombatTracker {
             swade: {
               cardValue: currentCardValue,
               suitValue: c.getFlag('swade', 'suitValue') - 0.01,
-              '-=roundHeld': null,
+              roundHeld: null,
             },
           },
         });
