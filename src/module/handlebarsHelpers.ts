@@ -130,23 +130,33 @@ export const registerCustomHelpers = function () {
     const c = game.combat.combatants.get(id);
     const leaderId = c.getFlag('swade', 'groupId');
     //@ts-ignore
-    const leaderOwner = game.combat.combatants.get(leaderId);
-    if (leaderOwner?.players?.length) {
-      return leaderOwner.players[0].data.color;
+    const leader = game.combat.combatants.get(leaderId);
+    const groupColor = hasProperty(leader, 'data.flags.swade.groupColor');
+    if (groupColor) {
+      return leader.getFlag('swade', 'groupColor');
     } else {
-      return game.users.find((u) => u.isGM === true).data.color;
+      if (leader?.players?.length) {
+        return leader.players[0].data.color;
+      } else {
+        return game.users.find((u) => u.isGM === true).data.color;
+      }
     }
   });
 
   Handlebars.registerHelper('ownerColor', (id) => {
     //@ts-ignore
     const c = game.combat.combatants.get(id);
-    //@ts-ignore
-    if (c?.players?.length) {
-      return c.players[0].data.color;
+    const groupColor = hasProperty(c, 'data.flags.swade.groupColor');
+    if (groupColor) {
+      return c.getFlag('swade', 'groupColor');
     } else {
-      const gm = game.users.find((u) => u.isGM === true);
-      return gm.data.color;
+      //@ts-ignore
+      if (c?.players?.length) {
+        return c.players[0].data.color;
+      } else {
+        const gm = game.users.find((u) => u.isGM === true);
+        return gm.data.color;
+      }
     }
   });
 };

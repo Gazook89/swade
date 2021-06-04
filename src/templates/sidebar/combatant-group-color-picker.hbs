@@ -1,0 +1,13 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <main class="sheet-body">
+        <div class="form-group">
+            <label>{{localize "SWADE.SetGroupColor"}}</label>
+            <div class="form-fields">
+                <input type="text" title="Enter a hex color value." name="groupColor" value="{{ownerColor this.id}}"
+                    data-dtype="String" />
+                <input type="color" title="Select a color." name="groupColorSelector" value="{{ownerColor this.id}}"
+                    data-edit="groupColor"/>
+            </div>
+        </div>
+    </main>
+</form>
