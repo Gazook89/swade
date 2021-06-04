@@ -1,3 +1,6 @@
+/**
+ * This class defines a a new Combat Tracker specifically designed for SWADE
+ */
 export default class SwadeCombatTracker extends CombatTracker {
   /** @inheritdoc */
   static get defaultOptions() {
