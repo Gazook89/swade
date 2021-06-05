@@ -7,7 +7,10 @@ export default class SwadeCombatGroupColor extends FormApplication {
   constructor(object = {}, options = {}) {
     super(object, options);
   }
-
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find('.reset-color').click(this._onResetColor.bind(this));
+  }
   static get defaultOptions() {
     return {
       ...super.defaultOptions,
@@ -26,11 +29,28 @@ export default class SwadeCombatGroupColor extends FormApplication {
   }
 
   async _onChangeColorPicker(event) {
-      super._onChangeColorPicker(event);
-      //@ts-ignore
-      this.object.setFlag('swade', 'groupColor', event.currentTarget.value);
+    super._onChangeColorPicker(event);
+    //@ts-ignore
+    this.object.setFlag('swade', 'groupColor', event.currentTarget.value);
   }
 
-  async _updateObject(event, formData) {
+  async _onResetColor(event) {
+    //@ts-ignore
+    const c = game.combat.combatants.get(this.object.id);
+    let groupColor = '#efefef';
+    //@ts-ignore
+    if (c?.players?.length) {
+      //@ts-ignore
+      groupColor = c.players[0].data.color;
+    } else {
+      const gm = game.users.find((u) => u.isGM === true);
+      //@ts-ignore
+      groupColor = gm.data.color;
+    }
+    //@ts-ignore
+    this.object.unsetFlag('swade', 'groupColor');
+    this.form['groupColor'].value = groupColor;
   }
+
+  async _updateObject(event, formData) {}
 }
