@@ -153,6 +153,8 @@ SWADE.Fatigue: Erschöpfung
 SWADE.FatigueMax: Max Erschöpfung
 SWADE.Incap: Ausgeschaltet!
 SWADE.Init: Initiative
+SWADE.ResetActionDeck: Aktionsdeck zurücksetzen
+SWADE.ActionDeckResetNotification: Aktionsdeck wurde zurückgesetzt
 SWADE.InitDraw: zieht für Initiative!
 SWADE.JokersWild: Joker's Wild
 SWADE.Addi: Zusätzlich

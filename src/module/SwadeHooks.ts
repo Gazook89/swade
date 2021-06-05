@@ -459,13 +459,11 @@ export default class SwadeHooks {
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(
-          targetCombatantId,
-        );
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
         //@ts-ignore
-        const colorPicker = new SwadeCombatGroupColor(targetCombatant)
-        colorPicker.render(true)
-      }
+        const colorPicker = new SwadeCombatGroupColor(targetCombatant);
+        colorPicker.render(true);
+      },
     });
 
     // Remove Group Leader
