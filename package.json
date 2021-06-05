@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "swade",
-  "version": "0.19.0",
+  "version": "0.19.1",
   "description": "An implementation of the Savage Worlds Adventure Edition game system for Foundry Virtual Tabletop (http://foundryvtt.com). This work is permitted under the Pinnacle Entertainment Group Fan License (https://www.peginc.com/licensing)",
   "scripts": {
     "package": "gulp package",
