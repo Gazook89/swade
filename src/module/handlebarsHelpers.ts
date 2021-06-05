@@ -143,12 +143,12 @@ export const registerCustomHelpers = function () {
     }
   });
 
-  Handlebars.registerHelper('ownerColor', (id) => {
+  Handlebars.registerHelper('groupColor', (id) => {
     //@ts-ignore
     const c = game.combat.combatants.get(id);
-    const groupColor = hasProperty(c, 'data.flags.swade.groupColor');
+    const groupColor = c.getFlag('swade', 'groupColor');
     if (groupColor) {
-      return c.getFlag('swade', 'groupColor');
+      return groupColor;
     } else {
       //@ts-ignore
       if (c?.players?.length) {
