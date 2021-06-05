@@ -20,6 +20,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [v0.19.1]
+
+### Added
+
+- Added the missing Holy/Unholy Warrior edge
+
+### Fixed
+
+- Fixed an issue where arcane backgrounds would not display the powers tab
+- Fixed an issue where the smarts die type would always stay as a d4
+- Fixed an issue where the contents of the rank field would reset
+
 ## [v0.19.0]
 
 ### Added
