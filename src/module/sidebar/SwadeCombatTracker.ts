@@ -2,7 +2,6 @@
  * This class defines a a new Combat Tracker specifically designed for SWADE
  */
 import { SWADE } from '../config';
-
 export default class SwadeCombatTracker extends CombatTracker {
   /** @inheritdoc */
   static get defaultOptions() {
@@ -15,6 +14,7 @@ export default class SwadeCombatTracker extends CombatTracker {
   activateListeners(html) {
     super.activateListeners(html);
     html.find('.combatant-control').click(this._onCombatantControl.bind(this));
+
     html
       .find('.combat-control[data-control=resetDeck]')
       .click(this._onResetActionDeck.bind(this));
