@@ -1,3 +1,5 @@
+SWADE.ButtonReset: Zurücksetzen
+SWADE.ButtonSubmit: Einreichen
 SWADE.CommunityCharSheet: Legacy Charakterbogen
 SWADE.CommunityNPCSheet: Community NSC-Bogen
 SWADE.CommunityVicSheet: Community Fahrzeugbogen
@@ -264,6 +266,7 @@ SWADE.Unfollow: Folge {name} nicht
 SWADE.MakeGroupLeader: Gruppenleiter machen
 SWADE.RemoveGroupLeader: Gruppenleiter entfernen
 SWADE.SetGroupColor: Gruppenfarbe einstellen
+SWADE.SelectColor: Wählen Sie eine Farbe
 SWADE.Holding: Aufgespart
 SWADE.Invisible: Unsichtbar
 SWADE.Hold: Abwarten
