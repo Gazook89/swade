@@ -99,6 +99,7 @@ SWADE.Follow: Follow {name}
 SWADE.Unfollow: Unfollow {name}
 SWADE.MakeGroupLeader: Make Group Leader
 SWADE.RemoveGroupLeader: Remove Group Leader
+SWADE.SetGroupColor: Set Group Color
 SWADE.Holding: Holding
 SWADE.Hold: Hold
 SWADE.ActNow: Act Now

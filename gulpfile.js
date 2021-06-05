@@ -297,6 +297,7 @@ async function clean() {
       'module.json',
       'system.json',
       'template.json',
+      'swade.lock',
     );
   }
 

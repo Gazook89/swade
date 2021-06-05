@@ -13,6 +13,7 @@ import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import { createActionCardTable } from './util';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
+import SwadeCombatGroupColor from './sidebar/SwadeCombatGroupColor';
 
 export default class SwadeHooks {
   public static onSetup() {
@@ -205,13 +206,13 @@ export default class SwadeHooks {
       const combatant = currentCombat.combatants.find((c) => c.id == combId);
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
-      if (combatant.getFlag('swade', 'groupId') as boolean) {
+      if (combatant.getFlag('swade', 'groupId')) {
         initdiv[0].innerHTML = ``;
         //@ts-ignore
-      } else if (combatant.getFlag('swade', 'roundHeld') as boolean) {
+      } else if (combatant.getFlag('swade', 'roundHeld')) {
         initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-hand-rock"></span>`;
         //@ts-ignore
-      } else if (combatant.getFlag('swade', 'turnLost') as boolean) {
+      } else if (combatant.getFlag('swade', 'turnLost')) {
         initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-ban"></span>`;
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'cardString')) {
@@ -442,6 +443,26 @@ export default class SwadeHooks {
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         await targetCombatant.setFlag('swade', 'isGroupLeader', true);
+      },
+    });
+
+    // Set Group Color
+    newOptions.push({
+      name: 'SWADE.SetGroupColor',
+      icon: '<i class="fas fa-palette"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        return targetCombatant.getFlag('swade', 'isGroupLeader');
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id');
+        //@ts-ignore
+        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        //@ts-ignore
+        const colorPicker = new SwadeCombatGroupColor(targetCombatant);
+        colorPicker.render(true);
       },
     });
 

@@ -33,7 +33,7 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
    */
   get hasArcaneBackground(): boolean {
     const abEdges = this.itemTypes.edge.filter((i) =>
-      getProperty(i, '.data.data.isArcaneBackground'),
+      getProperty(i, 'data.data.isArcaneBackground'),
     );
     const abAbilities = this.itemTypes.ability.filter((i) =>
       getProperty(i, 'data.data.grantsPowers'),
