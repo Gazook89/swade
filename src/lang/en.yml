@@ -95,6 +95,11 @@ SWADE.Aiming: Aiming
 SWADE.Berserk: Berserk
 SWADE.Defending: Defending
 SWADE.Flying: Flying
+SWADE.Follow: Follow {name}
+SWADE.Unfollow: Unfollow {name}
+SWADE.MakeGroupLeader: Make Group Leader
+SWADE.RemoveGroupLeader: Remove Group Leader
+SWADE.SetGroupColor: Set Group Color
 SWADE.Holding: Holding
 SWADE.Hold: Hold
 SWADE.ActNow: Act Now
@@ -185,6 +190,7 @@ SWADE.Fatigue: Fatigue
 SWADE.FatigueMax: Max Fatigue
 SWADE.Incap: Incapacitated
 SWADE.Init: Initiative
+SWADE.DrawInit: Draw Initiative
 SWADE.InitDraw: draws for Initiative!
 SWADE.JokersWild: Joker's Wild
 SWADE.General: General
