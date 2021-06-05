@@ -45,14 +45,15 @@ export default class SwadeCombat extends Combat {
       // Get Combatant data
       //@ts-ignore
       const c = this.combatants.get(id);
-      const roundHeld = hasProperty(c, 'data.flags.swade.roundHeld');
+      const roundHeld = c.getFlag('swade', 'roundHeld');
+      const inGroup = c.getFlag('swade', 'groupId');
       if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c.defeated || roundHeld) continue;
+      if (c.defeated || roundHeld || inGroup) continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -135,13 +136,34 @@ export default class SwadeCombat extends Combat {
         cardString: card.data.content,
       };
 
+      const initiative =
+        (card.getFlag('swade', 'suitValue') as number) +
+        (card.getFlag('swade', 'cardValue') as number);
+
       combatantUpdates.push({
         _id: c.id,
-        initiative:
-          (card.getFlag('swade', 'suitValue') as number) +
-          (card.getFlag('swade', 'cardValue') as number),
+        initiative: initiative,
         'flags.swade': newflags,
       });
+      if (c.getFlag('swade', 'isGroupLeader')) {
+        const followers = game.combat.combatants.filter(
+          (f) =>
+            //@ts-ignore
+            f.getFlag('swade', 'groupId') === c.id,
+        );
+        //@ts-ignore
+        const fSuitValue = newflags.suitValue - 0.01;
+        for (const follower of followers) {
+          //@ts-ignore
+          combatantUpdates.push({
+            //@ts-ignore
+            _id: follower.id,
+            initiative: initiative,
+            'flags.swade': newflags,
+            'flags.swade.suitValue': fSuitValue,
+          });
+        }
+      }
 
       // Construct chat message data
       const template = `
@@ -213,9 +235,9 @@ export default class SwadeCombat extends Combat {
       hasProperty(b, 'data.flags.swade')
     ) {
       const isOnHoldA = (hasProperty(a, 'data.flags.swade.roundHeld') &&
-        a.getFlag('swade', 'roundHeld') !== currentRound) as boolean;
+        a.getFlag('swade', 'roundHeld') !== currentRound);
       const isOnHoldB = (hasProperty(b, 'data.flags.swade.roundHeld') &&
-        b.getFlag('swade', 'roundHeld') !== currentRound) as boolean;
+        b.getFlag('swade', 'roundHeld') !== currentRound);
       if (isOnHoldA && !isOnHoldB) {
         return -1;
       }
@@ -228,8 +250,17 @@ export default class SwadeCombat extends Combat {
       if (card !== 0) return card;
       const suitA = a.getFlag('swade', 'suitValue') as number;
       const suitB = b.getFlag('swade', 'suitValue') as number;
-      const suit = suitB - suitA;
-      return suit;
+      //const suit = suitB - suitA;
+      //return suit;
+      if (suitA > suitB) {
+        return -1;
+      }
+      if (suitA < suitB) {
+        return 1;
+      }
+      if (suitA === suitB) {
+        return 1;
+      }
     }
     const [an, bn] = [a.token.name || '', b.token.name || ''];
     const cn = an.localeCompare(bn);
@@ -389,11 +420,12 @@ export default class SwadeCombat extends Combat {
     //Init autoroll
     await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
-      if (this.combatants.some((c) => c.initiative === null)) {
-        //FIXME remove any later
-        const combatantIds = this.combatants.map((c: any) => c.id);
-        await this.rollInitiative(combatantIds);
+      const combatantIds = []
+      for (const c of this.combatants.filter((c) => c.initiative === null)) {
+        //@ts-ignore
+        combatantIds.push(c.id);
       }
+      await this.rollInitiative(combatantIds);
     }
     return this;
   }
@@ -479,7 +511,8 @@ export default class SwadeCombat extends Combat {
             cardValue: null,
             hasJoker: false,
             cardString: '',
-            '-=turnLost': null,
+            turnLost: false,
+            isOnHold: false,
           },
         };
       }

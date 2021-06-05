@@ -257,6 +257,11 @@ SWADE.Flying: Fliegend
 SWADE.Frightened: Veränstigt
 SWADE.General: Generell
 SWADE.HeartAttack: Herzinfarkt
+SWADE.Follow: Folge {name}
+SWADE.Unfollow: Folge {name} nicht
+SWADE.MakeGroupLeader: Gruppenleiter machen
+SWADE.RemoveGroupLeader: Gruppenleiter entfernen
+SWADE.SetGroupColor: Gruppenfarbe einstellen
 SWADE.Holding: Aufgespart
 SWADE.Invisible: Unsichtbar
 SWADE.Hold: Abwarten

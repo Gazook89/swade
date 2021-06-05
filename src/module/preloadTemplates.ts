@@ -55,6 +55,9 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/official/partials/item-card.html',
     'systems/swade/templates/official/partials/skill-card.html',
     'systems/swade/templates/official/partials/setting-fields.html',
+
+    //Sidebar
+    'systems/swade/templates/sidebar/combat-tracker.hbs',
   ];
 
   return loadTemplates(templatePaths);
