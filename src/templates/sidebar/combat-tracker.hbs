@@ -46,9 +46,11 @@
                 {{#unless hasCombat}}disabled{{/unless}}>
                 <i class="fas fa-undo"></i>
             </a>
+            {{#if combatCount}}
             <a class="combat-control" title="{{localize 'SWADE.ActionDeckReset'}}" data-control="resetDeck">
                 <i class="fas fa-recycle"></i>
             </a>
+            {{/if}}
             <a class="combat-settings" title="{{localize 'COMBAT.Settings'}}" data-control="trackerSettings">
                 <i class="fas fa-cog"></i>
             </a>
