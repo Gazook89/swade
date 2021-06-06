@@ -265,7 +265,7 @@ export default class SwadeHooks {
             .getAttribute('data-combatant-id');
           //@ts-ignore
           const leader = game.combat.combatants.get(leaderId);
-          if (!leader.getFlag('swade', 'groupId')) {
+          if (!leader.getFlag('swade', 'groupId') && draggedCombatant.id !== leaderId) {
             leader.setFlag('swade', 'isGroupLeader', true);
             const fInitiative = getProperty(leader, 'data.initiative');
             const fCardValue = leader.getFlag('swade', 'cardValue');
