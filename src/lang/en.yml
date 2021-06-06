@@ -1,3 +1,5 @@
+SWADE.ButtonReset: Reset
+SWADE.ButtonSubmit: Submit
 SWADE.CommunityCharSheet: Legacy Character Sheet
 SWADE.CommunityNPCSheet: Community NPC Sheet
 SWADE.CommunityVicSheet: Community Vehicle Sheet
@@ -100,6 +102,7 @@ SWADE.Unfollow: Unfollow {name}
 SWADE.MakeGroupLeader: Make Group Leader
 SWADE.RemoveGroupLeader: Remove Group Leader
 SWADE.SetGroupColor: Set Group Color
+SWADE.SelectColor: Select a color
 SWADE.Holding: Holding
 SWADE.Hold: Hold
 SWADE.ActNow: Act Now

@@ -22,9 +22,9 @@ export default class SwadeCombatGroupColor extends FormApplication {
       width: 275,
       height: 'auto' as const,
       resizable: false,
-      closeOnSubmit: false,
+      closeOnSubmit: true,
       submitOnClose: true,
-      submitOnChange: true,
+      submitOnChange: false,
     };
   }
 
