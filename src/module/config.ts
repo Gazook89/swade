@@ -91,6 +91,10 @@ export const SWADE = {
     flags: {},
   },
 
+  actionCardEditor: {
+    id: 'actionCardEditor',
+  },
+
   templates: {
     preloadPromise: null,
     templatesPreloaded: false,

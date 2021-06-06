@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SysItemData } from '../interfaces/item-data';
+import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
 import * as chat from './chat';
 import { SWADE } from './config';
@@ -174,6 +175,32 @@ export default class SwadeHooks {
         }
       });
     }
+  }
+
+  public static onGetCompendiumDirectoryEntryContext(
+    html: JQuery,
+    options: ContextMenu.Item[],
+  ) {
+    const obj: ContextMenu.Item = {
+      name: 'SWADE.OpenACEditor',
+      icon: '<i class="fas fa-edit"></i>',
+      condition: (li) => {
+        const pack = game.packs.get(li.data('pack'));
+        //@ts-ignore
+        return pack.documentClass.documentName === 'JournalEntry';
+      },
+      callback: async (li) => {
+        const pack = game.packs.get(li.data('pack'));
+        if (pack.locked) {
+          ui.notifications.warn(game.i18n.localize('SWADE.WarningPackLocked'));
+        } else {
+          //@ts-ignore
+          const cards = (await pack.getDocuments()) as JournalEntry[];
+          new ActionCardEditor(cards).render(true);
+        }
+      },
+    };
+    options.push(obj);
   }
 
   //TODO remove later
@@ -391,7 +418,7 @@ export default class SwadeHooks {
 
   public static onGetChatLogEntryContext(
     html: JQuery<HTMLElement>,
-    options: any[],
+    options: ContextMenu.Item[],
   ) {
     const canApply = (li: JQuery<HTMLElement>) => {
       const message = game.messages.get(li.data('messageId'));
@@ -420,7 +447,7 @@ export default class SwadeHooks {
 
   public static async onGetCombatTrackerEntryContext(
     html: JQuery<HTMLElement>,
-    options: any[],
+    options: ContextMenu.Item[],
   ) {
     const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
     if (index !== -1) {
@@ -626,7 +653,7 @@ export default class SwadeHooks {
 
   public static onGetUserContextOptions(
     html: JQuery<HTMLElement>,
-    context: any[],
+    context: ContextMenu.Item[],
   ) {
     const players = html.find('#players');
     if (!players) return;

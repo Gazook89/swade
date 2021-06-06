@@ -21,10 +21,10 @@ import CharacterSheet from './module/sheets/official/CharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
+import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import {
   createSwadeMacro,
   rollItemMacro,
@@ -54,7 +54,7 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  // CONFIG.debug.hooks = true;
+  //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
   game.swade = swadeGame;
@@ -75,6 +75,7 @@ Hooks.once('init', () => {
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.statusEffects = SWADE.statusEffects;
   CONFIG.ui.combat = SwadeCombatTracker;
+
   // Register custom system settings
   registerSettings();
   registerSettingRules();
@@ -220,4 +221,8 @@ Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 
 Hooks.on('getCombatTrackerEntryContext', (html, options) => {
   SwadeHooks.onGetCombatTrackerEntryContext(html, options);
+});
+
+Hooks.on('getCompendiumDirectoryEntryContext', (html, options) => {
+  SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
 });

@@ -1,0 +1,72 @@
+<form autocomplete="off">
+  <section class="body">
+    <ul>
+      {{#each cards as |card|}}
+      <li class="flexrow">
+        <img
+          class="card-face"
+          src="{{card.data.img}}"
+          alt="{{card.name}}"
+          data-id="{{card.id}}"
+        />
+        <span class="flexcol">
+          <div class="form-group">
+            <label>Name</label>
+            <div class="form-fields">
+              <input
+                type="text"
+                name="{{card.id}}.name"
+                value="{{card.name}}"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Card Face</label>
+            <div class="form-fields">
+              <input
+                type="text"
+                name="{{card.id}}.img"
+                value="{{card.data.img}}"
+              />
+              <button
+                type="button"
+                class="file-picker"
+                data-type="image"
+                data-target="{{card.id}}.img"
+                title="Browse Files"
+              >
+                <i class="fas fa-file-import fa-fw"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Card Value</label>
+            <div class="form-fields">
+              <input
+                type="number"
+                data-dtype="Number"
+                name="{{card.id}}.cardValue"
+                value="{{card.data.flags.swade.cardValue}}"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Card Suit</label>
+            <div class="form-fields">
+              <input
+                type="number"
+                data-dtype="Number"
+                name="{{card.id}}.suitValue"
+                value="{{card.data.flags.swade.suitValue}}"
+              />
+            </div>
+          </div>
+        </span>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+  <button type="submit" name="submit" id="submit">
+    <i class="far fa-save"></i>{{localize "SETTINGS.Save"}}
+  </button>
+</form>
