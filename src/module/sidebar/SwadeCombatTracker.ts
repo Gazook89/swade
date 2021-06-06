@@ -21,7 +21,7 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
 
   // Reset the Action Deck
-  async _onResetActionDeck(event) {
+  async _onResetActionDeck() {
     const cardTable = game.tables.getName(SWADE.init.cardTable);
     cardTable.reset();
     ui.notifications.info(
@@ -36,7 +36,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     const btn = event.currentTarget;
     const li = btn.closest('.combatant');
     //@ts-ignore
-    const c = game.combat.combatants.get(li.dataset.combatantId);
+    const c = this.combat.combatants.get(li.dataset.combatantId);
 
     // Switch control action
     switch (btn.dataset.control) {
@@ -64,19 +64,19 @@ export default class SwadeCombatTracker extends CombatTracker {
     if (!c.getFlag('swade', 'roundHeld')) {
       // Add flag for on hold to show icon on token
       //@ts-ignore
-      await c.setFlag('swade', 'roundHeld', game.combat.round);
+      await c.setFlag('swade', 'roundHeld', this.combat.round);
       if (
         //@ts-ignore
         c.getFlag('swade', 'isGroupLeader')
       ) {
-        const followers = game.combat.combatants.filter(
+        const followers = this.combat.combatants.filter(
           (f) =>
             //@ts-ignore
             f.getFlag('swade', 'groupId') === c.id,
         );
         for (const f of followers) {
           //@ts-ignore
-          f.setFlag('swade', 'roundHeld', game.combat.round);
+          f.setFlag('swade', 'roundHeld', this.combat.round);
         }
       }
     } else {
@@ -99,7 +99,7 @@ export default class SwadeCombatTracker extends CombatTracker {
       await c.update({
         flags: {
           swade: {
-            roundHeld: game.combat.round,
+            roundHeld: this.combat.round,
             turnLost: false,
           },
         },
@@ -109,8 +109,8 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Act Now
   async _onActNow(c) {
     const cId = c.id;
-    const currentCombatant = game.combat.combatant;
-    const nextActiveCombatant = game.combat.turns.find(
+    const currentCombatant = this.combat.combatant;
+    const nextActiveCombatant = this.combat.turns.find(
       (c) =>
         //@ts-ignore
         !c.getFlag('swade', 'roundHeld'),
@@ -130,7 +130,7 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       });
       if (c.getFlag('swade', 'isGroupLeader')) {
-        const followers = game.combat.combatants.filter(
+        const followers = this.combat.combatants.filter(
           (c) =>
             //@ts-ignore
             c.getFlag('swade', 'groupId') === cId,
@@ -146,12 +146,12 @@ export default class SwadeCombatTracker extends CombatTracker {
               },
             },
           });
-          await game.combat.previousTurn();
+          await this.combat.previousTurn();
         }
       }
-      await game.combat.previousTurn();
+      await this.combat.previousTurn();
     } else {
-      const nextActiveCombatant = game.combat.turns.find(
+      const nextActiveCombatant = this.combat.turns.find(
         (c) =>
           //@ts-ignore
           !c.getFlag('swade', 'roundHeld'),
@@ -175,7 +175,7 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       });
       if (c.getFlag('swade', 'isGroupLeader')) {
-        const followers = game.combat.combatants.filter(
+        const followers = this.combat.combatants.filter(
           (c) =>
             //@ts-ignore
             c.getFlag('swade', 'groupId') === cId,
@@ -191,7 +191,7 @@ export default class SwadeCombatTracker extends CombatTracker {
               },
             },
           });
-          game.combat.previousTurn();
+          this.combat.previousTurn();
         }
       }
     }
@@ -202,13 +202,13 @@ export default class SwadeCombatTracker extends CombatTracker {
       //@ts-ignore
       currentCombatant.id != nextActiveCombatant.id
     ) {
-      await game.combat.previousTurn();
+      await this.combat.previousTurn();
     }
   }
   // Act After Current Combatant
   async _onActAfterCurrentCombatant(c) {
     const cId = c.id;
-    const currentCombatant = game.combat.combatant;
+    const currentCombatant = this.combat.combatant;
     //@ts-ignore
     const currentCardValue = currentCombatant.getFlag('swade', 'cardValue');
     //@ts-ignore
@@ -223,7 +223,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     });
     await c.unsetFlag('swade', 'roundHeld');
     if (c.getFlag('swade', 'isGroupLeader')) {
-      const followers = game.combat.combatants.filter(
+      const followers = this.combat.combatants.filter(
         (c) =>
           //@ts-ignore
           c.getFlag('swade', 'groupId') === cId,
@@ -240,10 +240,10 @@ export default class SwadeCombatTracker extends CombatTracker {
           },
         });
         // Go back to previous turn because technically it's still their turn and the holder is going after them.
-        await game.combat.previousTurn();
+        await this.combat.previousTurn();
       }
     }
     // Go back to previous turn because technically it's still their turn and the holder is going after them.
-    await game.combat.previousTurn();
+    await this.combat.previousTurn();
   }
 }

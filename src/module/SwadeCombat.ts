@@ -228,8 +228,8 @@ export default class SwadeCombat extends Combat {
    * @param a Combatant A
    * @param b Combatant B
    */
-  _sortCombatants = (a, b) => {
-    const currentRound = this.round;
+  _sortCombatants(a, b) {
+    const currentRound = this?.round ?? 0;
     if (
       hasProperty(a, 'data.flags.swade') &&
       hasProperty(b, 'data.flags.swade')
@@ -268,7 +268,7 @@ export default class SwadeCombat extends Combat {
     const cn = an.localeCompare(bn);
     if (cn !== 0) return cn;
     return a.tokenId - b.tokenId;
-  };
+  }
 
   /** @override */
   async resetAll() {

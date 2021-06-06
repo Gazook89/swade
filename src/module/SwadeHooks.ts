@@ -11,9 +11,9 @@ import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
-import { createActionCardTable } from './util';
-import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 import SwadeCombatGroupColor from './sidebar/SwadeCombatGroupColor';
+import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
+import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
   public static onSetup() {
@@ -207,13 +207,15 @@ export default class SwadeHooks {
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
       if (combatant.getFlag('swade', 'groupId')) {
-        initdiv[0].innerHTML = ``;
+        initdiv[0].innerHTML = '<i class="fas fa-user-friends fa-sm"></i>';
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'roundHeld')) {
-        initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-hand-rock"></span>`;
+        initdiv[0].innerHTML =
+          '<span class="initiative"><i class="fas fa-hand-rock"></span>';
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'turnLost')) {
-        initdiv[0].innerHTML = `<span class="initiative"><i class="fas fa-ban"></span>`;
+        initdiv[0].innerHTML =
+          '<span class="initiative"><i class="fas fa-ban"></span>';
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'cardString')) {
         //@ts-ignore
