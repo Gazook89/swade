@@ -203,7 +203,7 @@ export default class SwadeHooks {
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id');
       //@ts-ignore
-      const combatant = currentCombat.combatants.find((c) => c.id == combId);
+      const combatant = currentCombat.combatants.get(combId);
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
       if (combatant.getFlag('swade', 'groupId')) {
