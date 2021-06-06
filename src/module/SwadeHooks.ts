@@ -13,6 +13,7 @@ import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import SwadeCombatGroupColor from './sidebar/SwadeCombatGroupColor';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
+import SwadeCombat from './SwadeCombat';
 import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
@@ -207,7 +208,7 @@ export default class SwadeHooks {
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
       if (combatant.getFlag('swade', 'groupId')) {
-        initdiv[0].innerHTML = '<i class="fas fa-user-friends fa-sm"></i>';
+        initdiv[0].innerHTML = '<i class="fas fa-user-friends"></i>';
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'roundHeld')) {
         initdiv[0].innerHTML =
@@ -309,6 +310,8 @@ export default class SwadeHooks {
               draggedCombatant.unsetFlag('swade', 'isGroupLeader');
             }
           }
+          //@ts-ignore
+          SwadeCombat._sortCombatants;
         },
         false,
       );
