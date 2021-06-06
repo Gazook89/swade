@@ -252,7 +252,6 @@ export default class SwadeCombat extends Combat {
       if (card !== 0) return card;
       const suitA = a.getFlag('swade', 'suitValue') as number;
       const suitB = b.getFlag('swade', 'suitValue') as number;
-      //const suit = suitB - suitA;
       //return suit;
       if (suitA > suitB) {
         return -1;
