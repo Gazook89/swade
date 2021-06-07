@@ -371,3 +371,7 @@ SWADE.DeckShuffled: Card Deck automatically shuffled
 SWADE.BasePace: Base Pace
 SWADE.WarningPackLocked: You cannot edit a locked Compendium. Please unlock it first
 SWADE.ActionCardEditor: Action Card Editor
+SWADE.CardFace: Card Face
+SWADE.CardValue: Value
+SWADE.CardSuit: Suit
+SWADE.IsJoker: Is Joker

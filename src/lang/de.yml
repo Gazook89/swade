@@ -369,3 +369,7 @@ SWADE.WarningPackLocked: |-
   Sie können ein gesperrtes Kompendium nicht bearbeiten. 
   Bitte zuerst entsperren
 SWADE.ActionCardEditor: Aktionskarteneditor
+SWADE.CardFace: Kartenillustration
+SWADE.CardValue: Wert
+SWADE.IsJoker: Ist ein Joker
+SWADE.CardSuit: Symbol
