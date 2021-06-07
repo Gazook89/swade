@@ -195,9 +195,8 @@ export default class SwadeHooks {
         if (pack.locked) {
           ui.notifications.warn(game.i18n.localize('SWADE.WarningPackLocked'));
         } else {
-          //@ts-ignore
-          const cards = (await pack.getDocuments()) as JournalEntry[];
-          new ActionCardEditor(cards).render(true);
+          const editor = await ActionCardEditor.fromPack(pack);
+          editor.render(true);
         }
       },
     };
@@ -293,7 +292,10 @@ export default class SwadeHooks {
             .getAttribute('data-combatant-id');
           //@ts-ignore
           const leader = game.combat.combatants.get(leaderId);
-          if (!leader.getFlag('swade', 'groupId') && draggedCombatant.id !== leaderId) {
+          if (
+            !leader.getFlag('swade', 'groupId') &&
+            draggedCombatant.id !== leaderId
+          ) {
             leader.setFlag('swade', 'isGroupLeader', true);
             const fInitiative = getProperty(leader, 'data.initiative');
             const fCardValue = leader.getFlag('swade', 'cardValue');

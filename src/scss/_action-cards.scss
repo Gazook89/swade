@@ -1,6 +1,5 @@
 .swade.action-card-editor {
-  ul,
-  ol {
+  .card-list {
     list-style: none;
   }
 
@@ -8,6 +7,18 @@
     border-top: 1px solid gray;
     margin-top: 3px;
     padding-top: 3px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-around;
+    h1 {
+      flex: 5;
+      margin-right: 5px;
+    }
+    button {
+      flex: 1;
+    }
   }
 
   .body {
@@ -21,5 +32,9 @@
     border: none;
     border-radius: 0;
     height: 124px;
+  }
+
+  .card-details {
+    flex: 3;
   }
 }
