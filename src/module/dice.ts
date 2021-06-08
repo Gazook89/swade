@@ -45,62 +45,64 @@ export default class SwadeDice {
       rollModes: CONFIG.Dice.rollModes,
     };
 
-    const buttons = {
-      ok: {
-        label: game.i18n.localize('SWADE.Roll'),
-        icon: '<i class="fas fa-dice"></i>',
-        callback: async (html) => {
-          finalRoll = await this._handleRoll({
-            form: html,
-            roll: roll,
-            speaker,
-            flavor,
-            flags,
-          });
-        },
-      },
-      extra: {
-        label: '',
-        icon: '<i class="far fa-plus-square"></i>',
-        callback: async (html) => {
-          finalRoll = await this._handleRoll({
-            form: html,
-            raise: true,
-            actor: actor,
-            roll: roll,
-            allowGroup: actor && !actor.isWildcard && allowGroup,
-            speaker,
-            flavor,
-            flags,
-          });
-        },
-      },
-      cancel: {
-        icon: '<i class="fas fa-times"></i>',
-        label: game.i18n.localize('Cancel'),
-      },
-    };
-
-    if (item) {
-      buttons.extra.label = game.i18n.localize('SWADE.RollRaise');
-    } else if (actor && !actor.isWildcard && allowGroup) {
-      buttons.extra.label = game.i18n.localize('SWADE.GroupRoll');
-    } else {
-      delete buttons.extra;
-    }
-
     const html = await renderTemplate(template, dialogData);
     //Create Dialog window
-    let finalRoll: Roll = null;
     return new Promise((resolve) => {
+      const buttons = {
+        ok: {
+          label: game.i18n.localize('SWADE.Roll'),
+          icon: '<i class="fas fa-dice"></i>',
+          callback: async (html) => {
+            resolve(
+              await this._handleRoll({
+                form: html,
+                roll: roll,
+                speaker,
+                flavor,
+                flags,
+              }),
+            );
+          },
+        },
+        extra: {
+          label: '',
+          icon: '<i class="far fa-plus-square"></i>',
+          callback: async (html) => {
+            resolve(
+              await this._handleRoll({
+                form: html,
+                raise: true,
+                actor: actor,
+                roll: roll,
+                allowGroup: actor && !actor.isWildcard && allowGroup,
+                speaker,
+                flavor,
+                flags,
+              }),
+            );
+          },
+        },
+        cancel: {
+          icon: '<i class="fas fa-times"></i>',
+          label: game.i18n.localize('Cancel'),
+          callback: (html) => resolve(null),
+        },
+      };
+
+      if (item) {
+        buttons.extra.label = game.i18n.localize('SWADE.RollRaise');
+      } else if (actor && !actor.isWildcard && allowGroup) {
+        buttons.extra.label = game.i18n.localize('SWADE.GroupRoll');
+      } else {
+        delete buttons.extra;
+      }
+
       new Dialog({
         title: title,
         content: html,
         buttons: buttons,
         default: 'ok',
-        close: () => {
-          resolve(finalRoll);
-        },
+        close: () => resolve(null),
       }).render(true);
     });
   }
@@ -178,7 +180,8 @@ export default class SwadeDice {
     //End of Workaround
     // Convert the roll to a chat message and return the roll
     const newRoll = Roll.fromTerms(terms, roll.options);
-    await newRoll.evaluate({ async: false }).toMessage(
+    await newRoll.evaluate({ async: true });
+    await newRoll.toMessage(
       {
         speaker: speaker,
         flavor: flavor,
