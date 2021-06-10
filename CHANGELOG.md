@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed currency and wealth die not saving
+- Fixed Actions no longer subtracting ammo
 
 ## [v0.19.2]
 
