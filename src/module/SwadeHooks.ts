@@ -188,7 +188,8 @@ export default class SwadeHooks {
       condition: (li) => {
         const pack = game.packs.get(li.data('pack'));
         //@ts-ignore
-        return pack.documentClass.documentName === 'JournalEntry';
+        const isJE = pack.documentClass.documentName === 'JournalEntry';
+        return isJE && game.user.isGM;
       },
       callback: async (li) => {
         const pack = game.packs.get(li.data('pack'));
