@@ -1,4 +1,5 @@
 @import 'scss/variables';
+@import 'scss/checkmark';
 @import 'scss/fonts';
 @import 'scss/base';
 @import 'scss/actor-base';
@@ -8,10 +9,11 @@
 @import 'scss/chat';
 @import 'scss/item-cards';
 @import 'scss/core';
-@import 'scss/setting-config';
+//applications
 @import 'scss/tweaks';
-@import 'scss/checkmark';
+@import 'scss/setting-config';
 @import 'scss/combat-tracker';
+@import 'scss/action-cards';
 //official sheet
 @import 'scss/official/mixins';
 @import 'scss/official/sheet';

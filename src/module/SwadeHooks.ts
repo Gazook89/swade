@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SysItemData } from '../interfaces/item-data';
+import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
 import * as chat from './chat';
 import { SWADE } from './config';
@@ -177,6 +178,32 @@ export default class SwadeHooks {
     }
   }
 
+  public static onGetCompendiumDirectoryEntryContext(
+    html: JQuery,
+    options: ContextMenu.Item[],
+  ) {
+    const obj: ContextMenu.Item = {
+      name: 'SWADE.OpenACEditor',
+      icon: '<i class="fas fa-edit"></i>',
+      condition: (li) => {
+        const pack = game.packs.get(li.data('pack'));
+        //@ts-ignore
+        const isJE = pack.documentClass.documentName === 'JournalEntry';
+        return isJE && game.user.isGM;
+      },
+      callback: async (li) => {
+        const pack = game.packs.get(li.data('pack'));
+        if (pack.locked) {
+          ui.notifications.warn(game.i18n.localize('SWADE.WarningPackLocked'));
+        } else {
+          const editor = await ActionCardEditor.fromPack(pack);
+          editor.render(true);
+        }
+      },
+    };
+    options.push(obj);
+  }
+
   //TODO remove later
   public static onUpdateActor(
     actor: SwadeActor,
@@ -266,7 +293,10 @@ export default class SwadeHooks {
             .getAttribute('data-combatant-id');
           //@ts-ignore
           const leader = game.combat.combatants.get(leaderId);
-          if (!leader.getFlag('swade', 'groupId') && draggedCombatant.id !== leaderId) {
+          if (
+            !leader.getFlag('swade', 'groupId') &&
+            draggedCombatant.id !== leaderId
+          ) {
             leader.setFlag('swade', 'isGroupLeader', true);
             const fInitiative = getProperty(leader, 'data.initiative');
             const fCardValue = leader.getFlag('swade', 'cardValue');
@@ -394,7 +424,7 @@ export default class SwadeHooks {
 
   public static onGetChatLogEntryContext(
     html: JQuery<HTMLElement>,
-    options: any[],
+    options: ContextMenu.Item[],
   ) {
     const canApply = (li: JQuery<HTMLElement>) => {
       const message = game.messages.get(li.data('messageId'));
@@ -423,7 +453,7 @@ export default class SwadeHooks {
 
   public static async onGetCombatTrackerEntryContext(
     html: JQuery<HTMLElement>,
-    options: any[],
+    options: ContextMenu.Item[],
   ) {
     const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
     if (index !== -1) {
@@ -629,7 +659,7 @@ export default class SwadeHooks {
 
   public static onGetUserContextOptions(
     html: JQuery<HTMLElement>,
-    context: any[],
+    context: ContextMenu.Item[],
   ) {
     const players = html.find('#players');
     if (!players) return;
