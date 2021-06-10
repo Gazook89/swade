@@ -35,7 +35,7 @@ export default class ActionCardEditor extends FormApplication {
       template: 'systems/swade/templates/action-card-editor.html',
       classes: ['swade', 'action-card-editor'],
       scrollY: ['.card-list'],
-      width: 800,
+      width: 600,
       height: 'auto' as const,
       closeOnSubmit: false,
       submitOnClose: false,
@@ -52,32 +52,25 @@ export default class ActionCardEditor extends FormApplication {
 
   activateListeners(html: JQuery) {
     super.activateListeners(html);
-    html.find('.card-face').on('click', (event) => {
-      const id = event.currentTarget.dataset.id;
-      new ImagePopout(this.cards.get(id).data.img, {
-        shareable: true,
-      }).render(true);
-    });
+    html.find('.card-face').on('click', (ev) => this._showCard(ev));
     html.find('.add-card').on('click', () => this._createNewCard());
   }
 
   protected async _updateObject(event: Event, formData?: object) {
     const data = expandObject(formData);
-    for (const [id, value] of Object.entries(data) as [string, CardData][]) {
-      const card = this.cards.get(id);
-      if (this._cardChanged(card, value)) {
-        await card.update({
-          name: value.name,
-          img: value.img,
-          'flags.swade': {
-            cardValue: value.cardValue,
-            suitValue: value.suitValue,
-            isJoker: value.isJoker,
-          },
-        });
-      }
+    const cards = Object.entries(data.card) as [string, CardData][];
+    for (const [id, value] of cards) {
+      await this.cards.get(id)?.update({
+        name: value.name,
+        img: value.img,
+        'flags.swade': {
+          cardValue: value.cardValue,
+          suitValue: value.suitValue,
+          isJoker: value.suitValue === 99,
+        },
+      });
     }
-    this.render(true);
+    await this.render(true);
   }
 
   private _sortCards(a: JournalEntry, b: JournalEntry) {
@@ -91,15 +84,11 @@ export default class ActionCardEditor extends FormApplication {
     return card;
   }
 
-  private _cardChanged(card: JournalEntry, data: CardData): boolean {
-    const nameChanged = card.name !== data.name;
-    const imgChanged = card.data.img !== data.img;
-    const valueChanged = card.getFlag('swade', 'cardValue') !== data.cardValue;
-    const suitChanged = card.getFlag('swade', 'suitValue') !== data.suitValue;
-    const jokerChanged = card.getFlag('swade', 'isJoker') !== data.isJoker;
-    return (
-      nameChanged || imgChanged || valueChanged || suitChanged || jokerChanged
-    );
+  private _showCard(event) {
+    const id = event.currentTarget.dataset.id;
+    new ImagePopout(this.cards.get(id).data.img, {
+      shareable: true,
+    }).render(true);
   }
 
   private async _createNewCard() {
@@ -113,5 +102,8 @@ export default class ActionCardEditor extends FormApplication {
     );
     this.cards.set(newCard.id, newCard);
     await this.render(true);
+    document
+      .querySelector(`#${SWADE.actionCardEditor.id} .card-list`)
+      ?.scrollIntoView(false);
   }
 }
