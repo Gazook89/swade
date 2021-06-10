@@ -143,7 +143,7 @@ export default class ItemChatCardHelper {
             ],
           });
         }
-        if (roll) await this.subtractShots(actor, item.id, 1);
+        if (roll) await this.subtractShots(actor, item.id);
         Hooks.call('swadeAction', actor, item, action, roll, game.user.id);
         break;
       case 'reload':

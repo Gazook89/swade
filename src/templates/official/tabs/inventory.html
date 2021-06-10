@@ -10,7 +10,7 @@
       <input
         name="data.details.currency"
         type="text"
-        value="{{data.details.currency}}"
+        value="{{data.data.details.currency}}"
         placeholder="{{localize 'SWADE.Currency'}}"
       />
     </span>
@@ -18,14 +18,14 @@
     <label><button class="roll">{{localize "SWADE.WealthDie"}}</button></label>
     <span class="form-fields">
       <select data-dtype="Number" name="data.details.wealth.die">
-        {{#select data.details.wealth.die}} {{>
+        {{#select data.data.details.wealth.die}} {{>
         "systems/swade/templates/die-sides-options.html"}} {{/select}}
       </select>
       <input
         type="text"
         data-dtype="Number"
         name="data.details.wealth.modifier"
-        value="{{signedString data.details.wealth.modifier}}"
+        value="{{signedString data.data.details.wealth.modifier}}"
         placeholder="{{localize 'SWADE.Mod'}}"
       />
     </span>
@@ -37,7 +37,7 @@
     <span class="header-name">{{localize "SWADE.Weapons"}}</span>
     <span class="damage">{{localize "SWADE.Dmg"}}</span>
     <span class="ap">{{localize "SWADE.Ap"}}</span>
-    <span class="note" style="text-align: center;"
+    <span class="note" style="text-align: center"
       >{{localize "SWADE.Notes"}}</span
     >
     <span class="weight">{{localize "SWADE.Weight"}}</span>
@@ -91,7 +91,7 @@
     <span class="header-name">{{localize "SWADE.Armors"}}</span>
     <span class="bonus">{{localize "SWADE.Armor"}}</span>
     <span class="min-str">{{localize "SWADE.MinStrShort"}}</span>
-    <span class="note" style="text-align: center;"
+    <span class="note" style="text-align: center"
       >{{localize "SWADE.Notes"}}</span
     >
     <span class="weight">{{localize "SWADE.Weight"}}</span>
@@ -141,7 +141,7 @@
     <span class="header-name">{{localize "SWADE.Shields"}}</span>
     <span class="parry">{{localize "SWADE.Parry"}}</span>
     <span class="cover">{{localize "SWADE.Cover"}}</span>
-    <span class="note" style="text-align: center;"
+    <span class="note" style="text-align: center"
       >{{localize "SWADE.Notes"}}</span
     >
     <span class="weight">{{localize "SWADE.Weight"}}</span>
