@@ -14,19 +14,19 @@
           data-id="{{card.id}}"
         />
         <span class="flexcol card-details">
-          <div class="form-group">
+          <span class="form-group">
             <label>{{localize "Name"}}</label>
-            <div class="form-fields">
+            <span class="form-fields">
               <input
                 type="text"
                 name="{{card.id}}.name"
                 value="{{card.name}}"
               />
-            </div>
-          </div>
-          <div class="form-group">
+            </span>
+          </span>
+          <span class="form-group">
             <label>{{localize "SWADE.CardFace"}}</label>
-            <div class="form-fields">
+            <span class="form-fields">
               <input
                 type="text"
                 name="{{card.id}}.img"
@@ -41,33 +41,33 @@
               >
                 <i class="fas fa-file-import fa-fw"></i>
               </button>
-            </div>
-          </div>
-          <div class="form-group">
+            </span>
+          </span>
+          <span class="form-group">
             <label>{{localize "SWADE.CardValue"}}</label>
-            <div class="form-fields">
+            <span class="form-fields">
               <input
                 type="number"
                 data-dtype="Number"
                 name="{{card.id}}.cardValue"
                 value="{{card.data.flags.swade.cardValue}}"
               />
-            </div>
-          </div>
-          <div class="form-group">
+            </span>
+          </span>
+          <span class="form-group">
             <label>{{localize "SWADE.CardSuit"}}</label>
-            <div class="form-fields">
+            <span class="form-fields">
               <input
                 type="number"
                 data-dtype="Number"
                 name="{{card.id}}.suitValue"
                 value="{{card.data.flags.swade.suitValue}}"
               />
-            </div>
-          </div>
-          <div class="form-group">
+            </span>
+          </span>
+          <span class="form-group">
             <label>{{localize "SWADE.IsJoker"}}</label>
-            <div class="form-fields">
+            <span class="form-fields">
               <input
                 type="checkbox"
                 data-dtype="Number"
@@ -76,8 +76,8 @@
                 {{checked
                 card.data.flags.swade.isJoker}}
               />
-            </div>
-          </div>
+            </span>
+          </span>
         </span>
       </li>
       {{/each}}
