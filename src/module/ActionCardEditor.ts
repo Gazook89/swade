@@ -8,6 +8,10 @@ interface CardData {
   isJoker: boolean;
 }
 
+interface ScrollRenderOptions extends Application.RenderOptions {
+  scroll?: boolean;
+}
+
 export default class ActionCardEditor extends FormApplication {
   static async fromPack(compendium: Compendium): Promise<ActionCardEditor> {
     //@ts-ignore
@@ -53,7 +57,7 @@ export default class ActionCardEditor extends FormApplication {
   activateListeners(html: JQuery) {
     super.activateListeners(html);
     html.find('.card-face').on('click', (ev) => this._showCard(ev));
-    html.find('.add-card').on('click', () => this._createNewCard());
+    html.find('.add-card').on('click', async () => this._createNewCard());
   }
 
   protected async _updateObject(event: Event, formData?: object) {
@@ -70,7 +74,7 @@ export default class ActionCardEditor extends FormApplication {
         },
       });
     }
-    await this.render(true);
+    this.render(true);
   }
 
   private _sortCards(a: JournalEntry, b: JournalEntry) {
@@ -101,9 +105,19 @@ export default class ActionCardEditor extends FormApplication {
       { pack: this.pack.collection },
     );
     this.cards.set(newCard.id, newCard);
-    await this.render(true);
-    document
-      .querySelector(`#${SWADE.actionCardEditor.id} .card-list`)
-      ?.scrollIntoView(false);
+    this.render(true, { scroll: true });
+  }
+
+  render(force: boolean, options?: ScrollRenderOptions) {
+    super.render(force, options);
+  }
+
+  async _render(force?: boolean, options?: ScrollRenderOptions) {
+    await super._render(force, options);
+    if (options.scroll) {
+      document
+        .querySelector(`#${SWADE.actionCardEditor.id} .card-list`)
+        ?.scrollIntoView(false);
+    }
   }
 }
