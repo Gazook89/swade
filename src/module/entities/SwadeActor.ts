@@ -244,11 +244,9 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
       return this.makeUnskilledAttempt(options);
     }
 
-    let skillRoll: [Roll, ITraitRollModifier[]] = null;
-    let rollMods = [];
-
-    skillRoll = this._handleComplexSkill(skill, options);
-    rollMods = skillRoll[1];
+    const skillRoll = this._handleComplexSkill(skill, options);
+    const roll = skillRoll[0];
+    const rollMods = skillRoll[1];
 
     //Build Flavour
     let flavour = '';
@@ -262,12 +260,12 @@ export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
     }
 
     if (options.suppressChat) {
-      return skillRoll[0];
+      return roll;
     }
 
     // Roll and return
     return SwadeDice.Roll({
-      roll: skillRoll[0],
+      roll: roll,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',

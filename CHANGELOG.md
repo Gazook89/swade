@@ -20,6 +20,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [v0.19.3]
+
+### Fixed
+
+- Fixed currency and wealth die not saving
+- Fixed Actions no longer subtracting ammo
+
 ## [v0.19.2]
 
 ### Fixed
