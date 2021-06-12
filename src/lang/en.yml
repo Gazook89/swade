@@ -85,6 +85,7 @@ SWADE.Weapons: Weapons
 SWADE.MeleeWeapons: Melee Weapons
 SWADE.RangedWeapons: Ranged Weapons
 SWADE.Armors: Armors
+SWADE.WeaponsAndArmor: Weapons & Armor
 SWADE.Shields: Shields
 SWADE.Biography: Biography
 SWADE.Shaken: Shaken
@@ -376,3 +377,5 @@ SWADE.CardValue: Value
 SWADE.CardSuit: Suit
 SWADE.IsJoker: Is Joker
 SWADE.OpenACEditor: Open in Action Card Editor
+SWADE.Yes: Yes
+SWADE.No: No

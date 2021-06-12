@@ -25,6 +25,7 @@ import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
+import CharacterSummarizer from './module/entities/CharacterSummarizer';
 import {
   createSwadeMacro,
   rollItemMacro,
@@ -47,6 +48,7 @@ export const swadeGame = {
   sockets: sockets,
   itemChatCardHelper: ItemChatCardHelper,
   migrations: migrations,
+  CharacterSummarizer,
 };
 Hooks.once('init', () => {
   console.log(
