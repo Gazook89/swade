@@ -52,7 +52,7 @@ export default class CharacterSummarizer {
     summary += getProperty(this.actor.data, 'data.bennies.max') + '</p>';
 
     // Attributes
-    let attributes = new Array();
+    const attributes = new Array();
     attributes.push(
       game.i18n.localize('SWADE.AttrAgiShort') +
         ' ' +
@@ -107,15 +107,16 @@ export default class CharacterSummarizer {
       ')</p>';
 
     // Items - skills, powers, gear, etc
-    let skills = new Array();
-    let edges = new Array();
-    let hindrances = new Array();
-    let weapons_and_armour = new Array();
-    let gear = new Array();
-    let powers = new Array();
-    let abilities = new Array();
+    const skills = new Array();
+    const edges = new Array();
+    const hindrances = new Array();
+    const weaponsAndArmour = new Array();
+    const gear = new Array();
+    const powers = new Array();
+    const abilities = new Array();
 
     this.actor.items.forEach((item) => {
+      let damage, range, ap, rof, armor;
       switch (item.type) {
         case 'skill':
           skills.push(item.name + ' ' + this._formatDieStat(item, 'data.die'));
@@ -127,19 +128,19 @@ export default class CharacterSummarizer {
           hindrances.push(item.name);
           break;
         case 'weapon':
-          const damage = getProperty(item.data, 'data.damage');
-          const range = getProperty(item.data, 'data.range');
-          const ap = getProperty(item.data, 'data.ap');
-          const rof = getProperty(item.data, 'data.rof');
-          weapons_and_armour.push(
+          damage = getProperty(item.data, 'data.damage');
+          range = getProperty(item.data, 'data.range');
+          ap = getProperty(item.data, 'data.ap');
+          rof = getProperty(item.data, 'data.rof');
+          weaponsAndArmour.push(
             `${item.name} (${damage}, ${range}, ` +
               `${game.i18n.localize('SWADE.Ap')}${ap}, ` +
               `${game.i18n.localize('SWADE.RoF')}${rof})`,
           );
           break;
         case 'armor':
-          const armor = getProperty(item.data, 'data.armor');
-          weapons_and_armour.push(`${item.name} (${armor})`);
+          armor = getProperty(item.data, 'data.armor');
+          weaponsAndArmour.push(`${item.name} (${armor})`);
           break;
         case 'gear':
           gear.push(item.name);
@@ -165,7 +166,7 @@ export default class CharacterSummarizer {
     );
 
     summary += this._formatList(
-      weapons_and_armour,
+      weaponsAndArmour,
       game.i18n.localize('SWADE.WeaponsAndArmor'),
     );
     summary += this._formatList(gear, game.i18n.localize('SWADE.Inv'));
@@ -176,7 +177,7 @@ export default class CharacterSummarizer {
     );
 
     // Additional stats
-    let additionalStats = new Array();
+    const additionalStats = new Array();
     Object.keys(getProperty(this.actor.data, 'data.additionalStats')).forEach(
       (additionalStatKey) => {
         const stat = getProperty(
@@ -241,7 +242,7 @@ export default class CharacterSummarizer {
   private _formatDieStat(entity: SwadeItem | SwadeActor, dataKey: String) {
     const sides = getProperty(entity.data, dataKey + '.sides');
     const modifier = getProperty(entity.data, dataKey + '.modifier');
-    let val = `d${sides}` + this._formatModifier(modifier);
+    const val = `d${sides}` + this._formatModifier(modifier);
     return val;
   }
 
