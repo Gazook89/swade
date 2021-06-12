@@ -18,7 +18,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 ### Security
+
+### Known Issues
 -->
+
+## [v0.20.0]
+
+## Added
+
+- Added the _Action Card Editor_. This is an alternative interface for Journal Entry compendiums. Any GM can open it by right-clicking a Journal Entry compendium and selecting the "Open in Action Card editor option. This is primarily meant for people that want to create their own Action Card decks.
+- Added the character summarizer, which is based on @penllawen 's Summarizer Macro. The Summarizer provides a compact statblock for any NPC or Player character.
+  Currently the summarizer is only usable via a macro, see example
+  ```JS
+  const actor = game.actors.getName("TestActor");
+  new game.swade.CharacterSummarizer(actor).getSummary();
+  ```
 
 ## [v0.19.3]
 
