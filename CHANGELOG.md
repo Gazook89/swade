@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   ```JS
   const actor = game.actors.getName("SomeActor");
   const summarizer = new game.swade.CharacterSummarizer(actor);
-  summarizer.getSummary();
+  summarizer.getSummary(); //Returns the finished summary as HTML in a string
   ```
 
 ## [v0.19.3]
