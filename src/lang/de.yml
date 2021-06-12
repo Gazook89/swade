@@ -85,6 +85,7 @@ SWADE.RangedWeapons: Fernkampfwaffen
 SWADE.Armors: Rüstungen
 SWADE.Shields: Schilde
 SWADE.Armor: Rüstung
+SWADE.WeaponsAndArmor: Waffen & Rüstungen
 SWADE.Dmg: Schaden
 SWADE.DmgOver: Schaden überschreiben
 SWADE.Rng: Reichweite
@@ -374,3 +375,5 @@ SWADE.CardValue: Wert
 SWADE.IsJoker: Ist ein Joker
 SWADE.CardSuit: Symbol
 SWADE.OpenACEditor: Im Aktionskarteneditor öffnen
+SWADE.Yes: Ja
+SWADE.No: Nein
