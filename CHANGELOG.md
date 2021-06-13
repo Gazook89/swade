@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [v0.19.4]
+
+### Fixed
+
+- Fixed ammo not subtracting
+
 ## [v0.19.3]
 
 ### Fixed
