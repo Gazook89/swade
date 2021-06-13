@@ -48,38 +48,37 @@ export default class SwadeDice {
     const html = await renderTemplate(template, dialogData);
     //Create Dialog window
     return new Promise((resolve) => {
+      let finalRoll: Roll = null;
       const buttons = {
         ok: {
           label: game.i18n.localize('SWADE.Roll'),
           icon: '<i class="fas fa-dice"></i>',
           callback: async (html) => {
-            resolve(
-              await this._handleRoll({
-                form: html,
-                roll: roll,
-                speaker,
-                flavor,
-                flags,
-              }),
-            );
+            finalRoll = this._handleRoll({
+              form: html,
+              roll: roll,
+              speaker,
+              flavor,
+              flags,
+            });
+            resolve(finalRoll);
           },
         },
         extra: {
           label: '',
           icon: '<i class="far fa-plus-square"></i>',
           callback: async (html) => {
-            resolve(
-              await this._handleRoll({
-                form: html,
-                raise: true,
-                actor: actor,
-                roll: roll,
-                allowGroup: actor && !actor.isWildcard && allowGroup,
-                speaker,
-                flavor,
-                flags,
-              }),
-            );
+            finalRoll = this._handleRoll({
+              form: html,
+              raise: true,
+              actor: actor,
+              roll: roll,
+              allowGroup: actor && !actor.isWildcard && allowGroup,
+              speaker,
+              flavor,
+              flags,
+            });
+            resolve(finalRoll);
           },
         },
         cancel: {
@@ -102,12 +101,18 @@ export default class SwadeDice {
         content: html,
         buttons: buttons,
         default: 'ok',
-        close: () => resolve(null),
+        close: () => {
+          if (!finalRoll) {
+            resolve(null);
+          } else {
+            resolve(finalRoll);
+          }
+        },
       }).render(true);
     });
   }
 
-  static async _handleRoll({
+  static _handleRoll({
     form = null,
     raise = false,
     actor = null,
@@ -116,7 +121,7 @@ export default class SwadeDice {
     flavor = '',
     allowGroup = false,
     flags,
-  }: RollHandlerData): Promise<Roll> {
+  }: RollHandlerData): Roll {
     const terms = roll.terms;
     const groupRoll = actor && raise;
     //get the rollMode
@@ -180,8 +185,8 @@ export default class SwadeDice {
     //End of Workaround
     // Convert the roll to a chat message and return the roll
     const newRoll = Roll.fromTerms(terms, roll.options);
-    await newRoll.evaluate({ async: true });
-    await newRoll.toMessage(
+    newRoll.evaluate({ async: false });
+    newRoll.toMessage(
       {
         speaker: speaker,
         flavor: flavor,

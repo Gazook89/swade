@@ -35,6 +35,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   summarizer.getSummary(); //Returns the finished summary as HTML in a string
   ```
 
+## [v0.19.4]
+
+### Fixed
+
+- Fixed ammo not subtracting
+
 ## [v0.19.3]
 
 ### Fixed
