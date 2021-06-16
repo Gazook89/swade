@@ -265,12 +265,16 @@ export default class ItemChatCardHelper {
     actor: SwadeActor,
     options: IRollOptions,
   ): Promise<Roll> {
-    if (trait instanceof SwadeItem || !trait) {
+    const rollSkill = trait instanceof SwadeItem || !trait;
+    const rollAttribute = typeof trait === 'string';
+    if (rollSkill) {
       //get the id from the item or null if there was no trait
-      const id = !!trait && trait instanceof SwadeItem ? trait.id : null;
+      const id = trait instanceof SwadeItem ? trait.id : null;
       return actor.rollSkill(id, options) as Promise<Roll>;
+    } else if (rollAttribute) {
+      return actor.rollAttribute(trait as string, options) as Promise<Roll>;
     } else {
-      return actor.rollAttribute(trait, options) as Promise<Roll>;
+      return null;
     }
   }
 
