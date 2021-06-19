@@ -78,6 +78,10 @@ Hooks.once('init', () => {
   CONFIG.statusEffects = SWADE.statusEffects;
   CONFIG.ui.combat = SwadeCombatTracker;
 
+  //TODO: Will require Foundry 0.8.8
+  //@ts-ignore
+  //CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
+
   // Register custom system settings
   registerSettings();
   registerSettingRules();
@@ -228,3 +232,12 @@ Hooks.on('getCombatTrackerEntryContext', (html, options) => {
 Hooks.on('getCompendiumDirectoryEntryContext', (html, options) => {
   SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
 });
+// static INDEX_FIELDS = {
+//   Actor: ["name", "img", "type"],
+//   Item: ["name", "img", "type"],
+//   Scene: ["name", "thumb"],
+//   JournalEntry: ["name", "img"],
+//   Macro: ["name", "img"],
+//   RollTable: ["name", "img"],
+//   Playlist: ["name"]
+// }
