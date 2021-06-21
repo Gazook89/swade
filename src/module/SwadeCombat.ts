@@ -53,7 +53,7 @@ export default class SwadeCombat extends Combat {
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c.defeated || roundHeld || inGroup) continue;
+      if (c.data.defeated || roundHeld || inGroup) continue;
 
       // Set up edges
       let cardsToDraw = 1;
@@ -146,14 +146,19 @@ export default class SwadeCombat extends Combat {
         'flags.swade': newflags,
       });
       if (c.getFlag('swade', 'isGroupLeader')) {
+        await c.setFlag(
+          'swade',
+          'suitValue',
+          c.getFlag('swade', 'suitValue') + 0.9,
+        );
         const followers = game.combat.combatants.filter(
           (f) =>
             //@ts-ignore
             f.getFlag('swade', 'groupId') === c.id,
         );
         //@ts-ignore
-        const fSuitValue = newflags.suitValue - 0.01;
-        for (const follower of followers) {
+        const fSuitValue = newflags.suitValue + 0.89;
+        for await (const follower of followers) {
           //@ts-ignore
           combatantUpdates.push({
             //@ts-ignore
@@ -228,18 +233,20 @@ export default class SwadeCombat extends Combat {
    * @param a Combatant A
    * @param b Combatant B
    */
-  _sortCombatants(a, b) {
+  _sortCombatantsOld(a, b) {
+    // Using this broke coming off of holding.
     const currentRound = this?.round ?? 0;
+    //let currentRound = game.combats?.viewed?.round ?? 0;
     if (
       hasProperty(a, 'data.flags.swade') &&
       hasProperty(b, 'data.flags.swade')
     ) {
       const isOnHoldA =
         hasProperty(a, 'data.flags.swade.roundHeld') &&
-        a.getFlag('swade', 'roundHeld') !== currentRound;
+        a.getFlag('swade', 'roundHeld') < currentRound;
       const isOnHoldB =
         hasProperty(b, 'data.flags.swade.roundHeld') &&
-        b.getFlag('swade', 'roundHeld') !== currentRound;
+        b.getFlag('swade', 'roundHeld') < currentRound;
       if (isOnHoldA && !isOnHoldB) {
         return -1;
       }
@@ -267,6 +274,112 @@ export default class SwadeCombat extends Combat {
     const cn = an.localeCompare(bn);
     if (cn !== 0) return cn;
     return a.tokenId - b.tokenId;
+  }
+
+  /**
+   * @override
+   * @param a Combatant A
+   * @param b Combatant B
+   */
+  _sortCombatants(a, b) {
+    //@ts-ignore
+    if (game.canvas.ready) {
+      const currentRound = game.combat.round;
+      const isOnHoldA =
+        hasProperty(a, 'data.flags.swade.roundHeld') &&
+        a.getFlag('swade', 'roundHeld') < currentRound;
+      const isOnHoldB =
+        hasProperty(b, 'data.flags.swade.roundHeld') &&
+        b.getFlag('swade', 'roundHeld') < currentRound;
+
+      if (isOnHoldA && !isOnHoldB) {
+        return -1;
+      }
+      if (!isOnHoldA && isOnHoldB) {
+        return 1;
+      }
+
+      const aFollowerGroupId = SwadeCombat._getFollowerGroupId(a);
+      const bFollowerGroupId = SwadeCombat._getFollowerGroupId(b);
+
+      // both followers, in the same group -> alpha sort
+      if (
+        aFollowerGroupId &&
+        bFollowerGroupId &&
+        aFollowerGroupId === bFollowerGroupId
+      ) {
+        return SwadeCombat._nameSortCombatants(a, b);
+      }
+
+      // one is a follower of the other
+      if (aFollowerGroupId === b.id) return 1;
+      else if (bFollowerGroupId === a.id) return -1;
+
+      // one of them is a follower & not in the same group -> sort based on the leader instead
+      if (aFollowerGroupId) a = SwadeCombat._getGroupLeaderFor(a);
+      if (bFollowerGroupId) b = SwadeCombat._getGroupLeaderFor(b);
+
+      // both leaders/not grouped -> sort based on card, or name if no cards dealt yet
+      return SwadeCombat._finalSort(a, b);
+    }
+  }
+
+  static _finalSort(a, b) {
+    if (
+      hasProperty(a, 'data.flags.swade') &&
+      hasProperty(b, 'data.flags.swade')
+    ) {
+      return SwadeCombat._cardSortCombatants(a, b);
+    } else {
+      return SwadeCombat._nameSortCombatants(a, b);
+    }
+  }
+
+  static _getGroupLeaderFor(combatant) {
+    //@ts-ignore
+    return game.combat.combatants.get(
+      SwadeCombat._getFollowerGroupId(combatant),
+    );
+  }
+
+  /** Returns the group ID iff this is a follower. */
+  static _getFollowerGroupId(combatant) {
+    if (
+      hasProperty(combatant, 'data.flags.swade') &&
+      !combatant.getFlag('swade', 'isGroupLeader') &&
+      combatant.getFlag('swade', 'groupId')
+    ) {
+      return combatant.getFlag('swade', 'groupId');
+    }
+    return '';
+  }
+
+  /** Compares two tokens by initiative card */
+  // TODO: verify this, it's a cut/paste from the original code
+  static _cardSortCombatants(a, b) {
+    const cardA = a.getFlag('swade', 'cardValue') as number;
+    const cardB = b.getFlag('swade', 'cardValue') as number;
+    const card = cardB - cardA;
+    if (card !== 0) return card;
+    const suitA = a.getFlag('swade', 'suitValue') as number;
+    const suitB = b.getFlag('swade', 'suitValue') as number;
+    if (suitA > suitB) {
+      return -1;
+    }
+    if (suitA < suitB) {
+      return 1;
+    }
+    if (suitA === suitB) {
+      return 1; // ???
+    }
+  }
+
+  /** Compares two combatants by name or - if they're the same - ID. */
+  static _nameSortCombatants(a, b) {
+    const [an, bn] = [a.name || '', b.name || ''];
+    const cn = an.localeCompare(bn);
+    if (cn !== 0) return cn;
+    return a.id - b.id;
   }
 
   /** @override */
@@ -442,8 +555,15 @@ export default class SwadeCombat extends Combat {
     if (skip) {
       for (const [i, t] of this.turns.entries()) {
         if (i <= turn) continue;
-        //@ts-ignore
-        if (!t.defeated && !t.getFlag('swade', 'turnLost')) {
+        // Skip defeated, lost turns, and followers on hold (their leaders act for them)
+        if (
+          //@ts-ignore
+          !t.data.defeated &&
+          //@ts-ignore
+          !t.getFlag('swade', 'turnLost') &&
+          //@ts-ignore
+          !(t.getFlag('swade', 'groupId') && t.getFlag('swade', 'roundHeld'))
+        ) {
           next = i;
           break;
         }
@@ -497,12 +617,24 @@ export default class SwadeCombat extends Combat {
     const updates = this.combatants.map((c: any) => {
       const roundHeld = c.getFlag('swade', 'roundHeld') as boolean;
       const turnLost = c.getFlag('swade', 'turnLost') as number;
+      const groupId = c.getFlag('swade', 'groupId') as string;
       if (roundHeld) {
-        return {
-          _id: c.id,
-          initiative: null,
-          'flags.swade.hasJoker': false,
-        };
+        if (turnLost && groupId) {
+          return {
+            _id: c.id,
+            initiative: null,
+            'flags.swade': {
+              hasJoker: false,
+              '-=turnLost': null,
+            },
+          };
+        } else {
+          return {
+            _id: c.id,
+            initiative: null,
+            'flags.swade.hasJoker': false,
+          };
+        }
       } else if (!roundHeld || turnLost) {
         return {
           _id: c.id,
@@ -513,7 +645,6 @@ export default class SwadeCombat extends Combat {
             hasJoker: false,
             cardString: '',
             turnLost: false,
-            isOnHold: false,
           },
         };
       }

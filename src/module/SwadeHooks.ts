@@ -14,7 +14,6 @@ import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import SwadeCombatGroupColor from './sidebar/SwadeCombatGroupColor';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
-import SwadeCombat from './SwadeCombat';
 import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
@@ -227,6 +226,10 @@ export default class SwadeHooks {
   ) {
     const currentCombat: Combat =
       data.combats[data.currentIndex - 1] || data.combat;
+    if (currentCombat) {
+      currentCombat.setupTurns();
+    }
+
     let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id');
@@ -234,8 +237,10 @@ export default class SwadeHooks {
       const combatant = currentCombat.combatants.get(combId);
       const initdiv = el.getElementsByClassName('token-initiative');
       //@ts-ignore
-      if (combatant.getFlag('swade', 'groupId')) {
-        initdiv[0].innerHTML = '<i class="fas fa-user-friends"></i>';
+      if (combatant.getFlag('swade', 'groupId') || combatant.data.defeated) {
+        /*initdiv[0].innerHTML =
+        '<span class="initiative"><i class="fas fa-user-friends"></i></span>';*/
+        initdiv[0].innerHTML = '';
         //@ts-ignore
       } else if (combatant.getFlag('swade', 'roundHeld')) {
         initdiv[0].innerHTML =
@@ -254,6 +259,7 @@ export default class SwadeHooks {
       }
 
       // Drag and drop listeners
+      // On dragstart
       el.addEventListener(
         'dragstart',
         function (e) {
@@ -265,46 +271,54 @@ export default class SwadeHooks {
         },
         false,
       );
+
+      // On dragOver
       el.addEventListener('dragover', function (e) {
         const dropTargetEl = e.target
           //@ts-ignore
           .closest('li.combatant');
-        const dropTargetId = dropTargetEl.getAttribute('data-combatant-id');
-        //@ts-ignore
-        const dropTargetCombatant = game.combat.combatants.get(dropTargetId);
-        if (!dropTargetCombatant.getFlag('swade', 'groupId')) {
-          dropTargetEl.classList.add('dropTarget');
-        }
+        dropTargetEl.classList.add('dropTarget');
       });
+
+      // On dragleave
       el.addEventListener('dragleave', function (e) {
         e.target
           //@ts-ignore
           .closest('li.combatant')
           .classList.remove('dropTarget');
       });
+
+      // On drop
       el.addEventListener(
         'drop',
-        function (e) {
+        async function (e) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          const leaderId = e.target
+          const leaderId = await e.target
             //@ts-ignore
             .closest('li.combatant')
             .getAttribute('data-combatant-id');
           //@ts-ignore
-          const leader = game.combat.combatants.get(leaderId);
-          if (
-            !leader.getFlag('swade', 'groupId') &&
-            draggedCombatant.id !== leaderId
-          ) {
-            leader.setFlag('swade', 'isGroupLeader', true);
+          const leader = await game.combat.combatants.get(leaderId);
+          // If a follower, set as group leader
+          if (draggedCombatant.id !== leaderId) {
+            if (!leader.getFlag('swade', 'isGroupLeader')) {
+              await leader.update({
+                flags: {
+                  swade: {
+                    isGroupLeader: true,
+                    '-=groupId': null,
+                  },
+                },
+              });
+            }
             const fInitiative = getProperty(leader, 'data.initiative');
             const fCardValue = leader.getFlag('swade', 'cardValue');
             const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
             const fHasJoker = leader.getFlag('swade', 'hasJoker');
             // Set groupId of dragged combatant to the selected target's id
             //@ts-ignore
-            draggedCombatant.update({
+            await draggedCombatant.update({
               initiative: fInitiative,
               flags: {
                 swade: {
@@ -317,15 +331,16 @@ export default class SwadeHooks {
             });
             // If a leader, update its followers
             if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
+              //@ts-ignore
               const followers = game.combat.combatants.filter(
                 (f) =>
                   //@ts-ignore
                   f.getFlag('swade', 'groupId') === draggedCombatant.id,
               );
               //@ts-ignore
-              for (const follower of followers) {
+              for await (const f of followers) {
                 //@ts-ignore
-                follower.update({
+                await f.update({
                   initiative: fInitiative,
                   flags: {
                     swade: {
@@ -337,11 +352,9 @@ export default class SwadeHooks {
                   },
                 });
               }
-              draggedCombatant.unsetFlag('swade', 'isGroupLeader');
+              await draggedCombatant.unsetFlag('swade', 'isGroupLeader');
             }
           }
-          //@ts-ignore
-          SwadeCombat._sortCombatants;
         },
         false,
       );
@@ -477,7 +490,14 @@ export default class SwadeHooks {
         const targetCombatantId = li.attr('data-combatant-id');
         //@ts-ignore
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        await targetCombatant.setFlag('swade', 'isGroupLeader', true);
+        await targetCombatant.update({
+          flags: {
+            swade: {
+              isGroupLeader: true,
+              '-=groupId': null,
+            },
+          },
+        });
       },
     });
 
@@ -576,7 +596,7 @@ export default class SwadeHooks {
             const fHasJoker = gl.getFlag('swade', 'hasJoker');
             // Set groupId of dragged combatant to the selected target's id
             //@ts-ignore
-            targetCombatant.update({
+            await targetCombatant.update({
               initiative: fInitiative,
               flags: {
                 swade: {
@@ -596,7 +616,7 @@ export default class SwadeHooks {
               //@ts-ignore
               for (const follower of followers) {
                 //@ts-ignore
-                follower.update({
+                await follower.update({
                   initiative: fInitiative,
                   flags: {
                     swade: {
@@ -608,7 +628,7 @@ export default class SwadeHooks {
                   },
                 });
               }
-              targetCombatant.unsetFlag('swade', 'isGroupLeader');
+              await targetCombatant.unsetFlag('swade', 'isGroupLeader');
             }
           },
         });
