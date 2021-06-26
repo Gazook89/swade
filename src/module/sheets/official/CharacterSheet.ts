@@ -731,12 +731,11 @@ export default class CharacterSheet extends ActorSheet {
       .localize('ENTITY.New')
       .replace('{entity}', game.i18n.localize('Active Effect'));
     if (name) possibleName = name;
-    const id = (
-      await this.actor.createEmbeddedEntity('ActiveEffect', {
-        label: possibleName,
-        icon: '/icons/svg/mystery-man-black.svg',
-      })
-    )._id;
-    return this.actor['effects'].get(id).sheet.render(true);
+    const effect = await this.actor.createEmbeddedEntity('ActiveEffect', {
+      label: possibleName,
+      icon: '/icons/svg/mystery-man-black.svg',
+    });
+    //@ts-ignore
+    return this.actor.effects.get(effect[0].id).sheet.render(true);
   }
 }

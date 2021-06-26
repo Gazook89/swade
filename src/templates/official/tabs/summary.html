@@ -229,7 +229,17 @@
         data-effect-id="{{_id}}"
       >
         <img src="{{icon}}" alt="{{label}}" class="effect-icon" />
+        {{#if origin}}
+        <button
+          type="button"
+          class="effect-label {{#if origin}}effect-action{{/if}}"
+          data-action="open-origin"
+        >
+          {{label}}
+        </button>
+        {{else}}
         <span class="effect-label">{{label}}</span>
+        {{/if}}
         <span class="effect-controls">
           <button type="button" class="effect-action" data-action="toggle">
             <i class="fas fa-power-off"></i>
@@ -237,15 +247,9 @@
           <button type="button" class="effect-action" data-action="edit">
             <i class="fas fa-edit"></i>
           </button>
-          {{#unless origin}}
           <a class="effect-action" data-action="delete">
             <i class="fas fa-trash"></i>
           </a>
-          {{else}}
-          <a class="effect-action" data-action="open-origin">
-            <i class="fas fa-sign-out-alt"></i>
-          </a>
-          {{/unless}}
         </span>
       </li>
       {{/each}}

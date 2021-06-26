@@ -5,8 +5,13 @@
     data-effect-id="{{_id}}"
   >
     <img src="{{icon}}" alt="{{label}}" class="effect-icon" />
+    {{#if origin}}
+    <a class="effect-label effect-action" data-action="open-origin"
+      >{{label}}</a
+    >
+    {{else}}
     <span class="effect-label">{{label}}</span>
-    {{#unless ../data.isOwned}}
+    {{/if}} {{#unless ../data.isOwned}}
     <span class="effect-controls">
       <a class="effect-action" data-action="toggle">
         <i class="fas fa-power-off"></i>
@@ -14,15 +19,9 @@
       <a class="effect-action" data-action="edit">
         <i class="fas fa-edit"></i>
       </a>
-      {{#unless origin}}
       <a class="effect-action" data-action="delete">
         <i class="fas fa-trash"></i>
       </a>
-      {{else}}
-      <a class="effect-action" data-action="open-origin">
-        <i class="fas fa-sign-out-alt"></i>
-      </a>
-      {{/unless}}
     </span>
     {{/unless}}
   </li>
