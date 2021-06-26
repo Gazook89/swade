@@ -5,7 +5,7 @@
   "description": "Published by <a href=\"https://peginc.com\">Pinnacle Entertainment Group, Inc.</a></p><p>A comprehensive game system for running <cite><em>Savage Worlds Adventure Edition<em></cite>.<br><p>Any time. Any place. <em>Savage Worlds</em>.</p>",
   "version": "0.19.4",
   "minimumCoreVersion": "0.8.4",
-  "compatibleCoreVersion": "0.8.6",
+  "compatibleCoreVersion": "0.8.8",
   "author": "FloRad",
   "esmodules": ["swade.js"],
   "styles": ["swade.css"],

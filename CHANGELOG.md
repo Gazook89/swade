@@ -20,6 +20,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Security
 -->
 
+## [v0.19.5]
+
+### Changed
+
+- Changed compatability flag to 0.8.8
+- All active effects can now be delete, but transfered effects can have their name clicked to open the sheet of the transfering item.
+
 ## [v0.19.4]
 
 ### Fixed

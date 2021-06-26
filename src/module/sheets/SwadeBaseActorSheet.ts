@@ -173,7 +173,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.actor['effects'].get(effectId) as any;
+      const effect = this.actor.effects.get(effectId) as any;
       const action = a.dataset.action;
 
       switch (action) {
@@ -196,16 +196,16 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     html.find('.add-effect').on('click', async (ev) => {
       const transfer = $(ev.currentTarget).data('transfer');
-      const id = (
-        await this.actor.createEmbeddedEntity('ActiveEffect', {
-          label: game.i18n
-            .localize('ENTITY.New')
-            .replace('{entity}', game.i18n.localize('Active Effect')),
-          icon: '/icons/svg/mystery-man-black.svg',
-          transfer: transfer,
-        })
-      )._id;
-      return new ActiveEffectConfig(this.actor['effects'].get(id)).render(true);
+      const effect = await this.actor.createEmbeddedEntity('ActiveEffect', {
+        label: game.i18n
+          .localize('ENTITY.New')
+          .replace('{entity}', game.i18n.localize('Active Effect')),
+        icon: '/icons/svg/mystery-man-black.svg',
+        transfer: transfer,
+      });
+      console.log(effect);
+      //@ts-ignore
+      this.actor.effects.get(effect[0].id).sheet.render(true);
     });
 
     html.find('.additional-stats .roll').on('click', (ev) => {
