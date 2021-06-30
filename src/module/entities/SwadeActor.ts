@@ -1,4 +1,3 @@
-import { SysActorData } from '../../interfaces/actor-data';
 import IRollOptions from '../../interfaces/IRollOptions';
 import { SWADE } from '../config';
 import SwadeDice from '../dice';
@@ -13,7 +12,7 @@ interface ITraitRollModifier {
 /**
  * @noInheritDoc
  */
-export default class SwadeActor extends Actor<SysActorData, SwadeItem> {
+export default class SwadeActor extends Actor {
   /**
    * @returns true when the actor is a Wild Card
    */

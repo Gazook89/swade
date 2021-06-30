@@ -1,7 +1,6 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
-import SwadeActor from '../../entities/SwadeActor';
 import SwadeItem from '../../entities/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
@@ -25,13 +24,6 @@ export default class CharacterSheet extends ActorSheet {
 
   get template() {
     return 'systems/swade/templates/official/sheet.html';
-  }
-
-  /**
-   * @override
-   */
-  get actor(): SwadeActor {
-    return super.actor as SwadeActor;
   }
 
   activateListeners(html: JQuery): void {

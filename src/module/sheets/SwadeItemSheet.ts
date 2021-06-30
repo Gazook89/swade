@@ -7,10 +7,6 @@ import SwadeItem from '../entities/SwadeItem';
  * @noInheritDoc
  */
 export default class SwadeItemSheet extends ItemSheet {
-  get item(): SwadeItem {
-    return super.item as SwadeItem;
-  }
-
   static get defaultOptions() {
     return {
       ...super.defaultOptions,

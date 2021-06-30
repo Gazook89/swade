@@ -1,5 +1,4 @@
 import { AdditionalStat } from '../../interfaces/additional';
-import { SysItemData } from '../../interfaces/item-data';
 import * as chat from '../chat';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
@@ -10,13 +9,6 @@ import SwadeItem from '../entities/SwadeItem';
  * @noInheritDoc
  */
 export default class SwadeBaseActorSheet extends ActorSheet {
-  /**
-   * @override
-   */
-  get actor(): SwadeActor {
-    return super.actor as SwadeActor;
-  }
-
   activateListeners(html: JQuery): void {
     super.activateListeners(html);
 

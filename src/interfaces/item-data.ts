@@ -1,5 +1,25 @@
 import { AdditionalStat, ItemAction } from './additional';
 
+declare global {
+  interface SourceConfig {
+    Item: SwadeItemDataSource;
+  }
+  interface DataConfig {
+    Item: SwadeItemDataSource;
+  }
+}
+
+export type SwadeItemDataSource =
+  | WeaponItemDataSource
+  | GearItemDataSource
+  | ArmorItemDataSource
+  | ShieldItemDataSource
+  | EdgeItemDataSource
+  | HindranceItemDataSource
+  | PowerItemDataSource
+  | SkillItemDataSource
+  | AbilityItemDataSource;
+
 interface PhysicalItem {
   weight: number;
   price: number;
@@ -48,9 +68,11 @@ interface WeaponData
   autoReload: boolean;
 }
 
-interface GearData extends ItemDescription, PhysicalItem, Equipable, Vehicular {
-  /**/
-}
+interface GearData
+  extends ItemDescription,
+    PhysicalItem,
+    Equipable,
+    Vehicular {}
 
 interface ArmorData extends ItemDescription, PhysicalItem, Equipable {
   minStr: string;
@@ -110,50 +132,47 @@ interface AbilityData extends ItemDescription {
   grantsPowers: boolean;
 }
 
-interface WeaponItemData extends Item.Data<WeaponData> {
+interface WeaponItemDataSource {
+  data: WeaponData;
   type: 'weapon';
 }
 
-interface GearItemData extends Item.Data<GearData> {
+interface GearItemDataSource {
+  data: GearData;
   type: 'gear';
 }
 
-interface ArmorItemData extends Item.Data<ArmorData> {
-  armor: string;
+interface ArmorItemDataSource {
+  data: ArmorData;
   type: 'armor';
 }
 
-interface ShieldItemData extends Item.Data<ShieldData> {
+interface ShieldItemDataSource {
+  data: ShieldData;
   type: 'shield';
 }
 
-interface EdgeItemData extends Item.Data<EdgeData> {
-  type: 'egde';
+interface EdgeItemDataSource {
+  data: EdgeData;
+  type: 'edge';
 }
 
-interface HindranceItemData extends Item.Data<HindranceData> {
+interface HindranceItemDataSource {
+  data: HindranceData;
   type: 'hindrance';
 }
 
-interface PowerItemData extends Item.Data<PowerData> {
+interface PowerItemDataSource {
+  data: PowerData;
   type: 'power';
 }
 
-interface SkillItemData extends Item.Data<SkillData> {
+interface SkillItemDataSource {
+  data: SkillData;
   type: 'skill';
 }
 
-interface AbilityItemData extends Item.Data<AbilityData> {
+interface AbilityItemDataSource {
+  data: AbilityData;
   type: 'ability';
 }
-
-export type SysItemData =
-  | WeaponItemData
-  | GearItemData
-  | ArmorItemData
-  | ShieldItemData
-  | EdgeItemData
-  | HindranceItemData
-  | PowerItemData
-  | SkillItemData
-  | AbilityItemData;

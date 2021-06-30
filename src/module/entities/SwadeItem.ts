@@ -1,6 +1,5 @@
 import { ItemAction } from '../../interfaces/additional';
 import IRollOptions from '../../interfaces/IRollOptions';
-import { SysItemData } from '../../interfaces/item-data';
 import SwadeDice from '../dice';
 import SwadeActor from './SwadeActor';
 
@@ -8,7 +7,7 @@ import SwadeActor from './SwadeActor';
  * Override and extend the basic :class:`Item` implementation
  * @noInheritDoc
  */
-export default class SwadeItem extends Item<SysItemData> {
+export default class SwadeItem extends Item {
   get isMeleeWeapon(): boolean {
     if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
