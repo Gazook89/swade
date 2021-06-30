@@ -215,6 +215,7 @@ export default class SwadeActor extends Actor {
     // Roll and return
     return SwadeDice.Roll({
       roll: finalRoll,
+      //@ts-ignore
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
@@ -265,6 +266,7 @@ export default class SwadeActor extends Actor {
     // Roll and return
     return SwadeDice.Roll({
       roll: roll,
+      //@ts-ignore
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',

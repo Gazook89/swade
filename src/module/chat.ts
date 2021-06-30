@@ -253,7 +253,9 @@ export async function rerollFromChat(
     'text/html',
   );
   const speaker = getProperty(message, 'data.speaker');
+  //@ts-ignore
   const roll = message.roll;
+  //@ts-ignore
   const actor = ChatMessage.getSpeakerActor(speaker) as SwadeActor;
   const currentBennies = getProperty(actor.data, 'data.bennies.value');
   const doSpendBenny = spendBenny && !!actor && actor.isWildcard;

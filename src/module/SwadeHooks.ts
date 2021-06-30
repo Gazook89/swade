@@ -427,9 +427,12 @@ export default class SwadeHooks {
   ) {
     const canApply = (li: JQuery<HTMLElement>) => {
       const message = game.messages.get(li.data('messageId'));
+      //@ts-ignore
       const actor = ChatMessage.getSpeakerActor(message.data['speaker']);
       const isRightMessageType =
+        //@ts-ignore
         message?.isRoll &&
+        //@ts-ignore
         message?.isContentVisible &&
         !message.getFlag('core', 'RollTable');
       return isRightMessageType && !!actor && (game.user.isGM || actor.owner);
