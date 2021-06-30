@@ -43,7 +43,7 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-      //@ts-ignore
+
       const c = this.combatants.get(id);
       const roundHeld = c.getFlag('swade', 'roundHeld');
       const inGroup = c.getFlag('swade', 'groupId');
@@ -152,16 +152,12 @@ export default class SwadeCombat extends Combat {
           c.getFlag('swade', 'suitValue') + 0.9,
         );
         const followers = game.combat.combatants.filter(
-          (f) =>
-            //@ts-ignore
-            f.getFlag('swade', 'groupId') === c.id,
+          (f) => f.getFlag('swade', 'groupId') === c.id,
         );
-        //@ts-ignore
+
         const fSuitValue = newflags.suitValue + 0.89;
         for await (const follower of followers) {
-          //@ts-ignore
           combatantUpdates.push({
-            //@ts-ignore
             _id: follower.id,
             initiative: initiative,
             'flags.swade': newflags,
@@ -204,7 +200,7 @@ export default class SwadeCombat extends Combat {
     if (!combatantUpdates.length) return this;
 
     // Update multiple combatants
-    //@ts-ignore
+
     await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
@@ -282,7 +278,6 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants(a, b) {
-    //@ts-ignore
     if (game.canvas.ready) {
       const currentRound = game.combat.round;
       const isOnHoldA =
@@ -336,7 +331,6 @@ export default class SwadeCombat extends Combat {
   }
 
   static _getGroupLeaderFor(combatant) {
-    //@ts-ignore
     return game.combat.combatants.get(
       SwadeCombat._getFollowerGroupId(combatant),
     );
@@ -385,7 +379,7 @@ export default class SwadeCombat extends Combat {
   /** @override */
   async resetAll() {
     const updates = this._getInitResetUpdates();
-    //@ts-ignore
+
     await this.updateEmbeddedDocuments('Combatant', updates);
     return this.update({ turn: 0 });
   }
@@ -414,7 +408,7 @@ export default class SwadeCombat extends Combat {
 
     for (const result of draw.results) {
       const resultID = result.data.resultId;
-      //@ts-ignore
+
       const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
       cards.push(card);
     }
@@ -518,7 +512,7 @@ export default class SwadeCombat extends Combat {
   async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
     const packName = game.settings.get('swade', 'cardDeck') as string;
     const actionCardPack = game.packs.get(packName);
-    //@ts-ignore
+
     const content = (await actionCardPack.getDocuments()) as JournalEntry[];
     return content.find(
       (c) =>
@@ -536,7 +530,6 @@ export default class SwadeCombat extends Combat {
     if (game.settings.get('swade', 'autoInit')) {
       const combatantIds = [];
       for (const c of this.combatants.filter((c) => c.initiative === null)) {
-        //@ts-ignore
         combatantIds.push(c.id);
       }
       await this.rollInitiative(combatantIds);
@@ -557,11 +550,8 @@ export default class SwadeCombat extends Combat {
         if (i <= turn) continue;
         // Skip defeated, lost turns, and followers on hold (their leaders act for them)
         if (
-          //@ts-ignore
           !t.data.defeated &&
-          //@ts-ignore
           !t.getFlag('swade', 'turnLost') &&
-          //@ts-ignore
           !(t.getFlag('swade', 'groupId') && t.getFlag('swade', 'roundHeld'))
         ) {
           next = i;
@@ -600,7 +590,7 @@ export default class SwadeCombat extends Combat {
       }
 
       const updates = this._getInitResetUpdates();
-      //@ts-ignore
+
       await this.updateEmbeddedDocuments('Combatant', updates);
 
       //Init autoroll
@@ -653,7 +643,6 @@ export default class SwadeCombat extends Combat {
   }
 
   async _preDelete(options, user: User) {
-    //@ts-ignore
     await super._preDelete(options, user);
     //FIXME remove any later
     const jokerDrawn = this.combatants.some((v: any) =>

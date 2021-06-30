@@ -14,7 +14,6 @@ interface ScrollRenderOptions extends Application.RenderOptions {
 
 export default class ActionCardEditor extends FormApplication {
   static async fromPack(compendium: Compendium): Promise<ActionCardEditor> {
-    //@ts-ignore
     const cards = await compendium.getDocuments();
     return new this(cards, compendium);
   }

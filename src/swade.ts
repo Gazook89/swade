@@ -9,6 +9,7 @@ import Benny from './module/Benny';
 import { getSwadeConeShape } from './module/cone';
 import { SWADE } from './module/config';
 import SwadeEntityTweaks from './module/dialog/entity-tweaks';
+import CharacterSummarizer from './module/entities/CharacterSummarizer';
 import SwadeActor from './module/entities/SwadeActor';
 import SwadeItem from './module/entities/SwadeItem';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
@@ -25,7 +26,6 @@ import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import CharacterSummarizer from './module/entities/CharacterSummarizer';
 import {
   createSwadeMacro,
   rollItemMacro,
@@ -69,17 +69,17 @@ Hooks.once('init', () => {
   MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
 
   // Register custom classes
-  //@ts-ignore
+
   CONFIG.Actor.documentClass = SwadeActor;
-  //@ts-ignore
+
   CONFIG.Item.documentClass = SwadeItem;
-  //@ts-ignore
+
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.statusEffects = SWADE.statusEffects;
   CONFIG.ui.combat = SwadeCombatTracker;
 
   //TODO: Will require Foundry 0.8.8
-  //@ts-ignore
+
   //CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
 
   // Register custom system settings

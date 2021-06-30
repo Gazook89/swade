@@ -86,13 +86,11 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('isOnHold', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'roundHeld');
   });
 
   Handlebars.registerHelper('isNotOnHold', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     if (!c.getFlag('swade', 'roundHeld')) {
       return true;
@@ -102,34 +100,29 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('turnLost', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'turnLost');
   });
 
   Handlebars.registerHelper('isGroupLeader', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'isGroupLeader');
   });
 
   Handlebars.registerHelper('isInGroup', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'groupId');
   });
 
   Handlebars.registerHelper('roundHeld', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     return c.getFlag('swade', 'roundHeld');
   });
 
   Handlebars.registerHelper('leaderColor', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     const leaderId = c.getFlag('swade', 'groupId');
-    //@ts-ignore
+
     const leader = game.combat.combatants.get(leaderId);
     const groupColor = hasProperty(leader, 'data.flags.swade.groupColor');
     if (groupColor) {
@@ -144,13 +137,11 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('groupColor', (id) => {
-    //@ts-ignore
     const c = game.combat.combatants.get(id);
     const groupColor = c.getFlag('swade', 'groupColor');
     if (groupColor) {
       return groupColor;
     } else {
-      //@ts-ignore
       if (c?.players?.length) {
         return c.players[0].data.color;
       } else {

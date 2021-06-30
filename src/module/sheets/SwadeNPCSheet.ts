@@ -62,7 +62,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     super.activateListeners(html);
 
     // Drag events for macros.
-    //@ts-ignore
+
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.

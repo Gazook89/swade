@@ -822,16 +822,14 @@ export default class SwadeActor extends Actor {
   }
 
   async _preCreate(data, options, user: User) {
-    //@ts-ignore
     await super._preCreate(data, options, user);
 
     const tokenData = mergeObject(
-      //@ts-ignore
       this.data.token.toObject(),
       { actorLink: data.type === 'character', vision: true },
       { overwrite: false },
     );
-    //@ts-ignore
+
     this.data.token.update(tokenData);
 
     //only do this if this is a PC with no prior skills
@@ -845,13 +843,13 @@ export default class SwadeActor extends Actor {
       const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
       const skillIndex: SwadeItem[] = await game.packs
         .get(pack)
-        //@ts-ignore
+
         .getDocuments();
 
       // extract skill data
       const skills = skillIndex
         .filter((i) => coreSkills.includes(i.data.name))
-        //@ts-ignore
+
         .map((s) => s.data.toObject());
 
       // Create core skills not in compendium (for custom skill names entered by the user)
@@ -885,20 +883,18 @@ export default class SwadeActor extends Actor {
         },
       });
       //Add the items to the creation data
-      //@ts-ignore
+
       this.data.update({ items: skills });
     }
   }
 
   async _preUpdate(changed, options, user: User) {
-    //@ts-ignore
     await super._preUpdate(changed, options, user);
     //wildcards will be linked, extras unlinked
     if (
       game.settings.get('swade', 'autoLinkWildcards') &&
       hasProperty(changed, 'data.wildcard')
     ) {
-      //@ts-ignore
       this.data.token.update({ actorlink: changed.data.wildcard });
     }
   }

@@ -32,7 +32,7 @@ export default class SwadeHooks {
   public static async onReady() {
     const packChoices = {};
     game.packs
-      //@ts-ignore
+
       .filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
         packChoices[
@@ -186,7 +186,7 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
         const pack = game.packs.get(li.data('pack'));
-        //@ts-ignore
+
         const isJE = pack.documentClass.documentName === 'JournalEntry';
         return isJE && game.user.isGM;
       },
@@ -233,25 +233,21 @@ export default class SwadeHooks {
     let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id');
-      //@ts-ignore
+
       const combatant = currentCombat.combatants.get(combId);
       const initdiv = el.getElementsByClassName('token-initiative');
-      //@ts-ignore
+
       if (combatant.getFlag('swade', 'groupId') || combatant.data.defeated) {
         /*initdiv[0].innerHTML =
         '<span class="initiative"><i class="fas fa-user-friends"></i></span>';*/
         initdiv[0].innerHTML = '';
-        //@ts-ignore
       } else if (combatant.getFlag('swade', 'roundHeld')) {
         initdiv[0].innerHTML =
           '<span class="initiative"><i class="fas fa-hand-rock"></span>';
-        //@ts-ignore
       } else if (combatant.getFlag('swade', 'turnLost')) {
         initdiv[0].innerHTML =
           '<span class="initiative"><i class="fas fa-ban"></span>';
-        //@ts-ignore
       } else if (combatant.getFlag('swade', 'cardString')) {
-        //@ts-ignore
         const cardString = combatant.getFlag('swade', 'cardString') as string;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
       } else if (!game.user.isGM) {
@@ -266,7 +262,7 @@ export default class SwadeHooks {
           // store the dragged item
           draggedEl = e.target;
           draggedId = draggedEl.getAttribute('data-combatant-id');
-          //@ts-ignore
+
           draggedCombatant = game.combat.combatants.get(draggedId);
         },
         false,
@@ -274,18 +270,13 @@ export default class SwadeHooks {
 
       // On dragOver
       el.addEventListener('dragover', function (e) {
-        const dropTargetEl = e.target
-          //@ts-ignore
-          .closest('li.combatant');
+        const dropTargetEl = e.target.closest('li.combatant');
         dropTargetEl.classList.add('dropTarget');
       });
 
       // On dragleave
       el.addEventListener('dragleave', function (e) {
-        e.target
-          //@ts-ignore
-          .closest('li.combatant')
-          .classList.remove('dropTarget');
+        e.target.closest('li.combatant').classList.remove('dropTarget');
       });
 
       // On drop
@@ -295,10 +286,10 @@ export default class SwadeHooks {
           e.preventDefault();
           e.stopImmediatePropagation();
           const leaderId = await e.target
-            //@ts-ignore
+
             .closest('li.combatant')
             .getAttribute('data-combatant-id');
-          //@ts-ignore
+
           const leader = await game.combat.combatants.get(leaderId);
           // If a follower, set as group leader
           if (draggedCombatant.id !== leaderId) {
@@ -317,7 +308,7 @@ export default class SwadeHooks {
             const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
             const fHasJoker = leader.getFlag('swade', 'hasJoker');
             // Set groupId of dragged combatant to the selected target's id
-            //@ts-ignore
+
             await draggedCombatant.update({
               initiative: fInitiative,
               flags: {
@@ -331,15 +322,11 @@ export default class SwadeHooks {
             });
             // If a leader, update its followers
             if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
-              //@ts-ignore
               const followers = game.combat.combatants.filter(
-                (f) =>
-                  //@ts-ignore
-                  f.getFlag('swade', 'groupId') === draggedCombatant.id,
+                (f) => f.getFlag('swade', 'groupId') === draggedCombatant.id,
               );
-              //@ts-ignore
+
               for await (const f of followers) {
-                //@ts-ignore
                 await f.update({
                   initiative: fInitiative,
                   flags: {
@@ -411,7 +398,6 @@ export default class SwadeHooks {
         const enemyWCs = game.combat.combatants.filter((c) => {
           const a = (c.actor as unknown) as SwadeActor;
           const hostile =
-            //@ts-ignore
             c.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
           return a.data.type === 'npc' && hostile && a.isWildcard;
         });
@@ -482,13 +468,13 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
+
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader');
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
+
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         await targetCombatant.update({
           flags: {
@@ -507,15 +493,15 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-palette"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
+
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return targetCombatant.getFlag('swade', 'isGroupLeader');
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
+
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        //@ts-ignore
+
         const colorPicker = new SwadeCombatGroupColor(targetCombatant);
         colorPicker.render(true);
       },
@@ -527,22 +513,20 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-users-slash"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
+
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         return targetCombatant.getFlag('swade', 'isGroupLeader');
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
+
         const targetCombatant = game.combat.combatants.get(targetCombatantId);
         // Remove combatants from this leader's group.
         if (game.combat) {
           const followers = game.combat.combatants.filter(
-            //@ts-ignore
             (f) => f.getFlag('swade', 'groupId') === targetCombatantId,
           );
           for (const f of followers) {
-            //@ts-ignore
             await f.unsetFlag('swade', 'groupId');
           }
         }
@@ -553,7 +537,6 @@ export default class SwadeHooks {
 
     // Get group leaders
     const groupLeaders = game.combat?.combatants?.filter((c) =>
-      //@ts-ignore
       c.getFlag('swade', 'isGroupLeader'),
     );
     // Enable follow and unfollow if there are group leaders.
@@ -566,7 +549,7 @@ export default class SwadeHooks {
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
             const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
+
             const targetCombatant = game.combat.combatants.get(
               targetCombatantId,
             );
@@ -578,24 +561,24 @@ export default class SwadeHooks {
           },
           callback: async (li) => {
             const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
+
             const targetCombatant = game.combat.combatants.get(
               targetCombatantId,
             );
-            //@ts-ignore
+
             const groupId = getProperty(gl, 'id');
-            //@ts-ignore
+
             gl.setFlag('swade', 'isGroupLeader', true);
-            //@ts-ignore
+
             const fInitiative = getProperty(gl, 'data.initiative');
-            //@ts-ignore
+
             const fCardValue = gl.getFlag('swade', 'cardValue');
-            //@ts-ignore
+
             const fSuitValue = gl.getFlag('swade', 'suitValue') - 0.01;
-            //@ts-ignore
+
             const fHasJoker = gl.getFlag('swade', 'hasJoker');
             // Set groupId of dragged combatant to the selected target's id
-            //@ts-ignore
+
             await targetCombatant.update({
               initiative: fInitiative,
               flags: {
@@ -609,13 +592,10 @@ export default class SwadeHooks {
             });
             if (targetCombatant.getFlag('swade', 'isGroupLeader')) {
               const followers = game.combat.combatants.filter(
-                (f) =>
-                  //@ts-ignore
-                  f.getFlag('swade', 'groupId') === targetCombatant.id,
+                (f) => f.getFlag('swade', 'groupId') === targetCombatant.id,
               );
-              //@ts-ignore
+
               for (const follower of followers) {
-                //@ts-ignore
                 await follower.update({
                   initiative: fInitiative,
                   flags: {
@@ -639,7 +619,7 @@ export default class SwadeHooks {
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
             const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
+
             const targetCombatant = game.combat.combatants.get(
               targetCombatantId,
             );
@@ -650,7 +630,7 @@ export default class SwadeHooks {
           },
           callback: async (li) => {
             const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
+
             const targetCombatant = game.combat.combatants.get(
               targetCombatantId,
             );
@@ -874,7 +854,7 @@ export default class SwadeHooks {
     const cardPack = game.packs.get(
       game.settings.get('swade', 'cardDeck') as string,
     ) as Compendium;
-    //@ts-ignore
+
     const cards = (await cardPack.getDocuments()).sort(
       (a: JournalEntry, b: JournalEntry) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
@@ -902,7 +882,6 @@ export default class SwadeHooks {
         options.document.getFlag('swade', 'cardValue') === cardValue &&
         options.document.getFlag('swade', 'suitValue') === suitValue;
       const isAvailable = cardTable.results.find(
-        //@ts-ignore
         (r) => r.data.text === card.name,
       ).drawn
         ? 'text-decoration: line-through;'
@@ -938,7 +917,7 @@ export default class SwadeHooks {
       const suitValue = selectedCard.data().suitValue as number;
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as String;
-      //@ts-ignore
+
       game.combat.combatants.get(options.document.id).update({
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },

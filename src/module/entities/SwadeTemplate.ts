@@ -57,9 +57,9 @@ export default class SwadeTemplate extends MeasuredTemplate {
     }
 
     // Return the template constructed from the item data
-    //@ts-ignore
+
     const cls = CONFIG.MeasuredTemplate.documentClass;
-    //@ts-ignore
+
     const template = new cls(templateData, { parent: canvas.scene });
     const object = new this(template);
     return object;
@@ -97,7 +97,7 @@ export default class SwadeTemplate extends MeasuredTemplate {
         center.y,
         2,
       );
-      //@ts-ignore
+
       this.data.update({ x: snapped.x, y: snapped.y });
       this.refresh();
       this.moveTime = now;
@@ -124,12 +124,11 @@ export default class SwadeTemplate extends MeasuredTemplate {
         this.data.y,
         2,
       );
-      //@ts-ignore
+
       this.data.update(destination);
 
       // Create the template
       getCanvas()
-        //@ts-ignore
         .scene.createEmbeddedDocuments('MeasuredTemplate', [this.data])
         .then(() => this.destroy());
     };
@@ -140,7 +139,7 @@ export default class SwadeTemplate extends MeasuredTemplate {
       event.stopPropagation();
       const delta = getCanvas().grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
       const snap = event.shiftKey ? delta : 5;
-      //@ts-ignore
+
       this.data.update({
         direction: this.data.direction + snap * Math.sign(event.deltaY),
       });

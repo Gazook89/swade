@@ -249,7 +249,7 @@ export default class SwadeItemSheet extends ItemSheet {
     }
 
     //prep item data
-    //@ts-ignore
+
     const itemData = deepClone(item.data.toObject());
     delete itemData['_id'];
     delete itemData['permission'];

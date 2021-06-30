@@ -33,7 +33,7 @@ export default class CharacterSheet extends ActorSheet {
     if (!this.options.editable) return;
 
     // Drag events for macros.
-    //@ts-ignore
+
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.
@@ -727,7 +727,7 @@ export default class CharacterSheet extends ActorSheet {
       label: possibleName,
       icon: '/icons/svg/mystery-man-black.svg',
     });
-    //@ts-ignore
+
     return this.actor.effects.get(effect[0].id).sheet.render(true);
   }
 }

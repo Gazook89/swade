@@ -15,7 +15,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
-    //@ts-ignore
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       html.find('li.active-effect').each((i, li) => {
@@ -196,7 +195,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         transfer: transfer,
       });
       console.log(effect);
-      //@ts-ignore
+
       this.actor.effects.get(effect[0].id).sheet.render(true);
     });
 
@@ -295,7 +294,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     let buttons = super._getHeaderButtons();
 
     // Token Configuration
-    //@ts-ignore
+
     if (this.actor.isOwner) {
       buttons = [
         {
