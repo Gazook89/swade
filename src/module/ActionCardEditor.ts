@@ -28,7 +28,7 @@ export default class ActionCardEditor extends FormApplication {
   ) {
     super({}, options);
     this.pack = pack;
-    this.cards = new Map(cards.map((v) => [v.id, v]));
+    this.cards = new Map(cards.map((v) => [v.id!, v]));
   }
 
   static get defaultOptions() {
@@ -60,7 +60,7 @@ export default class ActionCardEditor extends FormApplication {
     html.find('.add-card').on('click', async () => this._createNewCard());
   }
 
-  protected async _updateObject(event: Event, formData?: object) {
+  protected async _updateObject(event: Event, formData = {}) {
     const data = expandObject(formData);
     const cards = Object.entries(data.card) as [string, CardData][];
     for (const [id, value] of cards) {
@@ -88,9 +88,9 @@ export default class ActionCardEditor extends FormApplication {
     return card;
   }
 
-  private _showCard(event) {
-    const id = event.currentTarget.dataset.id;
-    new ImagePopout(this.cards.get(id).data.img, {
+  private _showCard(event: JQuery.ClickEvent<HTMLElement>) {
+    const id = event.currentTarget.dataset.id!;
+    new ImagePopout(this.cards.get(id)?.data.img!, {
       shareable: true,
     }).render(true);
   }
@@ -104,15 +104,17 @@ export default class ActionCardEditor extends FormApplication {
       },
       { pack: this.pack.collection },
     );
-    this.cards.set(newCard.id, newCard);
-    this.render(true, { scroll: true });
+    if (newCard) {
+      this.cards.set(newCard.id!, newCard);
+      this.render(true, { scroll: true });
+    }
   }
 
   render(force: boolean, options?: ScrollRenderOptions) {
     super.render(force, options);
   }
 
-  async _render(force?: boolean, options?: ScrollRenderOptions) {
+  async _render(force?: boolean, options: ScrollRenderOptions = {}) {
     await super._render(force, options);
     if (options.scroll) {
       document
