@@ -146,14 +146,12 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
       if (ev.shiftKey) {
         runningRoll.evaluate({ async: false }).toMessage({
-          //@ts-ignore
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           flavor: game.i18n.localize('SWADE.Running'),
         });
       } else {
         SwadeDice.Roll({
           roll: runningRoll,
-          //@ts-ignore
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           flavor: game.i18n.localize('SWADE.Running'),
           title: game.i18n.localize('SWADE.Running'),
@@ -215,7 +213,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
         .evaluate({ async: false })
         .toMessage({
-          //@ts-ignore
           speaker: ChatMessage.getSpeaker(),
           flavor: statData.label,
         });

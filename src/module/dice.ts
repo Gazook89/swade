@@ -1,11 +1,11 @@
+import { ChatSpeakerData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatSpeakerData';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
-  //@ts-ignore
-  speaker?: ChatMessage.SpeakerData;
+  speaker?: ChatSpeakerData;
   flavor?: string;
   title?: string;
   item?: SwadeItem;
@@ -17,8 +17,7 @@ interface RollHelperData {
 interface RollHandlerData {
   form: any;
   roll: Roll;
-  //@ts-ignore
-  speaker: ChatMessage.SpeakerData;
+  speaker: ChatSpeakerData;
   flavor: string;
   raise?: boolean;
   actor?: SwadeActor;

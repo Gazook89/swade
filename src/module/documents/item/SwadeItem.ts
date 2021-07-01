@@ -93,7 +93,6 @@ export default class SwadeItem extends Item {
     // Roll and return
     return SwadeDice.Roll({
       roll: newRoll,
-      //@ts-ignore
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,
@@ -278,7 +277,6 @@ export default class SwadeItem extends Item {
     // Toggle default roll mode
     const rollMode = game.settings.get('core', 'rollMode') as string;
     if (['gmroll', 'blindroll'].includes(rollMode))
-      //@ts-ignore
       chatData['whisper'] = ChatMessage.getWhisperRecipients('GM');
     if (rollMode === 'selfroll') chatData['whisper'] = [game.user._id];
     if (rollMode === 'blindroll') chatData['blind'] = true;

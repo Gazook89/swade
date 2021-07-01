@@ -159,7 +159,6 @@ export default class CharacterSheet extends ActorSheet {
       }
 
       new Roll(rollFormula).evaluate({ async: false }).toMessage({
-        //@ts-ignore
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: game.i18n.localize('SWADE.Running'),
       });
@@ -437,7 +436,6 @@ export default class CharacterSheet extends ActorSheet {
       new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
         .evaluate({ async: false })
         .toMessage({
-          //@ts-ignore
           speaker: ChatMessage.getSpeaker(),
           flavor: statData.label,
         });
@@ -459,7 +457,6 @@ export default class CharacterSheet extends ActorSheet {
 
       SwadeDice.Roll({
         roll: roll,
-        //@ts-ignore
         speaker: ChatMessage.getSpeaker(),
         actor: this.actor,
         flavor: game.i18n.localize('SWADE.WealthDie'),
