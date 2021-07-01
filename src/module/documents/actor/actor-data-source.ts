@@ -4,9 +4,6 @@ declare global {
   interface SourceConfig {
     Actor: SwadeActorDataSource;
   }
-  interface DataConfig {
-    Actor: SwadeActorDataProperties;
-  }
 }
 
 export type SwadeActorDataSource =
@@ -14,31 +11,22 @@ export type SwadeActorDataSource =
   | SwadeNpcDataSource
   | SwadeVehicleDataSource;
 
-export type SwadeActorDataProperties =
-  | SwadeCharacterDataSource
-  | SwadeNpcDataSource
-  | SwadeVehicleDataSource;
-
 interface SwadeCharacterDataSource {
-  data: SwadeCharacterDataSourceData;
+  data: CharacterDataSourceData;
   type: 'character';
 }
 
 interface SwadeNpcDataSource {
-  data: SwadeCharacterDataSourceData;
+  data: CharacterDataSourceData;
   type: 'npc';
 }
 
 interface SwadeVehicleDataSource {
-  data: SwadeVehicleDataSourceData;
+  data: VehicleDataSourceData;
   type: 'vehicle';
 }
 
-interface SwadeCharacterDataSourceData extends CharacterCommonData {}
-
-interface SwadeVehicleDataSourceData extends VehicleCommonData {}
-
-interface CharacterCommonData {
+export interface CharacterDataSourceData {
   attributes: {
     agility: {
       die: {
@@ -168,7 +156,7 @@ interface CharacterCommonData {
   wildcard: boolean;
 }
 
-interface VehicleCommonData {
+export interface VehicleDataSourceData {
   size: number;
   scale: number;
   classification: string;
