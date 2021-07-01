@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { SysItemData } from '../interfaces/item-data';
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
 import * as chat from './chat';
 import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
-import SwadeTemplate from './entities/SwadeTemplate';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
+import SwadeTemplate from './documents/SwadeTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';

@@ -1,7 +1,7 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
-import SwadeItem from '../../entities/SwadeItem';
+import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {

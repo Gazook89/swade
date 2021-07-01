@@ -1,9 +1,10 @@
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
+  //@ts-ignore
   speaker?: ChatMessage.SpeakerData;
   flavor?: string;
   title?: string;
@@ -16,6 +17,7 @@ interface RollHelperData {
 interface RollHandlerData {
   form: any;
   roll: Roll;
+  //@ts-ignore
   speaker: ChatMessage.SpeakerData;
   flavor: string;
   raise?: boolean;

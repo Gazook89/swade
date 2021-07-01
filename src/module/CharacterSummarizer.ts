@@ -1,6 +1,6 @@
-import { AdditionalStat } from '../../interfaces/additional';
-import SwadeActor from './SwadeActor';
-import SwadeItem from './SwadeItem';
+import { AdditionalStat } from '../interfaces/additional';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 
 /**
  * Produce short, plaintext summaries of the most important aspects of an Actor's character sheet.

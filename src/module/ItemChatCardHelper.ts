@@ -1,8 +1,8 @@
 import { ItemAction } from '../interfaces/additional';
 import IRollOptions from '../interfaces/IRollOptions';
 import { SWADE } from './config';
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 import { getTrait, notificationExists } from './util';
 
 /**

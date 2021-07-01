@@ -1,4 +1,4 @@
-import { SWADE } from './config';
+import { SWADE } from '../config';
 
 interface IPickACard {
   cards: JournalEntry[];

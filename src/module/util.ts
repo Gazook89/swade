@@ -1,6 +1,6 @@
 import { SWADE } from './config';
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 
 const warningString =
   'This type of macro will be removed in version 0.20.0. Please create a new one by dragging/dropping';

@@ -18,3 +18,8 @@ export interface ItemAction {
   dmgMod?: string;
   dmgOverride?: string;
 }
+
+export interface ITraitRollModifier {
+  label: string;
+  value: string;
+}

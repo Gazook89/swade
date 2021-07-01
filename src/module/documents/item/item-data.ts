@@ -1,4 +1,4 @@
-import { AdditionalStat, ItemAction } from './additional';
+import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 
 declare global {
   interface SourceConfig {

@@ -1,6 +1,6 @@
-import SwadeActor from './entities/SwadeActor';
 import * as chat from './chat';
 import { SWADE } from './config';
+import SwadeActor from './documents/actor/SwadeActor';
 
 export default class Bennies {
   static async spendEvent(ev: MouseEvent) {

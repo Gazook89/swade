@@ -1,5 +1,5 @@
 import { SWADE } from './config';
-import SwadeActor from './entities/SwadeActor';
+import SwadeActor from './documents/actor/SwadeActor';
 import ItemChatCardHelper from './ItemChatCardHelper';
 
 export async function formatRoll(

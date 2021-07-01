@@ -1,7 +1,5 @@
-import { SysActorData } from '../../interfaces/actor-data';
-import { SysItemData } from '../../interfaces/item-data';
-import SwadeActor from '../entities/SwadeActor';
-import SwadeItem from '../entities/SwadeItem';
+import SwadeActor from '../documents/actor/SwadeActor';
+import SwadeItem from '../documents/item/SwadeItem';
 
 export default class SwadeEntityTweaks extends FormApplication {
   constructor(object, options = {}) {
@@ -81,9 +79,7 @@ export default class SwadeEntityTweaks extends FormApplication {
    */
   async _updateObject(event, formData) {
     event.preventDefault();
-    const expandedFormData = expandObject(formData) as
-      | DeepPartial<SysItemData>
-      | DeepPartial<SysActorData>;
+    const expandedFormData = expandObject(formData);
 
     //recombine the formdata
     setProperty(

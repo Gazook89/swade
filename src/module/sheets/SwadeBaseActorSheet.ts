@@ -3,8 +3,8 @@ import * as chat from '../chat';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
 import SwadeDice from '../dice';
-import SwadeActor from '../entities/SwadeActor';
-import SwadeItem from '../entities/SwadeItem';
+import SwadeActor from '../documents/actor/SwadeActor';
+import SwadeItem from '../documents/item/SwadeItem';
 /**
  * @noInheritDoc
  */

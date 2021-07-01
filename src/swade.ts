@@ -5,13 +5,14 @@
  * Software License: Apache License, Version 2.0
  */
 
-import Benny from './module/Benny';
+import CharacterSummarizer from './module/CharacterSummarizer';
 import { getSwadeConeShape } from './module/cone';
 import { SWADE } from './module/config';
 import SwadeEntityTweaks from './module/dialog/entity-tweaks';
-import CharacterSummarizer from './module/entities/CharacterSummarizer';
-import SwadeActor from './module/entities/SwadeActor';
-import SwadeItem from './module/entities/SwadeItem';
+import SwadeActor from './module/documents/actor/SwadeActor';
+import Benny from './module/documents/Benny';
+import SwadeItem from './module/documents/item/SwadeItem';
+import SwadeCombat from './module/documents/SwadeCombat';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
@@ -23,7 +24,6 @@ import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
-import SwadeCombat from './module/SwadeCombat';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
 import {
@@ -93,9 +93,8 @@ Hooks.once('init', () => {
   Actors.registerSheet('swade', CharacterSheet, {
     types: ['character'],
     makeDefault: true,
-    label: game.i18n.localize('SWADE.OfficialSheet'),
+    label: 'SWADE.OfficialSheet',
   });
-
   Actors.registerSheet('swade', SwadeNPCSheet, {
     types: ['npc'],
     label: 'SWADE.CommunityNPCSheet',

@@ -1,7 +1,13 @@
-import { ItemAction } from '../../interfaces/additional';
-import IRollOptions from '../../interfaces/IRollOptions';
-import SwadeDice from '../dice';
-import SwadeActor from './SwadeActor';
+import { ItemAction } from '../../../interfaces/additional';
+import IRollOptions from '../../../interfaces/IRollOptions';
+import SwadeDice from '../../dice';
+import SwadeActor from '../actor/SwadeActor';
+
+declare global {
+  interface DocumentClassConfig {
+    Item: typeof SwadeItem;
+  }
+}
 
 /**
  * Override and extend the basic :class:`Item` implementation

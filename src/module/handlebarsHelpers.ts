@@ -1,5 +1,5 @@
 import { SWADE } from './config';
-import SwadeItem from './entities/SwadeItem';
+import SwadeItem from './documents/item/SwadeItem';
 
 export const registerCustomHelpers = function () {
   Handlebars.registerHelper('add', function (a, b) {

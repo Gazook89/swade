@@ -1,4 +1,4 @@
-import { AdditionalStat } from './additional';
+import { AdditionalStat } from '../../../interfaces/additional';
 
 declare global {
   interface SourceConfig {
@@ -16,6 +16,7 @@ export type SwadeActorDataSource =
 
 export type SwadeActorDataProperties =
   | SwadeCharacterDataSource
+  | SwadeNpcDataSource
   | SwadeVehicleDataSource;
 
 interface SwadeCharacterDataSource {

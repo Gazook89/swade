@@ -1,7 +1,7 @@
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import SwadeActor from '../entities/SwadeActor';
-import SwadeItem from '../entities/SwadeItem';
+import SwadeActor from '../documents/actor/SwadeActor';
+import SwadeItem from '../documents/item/SwadeItem';
 
 /**
  * @noInheritDoc

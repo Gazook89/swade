@@ -1,12 +1,14 @@
-import IRollOptions from '../../interfaces/IRollOptions';
-import { SWADE } from '../config';
-import SwadeDice from '../dice';
-import * as util from '../util';
-import SwadeItem from './SwadeItem';
+import { ITraitRollModifier } from '../../../interfaces/additional';
+import IRollOptions from '../../../interfaces/IRollOptions';
+import { SWADE } from '../../config';
+import SwadeDice from '../../dice';
+import * as util from '../../util';
+import SwadeItem from '../item/SwadeItem';
 
-interface ITraitRollModifier {
-  label: string;
-  value: string;
+declare global {
+  interface DocumentClassConfig {
+    Actor: typeof SwadeActor;
+  }
 }
 
 /**
@@ -901,14 +903,13 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  //TODO change to onUpdate once TS behaves
-  // async _onUpdate(changed, options, user: User) {
-  //   super._onUpdate(changed, options, user);
-  //   if (this.data.type === 'npc') {
-  //     ui.actors.render(true);
-  //   }
-  //   if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
-  //     ui.players.render(true);
-  //   }
-  // }
+  async _onUpdate(changed, options, user: User) {
+    super._onUpdate(changed, options, user);
+    if (this.data.type === 'npc') {
+      ui.actors.render(true);
+    }
+    if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
+      ui.players.render(true);
+    }
+  }
 }
