@@ -109,7 +109,7 @@ export default class SwadeItem extends Item {
     data.notes = TextEditor.enrichHTML(data.notes, htmlOptions);
 
     // Item properties
-    const props: any[] = [];
+    const props = new Array<string>();
 
     switch (this.type) {
       case 'hindrance':
