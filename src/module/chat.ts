@@ -7,7 +7,7 @@ export async function formatRoll(
   html: JQuery<HTMLElement>,
   data: any,
 ) {
-  const colorMessage = chatMessage.getFlag('swade', 'colorMessage');
+  const colorMessage = chatMessage.getFlag('swade', 'colorMessage') as boolean;
 
   // Little helper function
   const pushDice = (data, total, faces, red?: boolean) => {
@@ -18,7 +18,7 @@ export async function formatRoll(
     if (red) {
       color = 'red';
     }
-    let img = null;
+    let img = '';
     if ([4, 6, 8, 10, 12, 20].indexOf(faces) > -1) {
       img = `icons/svg/d${faces}-grey.svg`;
     }
@@ -31,7 +31,7 @@ export async function formatRoll(
   };
 
   //helper function that determines if a roll contained at least one result of 1
-  const rollIsRed = (roll?: Roll) => {
+  const rollIsRed = (roll: Roll) => {
     const retVal = roll.terms.some((d: Die) => {
       if (d['class'] !== 'Die') return false;
       return d.results[0]['result'] === 1;
@@ -46,7 +46,7 @@ export async function formatRoll(
   };
 
   const roll = Roll.fromJSON(data.message.roll);
-  const chatData = { dice: [], modifiers: [] };
+  const chatData: DiceResults = { dice: [], modifiers: [], result: 0 };
 
   for (const term of roll.terms) {
     if (term instanceof PoolTerm) {
@@ -78,7 +78,7 @@ export async function formatRoll(
     .find('.dice-formula')
     .replaceWith(await renderTemplate(formulaTemplate, chatData));
 
-  const results = { dice: [], modifiers: [], total: 0 };
+  const results: DiceResults = { dice: [], total: 0 };
   const modifiers: (string | number)[] = [];
   let conviction = 0;
 
@@ -94,12 +94,12 @@ export async function formatRoll(
       });
     } else if (term instanceof Die) {
       if (term.flavor === game.i18n.localize('SWADE.Conv')) {
-        conviction = term.total;
+        conviction = term.total!;
       } else {
-        modifiers.push(term.total);
+        modifiers.push(term.total!);
       }
     } else if (term instanceof Roll) {
-      results.total += term.total;
+      results.total! += term.total!;
     } else {
       modifiers.push(term.expression);
     }
@@ -125,7 +125,7 @@ export async function formatRoll(
         v.result += mod;
       });
     } else {
-      results.total += mod + conviction;
+      results.total! += mod + conviction;
     }
   }
   const resultTemplate = 'systems/swade/templates/chat/roll-result.html';
@@ -137,8 +137,11 @@ export async function formatRoll(
 export function chatListeners(html: JQuery<HTMLElement>) {
   html.on('click', '.card-header .item-name', (event) => {
     const target = $(event.currentTarget).parents('.item-card');
-    const actor = game.actors.get(target.data('actorId')) as SwadeActor;
-    if (actor && (game.user.isGM || actor.hasPerm(game.user, 'OBSERVER'))) {
+    const actor = game.actors!.get(target.data('actorId'))!;
+    if (
+      actor &&
+      (game.user!.isGM || actor.testUserPermission(game.user!, 'OBSERVER'))
+    ) {
       const desc = target.find('.card-content');
       desc.slideToggle();
     }
@@ -146,9 +149,13 @@ export function chatListeners(html: JQuery<HTMLElement>) {
 
   html.on('click', '.card-buttons button', async (event) => {
     const element = event.currentTarget as Element;
-    const actorId = $(element).parents('[data-actor-id]').attr('data-actor-id');
-    const itemId = $(element).parents('[data-item-id]').attr('data-item-id');
-    const actor = game.actors.get(actorId) as SwadeActor;
+    const actorId = $(element)
+      .parents('[data-actor-id]')
+      .attr('data-actor-id') as string;
+    const itemId = $(element)
+      .parents('[data-item-id]')
+      .attr('data-item-id') as string;
+    const actor = game.actors!.get(actorId)!;
     const action = element.getAttribute('data-action');
     const messageId = $(element)
       .parents('[data-message-id]')
@@ -164,7 +171,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
         .find('input.pp-adjust')
         .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
-      const power = actor.items.get(itemId);
+      const power = actor.items.get(itemId)!;
       let key = 'data.powerPoints.value';
       const arcane = getProperty(power.data, 'data.arcane');
       if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -190,9 +197,9 @@ export function hideChatActionButtons(
   const chatCard = html.find('.swade.chat-card');
   if (chatCard.length > 0) {
     // If the user is the message author or the actor owner, proceed
-    const actor = game.actors.get(data.message.speaker.actor);
-    if (actor && actor.owner) return;
-    else if (game.user.isGM || data.author.id === game.user.id) return;
+    const actor = game.actors!.get(data.message.speaker.actor);
+    if (actor && actor.isOwner) return;
+    else if (game.user!.isGM || data.author.id === game.user!.id) return;
 
     // Otherwise conceal action buttons except for saving throw
     const buttons = chatCard.find('button[data-action]');
@@ -222,7 +229,7 @@ export async function createConvictionEndMessage(actor: SwadeActor) {
  * Creates a chat message for GM Bennies
  */
 export async function createGmBennyAddMessage(
-  user: User = game.user,
+  user: User = game.user!,
   given?: boolean,
 ) {
   let message = await renderTemplate(SWADE.bennies.templates.gmadd, {
@@ -247,19 +254,21 @@ export async function rerollFromChat(
   li: JQuery<HTMLElement>,
   spendBenny: boolean,
 ) {
-  const message = game.messages.get(li.data('messageId')) as ChatMessage;
+  const message = game.messages?.get(li.data('messageId'))!;
   const flavor = new DOMParser().parseFromString(
     getProperty(message, 'data.flavor'),
     'text/html',
   );
   const speaker = getProperty(message, 'data.speaker');
-  const roll = message.roll;
-  const actor = ChatMessage.getSpeakerActor(speaker);
+  const roll = message.roll!;
+  const actor = (ChatMessage.getSpeakerActor(
+    speaker,
+  )! as unknown) as SwadeActor;
   const currentBennies = getProperty(actor.data, 'data.bennies.value');
   const doSpendBenny = spendBenny && !!actor && actor.isWildcard;
 
   if (doSpendBenny && currentBennies <= 0) {
-    ui.notifications.warn(game.i18n.localize('SWADE.NoBennies'));
+    ui.notifications?.warn(game.i18n.localize('SWADE.NoBennies'));
     return;
   }
 
@@ -284,4 +293,18 @@ export async function rerollFromChat(
     await actor.spendBenny();
   }
   roll.reroll({ async: false }).toMessage(newRollData);
+}
+
+interface ChatDie {
+  img: string | null;
+  result: string;
+  color: string;
+  dice: boolean;
+}
+
+interface DiceResults {
+  dice: ChatDie[];
+  modifiers?: (string | number)[];
+  result?: number;
+  total?: number;
 }
