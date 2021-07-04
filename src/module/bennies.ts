@@ -5,8 +5,8 @@ import SwadeActor from './documents/actor/SwadeActor';
 export default class Bennies {
   static async spendEvent(ev: MouseEvent) {
     ev.preventDefault();
-    const userId = (ev.target as HTMLElement).parentElement.dataset.userId;
-    const user = game.users.find((user: User) => user.id == userId);
+    const userId = (ev.target as HTMLElement).parentElement!.dataset.userId;
+    const user = game.users!.find((user) => user.id == userId)!;
     if (user.isGM) {
       const value = user.getFlag('swade', 'bennies') as number;
       if (value == 0) return;
@@ -30,8 +30,7 @@ export default class Bennies {
         }
       });
     } else if (user.character) {
-      const character = user.character as SwadeActor;
-      character.spendBenny();
+      user.character.spendBenny();
     }
   }
 
@@ -58,7 +57,7 @@ export default class Bennies {
         };
         ChatMessage.create(chatData);
       }
-      ui['players'].render(true);
+      ui.players?.render(true);
     }
     if (user.character) {
       (user.character as SwadeActor).refreshBennies(displayToChat);
@@ -66,14 +65,13 @@ export default class Bennies {
   }
 
   static async refreshAll() {
-    for (const user of game.users.values()) {
+    for (const user of game.users!.values()) {
       this.refresh(user, false);
     }
 
-    const npcWildcardsToRefresh = game.actors.filter(
-      (a: SwadeActor) =>
-        !a.hasPlayerOwner && a.data.type === 'npc' && a.isWildcard,
-    ) as SwadeActor[];
+    const npcWildcardsToRefresh = game.actors!.filter(
+      (a) => !a.hasPlayerOwner && a.data.type === 'npc' && a.isWildcard,
+    );
     for (const actor of npcWildcardsToRefresh) {
       await actor.refreshBennies(false);
     }
@@ -92,8 +90,8 @@ export default class Bennies {
 
   static async giveEvent(ev: MouseEvent) {
     ev.preventDefault();
-    const userId = (ev.target as HTMLElement).parentElement.dataset.userId;
-    const user = game.users.find((user: User) => user.id == userId);
+    const userId = (ev.target as HTMLElement).parentElement!.dataset.userId;
+    const user = game.users!.find((user) => user.id == userId)!;
     if (user.isGM) {
       await user.setFlag(
         'swade',
@@ -103,22 +101,20 @@ export default class Bennies {
       if (game.settings.get('swade', 'notifyBennies')) {
         chat.createGmBennyAddMessage(user, true);
       }
-      ui['players'].render(true);
-    } else if (user.character) {
-      const character = user.character as SwadeActor;
-      character.getBenny();
+      ui.players?.render(true);
+    } else if (user!.character) {
+      user.character.getBenny();
     }
   }
 
   private static updateBenny(ev: MouseEvent) {
-    const userId = (ev.target as HTMLElement).parentElement.dataset.userId;
-    const user = game.users.find((user: User) => user.id == userId);
+    const userId = (ev!.target as HTMLElement).parentElement!.dataset.userId;
+    const user = game.users!.find((user: User) => user.id == userId)!;
     if (user.isGM) {
-      const value = user.getFlag('swade', 'bennies');
-      (ev.target as HTMLElement).innerHTML = value.toString();
-    } else if (user.character) {
-      (ev.target as HTMLElement).innerHTML =
-        user.character.data.data.bennies.value;
+      const value = user.getFlag('swade', 'bennies') as number;
+      (ev.target as HTMLElement).innerHTML = value!.toString();
+    } else if (user.character && user.character?.data.type !== 'vehicle') {
+      (ev.target as HTMLElement).innerHTML = user!.character.data.data.bennies.value.toString();
     }
   }
 
@@ -130,7 +126,7 @@ export default class Bennies {
     span.classList.add('bennies-count');
 
     // Player view
-    if (!game.user.isGM) {
+    if (!game.user!.isGM) {
       if (user.isGM) {
         span.innerHTML = user.getFlag('swade', 'bennies');
       } else if (user.character) {
@@ -163,12 +159,11 @@ export default class Bennies {
       const bennies = user.getFlag('swade', 'bennies');
       // Set bennies to number as defined in GM benny setting
       if (bennies == null) {
-        user
-          .setFlag('swade', 'bennies', game.settings.get('swade', 'gmBennies'))
-          .then(() => {
-            span.innerHTML = game.settings.get('swade', 'gmBennies').toString();
-            player.append(span);
-          });
+        const gmBennies = game.settings.get('swade', 'gmBennies') as number;
+        user.setFlag('swade', 'bennies', gmBennies).then(() => {
+          span.innerHTML = gmBennies.toString();
+          player.append(span);
+        });
       } else {
         span.innerHTML = user.getFlag('swade', 'bennies');
         player.append(span);
