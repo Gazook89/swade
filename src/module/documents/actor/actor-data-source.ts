@@ -57,7 +57,7 @@ export interface CharacterDataSourceData {
       };
       unShakeBonus: number;
     };
-    strenght: {
+    strength: {
       die: {
         sides: number;
         modifier: number;
