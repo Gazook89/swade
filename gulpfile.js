@@ -130,6 +130,7 @@ function createTransformer() {
 }
 
 const tsConfig = ts.createProject('tsconfig.json', {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getCustomTransformers: (_program) => ({
     after: [createTransformer()],
   }),
