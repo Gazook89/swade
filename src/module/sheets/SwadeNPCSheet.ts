@@ -23,20 +23,25 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
   get template() {
     // Later you might want to return a different template
     // based on user permissions.
-    if (!game.user.isGM && this.actor.limited)
+    if (!game.user?.isGM && this.actor.limited)
       return 'systems/swade/templates/actors/limited-sheet.html';
     return 'systems/swade/templates/actors/npc-sheet.html';
   }
 
-  _createEditor(target, editorOptions, initialContent) {
-    // remove some controls to the editor as the space is lacking
-    editorOptions.toolbar = 'styleselect bullist hr table removeFormat save';
-    super._createEditor(target, editorOptions, initialContent);
+  activateEditor(
+    name: string,
+    options?: TextEditor.Options,
+    initialContent?: string,
+  ) {
+    if (options && name === 'data.details.biography.value') {
+      options.toolbar = 'styleselect bullist hr table removeFormat save';
+    }
+    super.activateEditor(name, options, initialContent);
   }
 
   // Override to set resizable initial size
-  async _renderInner(data, options) {
-    const html = await super._renderInner(data, options);
+  async _renderInner(data) {
+    const html = await super._renderInner(data);
     this.form = html[0];
 
     // Resize resizable classes
@@ -44,7 +49,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     resizable.each((_, el) => {
       const heightDelta =
         (this.position.height as number) - (this.options.height as number);
-      el.style.height = `${heightDelta + parseInt(el.dataset.baseSize)}px`;
+      el.style.height = `${heightDelta + parseInt(el.dataset.baseSize!)}px`;
     });
 
     // Filter power list
@@ -89,20 +94,20 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     // Update Item via right-click
     html.find('.contextmenu-edit').on('contextmenu', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.sheet.render(true);
+      const item = this.actor.items.get(li.data('itemId'))!;
+      item.sheet?.render(true);
     });
 
     // Delete Item
     html.find('.item-delete').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.gear-card');
-      this.actor.deleteOwnedItem(li.data('itemId'));
+      this.actor.items.get(li.data('itemId'))?.delete();
     });
 
     // Roll Skill
     html.find('.skill.item a').on('click', (event) => {
       const element = event.currentTarget as Element;
-      const item = element.parentElement.dataset.itemId;
+      const item = element.parentElement!.dataset.itemId as string;
       this.actor.rollSkill(item);
     });
 
@@ -110,7 +115,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     html.find('.item-create').on('click', async (event) => {
       event.preventDefault();
       const header = event.currentTarget;
-      const type = header.dataset.type;
+      const type = header.dataset.type!;
 
       // item creation helper func
       const createItem = function (
@@ -131,13 +136,16 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         this._chooseItemType().then(async (dialogInput: any) => {
           const itemData = createItem(dialogInput.type, dialogInput.name);
           itemData.data.equipped = true;
-          await this.actor.createOwnedItem(itemData, { renderSheet: true });
+          await Item.create(itemData, {
+            renderSheet: true,
+            parent: this.actor,
+          });
         });
         return;
       } else {
         const itemData = createItem(type);
         itemData.data.equipped = true;
-        await this.actor.createOwnedItem(itemData, { renderSheet: true });
+        await Item.create(itemData, { renderSheet: true, parent: this.actor });
       }
     });
 

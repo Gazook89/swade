@@ -21,6 +21,14 @@ export default class SwadeCombatant extends Combatant {
     return this.setFlag('swade', 'suitValue', suitValue);
   }
 
+  get cardString() {
+    return this.getFlag('swade', 'cardString') as string | undefined;
+  }
+
+  async setCardString(cardString: string) {
+    return this.setFlag('swade', 'cardString', cardString);
+  }
+
   get hasJoker() {
     return this.getFlag('swade', 'hasJoker') as boolean | undefined;
   }
@@ -37,12 +45,20 @@ export default class SwadeCombatant extends Combatant {
     return this.setFlag('swade', 'groupId', groupId);
   }
 
+  async unsetGroupId() {
+    return this.unsetFlag('swade', 'groupId');
+  }
+
   get isGroupLeader() {
     return this.getFlag('swade', 'isGroupLeader') as boolean | undefined;
   }
 
-  async setGroupLeader(groupLeader: boolean) {
+  async setIsGroupLeader(groupLeader: boolean) {
     return this.setFlag('swade', 'isGroupLeader', groupLeader);
+  }
+
+  async unsetIsGroupLeader() {
+    return this.unsetFlag('swade', 'isGroupLeader');
   }
 
   get roundHeld() {

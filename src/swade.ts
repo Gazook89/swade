@@ -5,19 +5,20 @@
  * Software License: Apache License, Version 2.0
  */
 
+import SwadeGame from './interfaces/SwadeGame';
 import CharacterSummarizer from './module/CharacterSummarizer';
-import { getSwadeConeShape } from './module/cone';
 import { SWADE } from './module/config';
 import SwadeEntityTweaks from './module/dialog/entity-tweaks';
 import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
 import SwadeCombat from './module/documents/SwadeCombat';
+import SwadeCombatant from './module/documents/SwadeCombatant';
+import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
 import * as migrations from './module/migration';
-import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import { registerSettingRules, registerSettings } from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
@@ -26,26 +27,16 @@ import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import {
-  createSwadeMacro,
-  rollItemMacro,
-  rollPowerMacro,
-  rollSkillMacro,
-  rollWeaponMacro,
-} from './module/util';
+import { createSwadeMacro, rollItemMacro } from './module/util';
 
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
 
-const sockets: SwadeSocketHandler = null;
-export const swadeGame = {
+const swadeGame: SwadeGame = {
   SwadeEntityTweaks,
-  rollSkillMacro,
-  rollWeaponMacro,
-  rollPowerMacro,
   rollItemMacro,
-  sockets: sockets,
+  sockets: null,
   itemChatCardHelper: ItemChatCardHelper,
   migrations: migrations,
   CharacterSummarizer,
@@ -64,22 +55,19 @@ Hooks.once('init', () => {
   //Register custom Handlebars helpers
   registerCustomHelpers();
 
-  //Overwrite method prototypes
-  //@ts-expect-error I'm not extending this class and just altering the shape so overwriting the prototype is the easiest way of doing things
-  MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
-
   // Register custom classes
-
   CONFIG.Actor.documentClass = SwadeActor;
-
   CONFIG.Item.documentClass = SwadeItem;
-
   CONFIG.Combat.documentClass = SwadeCombat;
-  CONFIG.statusEffects = SWADE.statusEffects;
+  CONFIG.Combatant.documentClass = SwadeCombatant;
+  CONFIG.MeasuredTemplate.documentClass = SwadeMeasuredTemplate;
+
   CONFIG.ui.combat = SwadeCombatTracker;
 
-  //TODO: Will require Foundry 0.8.8
+  //register custom status effects
+  CONFIG.statusEffects = SWADE.statusEffects;
 
+  //TODO: Will require Foundry 0.8.8
   //CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
 
   // Register custom system settings
@@ -114,30 +102,30 @@ Hooks.once('init', () => {
   // Drop a journal image to a tile (for cards)
   listenJournalDrop();
 
+  //TODO revisit if necessary
   // Preload Handlebars templates
-  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  SWADE.templates.preloadPromise.then(() => {
-    SWADE.templates.templatesPreloaded = true;
-  });
+  // SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
+  // SWADE.templates.preloadPromise.then(() => {
+  //   SWADE.templates.templatesPreloaded = true;
+  // });
 });
-
-Hooks.once('setup', () => SwadeHooks.onSetup());
 
 Hooks.once('ready', async () => SwadeHooks.onReady());
 
-/**
- * This hook only really exists to stop Races from being added to the actor as an item
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-Hooks.on('preCreateItem', (item, options, userId) => {
-  if (
-    item.parent &&
-    item.data.type === 'ability' &&
-    item.data.data.subtype === 'race'
-  ) {
-    return false; //return early if we're doing race stuff
-  }
-});
+/** This hook only really exists to stop Races from being added to the actor as an item */
+Hooks.on(
+  'preCreateItem',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  (item: SwadeItem, options: object, userId: string) => {
+    if (
+      item.parent &&
+      item.data.type === 'ability' &&
+      item.data.data.subtype === 'race'
+    ) {
+      return false; //return early if we're doing race stuff
+    }
+  },
+);
 
 Hooks.on(
   'renderActorDirectory',
@@ -183,7 +171,7 @@ Hooks.on(
     SwadeHooks.onGetChatLogEntryContext(html, options),
 );
 
-Hooks.on('renderChatLog', (app, html: JQuery<HTMLElement>, data) =>
+Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>, data: any) =>
   SwadeHooks.onRenderChatLog(app, html, data),
 );
 
@@ -200,7 +188,7 @@ Hooks.on('getSceneControlButtons', (sceneControlButtons: any[]) =>
   SwadeHooks.onGetSceneControlButtons(sceneControlButtons),
 );
 
-Hooks.on('renderChatPopout', (app, html: JQuery<HTMLElement>, data) =>
+Hooks.on('renderChatPopout', (app: any, html: JQuery<HTMLElement>, data: any) =>
   SwadeHooks.onRenderChatLog(app, html, data),
 );
 
@@ -224,13 +212,19 @@ Hooks.once('diceSoNiceReady', (dice3d: any) => {
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 
-Hooks.on('getCombatTrackerEntryContext', (html, options) => {
-  SwadeHooks.onGetCombatTrackerEntryContext(html, options);
-});
+Hooks.on(
+  'getCombatTrackerEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCombatTrackerEntryContext(html, options);
+  },
+);
 
-Hooks.on('getCompendiumDirectoryEntryContext', (html, options) => {
-  SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
-});
+Hooks.on(
+  'getCompendiumDirectoryEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
+  },
+);
 // static INDEX_FIELDS = {
 //   Actor: ["name", "img", "type"],
 //   Item: ["name", "img", "type"],

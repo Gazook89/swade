@@ -10,7 +10,7 @@ export default class SwadeSocketHandler {
    * registers all the socket listeners
    */
   registerSocketListeners(): void {
-    game.socket.on('system.swade', async (data) => {
+    game.socket?.on('system.swade', async (data) => {
       switch (data.type) {
         case 'deleteConvictionMessage':
           await this._onDeleteConvictionMessage(data);
@@ -26,7 +26,7 @@ export default class SwadeSocketHandler {
   }
 
   deleteConvictionMessage(messageId: string) {
-    game.socket.emit(this.SWADE, {
+    game.socket?.emit(this.SWADE, {
       type: 'deleteConvictionMessage',
       messageId,
       userId: game.userId,

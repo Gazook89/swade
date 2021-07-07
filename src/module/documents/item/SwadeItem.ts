@@ -353,7 +353,7 @@ export default class SwadeItem extends Item {
 
     if (this.parent) {
       const updates = new Array<string>();
-      for (const ae of this.actor!.effects) {
+      for (const ae of this.actor?.effects.values()!) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push(ae.id!);
       }
@@ -366,7 +366,7 @@ export default class SwadeItem extends Item {
 
     if (this.parent && hasProperty(changed, 'data.equipped')) {
       const updates = new Array<Record<string, unknown>>();
-      for (const ae of this.actor!.effects) {
+      for (const ae of this.actor?.effects.values()!) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push({ _id: ae.id, disabled: !changed.data.equipped });
       }

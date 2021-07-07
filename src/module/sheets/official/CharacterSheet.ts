@@ -120,7 +120,8 @@ export default class CharacterSheet extends ActorSheet {
     //Roll Attribute
     html.find('.attribute-label').on('click', (ev) => {
       const element = ev.currentTarget as Element;
-      const attribute = element.parentElement.dataset.attribute;
+      const attribute = element.parentElement!.dataset.attribute!;
+      //@ts-ignore
       this.actor.rollAttribute(attribute);
     });
 
@@ -135,7 +136,7 @@ export default class CharacterSheet extends ActorSheet {
     // Roll Skill
     html.find('.skill-card .skill-die').on('click', (ev) => {
       const element = ev.currentTarget as HTMLElement;
-      const item = element.parentElement.dataset.itemId;
+      const item = element.parentElement!.dataset.itemId!;
       this.actor.rollSkill(item);
     });
 
@@ -167,7 +168,7 @@ export default class CharacterSheet extends ActorSheet {
     // Roll Damage
     html.find('.damage-roll').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
+      const item = this.actor.items.get(li.data('itemId'))!;
       return item.rollDamage();
     });
 
@@ -182,21 +183,21 @@ export default class CharacterSheet extends ActorSheet {
     //Edit Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item.sheet.render(true);
+      const item = this.actor.items.get(li.data('itemId'))!;
+      item.sheet?.render(true);
     });
 
     //Show Item
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const item = this.actor.items.get(li.data('itemId'));
-      item.show();
+      item?.show();
     });
 
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.items.get(li.data('itemId'));
+      const ownedItem = this.actor.items.get(li.data('itemId'))!;
       const template = `
       <form>
         <div style="text-align: center;">
@@ -209,7 +210,7 @@ export default class CharacterSheet extends ActorSheet {
         title: game.i18n.localize('Delete'),
         content: template,
         yes: () => {
-          li.slideUp(200, () => this.actor.deleteOwnedItem(ownedItem.id));
+          li.slideUp(200, () => ownedItem.delete());
         },
         no: () => {},
       });
@@ -217,7 +218,7 @@ export default class CharacterSheet extends ActorSheet {
 
     html.find('.item-create').on('click', async (ev) => {
       const header = ev.currentTarget;
-      const type = header.dataset.type;
+      const type = header.dataset.type!;
 
       // item creation helper func
       const createItem = function (
@@ -237,7 +238,10 @@ export default class CharacterSheet extends ActorSheet {
           this._chooseItemType().then(async (dialogInput: any) => {
             if (dialogInput.type !== 'effect') {
               const itemData = createItem(dialogInput.type, dialogInput.name);
-              await this.actor.createOwnedItem(itemData, { renderSheet: true });
+              await Item.create(itemData, {
+                renderSheet: true,
+                parent: this.actor,
+              });
             } else {
               this._createActiveEffect(dialogInput.name);
             }
@@ -247,8 +251,9 @@ export default class CharacterSheet extends ActorSheet {
           this._createActiveEffect();
           break;
         default:
-          await this.actor.createOwnedItem(createItem(type), {
+          await Item.create(createItem(type), {
             renderSheet: true,
+            parent: this.actor,
           });
           break;
       }
@@ -259,15 +264,17 @@ export default class CharacterSheet extends ActorSheet {
       const li = $(ev.currentTarget).parents('.item');
       const itemID = li.data('itemId');
       const item = this.actor.items.get(itemID);
-      await this.actor.updateOwnedItem(this._toggleEquipped(itemID, item));
+      await this.actor.updateEmbeddedDocuments('OwnedItem', [
+        this._toggleEquipped(itemID, item),
+      ]);
     });
 
     html.find('.effect-action').on('click', async (ev) => {
       const a = ev.currentTarget;
-      const effectId = a.closest('li').dataset.effectId;
-      const effect = this.actor.effects.get(effectId);
+      const effectId = a.closest('li')!.dataset.effectId!;
+      const effect = this.actor.effects.get(effectId)!;
       const action = a.dataset.action;
-      let item: SwadeItem = null;
+      let item: SwadeItem | null = null;
 
       switch (action) {
         case 'edit':
@@ -277,8 +284,8 @@ export default class CharacterSheet extends ActorSheet {
         case 'toggle':
           return effect.update({ disabled: !effect.data.disabled });
         case 'open-origin':
-          item = (await fromUuid(effect.data.origin)) as SwadeItem;
-          if (item) this.actor.items.get(item.id).sheet.render(true);
+          item = (await fromUuid(effect.data.origin!)) as SwadeItem;
+          if (item) item?.sheet?.render(true);
           break;
         default:
           console.warn(`The action ${action} is not currently supported`);
@@ -371,10 +378,10 @@ export default class CharacterSheet extends ActorSheet {
     //Item Action Buttons
     html.find('.card-buttons button').on('click', async (ev) => {
       const button = ev.currentTarget;
-      const action = button.dataset['action'];
+      const action = button.dataset.action!;
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      const item = this.actor.items.get(itemId);
-      const additionalMods = [];
+      const item = this.actor.items.get(itemId)!;
+      const additionalMods = new Array<string>();
       const ppToAdjust = $(button)
         .parents('.chat-card.item-card')
         .find('input.pp-adjust')
@@ -405,7 +412,7 @@ export default class CharacterSheet extends ActorSheet {
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
         const adjustment = button.getAttribute('data-adjust') as string;
-        const power = this.actor.items.get(itemId);
+        const power = this.actor.items.get(itemId)!;
         let key = 'data.powerPoints.value';
         const arcane = getProperty(power.data, 'data.arcane');
         if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -538,7 +545,8 @@ export default class CharacterSheet extends ActorSheet {
       data.currentBennies.push(i + 1);
     }
 
-    const additionalStats = data.data.data.additionalStats || {};
+    const additionalStats: Record<string, AdditionalStat> =
+      data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -633,16 +641,15 @@ export default class CharacterSheet extends ActorSheet {
     let buttons = super._getHeaderButtons();
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.actor.owner;
+    const canConfigure = game.user!.isGM || this.actor.owner;
     if (this.options.editable && canConfigure) {
-      buttons = [
-        {
-          label: game.i18n.localize('SWADE.Tweaks'),
-          class: 'configure-actor',
-          icon: 'fas fa-dice',
-          onclick: (ev) => this._onConfigureEntity(ev),
-        },
-      ].concat(buttons);
+      const button = {
+        label: game.i18n.localize('SWADE.Tweaks'),
+        class: 'configure-actor',
+        icon: 'fas fa-dice',
+        onclick: (ev) => this._onConfigureEntity(ev),
+      };
+      buttons = [button, ...buttons];
     }
     return buttons;
   }
@@ -723,11 +730,12 @@ export default class CharacterSheet extends ActorSheet {
       .localize('ENTITY.New')
       .replace('{entity}', game.i18n.localize('Active Effect'));
     if (name) possibleName = name;
-    const effect = await this.actor.createEmbeddedEntity('ActiveEffect', {
-      label: possibleName,
-      icon: '/icons/svg/mystery-man-black.svg',
-    });
-
-    return this.actor.effects.get(effect[0].id).sheet.render(true);
+    await ActiveEffect.create(
+      {
+        label: possibleName,
+        icon: '/icons/svg/mystery-man-black.svg',
+      },
+      { renderSheet: true },
+    );
   }
 }

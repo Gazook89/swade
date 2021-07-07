@@ -16,7 +16,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     if (!this.options.editable) return;
 
     if (this.actor.isOwner) {
-      const handler = (ev) => this._onDragStart(ev);
+      const handler = (ev: DragEvent) => this._onDragStart(ev);
       html.find('li.active-effect').each((i, li) => {
         // Add draggable attribute and dragstart listener.
         li.setAttribute('draggable', 'true');
@@ -28,24 +28,24 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const item = this.actor.items.get(li.data('itemId'));
-      item.sheet.render(true);
+      item?.sheet?.render(true);
     });
 
     html.find('.item .item-controls .item-show').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId')) as SwadeItem;
+      const item = this.actor.items.get(li.data('itemId'))!;
       item.show();
     });
 
     html.find('.item .item-name .item-image').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId')) as SwadeItem;
+      const item = this.actor.items.get(li.data('itemId'))!;
       item.show();
     });
 
     // Edit armor modifier
     html.find('.armor-value').on('click', (ev) => {
-      let target = ev.currentTarget.dataset.target;
+      let target = ev.currentTarget.dataset.target ?? '';
       const shouldAutoCalcArmor = getProperty(
         this.actor.data,
         'data.details.autoCalcToughness',
@@ -58,17 +58,19 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     // Roll attribute
     html.find('.attribute-label a').on('click', (event) => {
-      const element = event.currentTarget as Element;
-      const attribute = element.parentElement.parentElement.dataset.attribute;
+      const element = event.currentTarget;
+      const attribute = element.parentElement!.parentElement!.dataset
+        .attribute!;
+      //@ts-ignore
       this.actor.rollAttribute(attribute);
     });
 
     // Roll Damage
     html.find('.damage-roll').on('click', (event) => {
       const element = event.currentTarget as Element;
-      const itemId = $(element).parents('[data-item-id]').attr('data-item-id');
-      const item = this.actor.items.get(itemId) as SwadeItem;
-      return item.rollDamage();
+      const itemId = $(element).parents('[data-item-id]').attr('data-item-id')!;
+      const item = this.actor.items.get(itemId);
+      return item!.rollDamage();
     });
 
     //Add Benny
@@ -163,20 +165,20 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
-      const effectId = a.closest('li').dataset.effectId;
-      const effect = this.actor.effects.get(effectId) as any;
+      const effectId = a.closest('li')!.dataset.effectId!;
+      const effect = this.actor.effects.get(effectId);
       const action = a.dataset.action;
 
       switch (action) {
         case 'edit':
-          return effect.sheet.render(true);
+          return effect!.sheet.render(true);
         case 'delete':
-          return effect.delete();
+          return effect!.delete();
         case 'toggle':
-          return effect.update({ disabled: !effect.data.disabled });
+          return effect!.update({ disabled: !effect?.data.disabled });
         case 'open-origin':
-          fromUuid(effect.data.origin).then((item: SysItemData) => {
-            if (item) this.actor.items.get(item._id).sheet.render(true);
+          fromUuid(effect!.data?.origin!).then((item: SwadeItem) => {
+            if (item) this.actor.items.get(item.id!)!.sheet?.render(true);
           });
           break;
         default:
@@ -187,16 +189,17 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     html.find('.add-effect').on('click', async (ev) => {
       const transfer = $(ev.currentTarget).data('transfer');
-      const effect = await this.actor.createEmbeddedEntity('ActiveEffect', {
-        label: game.i18n
-          .localize('ENTITY.New')
-          .replace('{entity}', game.i18n.localize('Active Effect')),
-        icon: '/icons/svg/mystery-man-black.svg',
-        transfer: transfer,
-      });
-      console.log(effect);
-
-      this.actor.effects.get(effect[0].id).sheet.render(true);
+      const effect = await ActiveEffect.create(
+        {
+          label: game.i18n
+            .localize('ENTITY.New')
+            .replace('{entity}', game.i18n.localize('Active Effect')),
+          icon: '/icons/svg/mystery-man-black.svg',
+          transfer: transfer,
+        },
+        { parent: this.actor },
+      );
+      this.actor.effects.get(effect?.id!)?.sheet.render(true);
     });
 
     html.find('.additional-stats .roll').on('click', (ev) => {
@@ -227,7 +230,9 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     for (const type of game.system.entityTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
     }
-    data.itemsByType['skill'].sort((a, b) => a.name.localeCompare(b.name));
+    data.itemsByType['skill'].sort((a: SwadeItem, b: SwadeItem) =>
+      a.name!.localeCompare(b.name!),
+    );
 
     if (this.actor.data.type !== 'vehicle') {
       //Encumbrance
@@ -278,7 +283,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       };
     }
 
-    const additionalStats = data.data.data.additionalStats || {};
+    const additionalStats: Record<string, AdditionalStat> =
+      data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -294,7 +300,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     let buttons = super._getHeaderButtons();
 
     // Token Configuration
-
     if (this.actor.isOwner) {
       buttons = [
         {
@@ -303,12 +308,13 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           icon: 'fas fa-dice',
           onclick: (ev) => this._onConfigureEntity(ev),
         },
-      ].concat(buttons);
+        ...buttons,
+      ];
     }
     return buttons;
   }
 
-  protected _onConfigureEntity(event: Event) {
+  protected _onConfigureEntity(event: JQuery.ClickEvent) {
     event.preventDefault();
     new SwadeEntityTweaks(this.actor).render(true);
   }
@@ -344,7 +350,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           ok: {
             label: game.i18n.localize('SWADE.Ok'),
             icon: '<i class="fas fa-check"></i>',
-            callback: (html: JQuery) => {
+            callback: (html: JQuery<HTMLElement>) => {
               resolve({
                 type: html.find('select[name="type"]').val(),
                 name: html.find('input[name="name"]').val(),
@@ -376,7 +382,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     resizable.each((_, el) => {
       const heightDelta =
         (this.position.height as number) - (this.options.height as number);
-      el.style.height = `${heightDelta + parseInt(el.dataset.baseSize)}px`;
+      el.style.height = `${heightDelta + parseInt(el.dataset.baseSize!)}px`;
     });
   }
 
@@ -474,18 +480,18 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     });
   }
 
-  /** @override */
-  render(force?: boolean, options?: Application.RenderOptions) {
-    if (!SWADE.templates.templatesPreloaded) {
-      console.log('Templates not loaded yet, waiting');
-      SWADE.templates.preloadPromise.then(() => {
-        console.log('Templates loaded, rendering');
-        SWADE.templates.templatesPreloaded = true;
-        super.render(force, options);
-      });
-    } else {
-      console.log('Templates loaded, rendering');
-      return super.render(force, options);
-    }
-  }
+  //TODO revisit if necessary
+  // render(force?: boolean, options?: Application.RenderOptions) {
+  //   if (!SWADE.templates.templatesPreloaded) {
+  //     console.log('Templates not loaded yet, waiting');
+  //     SWADE.templates.preloadPromise.then(() => {
+  //       console.log('Templates loaded, rendering');
+  //       SWADE.templates.templatesPreloaded = true;
+  //       super.render(force, options);
+  //     });
+  //   } else {
+  //     console.log('Templates loaded, rendering');
+  //     return super.render(force, options);
+  //   }
+  // }
 }

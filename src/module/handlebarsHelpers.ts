@@ -86,13 +86,13 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('isOnHold', (id) => {
-    const c = game.combat.combatants.get(id);
-    return c.getFlag('swade', 'roundHeld');
+    const c = game.combat?.combatants.get(id)!;
+    return c.roundHeld;
   });
 
   Handlebars.registerHelper('isNotOnHold', (id) => {
-    const c = game.combat.combatants.get(id);
-    if (!c.getFlag('swade', 'roundHeld')) {
+    const c = game.combat?.combatants.get(id)!;
+    if (!c.roundHeld) {
       return true;
     } else {
       return false;
@@ -100,30 +100,30 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('turnLost', (id) => {
-    const c = game.combat.combatants.get(id);
-    return c.getFlag('swade', 'turnLost');
+    const c = game.combat?.combatants.get(id)!;
+    return c.turnLost;
   });
 
   Handlebars.registerHelper('isGroupLeader', (id) => {
-    const c = game.combat.combatants.get(id);
-    return c.getFlag('swade', 'isGroupLeader');
+    const c = game.combat?.combatants.get(id)!;
+    return c.isGroupLeader;
   });
 
   Handlebars.registerHelper('isInGroup', (id) => {
-    const c = game.combat.combatants.get(id);
-    return c.getFlag('swade', 'groupId');
+    const c = game.combat?.combatants.get(id)!;
+    return c.groupId!;
   });
 
   Handlebars.registerHelper('roundHeld', (id) => {
-    const c = game.combat.combatants.get(id);
-    return c.getFlag('swade', 'roundHeld');
+    const c = game.combat?.combatants.get(id)!;
+    return c.roundHeld;
   });
 
   Handlebars.registerHelper('leaderColor', (id) => {
-    const c = game.combat.combatants.get(id);
-    const leaderId = c.getFlag('swade', 'groupId');
+    const c = game.combat?.combatants.get(id)!;
+    const leaderId = c.groupId!;
 
-    const leader = game.combat.combatants.get(leaderId);
+    const leader = game.combat?.combatants.get(leaderId)!;
     const groupColor = hasProperty(leader, 'data.flags.swade.groupColor');
     if (groupColor) {
       return leader.getFlag('swade', 'groupColor');
@@ -131,13 +131,13 @@ export const registerCustomHelpers = function () {
       if (leader?.players?.length) {
         return leader.players[0].data.color;
       } else {
-        return game.users.find((u) => u.isGM === true).data.color;
+        return game.users?.find((u) => u.isGM)?.data.color;
       }
     }
   });
 
   Handlebars.registerHelper('groupColor', (id) => {
-    const c = game.combat.combatants.get(id);
+    const c = game.combat?.combatants.get(id)!;
     const groupColor = c.getFlag('swade', 'groupColor');
     if (groupColor) {
       return groupColor;
@@ -145,7 +145,7 @@ export const registerCustomHelpers = function () {
       if (c?.players?.length) {
         return c.players[0].data.color;
       } else {
-        const gm = game.users.find((u) => u.isGM === true);
+        const gm = game.users?.find((u) => u.isGM)!;
         return gm.data.color;
       }
     }

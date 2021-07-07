@@ -1,10 +1,12 @@
-/**
- * This class defines a form colorpicker for group leader to assign a group color
- */
-export default class SwadeCombatGroupColor extends FormApplication {
+/** This class defines a form colorpicker for group leader to assign a group color */
+export default class SwadeCombatGroupColor extends FormApplication<
+  FormApplication.Options,
+  any,
+  Combatant
+> {
   config: any;
   groupDefaultColors: any;
-  constructor(object = {}, options = {}) {
+  constructor(object: Combatant, options = {}) {
     super(object, options);
   }
   activateListeners(html) {
@@ -30,25 +32,25 @@ export default class SwadeCombatGroupColor extends FormApplication {
 
   async _onChangeColorPicker(event) {
     super._onChangeColorPicker(event);
-
     this.object.setFlag('swade', 'groupColor', event.currentTarget.value);
   }
 
-  async _onResetColor(event) {
-    const c = game.combat.combatants.get(this.object.id);
+  async _onResetColor() {
+    const c = game.combat?.combatants.get(this.object.id!);
     let groupColor = '#efefef';
 
     if (c?.players?.length) {
-      groupColor = c.players[0].data.color;
+      groupColor = c.players[0].data.color!;
     } else {
-      const gm = game.users.find((u) => u.isGM === true);
-
-      groupColor = gm.data.color;
+      const gm = game.users?.find((u) => u.isGM === true)!;
+      groupColor = gm.data.color!;
     }
 
-    this.object.unsetFlag('swade', 'groupColor');
-    this.form['groupColor'].value = groupColor;
+    await this.object.unsetFlag('swade', 'groupColor');
+    $(this.form!).find('#groupColor').val(groupColor);
   }
 
-  async _updateObject(event, formData) {}
+  async _updateObject(event, formData: GroupColorPickerData) {}
 }
+
+interface GroupColorPickerData {}
