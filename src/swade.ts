@@ -50,25 +50,29 @@ Hooks.once('init', () => {
   //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
-  game.swade = swadeGame;
   game.swade.sockets = new SwadeSocketHandler();
-  //Register custom Handlebars helpers
+  game.swade = swadeGame;
+
+  //register custom Handlebars helpers
   registerCustomHelpers();
 
-  // Register custom classes
+  //register document classes
   CONFIG.Actor.documentClass = SwadeActor;
   CONFIG.Item.documentClass = SwadeItem;
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.Combatant.documentClass = SwadeCombatant;
-  CONFIG.MeasuredTemplate.documentClass = SwadeMeasuredTemplate;
 
+  //register custom object classes
+  CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
+
+  //register custom sidebar tabs
   CONFIG.ui.combat = SwadeCombatTracker;
 
   //register custom status effects
   CONFIG.statusEffects = SWADE.statusEffects;
 
-  //TODO: Will require Foundry 0.8.8
-  //CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
+  //@ts-ignore
+  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
 
   // Register custom system settings
   registerSettings();
@@ -225,12 +229,3 @@ Hooks.on(
     SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
   },
 );
-// static INDEX_FIELDS = {
-//   Actor: ["name", "img", "type"],
-//   Item: ["name", "img", "type"],
-//   Scene: ["name", "thumb"],
-//   JournalEntry: ["name", "img"],
-//   Macro: ["name", "img"],
-//   RollTable: ["name", "img"],
-//   Playlist: ["name"]
-// }

@@ -140,7 +140,7 @@ export async function shouldShowBennyAnimation(): Promise<boolean> {
 }
 
 export function getCanvas(): Canvas {
-  if (canvas instanceof Canvas) {
+  if (canvas instanceof Canvas && canvas.ready) {
     return canvas;
   }
   throw new Error('No Canvas available');

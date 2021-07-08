@@ -681,7 +681,8 @@ export default class SwadeHooks {
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
     let template: SwadeMeasuredTemplate | null = null;
-    const templateCls = CONFIG.MeasuredTemplate.documentClass;
+    const templateCls = CONFIG.MeasuredTemplate
+      .objectClass as typeof SwadeMeasuredTemplate;
     const newButtons: SceneControlTool[] = [
       {
         name: 'swcone',

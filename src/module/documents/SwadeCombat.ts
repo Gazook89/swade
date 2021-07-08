@@ -361,7 +361,6 @@ export default class SwadeCombat extends Combat {
 
     for (const result of draw.results) {
       const resultID = result.data.resultId;
-
       const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
       cards.push(card);
     }

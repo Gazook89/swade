@@ -8,6 +8,10 @@ declare global {
     swade: SwadeGame;
   }
 
+  interface LenientGlobalVariableTypes {
+    game: never; //type is entirely irrelevant, as long as it is configured
+  }
+
   interface CONFIG {
     SWADE: typeof SWADE;
   }

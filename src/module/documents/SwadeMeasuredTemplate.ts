@@ -1,25 +1,17 @@
+//@ts-nocheck
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
 import { getCanvas } from '../util';
 
-declare global {
-  interface DocumentClassConfig {
-    MeasuredTemplate: typeof SwadeMeasuredTemplate;
-  }
-}
-
 export default class SwadeMeasuredTemplate extends MeasuredTemplate {
   moveTime = 0;
-
   //The initially active CanvasLayer to re-activate after the workflow is complete
   initialLayer: CanvasLayer;
-
   handlers: MouseInterActionHandlers = {
     mm: () => {},
     rc: () => {},
     lc: () => {},
     mw: () => {},
   };
-
   /**
    * A factory method to create a SwadeMeasuredTemplate instance using provided preset
    * @param preset the preset to use.
@@ -35,7 +27,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       y: 0,
       fillColor: game.user!.data.color,
     };
-
     //Set template data based on preset option
     switch (preset) {
       case TemplatePreset.CONE:
@@ -57,7 +48,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       default:
         return null;
     }
-
     // Return the template constructed from the item data
     const cls = CONFIG.MeasuredTemplate.documentClass;
     //@ts-ignore
@@ -65,9 +55,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     const object = new this(template);
     return object;
   }
-
   /* -------------------------------------------- */
-
   /**
    * Creates a preview of the template
    * @param {Event} event   The initiating click event
@@ -80,9 +68,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     this.draw();
     this.layer.activate();
   }
-
   /* -------------------------------------------- */
-
   /**
    * Activate listeners for the template preview
    */
@@ -98,12 +84,10 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
         center.y,
         2,
       );
-
       this.data.update({ x: snapped.x, y: snapped.y });
       this.refresh();
       this.moveTime = now;
     };
-
     // Cancel the workflow (right-click)
     this.handlers.rc = () => {
       this.layer.preview.removeChildren();
@@ -113,7 +97,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       getCanvas().app.view.onwheel = null;
       this.initialLayer.activate();
     };
-
     // Confirm the workflow (left-click)
     this.handlers.lc = (event) => {
       event.stopPropagation();
@@ -125,38 +108,32 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
         2,
       );
       this.data.update(destination);
-
       // Create the template
       getCanvas()
         .scene?.createEmbeddedDocuments('MeasuredTemplate', [this.data])
         .then(() => this.destroy());
     };
-
     // Rotate the template by 3 degree increments (mouse-wheel)
     this.handlers.mw = (event) => {
       if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
       event.stopPropagation();
       const delta = getCanvas().grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
       const snap = event.shiftKey ? delta : 5;
-
       this.data.update({
         direction: this.data.direction + snap * Math.sign(event.deltaY),
       });
       this.refresh();
     };
-
     // Activate listeners
     getCanvas().stage.on('mousemove', this.handlers.mm);
     getCanvas().stage.on('mousedown', this.handlers.lc);
     getCanvas().app.view.oncontextmenu = this.handlers.rc;
     getCanvas().app.view.onwheel = this.handlers.mw;
   }
-
   destroy(...args) {
     super.destroy(...args);
     this.handlers.rc();
   }
-
   protected _getConeShape(
     direction: number,
     angle: number,
@@ -169,11 +146,9 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     let angles: number[];
     let points: number[];
     let rays: Ray[];
-
     const toRadians = function (degrees: number): number {
       return degrees * (Math.PI / 180);
     };
-
     // For round cones - approximate the shape with a ray every 3 degrees
     if (coneType === 'round') {
       const da = Math.min(angle, 3);
