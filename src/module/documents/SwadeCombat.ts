@@ -1,6 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { SWADE } from '../config';
-import { getCanvas } from '../util';
 import SwadeCombatant from './SwadeCombatant';
 
 interface IPickACard {
@@ -70,16 +69,20 @@ export default class SwadeCombat extends Combat {
       // Draw initiative
       let card: JournalEntry | undefined;
       if (isRedraw) {
-        const oldCard = await this.findCard(c!.cardValue!, c!.suitValue!);
+        const oldCard = await this.findCard(c?.cardValue!, c?.suitValue!);
         const cards = await this.drawCard();
-        cards.push(oldCard);
-        card = await this.pickACard({
-          cards: cards,
-          combatantName: c!.name,
-          oldCardId: oldCard.id!,
-        });
-        if (card === oldCard) {
-          skipMessage = true;
+        if (oldCard) {
+          cards.push(oldCard);
+          card = await this.pickACard({
+            cards: cards,
+            combatantName: c!.name,
+            oldCardId: oldCard?.id!,
+          });
+          if (card === oldCard) {
+            skipMessage = true;
+          }
+        } else {
+          card = cards[0];
         }
       } else if (hasHesitant) {
         // Hesitant
@@ -229,47 +232,42 @@ export default class SwadeCombat extends Combat {
    * @param b Combatant B
    */
   _sortCombatants(a: SwadeCombatant, b: SwadeCombatant) {
-    if (getCanvas().ready) {
-      const currentRound = game.combat?.round!;
-      const isOnHoldA =
-        hasProperty(a, 'data.flags.swade.roundHeld') &&
-        (a.roundHeld ?? 0 < currentRound);
-      const isOnHoldB =
-        hasProperty(b, 'data.flags.swade.roundHeld') &&
-        (b.roundHeld ?? 0 < currentRound);
-
-      if (isOnHoldA && !isOnHoldB) {
-        return -1;
-      }
-      if (!isOnHoldA && isOnHoldB) {
-        return 1;
-      }
-
-      const aFollowerGroupId = SwadeCombat._getFollowerGroupId(a);
-      const bFollowerGroupId = SwadeCombat._getFollowerGroupId(b);
-
-      // both followers, in the same group -> alpha sort
-      if (
-        aFollowerGroupId &&
-        bFollowerGroupId &&
-        aFollowerGroupId === bFollowerGroupId
-      ) {
-        return SwadeCombat._nameSortCombatants(a, b);
-      }
-
-      // one is a follower of the other
-      if (aFollowerGroupId === b.id) return 1;
-      else if (bFollowerGroupId === a.id) return -1;
-
-      // one of them is a follower & not in the same group -> sort based on the leader instead
-      if (aFollowerGroupId) a = SwadeCombat._getGroupLeaderFor(a)!;
-      if (bFollowerGroupId) b = SwadeCombat._getGroupLeaderFor(b)!;
-
-      // both leaders/not grouped -> sort based on card, or name if no cards dealt yet
-      return SwadeCombat._finalSort(a, b);
-    } else {
-      return 0;
+    let currentRound = 0;
+    if (game.canvas.ready) {
+      currentRound = game.combat?.round ?? 0;
     }
+    const isOnHoldA = a.roundHeld && (a.roundHeld ?? 0 < currentRound);
+    const isOnHoldB = b.roundHeld && (b.roundHeld ?? 0 < currentRound);
+
+    if (isOnHoldA && !isOnHoldB) {
+      return -1;
+    }
+    if (!isOnHoldA && isOnHoldB) {
+      return 1;
+    }
+
+    const aFollowerGroupId = SwadeCombat._getFollowerGroupId(a);
+    const bFollowerGroupId = SwadeCombat._getFollowerGroupId(b);
+
+    // both followers, in the same group -> alpha sort
+    if (
+      aFollowerGroupId &&
+      bFollowerGroupId &&
+      aFollowerGroupId === bFollowerGroupId
+    ) {
+      return SwadeCombat._nameSortCombatants(a, b);
+    }
+
+    // one is a follower of the other
+    if (aFollowerGroupId === b.id) return 1;
+    else if (bFollowerGroupId === a.id) return -1;
+
+    // one of them is a follower & not in the same group -> sort based on the leader instead
+    if (aFollowerGroupId) a = SwadeCombat._getGroupLeaderFor(a)!;
+    if (bFollowerGroupId) b = SwadeCombat._getGroupLeaderFor(b)!;
+
+    // both leaders/not grouped -> sort based on card, or name if no cards dealt yet
+    return SwadeCombat._finalSort(a, b);
   }
 
   static _finalSort(a, b) {
@@ -323,7 +321,7 @@ export default class SwadeCombat extends Combat {
 
   /** Compares two combatants by name or - if they're the same - ID. */
   static _nameSortCombatants(a: SwadeCombatant, b: SwadeCombatant) {
-    const [an, bn] = [a.name || '', b.name || ''];
+    const [an, bn] = [a.name ?? '', b.name ?? ''];
     const cn = an.localeCompare(bn);
     if (cn !== 0) return cn;
     return a.id!.localeCompare(b.id!);
@@ -462,17 +460,19 @@ export default class SwadeCombat extends Combat {
    * @param cardValue
    * @param cardSuit
    */
-  async findCard(cardValue: number, cardSuit: number): Promise<JournalEntry> {
+  async findCard(
+    cardValue: number,
+    cardSuit: number,
+  ): Promise<JournalEntry | undefined> {
     const packName = game.settings.get('swade', 'cardDeck') as string;
     const actionCardPack = game.packs?.get(packName);
 
-    //@ts-ignore
     const content = (await actionCardPack?.getDocuments()) as JournalEntry[];
     return content.find(
       (c) =>
-        (c.getFlag('swade', 'cardValue') as number) === cardValue &&
-        (c.getFlag('swade', 'suitValue') as number) === cardSuit,
-    )!;
+        c.getFlag('swade', 'cardValue') === cardValue ??
+        c.getFlag('swade', 'suitValue') === cardSuit,
+    );
   }
 
   //@ts-ignore
@@ -599,7 +599,7 @@ export default class SwadeCombat extends Combat {
     if (jokerDrawn) {
       //@ts-ignore
       await game.tables!.getName(SWADE.init.cardTable)?.reset();
-      ui.notifications!.info(game.i18n.localize('SWADE.DeckShuffled'));
+      ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
     }
   }
 }
