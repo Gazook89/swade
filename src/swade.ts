@@ -19,6 +19,7 @@ import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
 import * as migrations from './module/migration';
+import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import { registerSettingRules, registerSettings } from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
@@ -50,8 +51,8 @@ Hooks.once('init', () => {
   //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
-  game.swade.sockets = new SwadeSocketHandler();
   game.swade = swadeGame;
+  game.swade.sockets = new SwadeSocketHandler();
 
   //register custom Handlebars helpers
   registerCustomHelpers();
@@ -106,12 +107,12 @@ Hooks.once('init', () => {
   // Drop a journal image to a tile (for cards)
   listenJournalDrop();
 
-  //TODO revisit if necessary
-  // Preload Handlebars templates
-  // SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  // SWADE.templates.preloadPromise.then(() => {
-  //   SWADE.templates.templatesPreloaded = true;
-  // });
+  // TODO revisit if necessary
+  //Preload Handlebars templates
+  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
+  SWADE.templates.preloadPromise.then(() => {
+    SWADE.templates.templatesPreloaded = true;
+  });
 });
 
 Hooks.once('ready', async () => SwadeHooks.onReady());
@@ -141,12 +142,6 @@ Hooks.on(
   'renderCompendium',
   (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCompendium(app, html, data),
-);
-
-Hooks.on(
-  'updateActor',
-  (actor: SwadeActor, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onUpdateActor(actor, updateData, options, userId),
 );
 
 Hooks.on(

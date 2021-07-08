@@ -192,22 +192,6 @@ export default class SwadeHooks {
     options.push(obj);
   }
 
-  //TODO remove later
-  public static onUpdateActor(
-    actor: SwadeActor,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    if (actor.data.type === 'npc') {
-      ui.actors?.render();
-    }
-    // Update the player list to display new bennies values
-    if (hasProperty(updateData, 'data.bennies') && actor.hasPlayerOwner) {
-      ui.players?.render(true);
-    }
-  }
-
   public static onRenderCombatTracker(
     app: SwadeCombatTracker,
     html: JQuery<HTMLElement>,

@@ -54,19 +54,19 @@ export default class SwadeActor extends Actor {
     //return early if no combat is running
     if (!game?.combats?.active) return false;
 
-    let combatant: SwadeCombatant;
+    let combatant: SwadeCombatant | undefined;
     const hasToken = !!this.token;
     const isLinked = this.data.token.actorLink;
     if (isLinked || !hasToken) {
       //linked token
-      combatant = game.combat?.combatants.find((c) => c.actor?.id === this.id)!;
+      combatant = game.combat?.combatants.find((c) => c.actor?.id === this.id);
     } else {
       //unlinked token
       combatant = game.combat?.combatants.find(
         (c) => c.token?.id === this.token?.id,
-      )!;
+      );
     }
-    return combatant.hasJoker;
+    return combatant?.hasJoker ?? false;
   }
 
   /**
