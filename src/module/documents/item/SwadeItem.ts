@@ -21,7 +21,7 @@ export default class SwadeItem extends Item {
     return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
   }
 
-  rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll | null {
+  rollDamage(options: IRollOptions = {}) {
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;

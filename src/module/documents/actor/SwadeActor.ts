@@ -158,7 +158,7 @@ export default class SwadeActor extends Actor {
   rollAttribute(
     abilityId: keyof typeof SWADE.attributes,
     options: IRollOptions = {},
-  ): Promise<Roll> | Roll | undefined {
+  ) {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
       ui.notifications?.warn(
@@ -239,7 +239,7 @@ export default class SwadeActor extends Actor {
     skillId: string | null,
     options: IRollOptions = { rof: 1 },
     tempSkill?: SwadeItem,
-  ): Promise<Roll> | Roll {
+  ): Promise<Roll | null> | Roll {
     let skill: SwadeItem | undefined;
     skill = this.items.find((i) => i.id == skillId);
     if (tempSkill) {
@@ -283,7 +283,7 @@ export default class SwadeActor extends Actor {
     });
   }
 
-  async makeUnskilledAttempt(options: IRollOptions = {}): Promise<Roll> {
+  async makeUnskilledAttempt(options: IRollOptions = {}) {
     const tempSkill = new SwadeItem({
       name: game.i18n.localize('SWADE.Unskilled'),
       type: 'skill',

@@ -37,24 +37,22 @@ export default class SwadeDice {
     actor,
     allowGroup,
     flags,
-  }: RollHelperData): Promise<Roll> {
-    const template = 'systems/swade/templates/chat/roll-dialog.html';
-    const dialogData = {
-      formula: roll.formula,
-      rollMode: game.settings.get('core', 'rollMode'),
-      rollModes: CONFIG.Dice.rollModes,
-    };
-
-    const html = await renderTemplate(template, dialogData);
-    //Create Dialog window
+  }: RollHelperData): Promise<Roll | null> {
     return new Promise((resolve) => {
-      let finalRoll: Roll = null;
+      const template = 'systems/swade/templates/chat/roll-dialog.html';
+      const dialogData = {
+        formula: roll.formula,
+        rollMode: game.settings.get('core', 'rollMode'),
+        rollModes: CONFIG.Dice.rollModes,
+      };
+      let confirmed = false;
       const buttons = {
         ok: {
           label: game.i18n.localize('SWADE.Roll'),
           icon: '<i class="fas fa-dice"></i>',
           callback: async (html) => {
-            finalRoll = this._handleRoll({
+            confirmed = true;
+            finalRoll = await this._handleRoll({
               form: html,
               roll: roll,
               speaker,
@@ -68,7 +66,8 @@ export default class SwadeDice {
           label: '',
           icon: '<i class="far fa-plus-square"></i>',
           callback: async (html) => {
-            finalRoll = this._handleRoll({
+            confirmed = true;
+            finalRoll = await this._handleRoll({
               form: html,
               raise: true,
               actor: actor,
@@ -84,10 +83,8 @@ export default class SwadeDice {
         cancel: {
           icon: '<i class="fas fa-times"></i>',
           label: game.i18n.localize('Cancel'),
-          callback: (html) => resolve(null),
         },
       };
-
       if (item) {
         buttons.extra.label = game.i18n.localize('SWADE.RollRaise');
       } else if (actor && !actor.isWildcard && allowGroup) {
@@ -95,17 +92,17 @@ export default class SwadeDice {
       } else {
         delete buttons.extra;
       }
-
+      const html = await renderTemplate(template, dialogData);
+      //Create Dialog window
+      let finalRoll = null;
       new Dialog({
         title: title,
         content: html,
         buttons: buttons,
         default: 'ok',
         close: () => {
-          if (!finalRoll) {
+          if (!confirmed) {
             resolve(null);
-          } else {
-            resolve(finalRoll);
           }
         },
       }).render(true);
