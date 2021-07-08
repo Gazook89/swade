@@ -1,14 +1,19 @@
-import { ItemAction } from '../../interfaces/additional';
-import IRollOptions from '../../interfaces/IRollOptions';
-import { SysItemData } from '../../interfaces/item-data';
-import SwadeDice from '../dice';
-import SwadeActor from './SwadeActor';
+import { ItemAction } from '../../../interfaces/additional';
+import IRollOptions from '../../../interfaces/IRollOptions';
+import SwadeDice from '../../dice';
+import SwadeActor from '../actor/SwadeActor';
+
+declare global {
+  interface DocumentClassConfig {
+    Item: typeof SwadeItem;
+  }
+}
 
 /**
  * Override and extend the basic :class:`Item` implementation
  * @noInheritDoc
  */
-export default class SwadeItem extends Item<SysItemData> {
+export default class SwadeItem extends Item {
   get isMeleeWeapon(): boolean {
     if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
@@ -16,7 +21,7 @@ export default class SwadeItem extends Item<SysItemData> {
     return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
   }
 
-  rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll {
+  rollDamage(options: IRollOptions = {}): Promise<Roll> | Roll | null {
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;
@@ -44,7 +49,7 @@ export default class SwadeItem extends Item<SysItemData> {
     }
 
     const terms = Roll.parse(rollParts.join(''), actor.getRollData());
-    const newParts = [];
+    const newParts = new Array<String>();
     for (const term of terms) {
       if (term instanceof Die) {
         if (!term.modifiers.includes('x')) term.modifiers.push('x');
@@ -88,7 +93,7 @@ export default class SwadeItem extends Item<SysItemData> {
     // Roll and return
     return SwadeDice.Roll({
       roll: newRoll,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      speaker: ChatMessage.getSpeaker({ actor: this.actor! }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,
       item: this,
@@ -104,7 +109,7 @@ export default class SwadeItem extends Item<SysItemData> {
     data.notes = TextEditor.enrichHTML(data.notes, htmlOptions);
 
     // Item properties
-    const props = [];
+    const props = new Array<string>();
 
     switch (this.type) {
       case 'hindrance':
@@ -196,9 +201,9 @@ export default class SwadeItem extends Item<SysItemData> {
    */
   async show() {
     // Basic template rendering data
-    const token = this.actor.token;
-    //@ts-ignore
-    const tokenId = token ? `${token.parent.id}.${token.id}` : null;
+    const token = this.actor!.token;
+
+    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const hasAmmoManagement =
       this.type === 'weapon' &&
@@ -251,34 +256,34 @@ export default class SwadeItem extends Item<SysItemData> {
 
     // Basic chat message data
     const chatData = {
-      user: game.user.id,
+      user: game.user!.id,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       content: html,
       speaker: {
-        actor: this.actor.id,
+        actor: this.actor!.id,
         token: tokenId,
-        alias: this.actor.name,
+        alias: this.actor!.name,
       },
       flags: { 'core.canPopout': true },
     };
 
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&
-      this.actor.data.type === 'npc'
+      this.actor!.data.type === 'npc'
     ) {
-      chatData['whisper'] = game.users.filter((u: User) => u.isGM);
+      chatData['whisper'] = game.users!.filter((u: User) => u.isGM);
     }
 
     // Toggle default roll mode
     const rollMode = game.settings.get('core', 'rollMode') as string;
     if (['gmroll', 'blindroll'].includes(rollMode))
       chatData['whisper'] = ChatMessage.getWhisperRecipients('GM');
-    if (rollMode === 'selfroll') chatData['whisper'] = [game.user._id];
+    if (rollMode === 'selfroll') chatData['whisper'] = [game.user!.id];
     if (rollMode === 'blindroll') chatData['blind'] = true;
 
     // Create the chat message
     const chatCard = await ChatMessage.create(chatData);
-    Hooks.call('swadeChatCard', this.actor, this, chatCard, game.user.id);
+    Hooks.call('swadeChatCard', this.actor, this, chatCard, game.user!.id);
     return chatCard;
   }
 
@@ -287,7 +292,7 @@ export default class SwadeItem extends Item<SysItemData> {
     const diceRegExp = /\d*d\d+[^kdrxc]/g;
     expresion = expresion + ' '; // Just because of my poor reg_exp foo
     const diceStrings: string[] = expresion.match(diceRegExp) || [];
-    const used = [];
+    const used = new Array<string>();
     for (const match of diceStrings) {
       if (used.indexOf(match) === -1) {
         expresion = expresion.replace(
@@ -308,72 +313,65 @@ export default class SwadeItem extends Item<SysItemData> {
 
     const arcane: string = getProperty(this.data, 'data.arcane');
     let current: number = getProperty(
-      this.actor.data,
+      this.actor!.data,
       'data.powerPoints.value',
     );
-    let max: number = getProperty(this.actor.data, 'data.powerPoints.max');
+    let max: number = getProperty(this.actor!.data, 'data.powerPoints.max');
     if (arcane) {
       current = getProperty(
-        this.actor.data,
+        this.actor!.data,
         `data.powerPoints.${arcane}.value`,
       );
-      max = getProperty(this.actor.data, `data.powerPoints.${arcane}.max`);
+      max = getProperty(this.actor!.data, `data.powerPoints.${arcane}.max`);
     }
     return { current, max };
   }
 
   async _preCreate(data, options, user: User) {
-    //@ts-ignore
     await super._preCreate(data, options, user);
     //Set default image if no image already exists
     if (!data.img) {
-      //@ts-ignore
       this.data.update({ img: `systems/swade/assets/icons/${data.type}.svg` });
     }
-    //@ts-ignore
+
     if (this.parent) {
       if (data.type === 'skill' && options.renderSheet !== null) {
         options.renderSheet = true;
       }
       if (
-        //@ts-ignore
         this.parent.type === 'npc' &&
         hasProperty(this.data, 'data.equippable')
       ) {
-        //@ts-ignore
         this.data.update({ 'data.equipped': true });
       }
     }
   }
 
   async _preDelete(options, user: User) {
-    //@ts-ignore
     await super._preDelete(options, user);
     //delete all transfered active effects from the actor
-    //@ts-ignore
+
     if (this.parent) {
-      const updates = [];
-      for (const ae of this.actor.effects) {
+      const updates = new Array<string>();
+      for (const ae of this.actor?.effects.values()!) {
         if (ae.data.origin !== this.uuid) continue;
-        updates.push(ae.id);
+        updates.push(ae.id!);
       }
-      //@ts-ignore
-      await this.actor.deleteEmbeddedDocuments('ActiveEffect', updates);
+      await this.actor!.deleteEmbeddedDocuments('ActiveEffect', updates);
     }
   }
 
-  async _preUpdate(changed, options, user: User) {
-    //@ts-ignore
+  async _preUpdate(changed, options, user) {
     await super._preUpdate(changed, options, user);
-    //@ts-ignore
+
     if (this.parent && hasProperty(changed, 'data.equipped')) {
-      const updates = [];
-      for (const ae of this.actor.effects) {
+      const updates = new Array<Record<string, unknown>>();
+      for (const ae of this.actor?.effects.values()!) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push({ _id: ae.id, disabled: !changed.data.equipped });
       }
-      //@ts-ignore
-      await this.actor.updateEmbeddedDocuments('ActiveEffect', updates);
+
+      await this.actor!.updateEmbeddedDocuments('ActiveEffect', updates);
     }
   }
 }

@@ -2,6 +2,7 @@
  * This class defines a a new Combat Tracker specifically designed for SWADE
  */
 import { SWADE } from '../config';
+import SwadeCombatant from '../documents/SwadeCombatant';
 export default class SwadeCombatTracker extends CombatTracker {
   /** @inheritdoc */
   static get defaultOptions() {
@@ -23,9 +24,10 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Reset the Action Deck
   async _onResetActionDeck(event) {
     event.stopImmediatePropagation();
-    const cardTable = game.tables.getName(SWADE.init.cardTable);
+    const cardTable = game.tables?.getName(SWADE.init.cardTable)!;
+    //@ts-ignore
     cardTable.reset();
-    ui.notifications.info(
+    ui.notifications?.info(
       game.i18n.localize('SWADE.ActionDeckResetNotification'),
     );
   }
@@ -36,8 +38,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     event.stopImmediatePropagation();
     const btn = event.currentTarget;
     const li = btn.closest('.combatant');
-    //@ts-ignore
-    const c = this.viewed.combatants.get(li.dataset.combatantId);
+    const c = this.viewed.combatants.get(li.dataset.combatantId)!;
     // Switch control action
     switch (btn.dataset.control) {
       // Toggle combatant defeated flag to reallocate potential followers.
@@ -63,14 +64,13 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
 
   // Toggle Defeated and reallocate followers
-  async _onToggleDefeatedStatus(c) {
+  async _onToggleDefeatedStatus(c: SwadeCombatant) {
     await super._onToggleDefeatedStatus(c);
-    if (c.getFlag('swade', 'isGroupLeader')) {
-      //@ts-ignore
+    if (c.isGroupLeader) {
       const newLeader = await this.viewed.combatants.find(
-        (f) => f.getFlag('swade', 'groupId') === c.id && !f.data.defeated,
-      );
-      //@ts-ignore
+        (f) => f.groupId === c.id && !f.data.defeated,
+      )!;
+
       await newLeader.update({
         flags: {
           swade: {
@@ -81,48 +81,42 @@ export default class SwadeCombatTracker extends CombatTracker {
       });
       const followers = await this._getFollowers(c);
       for (const f of followers) {
-        //@ts-ignore
-        await f.update({ 'flags.swade.groupId': newLeader.id });
+        await f.setGroupId(newLeader.id!);
       }
-      await c.unsetFlag('swade', 'isGroupLeader');
+      await c.unsetIsGroupLeader();
     }
-    if (c.getFlag('swade', 'groupId')) {
-      await c.unsetFlag('swade', 'groupId');
+    if (c.groupId) {
+      await c.unsetGroupId();
     }
   }
 
   // Toggle Hold
-  async _onToggleHoldStatus(c) {
-    //@ts-ignore
-    if (!c.getFlag('swade', 'roundHeld')) {
+  async _onToggleHoldStatus(c: SwadeCombatant) {
+    if (!c.roundHeld) {
       // Add flag for on hold to show icon on token
-      //@ts-ignore
-      await c.setFlag('swade', 'roundHeld', this.viewed.round);
-      if (
-        //@ts-ignore
-        c.getFlag('swade', 'isGroupLeader')
-      ) {
+
+      await c.setRoundHeld(this.viewed.round);
+      if (c.isGroupLeader) {
         const followers = await this._getFollowers(c);
         for (const f of followers) {
-          //@ts-ignore
-          f.setFlag('swade', 'roundHeld', this.viewed.round);
+          await f.setRoundHeld(this.viewed.round);
         }
       }
     } else {
-      //@ts-ignore
       await c.unsetFlag('swade', 'roundHeld');
     }
   }
 
   // Toggle Turn Lost
-  async _onToggleTurnLostStatus(c) {
-    if (!c.getFlag('swade', 'turnLost')) {
-      const groupId = c.getFlag('swade', 'groupId');
+  async _onToggleTurnLostStatus(c: SwadeCombatant) {
+    if (!c.turnLost) {
+      const groupId = c.groupId;
       if (groupId) {
-        //@ts-ignore
-        const leader = await this.viewed.combatants.find(l => l.id === groupId);
+        const leader = await this.viewed.combatants.find(
+          (l) => l.id === groupId,
+        );
         if (leader) {
-          await c.setFlag('swade', 'turnLost', true);
+          await c.setTurnLost(true);
         }
       } else {
         await c.update({
@@ -138,7 +132,6 @@ export default class SwadeCombatTracker extends CombatTracker {
       await c.update({
         flags: {
           swade: {
-            //@ts-ignore
             roundHeld: this.viewed.round,
             '-=turnLost': null,
           },
@@ -148,41 +141,16 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
 
   // Act Now
-  async _onActNow(c) {
-    //@ts-ignore
+  async _onActNow(c: SwadeCombatant) {
     const currentCombatant = this.viewed.combatant;
-    //@ts-ignore
     if (c.id === currentCombatant.id) {
-      //@ts-ignore
-      const nextactiveCombatant = this.viewed.turns.find(
-        (c) =>
-          //@ts-ignore
-          !c.getFlag('swade', 'roundHeld'),
-      );
-      //@ts-ignore
-      const nextActiveCardValue = nextactiveCombatant.getFlag(
-        'swade',
-        'cardValue',
-      );
-      //@ts-ignore
-      const nextActiveSuitValue = nextactiveCombatant.getFlag(
-        'swade',
-        'suitValue',
-      );
-      if (c.getFlag('swade', 'isGroupLeader')) {
+      const nextactiveCombatant = this.viewed.turns.find((c) => !c.roundHeld)!;
+      const nextActiveCardValue = nextactiveCombatant.cardValue;
+      const nextActiveSuitValue = nextactiveCombatant.suitValue!;
+      if (c.isGroupLeader) {
         const followers = await this._getFollowers(c);
         for await (const f of followers) {
-          console.log(
-            //@ts-ignore
-            `${f.name} has '${f.getFlag('swade', 'cardValue')} and ${
-              c.name
-            } has ${c.getFlag('swade', 'cardValue')}`,
-          );
-          if (
-            //@ts-ignore
-            f.getFlag('swade', 'cardValue') === c.getFlag('swade', 'cardValue')
-          ) {
-            //@ts-ignore
+          if (f.cardValue === c.cardValue) {
             await f.update({
               flags: {
                 swade: {
@@ -205,24 +173,15 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       });
     } else {
-      //@ts-ignore
-      const currentCardValue = currentCombatant.getFlag('swade', 'cardValue');
-      //@ts-ignore
-      const currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
-      if (c.getFlag('swade', 'isGroupLeader')) {
+      const currentCardValue = currentCombatant.cardValue;
+      const currentSuitValue = currentCombatant.suitValue!;
+      if (c.isGroupLeader) {
         const followers = await this._getFollowers(c);
         for await (const f of followers) {
           console.log(
-            //@ts-ignore
-            `${f.name} has '${f.getFlag('swade', 'cardValue')} and ${
-              c.name
-            } has ${c.getFlag('swade', 'cardValue')}`,
+            `${f.name} has '${f.cardValue} and ${c.name} has ${c.cardValue}`,
           );
-          if (
-            //@ts-ignore
-            f.getFlag('swade', 'cardValue') === c.getFlag('swade', 'cardValue')
-          ) {
-            //@ts-ignore
+          if (f.cardValue === c.cardValue) {
             await f.update({
               flags: {
                 swade: {
@@ -245,29 +204,21 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       });
     }
-    //@ts-ignore
+
     await this.viewed.update({
-      //@ts-ignore
       turn: await this.viewed.turns.indexOf(c),
     });
   }
 
   // Act After Current Combatant
-  async _onActAfterCurrentCombatant(c) {
-    //@ts-ignore
+  async _onActAfterCurrentCombatant(c: SwadeCombatant) {
     const currentCombatant = this.viewed.combatant;
-    //@ts-ignore
-    const currentCardValue = currentCombatant.getFlag('swade', 'cardValue');
-    //@ts-ignore
-    const currentSuitValue = currentCombatant.getFlag('swade', 'suitValue');
-    if (c.getFlag('swade', 'isGroupLeader')) {
+    const currentCardValue = currentCombatant.cardValue;
+    const currentSuitValue = currentCombatant.suitValue!;
+    if (c.isGroupLeader) {
       const followers = await this._getFollowers(c);
       for (const f of followers) {
-        if (
-          //@ts-ignore
-          f.getFlag('swade', 'cardValue') === c.getFlag('swade', 'cardValue')
-        ) {
-          //@ts-ignore
+        if (f.cardValue === c.cardValue) {
           await f.update({
             flags: {
               swade: {
@@ -289,18 +240,13 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       },
     });
-    //@ts-ignore
+
     this.viewed.update({
-      //@ts-ignore
       turn: await this.viewed.turns.indexOf(currentCombatant),
     });
   }
 
-  async _getFollowers(c) {
-    return game.combat.combatants.filter(
-      (f) =>
-        //@ts-ignore
-        f.getFlag('swade', 'groupId') === c.id,
-    );
+  async _getFollowers(c: SwadeCombatant) {
+    return game.combat?.combatants.filter((f) => f.groupId === c.id) ?? [];
   }
 }

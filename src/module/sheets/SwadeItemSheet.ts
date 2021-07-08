@@ -1,16 +1,13 @@
+import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import SwadeActor from '../entities/SwadeActor';
-import SwadeItem from '../entities/SwadeItem';
+import SwadeActor from '../documents/actor/SwadeActor';
+import SwadeItem from '../documents/item/SwadeItem';
 
 /**
  * @noInheritDoc
  */
 export default class SwadeItemSheet extends ItemSheet {
-  get item(): SwadeItem {
-    return super.item as SwadeItem;
-  }
-
   static get defaultOptions() {
     return {
       ...super.defaultOptions,
@@ -29,10 +26,6 @@ export default class SwadeItemSheet extends ItemSheet {
     };
   }
 
-  /**
-   * Return a dynamic reference to the HTML template path used to render this Item Sheet
-   * @return {string}
-   */
   get template() {
     const path = 'systems/swade/templates/items';
     return `${path}/${this.item.type}.html`;
@@ -43,60 +36,56 @@ export default class SwadeItemSheet extends ItemSheet {
    * @override
    */
   protected _getHeaderButtons() {
-    let buttons = super._getHeaderButtons();
+    const buttons = super._getHeaderButtons();
 
     // Token Configuration
-    const canConfigure = game.user.isGM || this.item.owner;
+    const canConfigure = game.user!.isGM || this.item.owner;
     if (this.options.editable && canConfigure) {
-      buttons = [
-        {
-          label: 'Tweaks',
-          class: 'configure-actor',
-          icon: 'fas fa-dice',
-          onclick: (ev) => this._onConfigureEntity(ev),
-        },
-      ].concat(buttons);
+      const button: Application.HeaderButton = {
+        label: 'Tweaks',
+        class: 'configure-actor',
+        icon: 'fas fa-dice',
+        onclick: (ev) => this._onConfigureEntity(ev),
+      };
+      return [button, ...super._getHeaderButtons()];
     }
     return buttons;
   }
 
-  protected _onConfigureEntity(event: Event) {
+  protected _onConfigureEntity(event) {
     event.preventDefault();
     new SwadeEntityTweaks(this.item).render(true);
   }
 
   activateListeners(html) {
     super.activateListeners(html);
-
     if (!this.isEditable) return;
     if (
       this.item.type === 'ability' &&
       this.item.data.data['subtype'] === 'race'
     ) {
-      this.form.ondrop = (ev) => this._onDrop(ev);
+      this.form!.ondrop = (ev) => this._onDrop(ev);
     }
 
     // Delete Item from within Sheet. Only really used for Skills, Edges, Hindrances and Powers
-    html.find('.item-delete').on('click', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const itemId = li.data('itemId');
+    html.find('.item-delete').on('click', () => {
       this.close();
-      this.item.actor.deleteOwnedItem(itemId);
+      this.item.delete();
     });
 
     html.find('.profile-img').on('contextmenu', () => {
-      new ImagePopout(this.item.img, {
-        title: this.item.name,
+      new ImagePopout(this.item.img!, {
+        title: this.item.name!,
         shareable:
-          (this.item.isOwned && this.item.actor.owner) || game.user.isGM,
+          (this.item.isOwned && this.item.actor?.isOwner) || game.user!.isGM,
       }).render(true);
     });
 
     html.find('.action-create').on('click', () => {
       this.item.update(
         {
-          _id: this.item._id,
-          ['data.actions.additional.'.concat(randomID())]: {
+          _id: this.item.id,
+          ['data.actions.additional.' + randomID()]: {
             name: 'New Action',
             type: 'skill',
           },
@@ -109,7 +98,7 @@ export default class SwadeItemSheet extends ItemSheet {
       const key = ev.currentTarget.dataset.actionKey;
       this.item.update(
         {
-          _id: this.item._id,
+          _id: this.item.id,
           'data.actions.additional': {
             [`-=${key}`]: null,
           },
@@ -121,7 +110,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.item.effects.get(effectId);
+      const effect = this.item.effects.get(effectId)!;
       const action = a.dataset.action;
       switch (action) {
         case 'edit':
@@ -135,16 +124,17 @@ export default class SwadeItemSheet extends ItemSheet {
 
     html.find('.add-effect').on('click', async (ev) => {
       const transfer = $(ev.currentTarget).data('transfer');
-      const id = (
-        await this.item.createEmbeddedEntity('ActiveEffect', {
+      const newEffect = await ActiveEffect.create(
+        {
           label: game.i18n
             .localize('ENTITY.New')
             .replace('{entity}', game.i18n.localize('Active Effect')),
           icon: '/icons/svg/mystery-man.svg',
           transfer: transfer,
-        })
-      )._id;
-      return new ActiveEffectConfig(this.item.effects.get(id)).render(true);
+        },
+        { parent: this.item },
+      );
+      newEffect?.sheet.render(true);
     });
 
     html.find('.delete-embedded').on('click', (ev) => {
@@ -161,7 +151,9 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.additional-stats .roll').on('click', (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
-      const statData = this.item.data.data.additionalStats[stat];
+      const statData: AdditionalStat = this.item.data.data.additionalStats[
+        stat
+      ]!;
       let modifier = statData.modifier || '';
       if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
@@ -190,7 +182,8 @@ export default class SwadeItemSheet extends ItemSheet {
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
     }
-    const additionalStats = data.data.data.additionalStats || {};
+    const additionalStats: Record<string, AdditionalStat> =
+      data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
       attr['isCheckbox'] = attr['dtype'] === 'Boolean';
     }
@@ -206,7 +199,7 @@ export default class SwadeItemSheet extends ItemSheet {
       case 'weapon':
         data['isWeapon'] = true && game.settings.get('swade', 'ammoManagement');
         if (this.item.isOwned) {
-          data['ammoList'] = this.actor.itemTypes['gear'].map(
+          data['ammoList'] = this.actor!.itemTypes['gear'].map(
             (i) => i.data.name,
           );
         }
@@ -217,9 +210,6 @@ export default class SwadeItemSheet extends ItemSheet {
     return data;
   }
 
-  /**
-   * @override
-   */
   async _onDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -229,20 +219,20 @@ export default class SwadeItemSheet extends ItemSheet {
     //get the data and accept it
     try {
       //get the data
-      data = JSON.parse(event.dataTransfer.getData('text/plain'));
+      data = JSON.parse(event.dataTransfer!.getData('text/plain'));
+
       if ('pack' in data) {
-        const pack = game.packs.get(data.pack) as Compendium;
-        item = (await pack.getEntity(data.id)) as SwadeItem;
+        const pack = game.packs?.get(data.pack);
+        item = (await pack?.getDocument(data.id)) as SwadeItem;
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data);
       } else {
-        item = game.items.get(data.id) as SwadeItem;
+        item = game.items?.get(data.id)!;
       }
 
       if (
         data.type !== 'Item' ||
-        (item.type === 'ability' &&
-          getProperty(item, 'data.data.subtype') === 'race')
+        (item.data.type === 'ability' && item.data.data.subtype === 'race')
       ) {
         console.log('SWADE | You cannot add a race to a race');
         return false;
@@ -253,9 +243,11 @@ export default class SwadeItemSheet extends ItemSheet {
     }
 
     //prep item data
-    //@ts-ignore
+
     const itemData = deepClone(item.data.toObject());
+    //@ts-ignore
     delete itemData['_id'];
+    //@ts-ignore
     delete itemData['permission'];
 
     //pull the array from the flags, and push the new entry into it

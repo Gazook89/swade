@@ -1,10 +1,10 @@
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
-
+//@ts-nocheck
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
-  speaker?: ChatMessage.SpeakerData;
+  speaker?: foundry.data.ChatMessageData['speaker']['_source'];
   flavor?: string;
   title?: string;
   item?: SwadeItem;
@@ -15,8 +15,8 @@ interface RollHelperData {
 
 interface RollHandlerData {
   form: any;
-  roll: Roll;
-  speaker: ChatMessage.SpeakerData;
+  roll: Roll | null;
+  speaker: foundry.data.ChatMessageData['speaker']['_source'];
   flavor: string;
   raise?: boolean;
   actor?: SwadeActor;
@@ -129,7 +129,7 @@ export default class SwadeDice {
       ? (form.find('#rollMode').val() as foundry.CONST.DiceRollMode)
       : (game.settings.get('core', 'rollMode') as foundry.CONST.DiceRollMode);
     // Optionally include a situational bonus
-    let bonus: string = null;
+    let bonus: string = '';
     if (form) bonus = form.find('#bonus').val();
     if (bonus) {
       if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;

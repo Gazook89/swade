@@ -1,6 +1,6 @@
-import { AdditionalStat } from '../../interfaces/additional';
-import SwadeActor from './SwadeActor';
-import SwadeItem from './SwadeItem';
+import { AdditionalStat } from '../interfaces/additional';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 
 /**
  * Produce short, plaintext summaries of the most important aspects of an Actor's character sheet.
@@ -30,7 +30,7 @@ export default class CharacterSummarizer {
     const type: String = getProperty(actor.data, 'type');
     if (type !== 'character' && type !== 'npc') {
       // probably need better error checking than this
-      ui.notifications.error(
+      ui.notifications?.error(
         "Can't do character summariser against actor of type " + type,
       );
     }
@@ -152,7 +152,7 @@ export default class CharacterSummarizer {
           abilities.push(item.name);
           break;
         default:
-          ui.notifications.error(
+          ui.notifications?.error(
             `Item ${item.name} has unknown type ${item.type}`,
           );
       }
@@ -213,7 +213,7 @@ export default class CharacterSummarizer {
             }
             break;
           default:
-            ui.notifications.error(
+            ui.notifications?.error(
               `For ${additionalStatKey}, cannot process additionalStat of type ${stat.dtype}`,
             );
         }

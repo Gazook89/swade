@@ -96,7 +96,7 @@ export const SWADE = {
   },
 
   templates: {
-    preloadPromise: null,
+    preloadPromise: null as Promise<Handlebars.TemplateDelegate<any>[]> | null,
     templatesPreloaded: false,
   },
 

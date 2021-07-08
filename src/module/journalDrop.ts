@@ -18,11 +18,10 @@ export function listenJournalDrop() {
       // Projecting screen coords to the canvas
       const t = getCanvas().tiles.worldTransform;
       // Determine the tile size
-      const tex = await loadTexture(data.src);
-
+      const tex = await loadTexture(data.src)!;
       const tileData = {
-        img: data.src as string,
-        width: (SWADE.imagedrop.height * tex.width) / tex.height,
+        img: data.src,
+        width: (SWADE.imagedrop.height * tex!.width) / tex!.height,
         height: SWADE.imagedrop.height,
         x: (event.clientX - t.tx) / getCanvas().stage.scale.x,
         y: (event.clientY - t.ty) / getCanvas().stage.scale.y,
@@ -32,18 +31,20 @@ export function listenJournalDrop() {
         locked: false,
         rotation: 0,
       };
-
-      Tile.create(tileData);
+      const viewedScene = game.user?.viewedScene;
+      if (!viewedScene) return;
+      const scene = game.scenes?.get(viewedScene)!;
+      await scene.createEmbeddedDocuments('Tile', [tileData]);
     }
   }
 
   // Add the listener to the board html element
   Hooks.once('canvasReady', () => {
-    document.getElementById('board').addEventListener('drop', (event) => {
+    document.getElementById('board')?.addEventListener('drop', (event) => {
       // Try to extract the data (type + src)
       let data: any;
       try {
-        data = JSON.parse(event.dataTransfer.getData('text/plain'));
+        data = JSON.parse(event.dataTransfer!.getData('text/plain'));
       } catch (err) {
         return;
       }

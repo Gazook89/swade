@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { SysItemData } from '../interfaces/item-data';
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
 import * as chat from './chat';
 import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
-import SwadeTemplate from './entities/SwadeTemplate';
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
+import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
@@ -17,23 +16,10 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
-  public static onSetup() {
-    // Do anything after initialization but before ready
-    // Localize CONFIG objects once up-front
-    const toLocalize = [];
-    for (const o of toLocalize) {
-      SWADE[o] = Object.entries(SWADE[o]).reduce((obj, e: any) => {
-        obj[e[0]] = game.i18n.localize(e[1]);
-        return obj;
-      }, {});
-    }
-  }
-
   public static async onReady() {
     const packChoices = {};
-    game.packs
-      //@ts-ignore
-      .filter((p) => p.documentClass.documentName === 'JournalEntry')
+    game
+      .packs!.filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
         packChoices[
           p.collection
@@ -52,7 +38,7 @@ export default class SwadeHooks {
           `Repopulating action cards Table with cards from deck ${choice}`,
         );
         await createActionCardTable(true, choice);
-        ui.notifications.info('Table re-population complete');
+        ui.notifications?.info('Table re-population complete');
       },
     });
     await SwadeSetup.setup();
@@ -74,9 +60,9 @@ export default class SwadeHooks {
         type: Object,
         default: {
           labelColor: '#000000',
-          diceColor: game.user['color'],
-          outlineColor: game.user['color'],
-          edgeColor: game.user['color'],
+          diceColor: game.user?.data.color,
+          outlineColor: game.user?.data.color,
+          edgeColor: game.user?.data.color,
         },
       },
       dsnCustomWildDieOptions: {
@@ -90,7 +76,7 @@ export default class SwadeHooks {
     };
 
     // Determine whether a system migration is required and feasible
-    if (!game.user.isGM) return;
+    if (!game.user!.isGM) return;
     const currentVersion = game.settings.get(
       'swade',
       'systemMigrationVersion',
@@ -110,7 +96,7 @@ export default class SwadeHooks {
       currentVersion &&
       isNewerVersion(COMPATIBLE_MIGRATION_VERSION, currentVersion)
     ) {
-      ui.notifications.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
+      ui.notifications?.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
         permanent: true,
       });
     }
@@ -124,22 +110,23 @@ export default class SwadeHooks {
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
     const found = html.find('.entity-name');
-
     let wildcards = app.entities.filter(
-      (a: SwadeActor) => a.isWildcard && a.hasPlayerOwner,
-    ) as SwadeActor[];
+      //@ts-ignore
+      (a) => a.isWildcard && a.hasPlayerOwner,
+    );
 
     //if the player is not a GM, then don't mark the NPC wildcards
-    if (!game.settings.get('swade', 'hideNPCWildcards') || game.user.isGM) {
+    if (!game.settings.get('swade', 'hideNPCWildcards') || game.user!.isGM) {
       const npcWildcards = app.entities.filter(
-        (a: SwadeActor) => a.isWildcard && !a.hasPlayerOwner,
-      ) as SwadeActor[];
+        //@ts-ignore
+        (a) => a.isWildcard && !a.hasPlayerOwner,
+      );
       wildcards = wildcards.concat(npcWildcards);
     }
 
     for (let i = 0; i < found.length; i++) {
       const element = found[i];
-      const enitityId = element.parentElement.dataset.entityId;
+      const enitityId = element.parentElement!.dataset.entityId;
       const wildcard = wildcards.find((a) => a.id === enitityId);
 
       if (wildcard) {
@@ -159,13 +146,14 @@ export default class SwadeHooks {
     if (app.entity === 'Actor') {
       const content = await app.getContent();
       const wildcards = content.filter(
+        //@ts-ignore
         (entity: SwadeActor) => entity.isWildcard,
       );
       const ids: string[] = wildcards.map((e) => e.id);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {
-        const entryId = el.dataset.entryId;
+        const entryId = el.dataset.entryId!;
         if (ids.includes(entryId)) {
           const entityName = el.children[1];
           entityName.children[0].insertAdjacentHTML(
@@ -185,38 +173,23 @@ export default class SwadeHooks {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
-        const pack = game.packs.get(li.data('pack'));
-        //@ts-ignore
+        const pack = game.packs!.get(li.data('pack'))!;
+
         const isJE = pack.documentClass.documentName === 'JournalEntry';
-        return isJE && game.user.isGM;
+        return isJE && game.user!.isGM;
       },
       callback: async (li) => {
-        const pack = game.packs.get(li.data('pack'));
+        const pack = game.packs!.get(li.data('pack'))!;
         if (pack.locked) {
-          ui.notifications.warn(game.i18n.localize('SWADE.WarningPackLocked'));
+          ui.notifications?.warn(game.i18n.localize('SWADE.WarningPackLocked'));
         } else {
+          //@ts-ignore
           const editor = await ActionCardEditor.fromPack(pack);
           editor.render(true);
         }
       },
     };
     options.push(obj);
-  }
-
-  //TODO remove later
-  public static onUpdateActor(
-    actor: SwadeActor,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    if (actor.data.type === 'npc') {
-      ui.actors.render();
-    }
-    // Update the player list to display new bennies values
-    if (hasProperty(updateData, 'data.bennies') && actor.hasPlayerOwner) {
-      ui.players.render(true);
-    }
   }
 
   public static onRenderCombatTracker(
@@ -232,29 +205,24 @@ export default class SwadeHooks {
 
     let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
-      const combId = el.getAttribute('data-combatant-id');
-      //@ts-ignore
-      const combatant = currentCombat.combatants.get(combId);
+      const combId = el.getAttribute('data-combatant-id') as string;
+      const combatant = currentCombat.combatants.get(combId)!;
       const initdiv = el.getElementsByClassName('token-initiative');
-      //@ts-ignore
-      if (combatant.getFlag('swade', 'groupId') || combatant.data.defeated) {
+
+      if (combatant.groupId || combatant.data.defeated) {
         /*initdiv[0].innerHTML =
         '<span class="initiative"><i class="fas fa-user-friends"></i></span>';*/
         initdiv[0].innerHTML = '';
-        //@ts-ignore
-      } else if (combatant.getFlag('swade', 'roundHeld')) {
+      } else if (combatant.roundHeld) {
         initdiv[0].innerHTML =
           '<span class="initiative"><i class="fas fa-hand-rock"></span>';
-        //@ts-ignore
-      } else if (combatant.getFlag('swade', 'turnLost')) {
+      } else if (combatant.turnLost) {
         initdiv[0].innerHTML =
           '<span class="initiative"><i class="fas fa-ban"></span>';
-        //@ts-ignore
-      } else if (combatant.getFlag('swade', 'cardString')) {
-        //@ts-ignore
-        const cardString = combatant.getFlag('swade', 'cardString') as string;
+      } else if (combatant.cardString) {
+        const cardString = combatant.cardString;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
-      } else if (!game.user.isGM) {
+      } else if (!game.user?.isGM) {
         initdiv[0].innerHTML = '';
       }
 
@@ -266,43 +234,36 @@ export default class SwadeHooks {
           // store the dragged item
           draggedEl = e.target;
           draggedId = draggedEl.getAttribute('data-combatant-id');
-          //@ts-ignore
-          draggedCombatant = game.combat.combatants.get(draggedId);
+
+          draggedCombatant = game.combat?.combatants.get(draggedId);
         },
         false,
       );
 
       // On dragOver
-      el.addEventListener('dragover', function (e) {
-        const dropTargetEl = e.target
-          //@ts-ignore
-          .closest('li.combatant');
-        dropTargetEl.classList.add('dropTarget');
+      el.addEventListener('dragover', (e) => {
+        $(e.target!).closest('li.combatant').toggleClass('dropTarget');
       });
 
       // On dragleave
-      el.addEventListener('dragleave', function (e) {
-        e.target
-          //@ts-ignore
-          .closest('li.combatant')
-          .classList.remove('dropTarget');
+      el.addEventListener('dragleave', (e) => {
+        $(e.target!).closest('li.combatant').toggleClass('dropTarget');
       });
 
       // On drop
       el.addEventListener(
         'drop',
-        async function (e) {
+        async (e) => {
           e.preventDefault();
           e.stopImmediatePropagation();
-          const leaderId = await e.target
-            //@ts-ignore
+          const leaderId = $(e.target!)
             .closest('li.combatant')
-            .getAttribute('data-combatant-id');
-          //@ts-ignore
-          const leader = await game.combat.combatants.get(leaderId);
+            .attr('data-combatant-id')!;
+
+          const leader = game.combat?.combatants.get(leaderId)!;
           // If a follower, set as group leader
           if (draggedCombatant.id !== leaderId) {
-            if (!leader.getFlag('swade', 'isGroupLeader')) {
+            if (!leader.isGroupLeader) {
               await leader.update({
                 flags: {
                   swade: {
@@ -312,12 +273,12 @@ export default class SwadeHooks {
                 },
               });
             }
-            const fInitiative = getProperty(leader, 'data.initiative');
-            const fCardValue = leader.getFlag('swade', 'cardValue');
-            const fSuitValue = leader.getFlag('swade', 'suitValue') - 0.01;
-            const fHasJoker = leader.getFlag('swade', 'hasJoker');
+            const fInitiative = leader.data.initiative;
+            const fCardValue = leader.cardValue;
+            const fSuitValue = leader.suitValue! - 0.01;
+            const fHasJoker = leader.hasJoker;
             // Set groupId of dragged combatant to the selected target's id
-            //@ts-ignore
+
             await draggedCombatant.update({
               initiative: fInitiative,
               flags: {
@@ -330,16 +291,13 @@ export default class SwadeHooks {
               },
             });
             // If a leader, update its followers
-            if (draggedCombatant.getFlag('swade', 'isGroupLeader')) {
-              //@ts-ignore
-              const followers = game.combat.combatants.filter(
-                (f) =>
-                  //@ts-ignore
-                  f.getFlag('swade', 'groupId') === draggedCombatant.id,
-              );
-              //@ts-ignore
-              for await (const f of followers) {
-                //@ts-ignore
+            if (draggedCombatant.isGroupLeader) {
+              const followers =
+                game.combat?.combatants.filter(
+                  (f) => f.groupId === draggedCombatant.id,
+                ) ?? [];
+
+              for (const f of followers) {
                 await f.update({
                   initiative: fInitiative,
                   flags: {
@@ -352,7 +310,7 @@ export default class SwadeHooks {
                   },
                 });
               }
-              await draggedCombatant.unsetFlag('swade', 'isGroupLeader');
+              await draggedCombatant.unsetIsGroupLeader();
             }
           }
         },
@@ -368,8 +326,8 @@ export default class SwadeHooks {
     userId: string,
   ) {
     // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-    const user = game.users.get(userId);
-    if (!game.user.isGM || (game.userId !== userId && user.isGM)) return;
+    const user = game.users?.get(userId)!;
+    if (!game.user!.isGM || (game.userId !== userId && user.isGM)) return;
 
     //return early if there's no flag updates
     if (!getProperty(updateData, 'flags.swade')) return;
@@ -388,19 +346,20 @@ export default class SwadeHooks {
 
       //Give bennies to PCs
       if (combatant.actor.type === 'character') {
-        await ChatMessage.create({ user: game.user, content: template });
+        await ChatMessage.create({ user: game.user?.id!, content: template });
         //filter combatants for PCs and give them bennies
-        const combatants = game.combat.combatants.filter(
-          (c) => c.actor.data.type === 'character',
-        );
+        const combatants =
+          game.combat?.combatants.filter(
+            (c) => c.actor!.data.type === 'character',
+          ) ?? [];
         for (const combatant of combatants) {
           const actor = (combatant.actor as unknown) as SwadeActor;
           await actor.getBenny();
         }
       } else if (combatant.actor.type === 'npc' && isCombHostile) {
-        await ChatMessage.create({ user: game.user, content: template });
+        await ChatMessage.create({ user: game.user?.id!, content: template });
         //give all GMs a benny
-        const gmUsers = game.users.filter((u) => u.active && u.isGM);
+        const gmUsers = game.users?.filter((u) => u.active && u.isGM)!;
         for (const gm of gmUsers) {
           const currBennies = (gm.getFlag('swade', 'bennies') as number) || 0;
           await gm.setFlag('swade', 'bennies', currBennies + 1);
@@ -408,13 +367,13 @@ export default class SwadeHooks {
         }
 
         //give all enemy wildcards a benny
-        const enemyWCs = game.combat.combatants.filter((c) => {
-          const a = (c.actor as unknown) as SwadeActor;
-          const hostile =
-            //@ts-ignore
-            c.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-          return a.data.type === 'npc' && hostile && a.isWildcard;
-        });
+        const enemyWCs =
+          game.combat?.combatants.filter((c) => {
+            const a = (c.actor as unknown) as SwadeActor;
+            const hostile =
+              c.token!.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
+            return a.data.type === 'npc' && hostile && a.isWildcard;
+          }) ?? [];
         for (const enemy of enemyWCs) {
           const a = (enemy.actor as unknown) as SwadeActor;
           await a.getBenny();
@@ -440,13 +399,15 @@ export default class SwadeHooks {
     options: ContextMenu.Item[],
   ) {
     const canApply = (li: JQuery<HTMLElement>) => {
-      const message = game.messages.get(li.data('messageId'));
+      const message = game.messages?.get(li.data('messageId'))!;
       const actor = ChatMessage.getSpeakerActor(message.data['speaker']);
       const isRightMessageType =
         message?.isRoll &&
         message?.isContentVisible &&
         !message.getFlag('core', 'RollTable');
-      return isRightMessageType && !!actor && (game.user.isGM || actor.owner);
+      return (
+        isRightMessageType && !!actor && (game.user?.isGM! || actor.isOwner)
+      );
     };
     options.push(
       {
@@ -474,22 +435,20 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    const newOptions = [];
+    const newOptions: ContextMenu.Item[] = [];
 
     // Set as group leader
     newOptions.push({
       name: 'SWADE.MakeGroupLeader',
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
-        const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
         return !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader');
       },
       callback: async (li) => {
-        const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
         await targetCombatant.update({
           flags: {
             swade: {
@@ -506,18 +465,14 @@ export default class SwadeHooks {
       name: 'SWADE.SetGroupColor',
       icon: '<i class="fas fa-palette"></i>',
       condition: (li) => {
-        const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return targetCombatant.getFlag('swade', 'isGroupLeader');
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        return targetCombatant.isGroupLeader ?? false;
       },
-      callback: async (li) => {
-        const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        //@ts-ignore
-        const colorPicker = new SwadeCombatGroupColor(targetCombatant);
-        colorPicker.render(true);
+      callback: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        new SwadeCombatGroupColor(targetCombatant).render(true);
       },
     });
 
@@ -526,35 +481,30 @@ export default class SwadeHooks {
       name: 'SWADE.RemoveGroupLeader',
       icon: '<i class="fas fa-users-slash"></i>',
       condition: (li) => {
-        const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(targetCombatantId);
-        return targetCombatant.getFlag('swade', 'isGroupLeader');
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        return targetCombatant.isGroupLeader ?? false;
       },
       callback: async (li) => {
-        const targetCombatantId = li.attr('data-combatant-id');
-        //@ts-ignore
-        const targetCombatant = game.combat.combatants.get(targetCombatantId);
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
         // Remove combatants from this leader's group.
         if (game.combat) {
           const followers = game.combat.combatants.filter(
-            //@ts-ignore
-            (f) => f.getFlag('swade', 'groupId') === targetCombatantId,
+            (f) => f.groupId === targetCombatantId,
           );
           for (const f of followers) {
-            //@ts-ignore
-            await f.unsetFlag('swade', 'groupId');
+            await f.unsetGroupId();
           }
         }
         // Remove as group leader
-        await targetCombatant.unsetFlag('swade', 'isGroupLeader');
+        await targetCombatant.unsetIsGroupLeader();
       },
     });
 
     // Get group leaders
-    const groupLeaders = game.combat?.combatants?.filter((c) =>
-      //@ts-ignore
-      c.getFlag('swade', 'isGroupLeader'),
+    const groupLeaders = game.combat?.combatants.filter(
+      (c) => c.isGroupLeader ?? false,
     );
     // Enable follow and unfollow if there are group leaders.
     if (groupLeaders) {
@@ -565,37 +515,29 @@ export default class SwadeHooks {
           name: game.i18n.format('SWADE.Follow', { name: gl.name }),
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
-            const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
-            const targetCombatant = game.combat.combatants.get(
+            const targetCombatantId = li.attr('data-combatant-id') as string;
+            const targetCombatant = game.combat?.combatants.get(
               targetCombatantId,
-            );
+            )!;
             return (
-              targetCombatant.getFlag('swade', 'groupId') !==
-                getProperty(gl, 'id') &&
-              !targetCombatant.getFlag('swade', 'isGroupLeader')
+              targetCombatant.groupId !== gl.id &&
+              !targetCombatant.isGroupLeader
             );
           },
           callback: async (li) => {
-            const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
-            const targetCombatant = game.combat.combatants.get(
+            const targetCombatantId = li.attr('data-combatant-id') as string;
+            const targetCombatant = game.combat?.combatants.get(
               targetCombatantId,
-            );
-            //@ts-ignore
-            const groupId = getProperty(gl, 'id');
-            //@ts-ignore
-            gl.setFlag('swade', 'isGroupLeader', true);
-            //@ts-ignore
+            )!;
+
+            const groupId = gl.id;
+            await gl.setIsGroupLeader(true);
             const fInitiative = getProperty(gl, 'data.initiative');
-            //@ts-ignore
-            const fCardValue = gl.getFlag('swade', 'cardValue');
-            //@ts-ignore
-            const fSuitValue = gl.getFlag('swade', 'suitValue') - 0.01;
-            //@ts-ignore
-            const fHasJoker = gl.getFlag('swade', 'hasJoker');
+            const fCardValue = gl.cardValue;
+            const fSuitValue = gl.suitValue! - 0.01;
+            const fHasJoker = gl.hasJoker;
             // Set groupId of dragged combatant to the selected target's id
-            //@ts-ignore
+
             await targetCombatant.update({
               initiative: fInitiative,
               flags: {
@@ -607,15 +549,13 @@ export default class SwadeHooks {
                 },
               },
             });
-            if (targetCombatant.getFlag('swade', 'isGroupLeader')) {
-              const followers = game.combat.combatants.filter(
-                (f) =>
-                  //@ts-ignore
-                  f.getFlag('swade', 'groupId') === targetCombatant.id,
-              );
-              //@ts-ignore
+            if (targetCombatant.isGroupLeader) {
+              const followers =
+                game.combat?.combatants.filter(
+                  (f) => f.groupId === targetCombatant.id,
+                ) ?? [];
+
               for (const follower of followers) {
-                //@ts-ignore
                 await follower.update({
                   initiative: fInitiative,
                   flags: {
@@ -628,7 +568,7 @@ export default class SwadeHooks {
                   },
                 });
               }
-              await targetCombatant.unsetFlag('swade', 'isGroupLeader');
+              await targetCombatant.unsetIsGroupLeader();
             }
           },
         });
@@ -638,24 +578,19 @@ export default class SwadeHooks {
           name: game.i18n.format('SWADE.Unfollow', { name: gl.name }),
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
-            const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
-            const targetCombatant = game.combat.combatants.get(
+            const targetCombatantId = li.attr('data-combatant-id') as string;
+            const targetCombatant = game.combat?.combatants.get(
               targetCombatantId,
-            );
-            return (
-              targetCombatant.getFlag('swade', 'groupId') ===
-              getProperty(gl, 'id')
-            );
+            )!;
+            return targetCombatant.groupId === getProperty(gl, 'id');
           },
           callback: async (li) => {
-            const targetCombatantId = li.attr('data-combatant-id');
-            //@ts-ignore
-            const targetCombatant = game.combat.combatants.get(
+            const targetCombatantId = li.attr('data-combatant-id') as string;
+            const targetCombatant = game.combat?.combatants.get(
               targetCombatantId,
-            );
+            )!;
             // If the current Combatant is the holding combatant, just remove Hold status.
-            await targetCombatant.unsetFlag('swade', 'groupId');
+            await targetCombatant.unsetGroupId();
           },
         });
       }
@@ -688,9 +623,9 @@ export default class SwadeHooks {
         name: game.i18n.localize('SWADE.BenniesGive'),
         icon: '<i class="fas fa-plus"></i>',
         condition: (li) =>
-          game.user.isGM && game.users.get(li[0].dataset.userId).isGM,
+          game.user!.isGM && game.users?.get(li[0].dataset.userId!)!.isGM!,
         callback: (li) => {
-          const selectedUser = game.users.get(li[0].dataset.userId);
+          const selectedUser = game.users?.get(li[0].dataset.userId!)!;
           selectedUser
             .setFlag(
               'swade',
@@ -698,7 +633,7 @@ export default class SwadeHooks {
               (selectedUser.getFlag('swade', 'bennies') as number) + 1,
             )
             .then(async () => {
-              ui['players'].render(true);
+              ui.players?.render(true);
               if (game.settings.get('swade', 'notifyBennies')) {
                 //In case one GM gives another GM a benny a different message should be displayed
                 const givenEvent = selectedUser !== game.user;
@@ -710,16 +645,16 @@ export default class SwadeHooks {
       {
         name: game.i18n.localize('SWADE.BenniesRefresh'),
         icon: '<i class="fas fa-sync"></i>',
-        condition: (li) => game.user.isGM,
+        condition: (li) => game.user!.isGM,
         callback: (li) => {
-          const user = game.users.get(li[0].dataset.userId);
+          const user = game.users?.get(li[0].dataset.userId!)!;
           Bennies.refresh(user);
         },
       },
       {
         name: game.i18n.localize('SWADE.AllBenniesRefresh'),
         icon: '<i class="fas fa-sync"></i>',
-        condition: (li) => game.user.isGM,
+        condition: (li) => game.user!.isGM,
         callback: (li) => {
           Bennies.refreshAll();
         },
@@ -728,8 +663,10 @@ export default class SwadeHooks {
   }
 
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
-    const measure = sceneControlButtons.find((a) => a.name === 'measure');
-    let template: SwadeTemplate = null;
+    const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
+    let template: SwadeMeasuredTemplate | null = null;
+    const templateCls = CONFIG.MeasuredTemplate
+      .objectClass as typeof SwadeMeasuredTemplate;
     const newButtons: SceneControlTool[] = [
       {
         name: 'swcone',
@@ -739,7 +676,7 @@ export default class SwadeHooks {
         button: true,
         onClick: () => {
           if (template) template.destroy();
-          template = SwadeTemplate.fromPreset(TemplatePreset.CONE);
+          template = templateCls.fromPreset(TemplatePreset.CONE);
           if (template) template.drawPreview();
         },
       },
@@ -751,7 +688,7 @@ export default class SwadeHooks {
         button: true,
         onClick: () => {
           if (template) template.destroy();
-          template = SwadeTemplate.fromPreset(TemplatePreset.SBT);
+          template = templateCls.fromPreset(TemplatePreset.SBT);
           if (template) template.drawPreview();
         },
       },
@@ -763,7 +700,7 @@ export default class SwadeHooks {
         button: true,
         onClick: () => {
           if (template) template.destroy();
-          template = SwadeTemplate.fromPreset(TemplatePreset.MBT);
+          template = templateCls.fromPreset(TemplatePreset.MBT);
           if (template) template.drawPreview();
         },
       },
@@ -775,7 +712,7 @@ export default class SwadeHooks {
         button: true,
         onClick: () => {
           if (template) template.destroy();
-          template = SwadeTemplate.fromPreset(TemplatePreset.LBT);
+          template = templateCls.fromPreset(TemplatePreset.LBT);
           if (template) template.drawPreview();
         },
       },
@@ -804,12 +741,12 @@ export default class SwadeHooks {
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
       let item: SwadeItem;
       if ('pack' in data) {
-        const pack = game.packs.get(data.pack);
-        item = (await pack.getEntity(data.id)) as SwadeItem;
+        const pack = game.packs?.get(data.pack)!;
+        item = (await pack.getDocument(data.id)) as SwadeItem;
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data, {});
       } else {
-        item = game.items.get(data.id) as SwadeItem;
+        item = game.items?.get(data.id)!;
       }
       const isRightItemTypeAndSubtype =
         item.data.type === 'ability' && item.data.data.subtype === 'race';
@@ -818,13 +755,13 @@ export default class SwadeHooks {
       //set name
       await actor.update({ 'data.details.species.name': item.name });
       //process embedded entities
-      const map = new Map<string, SysItemData>(
+      const map = new Map<string, SwadeItem['data']>(
         (item.getFlag('swade', 'embeddedAbilities') as [
           string,
-          SysItemData,
+          SwadeItem['data'],
         ][]) || [],
       );
-      const creationData = [];
+      const creationData = new Array<SwadeItem['data']>();
       for (const entry of map.values()) {
         //if the item isn't a skill, then push it to the new items
         if (entry.type !== 'skill') {
@@ -837,10 +774,9 @@ export default class SwadeHooks {
           if (skill) {
             //if the skill exists, set it to the value of the skill from the item
             const skillDie = getProperty(entry, 'data.die') as any;
-            await actor.updateOwnedItem({
-              _id: skill.id,
-              data: { die: skillDie },
-            });
+            await actor.items
+              .get(skill.id!)
+              ?.update({ data: { die: skillDie } });
           } else {
             //else, add it to the new items
             creationData.push(entry);
@@ -848,13 +784,16 @@ export default class SwadeHooks {
         }
       }
       if (creationData.length > 0) {
-        await actor.createOwnedItem(creationData, { renderSheet: null });
+        //@ts-ignore
+        await actor.createEmbeddedDocuments('OwnedItem', creationData, {
+          renderSheet: null,
+        });
       }
 
       //copy active effects
-      const effects = item.effects.map((ae) => ae.data) as any;
-      if (!!effects && effects.length > 0) {
-        await actor.createEmbeddedEntity('ActiveEffect', effects);
+      const effects = item.effects.map((ae) => ae.data.toObject());
+      if (effects.length > 0) {
+        await actor.createEmbeddedDocuments('ActiveEffect', effects);
       }
     }
   }
@@ -871,10 +810,10 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const cardPack = game.packs.get(
+    const cardPack = game.packs?.get(
       game.settings.get('swade', 'cardDeck') as string,
-    ) as Compendium;
-    //@ts-ignore
+    )!;
+
     const cards = (await cardPack.getDocuments()).sort(
       (a: JournalEntry, b: JournalEntry) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
@@ -889,9 +828,9 @@ export default class SwadeHooks {
     ) as JournalEntry[];
 
     //prep list of cards for selection
-    const cardTable = game.tables.getName(SWADE.init.cardTable);
+    const cardTable = game.tables?.getName(SWADE.init.cardTable)!;
 
-    const cardList = [];
+    const cardList: any[] = [];
     for (const card of cards) {
       const cardValue = card.getFlag('swade', 'cardValue') as number;
       const suitValue = card.getFlag('swade', 'suitValue') as number;
@@ -901,8 +840,8 @@ export default class SwadeHooks {
         options.document.data.flags.swade &&
         options.document.getFlag('swade', 'cardValue') === cardValue &&
         options.document.getFlag('swade', 'suitValue') === suitValue;
+      //@ts-ignore
       const isAvailable = cardTable.results.find(
-        //@ts-ignore
         (r) => r.data.text === card.name,
       ).drawn
         ? 'text-decoration: line-through;'
@@ -938,8 +877,8 @@ export default class SwadeHooks {
       const suitValue = selectedCard.data().suitValue as number;
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as String;
-      //@ts-ignore
-      game.combat.combatants.get(options.document.id).update({
+
+      game.combat?.combatants.get(options.document.id)!.update({
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
       });
@@ -968,11 +907,11 @@ export default class SwadeHooks {
       .catch((err) => console.error(err));
 
     const customWilDieColors =
-      game.user.getFlag('swade', 'dsnCustomWildDieColors') ||
+      game.user!.getFlag('swade', 'dsnCustomWildDieColors') ||
       getProperty(SWADE, 'diceConfig.flags.dsnCustomWildDieColors.default');
 
     const customWilDieOptions =
-      game.user.getFlag('swade', 'dsnCustomWildDieOptions') ||
+      game.user!.getFlag('swade', 'dsnCustomWildDieOptions') ||
       getProperty(SWADE, 'diceConfig.flags.dsnCustomWildDieOptions.default');
 
     dice3d.addColorset(
