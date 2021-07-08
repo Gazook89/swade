@@ -116,7 +116,7 @@ export default class SwadeActor extends Actor {
       const pace = this.data.data.stats.speed.value;
       //make sure the pace doesn't go below 1
       const adjustedPace = Math.max(pace - wounds, 1);
-      setProperty(this.data, 'data.stats.speed.adjusted', adjustedPace);
+      this.data.data.stats.speed.adjusted = adjustedPace;
     }
 
     //die type bounding for attributes

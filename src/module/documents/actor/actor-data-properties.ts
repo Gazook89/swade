@@ -29,6 +29,14 @@ interface SwadeVehicleDataSource {
   type: 'vehicle';
 }
 
-interface CharacterDataPropertiesData extends CharacterDataSourceData {}
+type CharacterDataPropertiesData = CharacterDataSourceData & {
+  stats: {
+    speed: {
+      adjusted: number;
+    };
+  };
+};
 
-interface VehicleDataPropertiesData extends VehicleDataSourceData {}
+type VehicleDataPropertiesData = VehicleDataSourceData & {
+  //add derived data here
+};
