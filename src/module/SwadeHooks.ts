@@ -721,7 +721,7 @@ export default class SwadeHooks {
   }
 
   public static async onDropActorSheetData(
-    actor: Actor,
+    actor: SwadeActor,
     sheet: ActorSheet,
     data: any,
   ) {
