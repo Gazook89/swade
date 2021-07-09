@@ -38,7 +38,7 @@ export default class SwadeDice {
     allowGroup,
     flags,
   }: RollHelperData): Promise<Roll | null> {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       const template = 'systems/swade/templates/chat/roll-dialog.html';
       const dialogData = {
         formula: roll.formula,
@@ -94,7 +94,7 @@ export default class SwadeDice {
       }
       const html = await renderTemplate(template, dialogData);
       //Create Dialog window
-      let finalRoll = null;
+      let finalRoll: Roll | null = null;
       new Dialog({
         title: title,
         content: html,
