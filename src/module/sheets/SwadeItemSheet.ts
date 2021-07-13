@@ -74,10 +74,13 @@ export default class SwadeItemSheet extends ItemSheet {
     });
 
     html.find('.profile-img').on('contextmenu', () => {
+      //@ts-ignore
       new ImagePopout(this.item.img!, {
         title: this.item.name!,
         shareable:
-          (this.item.isOwned && this.item.actor?.isOwner) || game.user!.isGM,
+          (this.item.isOwned && this.item.actor?.isOwner) ??
+          game.user?.isGM ??
+          false,
       }).render(true);
     });
 

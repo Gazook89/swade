@@ -110,13 +110,14 @@ export default class SwadeHooks {
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
     const found = html.find('.entity-name');
+    //@ts-ignore
     let wildcards = app.entities.filter(
-      //@ts-ignore
       (a) => a.isWildcard && a.hasPlayerOwner,
     );
 
     //if the player is not a GM, then don't mark the NPC wildcards
     if (!game.settings.get('swade', 'hideNPCWildcards') || game.user!.isGM) {
+      //@ts-ignore
       const npcWildcards = app.entities.filter(
         //@ts-ignore
         (a) => a.isWildcard && !a.hasPlayerOwner,
@@ -138,6 +139,7 @@ export default class SwadeHooks {
   }
 
   public static async onRenderCompendium(
+    //@ts-ignore
     app: Compendium,
     html: JQuery<HTMLElement>,
     data: any,
@@ -530,7 +532,7 @@ export default class SwadeHooks {
               targetCombatantId,
             )!;
 
-            const groupId = gl.id;
+            const groupId = gl.id ?? undefined;
             await gl.setIsGroupLeader(true);
             const fInitiative = getProperty(gl, 'data.initiative');
             const fCardValue = gl.cardValue;
@@ -876,7 +878,7 @@ export default class SwadeHooks {
       const cardValue = selectedCard.data().cardValue as number;
       const suitValue = selectedCard.data().suitValue as number;
       const hasJoker = selectedCard.data().isJoker as boolean;
-      const cardString = selectedCard.val() as String;
+      const cardString = selectedCard.val() as string;
 
       game.combat?.combatants.get(options.document.id)!.update({
         initiative: suitValue + cardValue,

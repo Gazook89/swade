@@ -16,6 +16,7 @@ export function listenJournalDrop() {
   async function _onDropImage(event, data: { type: string; src: string }) {
     if (data.type == 'image') {
       // Projecting screen coords to the canvas
+      //@ts-ignore
       const t = getCanvas().tiles.worldTransform;
       // Determine the tile size
       const tex = await loadTexture(data.src)!;

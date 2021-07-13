@@ -13,17 +13,19 @@ interface ScrollRenderOptions extends Application.RenderOptions {
 }
 
 export default class ActionCardEditor extends FormApplication {
-  static async fromPack(compendium: Compendium): Promise<ActionCardEditor> {
+  static async fromPack(
+    compendium: Compendium<CompendiumCollection.Metadata>,
+  ): Promise<ActionCardEditor> {
     //@ts-ignore
     const cards = await compendium.getDocuments();
     return new this(cards, compendium);
   }
 
   cards: Map<string, JournalEntry>;
-  pack: Compendium;
+  pack: Compendium<CompendiumCollection.Metadata>;
   constructor(
     cards: JournalEntry[],
-    pack: Compendium,
+    pack: Compendium<CompendiumCollection.Metadata>,
     options: Partial<FormApplication.Options> = {},
   ) {
     super({}, options);
@@ -90,6 +92,7 @@ export default class ActionCardEditor extends FormApplication {
 
   private _showCard(event: JQuery.ClickEvent<HTMLElement>) {
     const id = event.currentTarget.dataset.id!;
+    //@ts-ignore
     new ImagePopout(this.cards.get(id)?.data.img!, {
       shareable: true,
     }).render(true);
@@ -102,6 +105,7 @@ export default class ActionCardEditor extends FormApplication {
         img: 'systems/swade/assets/ui/ace-white.svg',
         'flags.swade': { cardValue: 0, suitValue: 0, isJoker: false },
       },
+      //@ts-ignore
       { pack: this.pack.collection },
     );
     if (newCard) {

@@ -2,11 +2,27 @@ declare global {
   interface DocumentClassConfig {
     Combatant: typeof SwadeCombatant;
   }
+
+  interface FlagConfig {
+    Combatant: {
+      swade: {
+        suitValue?: number;
+        cardValue?: number;
+        cardString?: string;
+        hasJoker?: boolean;
+        groupId?: string;
+        isGroupLeader?: boolean;
+        roundHeld?: number;
+        turnLost?: boolean;
+        [key: string]: unknown;
+      };
+    };
+  }
 }
 
 export default class SwadeCombatant extends Combatant {
   get suitValue() {
-    return this.getFlag('swade', 'suitValue') as number | undefined;
+    return this.getFlag('swade', 'suitValue');
   }
 
   async setCardValue(cardValue: number) {
@@ -14,7 +30,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get cardValue() {
-    return this.getFlag('swade', 'cardValue') as number | undefined;
+    return this.getFlag('swade', 'cardValue');
   }
 
   async setSuitValue(suitValue: number) {
@@ -22,7 +38,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get cardString() {
-    return this.getFlag('swade', 'cardString') as string | undefined;
+    return this.getFlag('swade', 'cardString');
   }
 
   async setCardString(cardString: string) {
@@ -30,7 +46,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get hasJoker() {
-    return this.getFlag('swade', 'hasJoker') as boolean | undefined;
+    return this.getFlag('swade', 'hasJoker');
   }
 
   async setJoker(joker: boolean) {
@@ -38,7 +54,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get groupId() {
-    return this.getFlag('swade', 'groupId') as string | undefined;
+    return this.getFlag('swade', 'groupId');
   }
 
   async setGroupId(groupId: string) {
@@ -50,7 +66,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get isGroupLeader() {
-    return this.getFlag('swade', 'isGroupLeader') as boolean | undefined;
+    return this.getFlag('swade', 'isGroupLeader');
   }
 
   async setIsGroupLeader(groupLeader: boolean) {
@@ -62,7 +78,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get roundHeld() {
-    return this.getFlag('swade', 'roundHeld') as number | undefined;
+    return this.getFlag('swade', 'roundHeld');
   }
 
   async setRoundHeld(roundHeld: number) {
@@ -70,7 +86,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get turnLost() {
-    return this.getFlag('swade', 'turnLost') as boolean | undefined;
+    return this.getFlag('swade', 'turnLost');
   }
 
   async setTurnLost(turnLost: boolean) {

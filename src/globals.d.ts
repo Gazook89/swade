@@ -1,6 +1,5 @@
 import SwadeGame from './interfaces/SwadeGame';
 import { SWADE } from './module/config';
-import SwadeCombat from './module/documents/SwadeCombat';
 
 declare global {
   interface Game {
@@ -14,9 +13,5 @@ declare global {
 
   interface CONFIG {
     SWADE: typeof SWADE;
-  }
-
-  interface CombatTracker {
-    viewed: SwadeCombat;
   }
 }

@@ -140,8 +140,11 @@ Hooks.on(
 
 Hooks.on(
   'renderCompendium',
-  (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
-    SwadeHooks.onRenderCompendium(app, html, data),
+  (
+    app: Compendium<CompendiumCollection.Metadata>,
+    html: JQuery<HTMLElement>,
+    data: any,
+  ) => SwadeHooks.onRenderCompendium(app, html, data),
 );
 
 Hooks.on(

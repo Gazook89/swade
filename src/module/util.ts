@@ -65,7 +65,7 @@ export async function createActionCardTable(
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-export async function createSwadeMacro(data: Hotbar.DropData, slot: number) {
+export async function createSwadeMacro(data: any, slot: number) {
   if (data.type !== 'Item') return;
   if (!('data' in data))
     return ui.notifications?.warn(
@@ -141,7 +141,7 @@ export async function shouldShowBennyAnimation(): Promise<boolean> {
 
 export function getCanvas(): Canvas {
   if (canvas instanceof Canvas && canvas.ready) {
-    return canvas;
+    return canvas!;
   }
   throw new Error('No Canvas available');
 }

@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
 import { getCanvas } from '../util';
 
@@ -61,9 +60,9 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
    * @param {Event} event   The initiating click event
    */
   drawPreview() {
-    this.layer.preview.removeChildren();
+    this.layer?.preview?.removeChildren();
     this.initialLayer = getCanvas().activeLayer!;
-    this.layer.preview.addChild(this);
+    this.layer?.preview?.addChild(this);
     this.activatePreviewListeners();
     this.draw();
     this.layer.activate();
@@ -79,18 +78,18 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       const now = Date.now(); // Apply a 20ms throttle
       if (now - this.moveTime <= 20) return;
       const center = event.data.getLocalPosition(this.layer);
-      const snapped = getCanvas().grid.getSnappedPosition(
+      const snapped = getCanvas().grid?.getSnappedPosition(
         center.x,
         center.y,
         2,
       );
-      this.data.update({ x: snapped.x, y: snapped.y });
+      this.data.update({ x: snapped?.x, y: snapped?.y });
       this.refresh();
       this.moveTime = now;
     };
     // Cancel the workflow (right-click)
     this.handlers.rc = () => {
-      this.layer.preview.removeChildren();
+      this.layer?.preview?.removeChildren();
       getCanvas().stage.off('mousemove', this.handlers.mm);
       getCanvas().stage.off('mousedown', this.handlers.lc);
       getCanvas().app.view.oncontextmenu = null;
@@ -102,7 +101,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       event.stopPropagation();
       this.handlers.rc(event);
       // Confirm final snapped position
-      const destination = getCanvas().grid.getSnappedPosition(
+      const destination = getCanvas().grid?.getSnappedPosition(
         this.data.x,
         this.data.y,
         2,
@@ -110,14 +109,16 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       this.data.update(destination);
       // Create the template
       getCanvas()
-        .scene?.createEmbeddedDocuments('MeasuredTemplate', [this.data])
+        .scene?.createEmbeddedDocuments('MeasuredTemplate', [
+          this.data.toObject(),
+        ])
         .then(() => this.destroy());
     };
     // Rotate the template by 3 degree increments (mouse-wheel)
     this.handlers.mw = (event) => {
       if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
       event.stopPropagation();
-      const delta = getCanvas().grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+      const delta = getCanvas().grid!.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
       const snap = event.shiftKey ? delta : 5;
       this.data.update({
         direction: this.data.direction + snap * Math.sign(event.deltaY),
