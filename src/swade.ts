@@ -5,12 +5,16 @@
  * Software License: Apache License, Version 2.0
  */
 
-import Benny from './module/Benny';
-import { getSwadeConeShape } from './module/cone';
+import SwadeGame from './interfaces/SwadeGame';
+import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
 import SwadeEntityTweaks from './module/dialog/entity-tweaks';
-import SwadeActor from './module/entities/SwadeActor';
-import SwadeItem from './module/entities/SwadeItem';
+import SwadeActor from './module/documents/actor/SwadeActor';
+import Benny from './module/documents/Benny';
+import SwadeItem from './module/documents/item/SwadeItem';
+import SwadeCombat from './module/documents/SwadeCombat';
+import SwadeCombatant from './module/documents/SwadeCombatant';
+import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
@@ -21,31 +25,22 @@ import CharacterSheet from './module/sheets/official/CharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
 import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
-import SwadeCombat from './module/SwadeCombat';
+import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import {
-  createSwadeMacro,
-  rollItemMacro,
-  rollPowerMacro,
-  rollSkillMacro,
-  rollWeaponMacro,
-} from './module/util';
+import { createSwadeMacro, rollItemMacro } from './module/util';
 
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
 
-const sockets: SwadeSocketHandler = null;
-export const swadeGame = {
+const swadeGame: SwadeGame = {
   SwadeEntityTweaks,
-  rollSkillMacro,
-  rollWeaponMacro,
-  rollPowerMacro,
   rollItemMacro,
-  sockets: sockets,
+  sockets: null,
   itemChatCardHelper: ItemChatCardHelper,
   migrations: migrations,
+  CharacterSummarizer,
 };
 Hooks.once('init', () => {
   console.log(
@@ -53,26 +48,32 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  // CONFIG.debug.hooks = true;
+  //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
   game.swade = swadeGame;
   game.swade.sockets = new SwadeSocketHandler();
-  //Register custom Handlebars helpers
+
+  //register custom Handlebars helpers
   registerCustomHelpers();
 
-  //Overwrite method prototypes
-  //@ts-expect-error I'm not extending this class and just altering the shape so overwriting the prototype is the easiest way of doing things
-  MeasuredTemplate.prototype._getConeShape = getSwadeConeShape;
-
-  // Register custom classes
-  //@ts-ignore
+  //register document classes
   CONFIG.Actor.documentClass = SwadeActor;
-  //@ts-ignore
   CONFIG.Item.documentClass = SwadeItem;
-  //@ts-ignore
   CONFIG.Combat.documentClass = SwadeCombat;
+  CONFIG.Combatant.documentClass = SwadeCombatant;
+
+  //register custom object classes
+  CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
+
+  //register custom sidebar tabs
+  CONFIG.ui.combat = SwadeCombatTracker;
+
+  //register custom status effects
   CONFIG.statusEffects = SWADE.statusEffects;
+
+  //@ts-ignore
+  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
 
   // Register custom system settings
   registerSettings();
@@ -85,9 +86,8 @@ Hooks.once('init', () => {
   Actors.registerSheet('swade', CharacterSheet, {
     types: ['character'],
     makeDefault: true,
-    label: game.i18n.localize('SWADE.OfficialSheet'),
+    label: 'SWADE.OfficialSheet',
   });
-
   Actors.registerSheet('swade', SwadeNPCSheet, {
     types: ['npc'],
     label: 'SWADE.CommunityNPCSheet',
@@ -107,30 +107,30 @@ Hooks.once('init', () => {
   // Drop a journal image to a tile (for cards)
   listenJournalDrop();
 
-  // Preload Handlebars templates
+  // TODO revisit if necessary
+  //Preload Handlebars templates
   SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
   SWADE.templates.preloadPromise.then(() => {
     SWADE.templates.templatesPreloaded = true;
   });
 });
 
-Hooks.once('setup', () => SwadeHooks.onSetup());
-
 Hooks.once('ready', async () => SwadeHooks.onReady());
 
-/**
- * This hook only really exists to stop Races from being added to the actor as an item
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-Hooks.on('preCreateItem', (item, options, userId) => {
-  if (
-    item.parent &&
-    item.data.type === 'ability' &&
-    item.data.data.subtype === 'race'
-  ) {
-    return false; //return early if we're doing race stuff
-  }
-});
+/** This hook only really exists to stop Races from being added to the actor as an item */
+Hooks.on(
+  'preCreateItem',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  (item: SwadeItem, options: object, userId: string) => {
+    if (
+      item.parent &&
+      item.data.type === 'ability' &&
+      item.data.data.subtype === 'race'
+    ) {
+      return false; //return early if we're doing race stuff
+    }
+  },
+);
 
 Hooks.on(
   'renderActorDirectory',
@@ -140,19 +140,16 @@ Hooks.on(
 
 Hooks.on(
   'renderCompendium',
-  (app: Compendium, html: JQuery<HTMLElement>, data: any) =>
-    SwadeHooks.onRenderCompendium(app, html, data),
-);
-
-Hooks.on(
-  'updateActor',
-  (actor: SwadeActor, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onUpdateActor(actor, updateData, options, userId),
+  (
+    app: Compendium<CompendiumCollection.Metadata>,
+    html: JQuery<HTMLElement>,
+    data: any,
+  ) => SwadeHooks.onRenderCompendium(app, html, data),
 );
 
 Hooks.on(
   'renderCombatTracker',
-  (app: CombatTracker, html: JQuery<HTMLElement>, data: any) =>
+  (app: SwadeCombatTracker, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCombatTracker(app, html, data),
 );
 
@@ -176,12 +173,12 @@ Hooks.on(
     SwadeHooks.onGetChatLogEntryContext(html, options),
 );
 
-Hooks.on('renderChatLog', (app, html: JQuery<HTMLElement>, data) =>
+Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>, data: any) =>
   SwadeHooks.onRenderChatLog(app, html, data),
 );
 
 // Add benny management to the player list
-Hooks.on('renderPlayerList', (list: any, html: JQuery, options: any) =>
+Hooks.on('renderPlayerList', async (list: any, html: JQuery, options: any) =>
   SwadeHooks.onRenderPlayerList(list, html, options),
 );
 
@@ -193,7 +190,7 @@ Hooks.on('getSceneControlButtons', (sceneControlButtons: any[]) =>
   SwadeHooks.onGetSceneControlButtons(sceneControlButtons),
 );
 
-Hooks.on('renderChatPopout', (app, html: JQuery<HTMLElement>, data) =>
+Hooks.on('renderChatPopout', (app: any, html: JQuery<HTMLElement>, data: any) =>
   SwadeHooks.onRenderChatLog(app, html, data),
 );
 
@@ -217,6 +214,16 @@ Hooks.once('diceSoNiceReady', (dice3d: any) => {
 
 Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
 
-Hooks.on('getCombatTrackerEntryContext', (html, options) =>
-  SwadeHooks.onGetCombatTrackerEntryContext(html, options),
+Hooks.on(
+  'getCombatTrackerEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCombatTrackerEntryContext(html, options);
+  },
+);
+
+Hooks.on(
+  'getCompendiumDirectoryEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
+  },
 );

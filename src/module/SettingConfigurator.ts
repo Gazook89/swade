@@ -100,7 +100,8 @@ export default class SettingConfigurator extends FormApplication {
 
   async _resetSettings() {
     for (const setting of this.config.settings) {
-      const resetValue = game.settings.settings.get(`swade.${setting}`).default;
+      const resetValue = game.settings.settings.get(`swade.${setting}`)!
+        .default;
       if (game.settings.get('swade', setting) !== resetValue) {
         await game.settings.set('swade', setting, resetValue);
       }
@@ -121,7 +122,7 @@ export default class SettingConfigurator extends FormApplication {
       const newElement = document.createElement('div');
       newElement.innerHTML = `<input type="text" name="actorSettingStats.attr${nk}.key" value="attr${nk}"/>`;
       const newKey = newElement.children[0];
-      form.appendChild(newKey);
+      form?.appendChild(newKey);
       await this._onSubmit(event);
       this.render(true);
     }
@@ -131,7 +132,7 @@ export default class SettingConfigurator extends FormApplication {
       const newElement = document.createElement('div');
       newElement.innerHTML = `<input type="text" name="itemSettingStats.attr${nk}.key" value="attr${nk}"/>`;
       const newKey = newElement.children[0];
-      form.appendChild(newKey);
+      form?.appendChild(newKey);
       await this._onSubmit(event);
       this.render(true);
     }
@@ -145,10 +146,10 @@ export default class SettingConfigurator extends FormApplication {
   }
 
   private _handleKeyValidityCheck(attributes: any): any {
-    return Object.values(attributes).reduce((obj, v) => {
+    return Object.values(attributes).reduce((obj: any, v: any) => {
       const k = v['key'].trim();
       if (/[\s.]/.test(k)) {
-        return ui.notifications.error(
+        return ui.notifications?.error(
           'Attribute keys may not contain spaces or periods',
         );
       }
@@ -175,7 +176,7 @@ export default class SettingConfigurator extends FormApplication {
     const retVal = {};
 
     game.packs
-      .filter((p) => p.entity === 'Item')
+      ?.filter((p) => p.entity === 'Item')
       .forEach((p) => {
         retVal[p.collection] = `${p.metadata.label} (${p.metadata.package})`;
       });

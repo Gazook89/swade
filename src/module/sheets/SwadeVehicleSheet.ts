@@ -1,7 +1,7 @@
 import IDriverData from '../../interfaces/IDriverData';
 import { SWADE } from '../config';
-import SwadeActor from '../entities/SwadeActor';
-import SwadeItem from '../entities/SwadeItem';
+import SwadeActor from '../documents/actor/SwadeActor';
+import SwadeItem from '../documents/item/SwadeItem';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
 /**
@@ -13,8 +13,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * @returns {Object}
    */
   static get defaultOptions() {
-    return {
-      ...super.defaultOptions,
+    return mergeObject(super.defaultOptions, {
       classes: ['swade', 'sheet', 'actor', 'vehicle'],
       width: 600,
       height: 540,
@@ -25,7 +24,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
           initial: 'summary',
         },
       ],
-    };
+    });
   }
 
   get template() {
@@ -41,8 +40,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     if (!this.options.editable) return;
 
     // Drag events for macros.
-    if (this.actor.owner) {
-      const handler = (ev) => this._onDragStart(ev);
+    if (this.actor.isOwner) {
+      const handler = (ev: DragEvent) => this._onDragStart(ev);
       // Find all items on the character sheet.
       html.find('li.item.weapon').each((i, li) => {
         // Add draggable attribute and dragstart listener.
@@ -71,7 +70,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
           <form>
             <div>
               <center>${game.i18n.localize('SWADE.Del')} 
-                <strong>${ownedItem.name}</strong>?
+                <strong>${ownedItem?.name}</strong>?
               </center>
               <br>
             </div>
@@ -81,7 +80,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
         content: template,
         render: () => {},
         yes: async () => {
-          await this.actor.deleteOwnedItem(ownedItem.id);
+          await ownedItem?.delete();
           li.slideUp(200, () => this.render(false));
         },
         no: () => {},
@@ -92,7 +91,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     html.find('.item-create').on('click', async (event) => {
       event.preventDefault();
       const header = event.currentTarget;
-      const type = header.dataset.type;
+      const type = header.dataset.type ?? '';
 
       let modData;
       let weaponData;
@@ -164,19 +163,14 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     }
 
     //Prepare inventory
-    data.inventory = this._determineCargo(data.itemsByType).sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
+    data.inventory = this._determineCargo().sort(
+      (a, b) => a!.name!.localeCompare(b.name!) ?? 0,
+    );
 
     data.inventoryWeight = 0;
-    data.inventory.forEach((i) => {
-      data.inventoryWeight += i.data.weight * i.data.quantity;
+    data.inventory.forEach((i: SwadeItem) => {
+      //@ts-ignore
+      data.inventoryWeight += i.data.data.weight * i.data.data.quantity;
     });
 
     //Fetch Driver data
@@ -202,21 +196,25 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * Determines the cargo inventory of the vehicle, sorting out all the non-vehicular items
    * @param itemsByType an object with the items filtered by type
    */
-  private _determineCargo(itemsByType) {
+  private _determineCargo() {
     return [
-      ...this._checkNull(itemsByType['gear']).filter(
-        (i) => !i.data['isVehicular'] || !i.data['equipped'],
+      ...this.actor.itemTypes.gear.filter(
+        (i) =>
+          i.data.type === 'gear' &&
+          (!i.data.data.isVehicular || !i.data.data.equipped),
       ),
-      ...this._checkNull(itemsByType['weapon']).filter(
-        (i) => !i.data['isVehicular'] || !i.data['equipped'],
+      ...this.actor.itemTypes.weapon.filter(
+        (i) =>
+          i.data.type === 'gear' &&
+          (!i.data.data.isVehicular || !i.data.data.equipped),
       ),
-      ...this._checkNull(itemsByType['armor']),
-      ...this._checkNull(itemsByType['shield']),
+      ...this.actor.itemTypes.armor,
+      ...this.actor.itemTypes.armor,
     ];
   }
 
   async setDriver(id: string): Promise<void> {
-    const driver = game.actors.get(id);
+    const driver = game.actors?.get(id);
     if (driver && driver.data.type !== 'vehicle') {
       await this.actor.update({ 'data.driver.id': id });
     }
@@ -228,12 +226,12 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     const driverId = this.actor.data.data.driver.id;
     const driver = await this.actor.getDriver();
     const userCanViewDriver =
-      game.user.isGM ||
+      game.user?.isGM ||
       (driver && driver.permission >= CONST.ENTITY_PERMISSIONS.LIMITED);
     const driverData: IDriverData = {
       img: 'icons/svg/mystery-man-black.svg',
       name: 'No Driver',
-      userCanSeeDriver: userCanViewDriver,
+      userCanSeeDriver: userCanViewDriver!,
     };
 
     //Return if the vehicle has no driver
@@ -243,8 +241,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
 
     //Display the Driver data if the current user has at least Limited permission on the driver Actor
     if (userCanViewDriver) {
-      driverData.img = driver.img;
-      driverData.name = driver.name;
+      driverData.img = driver.img!;
+      driverData.name = driver.name!;
     } else {
       //else just show an aunknown driver
       driverData.name = 'Unkown Driver';
@@ -260,7 +258,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     const driverId = getProperty(this.actor.data, 'data.driver.id');
     const driver = (await fromUuid(driverId)) as SwadeActor;
     if (driver) {
-      driver.sheet.render(true);
+      driver.sheet?.render(true);
     }
   }
 
@@ -286,13 +284,12 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   private _calcModSlotsUsed(): number {
     const mods = this.actor.items.filter(
       (i: SwadeItem) =>
-        i.type === 'gear' &&
-        i.data.data['isVehicular'] &&
-        i.data.data['equipped'],
+        i.data.type === 'gear' &&
+        i.data.data.isVehicular &&
+        i.data.data.equipped,
     );
     let retVal = 0;
-    mods.forEach((m: SwadeItem) => (retVal += m.data.data['mods']));
-
+    mods.forEach((m) => (retVal += getProperty(m.data, 'data.mods') as number));
     return retVal;
   }
 
@@ -300,8 +297,9 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * calculate how many percent of modslots are used
    * @param modsUsed number of active modslots
    */
-  private _calcModsPercentage(modsUsed: number): number {
-    const maxMods = this.actor.data.data['maxMods'];
+  private _calcModsPercentage(modsUsed: number): number | undefined {
+    if (this.actor.data.type !== 'vehicle') return;
+    const maxMods = this.actor.data.data.maxMods;
     let p = (modsUsed / maxMods) * 100;
 
     //cap the percentage at 100
@@ -311,12 +309,11 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     return p;
   }
 
-  private _buildOpSkillList(): any {
-    const retVal = {};
-    const opSkills = SWADE.vehicles.opSkills as string[];
-    for (const skill of opSkills) {
-      retVal[skill] = skill;
-    }
-    return retVal;
+  private _buildOpSkillList() {
+    const opSkills = SWADE.vehicles.opSkills;
+    return opSkills.reduce((acc: Record<string, string>, cur: string) => {
+      acc[cur] = cur;
+      return acc;
+    }, {});
   }
 }

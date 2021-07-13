@@ -18,7 +18,42 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 ### Security
+
+### Known Issues
 -->
+
+## [v0.20.0]
+
+### Added
+
+- Added the _Action Card Editor_. This is an alternative interface for Journal Entry compendiums. Any GM can open it by right-clicking a Journal Entry compendium and selecting the "Open in Action Card editor option. This is primarily meant for people that want to create their own Action Card decks.
+- Added the character summarizer, which is based on @penllawen 's Summarizer Macro. The Summarizer provides a compact statblock for any NPC or Player character in the form of HTML.
+  Currently the summarizer is only usable via a macro, see example
+  ```JS
+  const actor = game.actors.getName("SomeActor");
+  const summarizer = new game.swade.CharacterSummarizer(actor);
+  summarizer.getSummary(); //Returns the finished summary as HTML in a string
+  ```
+- Added new Combat Tracker UI
+  - Overhauled the Combat Tracker UI
+  - Added a button to the Combat Tracker that lets you shuffle the Action Card deck without having to open up its Rollable Table
+  - Combatants are color coded by user color.
+- Added Group Initiative
+    - Right-click combatants to create group leaders or follow other group leaders.
+    - Drag and drop combatants onto other combatants to quickly create leaders and groups.
+    - The leader of a group is dealt a card and all followers act on that initiative card.
+    - Followers will have the same color indicator as the group leader. Right-click the group leader to customize the group color.
+    - **Known Issues:**
+        - This is version 1.0 of the group initiative feature. It's possible there are cases we might have overlooked. If you identify any odd behaviors, [please submit an issue](https://gitlab.com/peginc/swade/-/issues).
+        - Before combat begins, there is a strange behavior with sorting that occurs when the bottom combatant is grouped with another combatant. This only occurs before combat has begun. The combatants are properly sorted and grouped once initiative is dealt.
+
+### Changed
+
+- Hold, Act Now, Act After Current Combatant, and Toggle Lose Turn context menu options have been moved to the combatant control buttons next to the Visible and Defeated buttons.
+
+### Fixed
+
+- Fixed a bug that would prevent the wild die to be edited on skills
 
 ## [v0.19.5]
 

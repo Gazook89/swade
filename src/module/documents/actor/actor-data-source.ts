@@ -1,7 +1,32 @@
-import { AdditionalStat } from './additional';
-import { SysItemData } from './item-data';
+import { AdditionalStat } from '../../../interfaces/additional';
 
-export interface CharacterCommon {
+declare global {
+  interface SourceConfig {
+    Actor: SwadeActorDataSource;
+  }
+}
+
+export type SwadeActorDataSource =
+  | SwadeCharacterDataSource
+  | SwadeNpcDataSource
+  | SwadeVehicleDataSource;
+
+interface SwadeCharacterDataSource {
+  data: CharacterDataSourceData;
+  type: 'character';
+}
+
+interface SwadeNpcDataSource {
+  data: CharacterDataSourceData;
+  type: 'npc';
+}
+
+interface SwadeVehicleDataSource {
+  data: VehicleDataSourceData;
+  type: 'vehicle';
+}
+
+export interface CharacterDataSourceData {
   attributes: {
     agility: {
       die: {
@@ -32,7 +57,7 @@ export interface CharacterCommon {
       };
       unShakeBonus: number;
     };
-    strenght: {
+    strength: {
       die: {
         sides: number;
         modifier: number;
@@ -131,7 +156,7 @@ export interface CharacterCommon {
   wildcard: boolean;
 }
 
-export interface VehicleCommon {
+export interface VehicleDataSourceData {
   size: number;
   scale: number;
   classification: string;
@@ -177,17 +202,3 @@ export interface VehicleCommon {
     hasQuick: boolean;
   };
 }
-
-interface CharacterActorData extends Actor.Data<CharacterCommon, SysItemData> {
-  type: 'character';
-}
-
-interface NpcActorData extends Actor.Data<CharacterCommon, SysItemData> {
-  type: 'npc';
-}
-
-interface VehicleActorData extends Actor.Data<VehicleCommon, SysItemData> {
-  type: 'vehicle';
-}
-
-export type SysActorData = CharacterActorData | NpcActorData | VehicleActorData;

@@ -1,10 +1,10 @@
-import SwadeActor from './entities/SwadeActor';
-import SwadeItem from './entities/SwadeItem';
-
+//@ts-nocheck
+import SwadeActor from './documents/actor/SwadeActor';
+import SwadeItem from './documents/item/SwadeItem';
 interface RollHelperData {
   roll: Roll;
   bonusDamage?: Die;
-  speaker?: ChatMessage.SpeakerData;
+  speaker?: foundry.data.ChatMessageData['speaker']['_source'];
   flavor?: string;
   title?: string;
   item?: SwadeItem;
@@ -15,8 +15,8 @@ interface RollHelperData {
 
 interface RollHandlerData {
   form: any;
-  roll: Roll;
-  speaker: ChatMessage.SpeakerData;
+  roll: Roll | null;
+  speaker: foundry.data.ChatMessageData['speaker']['_source'];
   flavor: string;
   raise?: boolean;
   actor?: SwadeActor;
@@ -37,24 +37,22 @@ export default class SwadeDice {
     actor,
     allowGroup,
     flags,
-  }: RollHelperData): Promise<Roll> {
-    const template = 'systems/swade/templates/chat/roll-dialog.html';
-    const dialogData = {
-      formula: roll.formula,
-      rollMode: game.settings.get('core', 'rollMode'),
-      rollModes: CONFIG.Dice.rollModes,
-    };
-
-    const html = await renderTemplate(template, dialogData);
-    //Create Dialog window
-    return new Promise((resolve) => {
-      let finalRoll: Roll = null;
+  }: RollHelperData): Promise<Roll | null> {
+    return new Promise(async (resolve) => {
+      const template = 'systems/swade/templates/chat/roll-dialog.html';
+      const dialogData = {
+        formula: roll.formula,
+        rollMode: game.settings.get('core', 'rollMode'),
+        rollModes: CONFIG.Dice.rollModes,
+      };
+      let confirmed = false;
       const buttons = {
         ok: {
           label: game.i18n.localize('SWADE.Roll'),
           icon: '<i class="fas fa-dice"></i>',
           callback: async (html) => {
-            finalRoll = this._handleRoll({
+            confirmed = true;
+            finalRoll = await this._handleRoll({
               form: html,
               roll: roll,
               speaker,
@@ -68,7 +66,8 @@ export default class SwadeDice {
           label: '',
           icon: '<i class="far fa-plus-square"></i>',
           callback: async (html) => {
-            finalRoll = this._handleRoll({
+            confirmed = true;
+            finalRoll = await this._handleRoll({
               form: html,
               raise: true,
               actor: actor,
@@ -84,10 +83,8 @@ export default class SwadeDice {
         cancel: {
           icon: '<i class="fas fa-times"></i>',
           label: game.i18n.localize('Cancel'),
-          callback: (html) => resolve(null),
         },
       };
-
       if (item) {
         buttons.extra.label = game.i18n.localize('SWADE.RollRaise');
       } else if (actor && !actor.isWildcard && allowGroup) {
@@ -95,17 +92,17 @@ export default class SwadeDice {
       } else {
         delete buttons.extra;
       }
-
+      const html = await renderTemplate(template, dialogData);
+      //Create Dialog window
+      let finalRoll: Roll | null = null;
       new Dialog({
         title: title,
         content: html,
         buttons: buttons,
         default: 'ok',
         close: () => {
-          if (!finalRoll) {
+          if (!confirmed) {
             resolve(null);
-          } else {
-            resolve(finalRoll);
           }
         },
       }).render(true);
@@ -129,7 +126,7 @@ export default class SwadeDice {
       ? (form.find('#rollMode').val() as foundry.CONST.DiceRollMode)
       : (game.settings.get('core', 'rollMode') as foundry.CONST.DiceRollMode);
     // Optionally include a situational bonus
-    let bonus: string = null;
+    let bonus: string = '';
     if (form) bonus = form.find('#bonus').val();
     if (bonus) {
       if (!bonus[0].match(/[+-]/)) bonus = '+' + bonus;

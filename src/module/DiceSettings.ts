@@ -47,7 +47,7 @@ export default class DiceSettings extends FormApplication {
     const settings = {};
     for (const flag in this.config.flags) {
       const defaultValue = this.config.flags[flag].default;
-      const value = game.user.getFlag('swade', flag);
+      const value = game.user?.getFlag('swade', flag);
       settings[flag] = {
         module: 'swade',
         key: flag,
@@ -79,7 +79,7 @@ export default class DiceSettings extends FormApplication {
     for (const [key, value] of Object.entries(expandedFormdata.swade)) {
       //handle custom wild die
       if (expandedFormdata.swade.dsnWildDie === 'customWildDie') {
-        await game.user.setFlag('swade', 'dsnCustomWildDieColors', {
+        await game.user?.setFlag('swade', 'dsnCustomWildDieColors', {
           diceColor:
             expandedFormdata.diceColor ||
             this.customWildDieDefaultColors.diceColor,
@@ -94,7 +94,7 @@ export default class DiceSettings extends FormApplication {
             this.customWildDieDefaultColors.outlineColor,
         });
       }
-      await game.user.setFlag('swade', key, value);
+      await game.user?.setFlag('swade', key, value);
     }
     this.render(true);
   }
@@ -102,8 +102,8 @@ export default class DiceSettings extends FormApplication {
   async _resetSettings() {
     for (const flag in this.config.flags) {
       const resetValue = this.config.flags[flag].default;
-      if (game.user.getFlag('swade', flag) !== resetValue) {
-        await game.user.setFlag('swade', flag, resetValue);
+      if (game.user?.getFlag('swade', flag) !== resetValue) {
+        await game.user?.setFlag('swade', flag, resetValue);
       }
     }
     this.render(true);
@@ -122,13 +122,16 @@ export default class DiceSettings extends FormApplication {
       if (
         game.i18n.localize(set1.description) <
         game.i18n.localize(set2.description)
-      )
+      ) {
         return -1;
-      if (
+      } else if (
         game.i18n.localize(set1.description) >
         game.i18n.localize(set2.description)
-      )
+      ) {
         return 1;
+      } else {
+        return 0;
+      }
     });
     const preparedList = {};
     for (let i = 0; i < groupedSetsList.length; i++) {
@@ -174,7 +177,7 @@ export default class DiceSettings extends FormApplication {
 
   private _deepCopyColorsets(colorsets: any): any {
     const deepCopy = {};
-    for (const [key, value] of Object.entries(colorsets)) {
+    for (const [key, value] of Object.entries(colorsets) as [string, any]) {
       deepCopy[deepClone(key)] = {
         name: deepClone(value['name']),
         category: deepClone(value['category']),

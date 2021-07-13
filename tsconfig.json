@@ -6,6 +6,8 @@
     "types": ["@league-of-foundry-developers/foundry-vtt-types"],
     "moduleResolution": "node",
     "sourceMap": true,
-    "inlineSourceMap": false
+    "inlineSourceMap": false,
+    "strict": false,
+    "strictNullChecks": true
   }
 }

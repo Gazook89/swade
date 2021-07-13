@@ -1,7 +1,6 @@
-import { SysActorData } from '../../interfaces/actor-data';
-import { SysItemData } from '../../interfaces/item-data';
-import SwadeActor from '../entities/SwadeActor';
-import SwadeItem from '../entities/SwadeItem';
+import { AdditionalStat } from '../../interfaces/additional';
+import SwadeActor from '../documents/actor/SwadeActor';
+import SwadeItem from '../documents/item/SwadeItem';
 
 export default class SwadeEntityTweaks extends FormApplication {
   constructor(object, options = {}) {
@@ -81,9 +80,7 @@ export default class SwadeEntityTweaks extends FormApplication {
    */
   async _updateObject(event, formData) {
     event.preventDefault();
-    const expandedFormData = expandObject(formData) as
-      | DeepPartial<SysItemData>
-      | DeepPartial<SysActorData>;
+    const expandedFormData = expandObject(formData);
 
     //recombine the formdata
     setProperty(
@@ -93,9 +90,9 @@ export default class SwadeEntityTweaks extends FormApplication {
     );
 
     // Update the actor
-    //@ts-expect-error This can update both Item and Actor Documents but I'm not sure how to make TS understand
     await this.object.update(expandedFormData);
-    this.object.sheet.render(true);
+    //TODO check if even necessary
+    this.object.sheet!.render(true);
   }
 
   private _getAppropriateSettingFields() {
@@ -117,7 +114,8 @@ export default class SwadeEntityTweaks extends FormApplication {
       getProperty(this.object.data, 'data.additionalStats'),
     );
     //handle setting specific fields
-    for (const [key, value] of Object.entries(formFields)) {
+    const entries = Object.entries(formFields) as [string, AdditionalStat][];
+    for (const [key, value] of entries) {
       const fieldExistsOnEntity = getProperty(
         this.object.data,
         `data.additionalStats.${key}`,

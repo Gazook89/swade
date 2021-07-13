@@ -1,6 +1,7 @@
+//@ts-nocheck
 //TODO Come back and check on this code before release for the migrations
 export async function migrateWorld() {
-  ui.notifications.info(
+  ui.notifications?.info(
     `Applying SWADE System Migration for version ${game.system.data.version}. Please be patient and do not close your game or shut down your server.`,
     { permanent: true },
   );
@@ -34,7 +35,7 @@ export async function migrateWorld() {
   }
 
   // Migrate World Compendium Packs
-  for (const p of game.packs) {
+  for (const p of game.packs!) {
     if (!(p instanceof Compendium)) continue;
     if (p.metadata.package !== 'world') continue;
     if (!['Actor', 'Item', 'Scene'].includes(p.metadata.entity)) continue;
@@ -47,7 +48,7 @@ export async function migrateWorld() {
     'systemMigrationVersion',
     game.system.data.version,
   );
-  ui.notifications.info(
+  ui.notifications?.info(
     `SWADE System Migration to version ${game.system.data.version} completed!`,
     { permanent: true },
   );
@@ -159,7 +160,7 @@ export function migrateSceneData(sceneData) {
     const t = token.toJSON();
     if (!t.actorId || t.actorLink) {
       t.actorData = {};
-    } else if (!game.actors.has(t.actorId)) {
+    } else if (!game.actors?.has(t.actorId)) {
       t.actorId = null;
       t.actorData = {};
     } else if (!t.actorLink) {
