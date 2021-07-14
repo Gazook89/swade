@@ -10,20 +10,23 @@ export async function createActionCardTable(
   if (cardpack) {
     packName = cardpack;
   }
-  const cardPack = game.packs?.get(packName)!;
-  let cardTable = game.tables?.getName(SWADE.init.cardTable)!;
+  const cardPack = game.packs?.get(packName, { strict: true });
+  let cardTable = game.tables?.getName(SWADE.init.cardTable);
 
   //If the table doesn't exist, create it
   if (!cardTable) {
-    const tableData = {
-      img: 'systems/swade/assets/ui/wildcard.svg',
-      name: SWADE.init.cardTable,
-      replacement: false,
-      displayRoll: false,
-    };
-    cardTable = (await RollTable.create(tableData, {
-      renderSheet: false,
-    })) as RollTable;
+    await RollTable.create(
+      {
+        img: 'systems/swade/assets/ui/wildcard.svg',
+        name: SWADE.init.cardTable,
+        replacement: false,
+        displayRoll: false,
+      },
+      {
+        renderSheet: false,
+      },
+    );
+    cardTable = game.tables?.getName(SWADE.init.cardTable)!;
   }
 
   //If it's a rebuild call, delete all entries and then repopulate them
@@ -33,15 +36,14 @@ export async function createActionCardTable(
     await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
   }
 
-  const createData = Array.from(cardPack.index.values()).map((c, i) => {
+  //FIXME Revisit this later as this could probably be done more efficiently by using the index
+  const cards = (await cardPack.getDocuments()) as JournalEntry[];
+  const createData = cards.map((c, i) => {
     return {
       type: CONST.TABLE_RESULT_TYPES.COMPENDIUM,
-      //@ts-ignore
       text: c.name,
-      //@ts-ignore
-      img: c.img,
+      img: c.data.img,
       collection: packName, // Name of the compendium
-      //@ts-ignore
       resultId: c.id, //Id of the entry inside the compendium
       weight: 1,
       range: [i + 1, i + 1],
@@ -49,9 +51,7 @@ export async function createActionCardTable(
   });
 
   await cardTable.createEmbeddedDocuments('TableResult', createData);
-  //@ts-ignore
-  await cardTable.normalize();
-  await ui.tables?.render(true);
+  ui.tables?.render(true);
 }
 
 /* -------------------------------------------- */
