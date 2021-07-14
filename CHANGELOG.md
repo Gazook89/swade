@@ -28,6 +28,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Changed the way Action Card tables are built to account for the fact that the compendium index no longer has all necessary information
 
+### Fixed
+
+- Fixed an issue where combatant sorting would fail if grouped and ungrouped combatants were present
+
 ## [v0.20.0]
 
 ### Added
