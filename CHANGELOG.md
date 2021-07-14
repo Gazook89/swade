@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed an issue where combatant sorting would fail if grouped and ungrouped combatants were present
+- Fixed an issue that prevented non-GMs from seeing which combatant was dealt which card
 
 ## [v0.20.0]
 
