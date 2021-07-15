@@ -647,7 +647,7 @@ export default class SwadeActor extends Actor {
     let driver: SwadeActor | undefined = undefined;
     if (driverId) {
       try {
-        driver = ((await fromUuid(driverId)) as unknown) as SwadeActor;
+        driver = (await fromUuid(driverId)) as unknown as SwadeActor;
       } catch (error) {
         ui.notifications?.error('The Driver could not be found!');
       }
@@ -841,13 +841,15 @@ export default class SwadeActor extends Actor {
     );
 
     this.data.token.update(tokenData);
-
+    const coreSkillList = game.settings.get('swade', 'coreSkills') as string;
     //only do this if this is a PC with no prior skills
-    if (data.type === 'character' && this.itemTypes.skill.length <= 0) {
+    if (
+      coreSkillList &&
+      data.type === 'character' &&
+      this.itemTypes.skill.length <= 0
+    ) {
       //Get list of core skills from settings
-      const coreSkills = (game.settings.get('swade', 'coreSkills') as string)
-        .split(',')
-        .map((s) => s.trim());
+      const coreSkills = coreSkillList.split(',').map((s) => s.trim());
 
       //Set compendium source
       const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;

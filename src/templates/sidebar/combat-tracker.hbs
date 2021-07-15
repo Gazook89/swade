@@ -79,7 +79,7 @@
                         <i class="fas fa-skull"></i></a>
                     {{#if ../combat.started}}
                     {{#if this.active}}
-                    {{#unless (or (gt ../combat.round (roundHeld this.id)) (turnLost this.id))}}
+                    {{#unless (or (isInGroup this.id) (gt ../combat.round (roundHeld this.id)) (turnLost this.id))}}
                     <a class="combatant-control {{#if (isOnHold this.id)}}active{{/if}}" title="{{localize 'SWADE.Hold'}}" data-control="toggleHold">
                         <i class="fas fa-hand-rock"></i></a>
                     {{/unless}}
@@ -90,8 +90,10 @@
                     {{/if}}
                     {{#unless (isInGroup this.id)}}
                     {{#if (isOnHold this.id)}}
+                    {{#unless (and (eq ../combat.round (roundHeld this.id)) (eq ../combat.combatant.id this.id))}}
                     <a class="combatant-control active" title="{{localize 'SWADE.ActNow'}}" data-control="actNow">
                         <i class="fas fa-long-arrow-alt-right"></i></a>
+                    {{/unless}}
                     {{/if}}
                     {{#if (and (isOnHold this.id) (eq this.active false))}}
                     {{#unless this.active}}
