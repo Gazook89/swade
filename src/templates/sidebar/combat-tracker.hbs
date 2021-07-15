@@ -90,8 +90,10 @@
                     {{/if}}
                     {{#unless (isInGroup this.id)}}
                     {{#if (isOnHold this.id)}}
+                    {{#unless (and (eq ../combat.round (roundHeld this.id)) (eq ../combat.combatant.id this.id))}}
                     <a class="combatant-control active" title="{{localize 'SWADE.ActNow'}}" data-control="actNow">
                         <i class="fas fa-long-arrow-alt-right"></i></a>
+                    {{/unless}}
                     {{/if}}
                     {{#if (and (isOnHold this.id) (eq this.active false))}}
                     {{#unless this.active}}
