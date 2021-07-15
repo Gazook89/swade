@@ -79,7 +79,7 @@
                         <i class="fas fa-skull"></i></a>
                     {{#if ../combat.started}}
                     {{#if this.active}}
-                    {{#unless (or (gt ../combat.round (roundHeld this.id)) (turnLost this.id))}}
+                    {{#unless (or (isInGroup this.id) (gt ../combat.round (roundHeld this.id)) (turnLost this.id))}}
                     <a class="combatant-control {{#if (isOnHold this.id)}}active{{/if}}" title="{{localize 'SWADE.Hold'}}" data-control="toggleHold">
                         <i class="fas fa-hand-rock"></i></a>
                     {{/unless}}
