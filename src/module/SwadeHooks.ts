@@ -208,12 +208,10 @@ export default class SwadeHooks {
     let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
       const combId = el.getAttribute('data-combatant-id') as string;
-      const combatant = currentCombat.combatants.get(combId)!;
+      const combatant = currentCombat.combatants.get(combId, { strict: true });
       const initdiv = el.getElementsByClassName('token-initiative');
 
       if (combatant.groupId || combatant.data.defeated) {
-        /*initdiv[0].innerHTML =
-        '<span class="initiative"><i class="fas fa-user-friends"></i></span>';*/
         initdiv[0].innerHTML = '';
       } else if (combatant.roundHeld) {
         initdiv[0].innerHTML =
@@ -224,8 +222,6 @@ export default class SwadeHooks {
       } else if (combatant.cardString) {
         const cardString = combatant.cardString;
         initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
-      } else if (!game.user?.isGM) {
-        initdiv[0].innerHTML = '';
       }
 
       // Drag and drop listeners
@@ -244,12 +240,12 @@ export default class SwadeHooks {
 
       // On dragOver
       el.addEventListener('dragover', (e) => {
-        $(e.target!).closest('li.combatant').toggleClass('dropTarget');
+        $(e.target!).closest('li.combatant').addClass('dropTarget');
       });
 
       // On dragleave
       el.addEventListener('dragleave', (e) => {
-        $(e.target!).closest('li.combatant').toggleClass('dropTarget');
+        $(e.target!).closest('li.combatant').removeClass('dropTarget');
       });
 
       // On drop
@@ -355,7 +351,7 @@ export default class SwadeHooks {
             (c) => c.actor!.data.type === 'character',
           ) ?? [];
         for (const combatant of combatants) {
-          const actor = (combatant.actor as unknown) as SwadeActor;
+          const actor = combatant.actor as unknown as SwadeActor;
           await actor.getBenny();
         }
       } else if (combatant.actor.type === 'npc' && isCombHostile) {
@@ -371,13 +367,13 @@ export default class SwadeHooks {
         //give all enemy wildcards a benny
         const enemyWCs =
           game.combat?.combatants.filter((c) => {
-            const a = (c.actor as unknown) as SwadeActor;
+            const a = c.actor as unknown as SwadeActor;
             const hostile =
               c.token!.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
             return a.data.type === 'npc' && hostile && a.isWildcard;
           }) ?? [];
         for (const enemy of enemyWCs) {
-          const a = (enemy.actor as unknown) as SwadeActor;
+          const a = enemy.actor as unknown as SwadeActor;
           await a.getBenny();
         }
       }
@@ -518,9 +514,8 @@ export default class SwadeHooks {
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
             const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant = game.combat?.combatants.get(
-              targetCombatantId,
-            )!;
+            const targetCombatant =
+              game.combat?.combatants.get(targetCombatantId)!;
             return (
               targetCombatant.groupId !== gl.id &&
               !targetCombatant.isGroupLeader
@@ -528,9 +523,8 @@ export default class SwadeHooks {
           },
           callback: async (li) => {
             const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant = game.combat?.combatants.get(
-              targetCombatantId,
-            )!;
+            const targetCombatant =
+              game.combat?.combatants.get(targetCombatantId)!;
 
             const groupId = gl.id ?? undefined;
             await gl.setIsGroupLeader(true);
@@ -581,16 +575,14 @@ export default class SwadeHooks {
           icon: '<i class="fas fa-user-friends"></i>',
           condition: (li) => {
             const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant = game.combat?.combatants.get(
-              targetCombatantId,
-            )!;
+            const targetCombatant =
+              game.combat?.combatants.get(targetCombatantId)!;
             return targetCombatant.groupId === getProperty(gl, 'id');
           },
           callback: async (li) => {
             const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant = game.combat?.combatants.get(
-              targetCombatantId,
-            )!;
+            const targetCombatant =
+              game.combat?.combatants.get(targetCombatantId)!;
             // If the current Combatant is the holding combatant, just remove Hold status.
             await targetCombatant.unsetGroupId();
           },
@@ -860,8 +852,9 @@ export default class SwadeHooks {
         isJoker: card.getFlag('swade', 'isJoker'),
       });
     }
-    const numberOfJokers = cards.filter((c) => c.getFlag('swade', 'isJoker'))
-      .length;
+    const numberOfJokers = cards.filter((c) =>
+      c.getFlag('swade', 'isJoker'),
+    ).length;
 
     //render and inject new HTML
     const path = 'systems/swade/templates/combatant-config-cardlist.html';

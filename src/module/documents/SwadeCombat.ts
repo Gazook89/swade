@@ -47,8 +47,7 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-
-      const c = this.combatants.get(id);
+      const c = this.combatants.get(id); //FIXME add strict option later so the combatant doesn't need to be asserted all the time
       const roundHeld = c!.roundHeld;
       const inGroup = c!.groupId;
       if (c!.initiative !== null && !roundHeld) {
@@ -153,7 +152,8 @@ export default class SwadeCombat extends Combat {
       if (c!.isGroupLeader) {
         await c!.setSuitValue(c!.suitValue ?? 0 + 0.9);
         const followers =
-          game.combat?.combatants.filter((f) => f.groupId === c!.id) ?? [];
+          game.combats?.viewed?.combatants.filter((f) => f.groupId === c!.id) ??
+          [];
 
         const fSuitValue = newflags.suitValue + 0.89;
         for await (const follower of followers) {
@@ -226,36 +226,69 @@ export default class SwadeCombat extends Combat {
     return this;
   }
 
-  /**
-   * @override
-   * @param a Combatant A
-   * @param b Combatant B
-   */
   _sortCombatants(a: SwadeCombatant, b: SwadeCombatant) {
-    let currentRound = 0;
-    if (game.canvas.ready) {
-      currentRound = game.combat?.round ?? 0;
-    }
-    const isOnHoldA = a.roundHeld && (a.roundHeld ?? 0 < currentRound);
-    const isOnHoldB = b.roundHeld && (b.roundHeld ?? 0 < currentRound);
+    if (!a || !b) return 0;
 
-    if (isOnHoldA && !isOnHoldB) {
-      return -1;
-    }
-    if (!isOnHoldA && isOnHoldB) {
-      return 1;
+    //shortcut for the currently active combat
+    const currentCombat = game.combats?.viewed;
+    const currentRound = currentCombat?.round ?? 0;
+
+    if (
+      (a.roundHeld && currentRound !== a.roundHeld) ||
+      (b.roundHeld && currentRound !== b.roundHeld)
+    ) {
+      const isOnHoldA = a.roundHeld && (a.roundHeld ?? 0 < currentRound);
+      const isOnHoldB = b.roundHeld && (b.roundHeld ?? 0 < currentRound);
+
+      if (isOnHoldA && !isOnHoldB) {
+        return -1;
+      }
+      if (!isOnHoldA && isOnHoldB) {
+        return 1;
+      }
     }
 
-    const aFollowerGroupId = SwadeCombat._getFollowerGroupId(a);
-    const bFollowerGroupId = SwadeCombat._getFollowerGroupId(b);
+    const getGroupLeaderFor = (c: SwadeCombatant) => {
+      if (c.groupId)
+        return currentCombat?.combatants.get(c.groupId, { strict: true });
+    };
 
-    // both followers, in the same group -> alpha sort
+    /** Compares two tokens by initiative card */
+    const cardSortCombatants = (a: SwadeCombatant, b: SwadeCombatant) => {
+      const cardA = a.cardValue ?? 0;
+      const cardB = b.cardValue ?? 0;
+      const card = cardB - cardA;
+      if (card !== 0) return card;
+      const suitA = a.suitValue ?? 0;
+      const suitB = b.suitValue ?? 0;
+      return suitB - suitA;
+    };
+
+    /** Compares two combatants by name or - if they're the same - ID. */
+    const nameSortCombatants = (a: SwadeCombatant, b: SwadeCombatant) => {
+      const cn = a.name.localeCompare(b.name);
+      if (cn !== 0) return cn;
+      return a.id!.localeCompare(b.id!);
+    };
+
+    const finalSort = (a: SwadeCombatant, b: SwadeCombatant) => {
+      if (a.data.flags?.swade && b.data.flags?.swade) {
+        return cardSortCombatants(a, b);
+      } else {
+        return nameSortCombatants(a, b);
+      }
+    };
+
+    const aFollowerGroupId = getGroupLeaderFor(a)?.id;
+    const bFollowerGroupId = getGroupLeaderFor(b)?.id;
+
+    // both followers, in the same group -> name sort
     if (
       aFollowerGroupId &&
       bFollowerGroupId &&
       aFollowerGroupId === bFollowerGroupId
     ) {
-      return SwadeCombat._nameSortCombatants(a, b);
+      return nameSortCombatants(a, b);
     }
 
     // one is a follower of the other
@@ -263,75 +296,13 @@ export default class SwadeCombat extends Combat {
     else if (bFollowerGroupId === a.id) return -1;
 
     // one of them is a follower & not in the same group -> sort based on the leader instead
-    if (aFollowerGroupId) a = SwadeCombat._getGroupLeaderFor(a)!;
-    if (bFollowerGroupId) b = SwadeCombat._getGroupLeaderFor(b)!;
+    const aGroupLeader = getGroupLeaderFor(a);
+    const bGroupLeader = getGroupLeaderFor(b);
+    if (aFollowerGroupId && aGroupLeader) a = aGroupLeader;
+    if (bFollowerGroupId && bGroupLeader) b = bGroupLeader;
 
     // both leaders/not grouped -> sort based on card, or name if no cards dealt yet
-    return SwadeCombat._finalSort(a, b);
-  }
-
-  static _finalSort(a, b) {
-    if (
-      hasProperty(a, 'data.flags.swade') &&
-      hasProperty(b, 'data.flags.swade')
-    ) {
-      return SwadeCombat._cardSortCombatants(a, b)!;
-    } else {
-      return SwadeCombat._nameSortCombatants(a, b)!;
-    }
-  }
-
-  static _getGroupLeaderFor(combatant: SwadeCombatant): SwadeCombatant {
-    return game.combat?.combatants.get(
-      SwadeCombat._getFollowerGroupId(combatant),
-    )!;
-  }
-
-  /** Returns the group ID iff this is a follower. */
-  static _getFollowerGroupId(combatant: SwadeCombatant): string {
-    if (
-      hasProperty(combatant, 'data.flags.swade') &&
-      !combatant.isGroupLeader &&
-      combatant.groupId
-    ) {
-      return combatant.groupId ?? '';
-    }
-    return '';
-  }
-
-  /** Compares two tokens by initiative card */
-  // TODO: verify this, it's a cut/paste from the original code
-  static _cardSortCombatants(a: SwadeCombatant, b: SwadeCombatant) {
-    const cardA = a.cardValue ?? 0;
-    const cardB = b.cardValue ?? 0;
-    const card = cardB - cardA;
-    if (card !== 0) return card;
-    const suitA = a.suitValue ?? 0;
-    const suitB = b.suitValue ?? 0;
-    if (suitA > suitB) {
-      return -1;
-    }
-    if (suitA < suitB) {
-      return 1;
-    }
-    if (suitA === suitB) {
-      return 0; // ???
-    }
-  }
-
-  /** Compares two combatants by name or - if they're the same - ID. */
-  static _nameSortCombatants(a: SwadeCombatant, b: SwadeCombatant) {
-    const [an, bn] = [a.name ?? '', b.name ?? ''];
-    const cn = an.localeCompare(bn);
-    if (cn !== 0) return cn;
-    return a.id!.localeCompare(b.id!);
-  }
-
-  //@ts-ignore
-  async resetAll() {
-    const updates = this._getInitResetUpdates();
-    await this.updateEmbeddedDocuments('Combatant', updates);
-    return this.update({ turn: 0 });
+    return finalSort(a, b);
   }
 
   /**
@@ -473,6 +444,13 @@ export default class SwadeCombat extends Combat {
         c.getFlag('swade', 'cardValue') === cardValue ??
         c.getFlag('swade', 'suitValue') === cardSuit,
     );
+  }
+
+  //@ts-ignore
+  async resetAll() {
+    const updates = this._getInitResetUpdates();
+    await this.updateEmbeddedDocuments('Combatant', updates);
+    return this.update({ turn: 0 });
   }
 
   //@ts-ignore
