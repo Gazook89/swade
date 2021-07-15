@@ -261,7 +261,7 @@ export default class SwadeCombat extends Combat {
       if (card !== 0) return card;
       const suitA = a.suitValue ?? 0;
       const suitB = b.suitValue ?? 0;
-      return suitA - suitB;
+      return suitB - suitA;
     };
 
     /** Compares two combatants by name or - if they're the same - ID. */
