@@ -51,6 +51,8 @@ export async function createActionCardTable(
   });
 
   await cardTable.createEmbeddedDocuments('TableResult', createData);
+  //@ts-ignore
+  await cardTable.normalize();
   ui.tables?.render(true);
 }
 

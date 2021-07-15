@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.20.2]
+
+### Fixed
+
+- Fixed an issue where newly created Action Card tables would not have a roll formula.
+
 ## [v0.20.1]
 
 ### Changed
