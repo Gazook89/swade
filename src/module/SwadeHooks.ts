@@ -240,12 +240,12 @@ export default class SwadeHooks {
 
       // On dragOver
       el.addEventListener('dragover', (e) => {
-        $(e.target!).closest('li.combatant').toggleClass('dropTarget');
+        $(e.target!).closest('li.combatant').addClass('dropTarget');
       });
 
       // On dragleave
       el.addEventListener('dragleave', (e) => {
-        $(e.target!).closest('li.combatant').toggleClass('dropTarget');
+        $(e.target!).closest('li.combatant').removeClass('dropTarget');
       });
 
       // On drop
