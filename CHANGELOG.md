@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Fixed an issue where combatant sorting would fail if grouped and ungrouped combatants were present
 - Fixed an issue that prevented non-GMs from seeing which combatant was dealt which card
+- Fixed an issue which would prevent actors from being created when no core skills are defined.
+- Fixed an issue that prevent equipment from being equiped or unequiped
 
 ## [v0.20.0]
 
