@@ -264,7 +264,7 @@ export default class CharacterSheet extends ActorSheet {
       const li = $(ev.currentTarget).parents('.item');
       const itemID = li.data('itemId');
       const item = this.actor.items.get(itemID);
-      await this.actor.updateEmbeddedDocuments('OwnedItem', [
+      await this.actor.updateEmbeddedDocuments('Item', [
         this._toggleEquipped(itemID, item),
       ]);
     });
