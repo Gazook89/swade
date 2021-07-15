@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Fixed an issue that prevented non-GMs from seeing which combatant was dealt which card
 - Fixed an issue which would prevent actors from being created when no core skills are defined.
 - Fixed an issue that prevent equipment from being equiped or unequiped
+- Fixed several issues which would prevent grouped combatants to properly interact with the Holding feature
 
 ## [v0.20.0]
 
