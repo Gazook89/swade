@@ -231,6 +231,22 @@ export default class SwadeCombat extends Combat {
 
     //shortcut for the currently active combat
     const currentCombat = game.combats?.viewed;
+    const currentRound = currentCombat?.round ?? 0;
+
+    if (
+      (a.roundHeld && currentRound !== a.roundHeld) ||
+      (b.roundHeld && currentRound !== b.roundHeld)
+    ) {
+      const isOnHoldA = a.roundHeld && (a.roundHeld ?? 0 < currentRound);
+      const isOnHoldB = b.roundHeld && (b.roundHeld ?? 0 < currentRound);
+
+      if (isOnHoldA && !isOnHoldB) {
+        return -1;
+      }
+      if (!isOnHoldA && isOnHoldB) {
+        return 1;
+      }
+    }
 
     const getGroupLeaderFor = (c: SwadeCombatant) => {
       if (c.groupId)
@@ -245,7 +261,7 @@ export default class SwadeCombat extends Combat {
       if (card !== 0) return card;
       const suitA = a.suitValue ?? 0;
       const suitB = b.suitValue ?? 0;
-      return suitA - suitB;
+      return suitB - suitA;
     };
 
     /** Compares two combatants by name or - if they're the same - ID. */
@@ -262,18 +278,6 @@ export default class SwadeCombat extends Combat {
         return nameSortCombatants(a, b);
       }
     };
-
-    const currentRound = currentCombat?.round ?? 0;
-
-    const isOnHoldA = a.roundHeld && (a.roundHeld ?? 0 < currentRound);
-    const isOnHoldB = b.roundHeld && (b.roundHeld ?? 0 < currentRound);
-
-    if (isOnHoldA && !isOnHoldB) {
-      return -1;
-    }
-    if (!isOnHoldA && isOnHoldB) {
-      return 1;
-    }
 
     const aFollowerGroupId = getGroupLeaderFor(a)?.id;
     const bFollowerGroupId = getGroupLeaderFor(b)?.id;

@@ -172,9 +172,6 @@ export default class SwadeCombatTracker extends CombatTracker {
       if (c.isGroupLeader) {
         const followers = await this._getFollowers(c);
         for await (const f of followers) {
-          console.log(
-            `${f.name} has '${f.cardValue} and ${c.name} has ${c.cardValue}`,
-          );
           if (f.cardValue === c.cardValue) {
             await f.update({
               flags: {
