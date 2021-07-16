@@ -1,3 +1,5 @@
+import SwadeCombat from "./SwadeCombat";
+
 declare global {
   interface DocumentClassConfig {
     Combatant: typeof SwadeCombatant;
@@ -21,12 +23,22 @@ declare global {
 }
 
 export default class SwadeCombatant extends Combatant {
+  async _onCreate() {
+    const min = Math.ceil(1);
+    const maxCards = Math.floor(54);
+    const maxSuits = Math.floor(4);
+    const randCard = Math.floor(Math.random() * (min - maxCards) + maxCards);
+    const randSuit = Math.floor(Math.random() * (min - maxSuits) + maxSuits);
+    await this.setCardValue(randCard);
+    await this.setSuitValue(randSuit);
+  }
+
   get suitValue() {
     return this.getFlag('swade', 'suitValue');
   }
 
   async setCardValue(cardValue: number) {
-    return this.setFlag('swade', 'suitValue', cardValue);
+    return this.setFlag('swade', 'cardValue', cardValue);
   }
 
   get cardValue() {
