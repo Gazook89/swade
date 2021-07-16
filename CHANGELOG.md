@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Fixed a small bug that would prevent active effects from being created inline on the player character sheet
 - Fixed a small bug that would prevent weapons from being displayed in the cargo tab on the vehicle sheet
+- Fixed `SwadeCombatant.setCardValue()` function
 
 ## [v0.20.2]
 
