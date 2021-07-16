@@ -26,7 +26,7 @@ export default class SwadeCombatant extends Combatant {
     await this.setCardValue(
       game?.combat?.combatants?.map((c) => c.id).indexOf(this.id)! + 1,
     );
-    await this.setSuitValue(1);
+    await this.setSuitValue(this.cardValue!);
   }
 
   get suitValue() {
