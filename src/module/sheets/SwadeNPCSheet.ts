@@ -133,14 +133,10 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
       // Getting back to main logic
       if (type == 'choice') {
-        this._chooseItemType().then(async (dialogInput: any) => {
-          const itemData = createItem(dialogInput.type, dialogInput.name);
-          itemData.data.equipped = true;
-          await Item.create(itemData, {
-            renderSheet: true,
-            parent: this.actor,
-          });
-        });
+        const dialogInput = await this._chooseItemType();
+        const itemData = createItem(dialogInput.type, dialogInput.name);
+        itemData.data.equipped = true;
+        await Item.create(itemData, { renderSheet: true, parent: this.actor });
         return;
       } else {
         const itemData = createItem(type);
