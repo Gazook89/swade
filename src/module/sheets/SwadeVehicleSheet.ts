@@ -176,6 +176,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     data.inventory = this._determineCargo().sort(
       (a, b) => a!.name!.localeCompare(b.name!) ?? 0,
     );
+    console.log(data.inventory);
 
     data.inventoryWeight = 0;
     data.inventory.forEach((i: SwadeItem) => {
@@ -215,11 +216,11 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       ),
       ...this.actor.itemTypes.weapon.filter(
         (i) =>
-          i.data.type === 'gear' &&
+          i.data.type === 'weapon' &&
           (!i.data.data.isVehicular || !i.data.data.equipped),
       ),
       ...this.actor.itemTypes.armor,
-      ...this.actor.itemTypes.armor,
+      ...this.actor.itemTypes.shield,
     ];
   }
 
