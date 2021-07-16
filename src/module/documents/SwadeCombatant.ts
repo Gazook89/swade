@@ -26,7 +26,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   async setCardValue(cardValue: number) {
-    return this.setFlag('swade', 'suitValue', cardValue);
+    return this.setFlag('swade', 'cardValue', cardValue);
   }
 
   get cardValue() {

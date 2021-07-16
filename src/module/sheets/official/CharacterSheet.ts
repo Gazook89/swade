@@ -735,7 +735,7 @@ export default class CharacterSheet extends ActorSheet {
         label: possibleName,
         icon: '/icons/svg/mystery-man-black.svg',
       },
-      { renderSheet: true },
+      { renderSheet: true, parent: this.actor },
     );
   }
 }

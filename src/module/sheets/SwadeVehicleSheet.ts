@@ -104,7 +104,10 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
               header,
               dialogInput.name,
             );
-            await this.actor.createOwnedItem(itemData, { renderSheet: true });
+            await Item.create(itemData, {
+              renderSheet: true,
+              parent: this.actor,
+            });
           });
           break;
         case 'mod':
@@ -112,17 +115,24 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
           modData.data.isVehicular = true;
           modData.data.equipped = true;
           modData.name = `New ${type.capitalize()}`;
-          await this.actor.createOwnedItem(modData, { renderSheet: true });
+          await Item.create(modData, {
+            renderSheet: true,
+            parent: this.actor,
+          });
           break;
         case 'vehicle-weapon':
           weaponData = this._createItemData('weapon', header);
           weaponData.data.isVehicular = true;
           weaponData.data.equipped = true;
-          await this.actor.createOwnedItem(weaponData, { renderSheet: true });
+          await Item.create(weaponData, {
+            renderSheet: true,
+            parent: this.actor,
+          });
           break;
         default:
-          await this.actor.createOwnedItem(this._createItemData(type, header), {
+          await Item.create(this._createItemData(type, header), {
             renderSheet: true,
+            parent: this.actor,
           });
           break;
       }
@@ -166,6 +176,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     data.inventory = this._determineCargo().sort(
       (a, b) => a!.name!.localeCompare(b.name!) ?? 0,
     );
+    console.log(data.inventory);
 
     data.inventoryWeight = 0;
     data.inventory.forEach((i: SwadeItem) => {
@@ -205,11 +216,11 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
       ),
       ...this.actor.itemTypes.weapon.filter(
         (i) =>
-          i.data.type === 'gear' &&
+          i.data.type === 'weapon' &&
           (!i.data.data.isVehicular || !i.data.data.equipped),
       ),
       ...this.actor.itemTypes.armor,
-      ...this.actor.itemTypes.armor,
+      ...this.actor.itemTypes.shield,
     ];
   }
 

@@ -45,8 +45,6 @@
     "yargs": "^15.4.1"
   },
   "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+    "hooks": {}
   }
 }
