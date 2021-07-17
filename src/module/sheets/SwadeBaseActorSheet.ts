@@ -9,7 +9,7 @@ import SwadeItem from '../documents/item/SwadeItem';
  * @noInheritDoc
  */
 export default class SwadeBaseActorSheet extends ActorSheet {
-  activateListeners(html: JQuery): void {
+  activateListeners(html: JQuery) {
     super.activateListeners(html);
 
     // Everything below here is only needed if the sheet is editable
@@ -60,8 +60,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.attribute-label a').on('click', (event) => {
       const element = event.currentTarget;
       const attribute = element.parentElement!.parentElement!.dataset
-        .attribute!;
-      //@ts-ignore
+        .attribute! as keyof typeof SWADE.attributes;
       this.actor.rollAttribute(attribute);
     });
 
@@ -197,7 +196,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
           icon: '/icons/svg/mystery-man-black.svg',
           transfer: transfer,
         },
-        { parent: this.actor },
+        { renderSheet: true, parent: this.actor },
       );
       this.actor.effects.get(effect?.id!)?.sheet.render(true);
     });
@@ -319,7 +318,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     new SwadeEntityTweaks(this.actor).render(true);
   }
 
-  protected async _chooseItemType(choices?: any) {
+  //TODO Define better return type
+  protected async _chooseItemType(choices?: any): Promise<any> {
     if (!choices) {
       choices = {
         weapon: game.i18n.localize('ITEM.TypeWeapon'),
