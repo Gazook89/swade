@@ -21,6 +21,14 @@ declare global {
 }
 
 export default class SwadeCombatant extends Combatant {
+  async _onCreate(data: object, options: object, userId: string) {
+    super._onCreate;
+    await this.setCardValue(
+      game?.combat?.combatants?.map((c) => c.id).indexOf(this.id)! + 1,
+    );
+    await this.setSuitValue(this.cardValue!);
+  }
+
   get suitValue() {
     return this.getFlag('swade', 'suitValue');
   }
