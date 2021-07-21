@@ -500,7 +500,98 @@ export default class SwadeHooks {
       },
     });
 
-    // Get group leaders
+    // Add selected tokens as followers
+    newOptions.push({
+      name: 'SWADE.AddTokenFollowers',
+      icon: '<i class="fas fa-users"></i>',
+      condition: (li) => {
+        return canvas?.tokens?.controlled.length! > 0;
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        const selectedTokens = canvas?.tokens?.controlled;
+        const cardValue = targetCombatant.cardValue! + 0.99;
+        if (selectedTokens) {
+          await targetCombatant.update({
+            flags: {
+              swade: {
+                cardValue: cardValue,
+                suitValue: targetCombatant.suitValue!,
+                isGroupLeader: true,
+                '-=groupId': null,
+              },
+            },
+          });
+          console.log(cardValue);
+          const createData = selectedTokens?.map((t) => {
+            return {
+              tokenId: t.id,
+              actorId: t.data.actorId,
+              hidden: t.data.hidden,
+            };
+          });
+          const combatants = await game?.combat?.createEmbeddedDocuments('Combatant',createData);
+          let suitValue = targetCombatant.suitValue!;
+          if (combatants) {
+            for await (const c of combatants) {
+              await c.update({
+                flags: {
+                  swade: {
+                    groupId: targetCombatantId,
+                    '-=isGroupLeader': null,
+                  },
+                },
+              });
+            }
+          }
+        }
+        let suitValue = targetCombatant.suitValue!;
+        const followers = game?.combat?.combatants.filter(f => f.groupId === targetCombatantId);
+        if (followers) {
+          for await (const f of followers) {
+            await f.update({
+              flags: {
+                swade: {
+                  cardValue: cardValue,
+                  suitValue: suitValue -= 0.01,
+                },
+              },
+            });
+            //@ts-ignore
+            console.log(`card: ${f.cardValue}, suit: ${f.suitValue}`);
+          }
+        }
+      },
+    });
+    // Add selected tokens as followers
+    newOptions.push({
+      name: 'SWADE.GroupByName',
+      icon: '<i class="fas fa-users"></i>',
+      condition: (li) => {
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        return !!(game.combat?.combatants.find(c => c.name === targetCombatant.name && c.id !== targetCombatantId)!);
+      },
+      callback: async (li) => {
+        const targetCombatantId = li.attr('data-combatant-id') as string;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        const matchingCombatants = game.combat?.combatants.filter(
+          (c) => c.name === targetCombatant.name && c.id !== targetCombatant.id,
+        );
+        if (matchingCombatants) {
+          await targetCombatant.unsetGroupId();
+          await targetCombatant.setIsGroupLeader(true);
+          for await (const c of matchingCombatants) {
+            await c?.setGroupId(targetCombatantId);
+            await c?.setCardValue(c!.cardValue!);
+            await c?.setSuitValue(c!.suitValue! - 0.01);
+          }
+        }
+      },
+    });
+
+    // Get group leaders for follow leader options
     const groupLeaders = game.combat?.combatants.filter(
       (c) => c.isGroupLeader ?? false,
     );
@@ -518,7 +609,7 @@ export default class SwadeHooks {
               game.combat?.combatants.get(targetCombatantId)!;
             return (
               targetCombatant.groupId !== gl.id &&
-              !targetCombatant.isGroupLeader
+              targetCombatantId !== gl.id
             );
           },
           callback: async (li) => {
