@@ -523,7 +523,6 @@ export default class SwadeHooks {
               },
             },
           });
-          console.log(cardValue);
           const createData = selectedTokens?.map((t) => {
             return {
               tokenId: t.id,
@@ -558,8 +557,6 @@ export default class SwadeHooks {
                 },
               },
             });
-            //@ts-ignore
-            console.log(`card: ${f.cardValue}, suit: ${f.suitValue}`);
           }
         }
       },
