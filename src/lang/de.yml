@@ -266,8 +266,8 @@ SWADE.Follow: Folge {name}
 SWADE.Unfollow: Folge {name} nicht
 SWADE.MakeGroupLeader: Gruppenleiter machen
 SWADE.RemoveGroupLeader: Gruppenleiter entfernen
-SWADE.AddTokenFollowers: Needs Translation
-SWADE.GroupByName: Needs Translation
+SWADE.AddTokenFollowers: Ausgewählte Tokens als Follower hinzufügen
+SWADE.GroupByName: Nach Namen gruppieren
 SWADE.SetGroupColor: Gruppenfarbe einstellen
 SWADE.SelectColor: Wählen Sie eine Farbe
 SWADE.Holding: Aufgespart
