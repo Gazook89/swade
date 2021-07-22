@@ -170,7 +170,7 @@ export default class SwadeCombat extends Combat {
       const template = `
           <div class="table-draw">
               <ol class="table-results">
-                  <li class="table-result flexrow">
+                  <li class="table-result card">
                       <img class="result-image" src="${card!.data.img}">
                       <h4 class="result-text">
                         @Compendium[${card!.pack}.${card!.id}]{${card!.name}}
