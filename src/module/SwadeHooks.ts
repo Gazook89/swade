@@ -526,14 +526,30 @@ export default class SwadeHooks {
               },
             },
           });
-          const createData = selectedTokens?.map((t) => {
+          // Filter for tokens that do not already have combatants
+          const newTokens = selectedTokens.filter((t) => game?.combat?.getCombatantByToken(t.id) === undefined);
+          // Filter for tokens that already have combatants to add them as followers later
+          const existingCombatantTokens = selectedTokens.filter((t) => game?.combat?.getCombatantByToken(t.id));
+          // Construct array of new combatants data
+          const createData = newTokens?.map((t) => {
             return {
               tokenId: t.id,
               actorId: t.data.actorId,
               hidden: t.data.hidden,
             };
           });
-          const combatants = await game?.combat?.createEmbeddedDocuments('Combatant',createData);
+          // Create the combatants and create array of combatants created
+          const combatants = await game?.combat?.createEmbeddedDocuments('Combatant', createData);
+          // If there were preexisting combatants...
+          if (existingCombatantTokens.length > 0) {
+            // Push them into the combatants array
+            for (const t of existingCombatantTokens) {
+              const c = game?.combat?.getCombatantByToken(t.id);
+              if (c) {
+                combatants?.push(c);
+              }
+            }
+          }
           if (combatants) {
             for (const c of combatants) {
               await c.update({
