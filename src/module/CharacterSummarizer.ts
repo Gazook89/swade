@@ -116,7 +116,7 @@ export default class CharacterSummarizer {
     const abilities = new Array();
 
     this.actor.items.forEach((item) => {
-      let damage, range, ap, rof, armor;
+      let damage, range, ap, rof, armor, shieldParry, shieldCover;
       switch (item.type) {
         case 'skill':
           skills.push(item.name + ' ' + this._formatDieStat(item, 'data.die'));
@@ -141,6 +141,11 @@ export default class CharacterSummarizer {
         case 'armor':
           armor = getProperty(item.data, 'data.armor');
           weaponsAndArmour.push(`${item.name} (${armor})`);
+          break;
+        case 'shield':  
+          shieldParry = getProperty(item.data, 'data.parry');
+          shieldCover = getProperty(item.data, 'data.cover');
+          weaponsAndArmour.push(`${item.name} (+${shieldParry} / ${shieldCover})`);
           break;
         case 'gear':
           gear.push(item.name);
