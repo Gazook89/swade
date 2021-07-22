@@ -505,7 +505,10 @@ export default class SwadeHooks {
       name: 'SWADE.AddTokenFollowers',
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
-        return canvas?.tokens?.controlled.length! > 0;
+        if (canvas?.ready && canvas?.tokens?.controlled.length! > 0) {
+          return true;
+        }
+        return false;
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
@@ -531,9 +534,8 @@ export default class SwadeHooks {
             };
           });
           const combatants = await game?.combat?.createEmbeddedDocuments('Combatant',createData);
-          let suitValue = targetCombatant.suitValue!;
           if (combatants) {
-            for await (const c of combatants) {
+            for (const c of combatants) {
               await c.update({
                 flags: {
                   swade: {
@@ -548,7 +550,7 @@ export default class SwadeHooks {
         let suitValue = targetCombatant.suitValue!;
         const followers = game?.combat?.combatants.filter(f => f.groupId === targetCombatantId);
         if (followers) {
-          for await (const f of followers) {
+          for (const f of followers) {
             await f.update({
               flags: {
                 swade: {
@@ -561,7 +563,7 @@ export default class SwadeHooks {
         }
       },
     });
-    // Add selected tokens as followers
+    // Set all combatants with this one's name as its followers.
     newOptions.push({
       name: 'SWADE.GroupByName',
       icon: '<i class="fas fa-users"></i>',
@@ -579,7 +581,7 @@ export default class SwadeHooks {
         if (matchingCombatants) {
           await targetCombatant.unsetGroupId();
           await targetCombatant.setIsGroupLeader(true);
-          for await (const c of matchingCombatants) {
+          for (const c of matchingCombatants) {
             await c?.setGroupId(targetCombatantId);
             await c?.setCardValue(c!.cardValue!);
             await c?.setSuitValue(c!.suitValue! - 0.01);
