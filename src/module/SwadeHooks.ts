@@ -574,11 +574,11 @@ export default class SwadeHooks {
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId, {strict: true});
         const matchingCombatants = game.combat?.combatants.filter(
-          (c) => c.name === targetCombatant.name && c.id !== targetCombatant.id,
+          (c) => c.name === targetCombatant?.name && c.id !== targetCombatant.id,
         );
-        if (matchingCombatants) {
+        if (matchingCombatants && targetCombatant) {
           await targetCombatant.unsetGroupId();
           await targetCombatant.setIsGroupLeader(true);
           for (const c of matchingCombatants) {
