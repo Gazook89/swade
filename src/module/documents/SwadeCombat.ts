@@ -171,10 +171,8 @@ export default class SwadeCombat extends Combat {
           <div class="table-draw">
               <ol class="table-results">
                   <li class="table-result card">
-                      <img class="result-image" src="${card!.data.img}">
-                      <h4 class="result-text">
-                        @Compendium[${card!.pack}.${card!.id}]{${card!.name}}
-                      </h4>
+                    <h4 class="result-text">${card!.name}</h4>
+                    <img class="result-image" src="${card!.data.img}">
                   </li>
               </ol>
           </div>
