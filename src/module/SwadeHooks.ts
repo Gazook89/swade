@@ -527,9 +527,9 @@ export default class SwadeHooks {
             },
           });
           // Filter for tokens that do not already have combatants
-          const newTokens = selectedTokens.filter((t) => game?.combat?.getCombatantByToken(t.id) === undefined);
+          const newTokens = selectedTokens.filter((t) => !t.inCombat);
           // Filter for tokens that already have combatants to add them as followers later
-          const existingCombatantTokens = selectedTokens.filter((t) => game?.combat?.getCombatantByToken(t.id));
+          const existingCombatantTokens = selectedTokens.filter((t) => t.inCombat);
           // Construct array of new combatants data
           const createData = newTokens?.map((t) => {
             return {
