@@ -367,7 +367,7 @@ SWADE.SysMigrationWarning: >-
 SWADE.DeckShuffled: Kartens automatisch gemischt
 SWADE.BasePace: Basisbewegung
 SWADE.WarningPackLocked: |-
-  Sie können ein gesperrtes Kompendium nicht bearbeiten. 
+  Sie können ein gesperrtes Kompendium nicht bearbeiten.
   Bitte zuerst entsperren
 SWADE.ActionCardEditor: Aktionskarteneditor
 SWADE.CardFace: Kartenillustration
