@@ -197,7 +197,7 @@ SWADE.Init: Initiative
 SWADE.DrawInit: Draw Initiative
 SWADE.ActionDeckReset: Reset Action Deck Table
 SWADE.ActionDeckResetNotification: Action Deck reset
-SWADE.InitDraw: drew inititiative...
+SWADE.InitDraw: drew the...
 SWADE.JokersWild: Joker's Wild
 SWADE.General: General
 SWADE.Addi: Additional
