@@ -166,11 +166,14 @@ export default class SwadeCombat extends Combat {
         }
       }
 
+      // Generate random degree of rotation to give card slide tilt
+      const rotation = Math.ceil(Math.random() * (5 - 2) + 2) * (Math.round(Math.random()) ? 1 : -1);
+
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
                 <h4 class="result-text result-text-card">${card!.name}</h4>
-                <img class="result-image" src="${card!.data.img}">
+                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${card!.data.img}">
             </section>
           `;
 

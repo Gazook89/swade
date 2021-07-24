@@ -115,19 +115,19 @@
   }
   .initiative-draw {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    margin: .5em;
     .result-text-card {
       font-size: 1.5em;
       font-weight: 700;
       line-height: 1;
       order: 2;
+      margin-left: 1em;
     }
     img.result-image {
       flex-basis: auto;
-      height: 90px;
+      height: 100px;
       width: auto;
-      margin-right: 1em;
       border: none;
       box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
       order: 1;
