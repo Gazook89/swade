@@ -109,24 +109,28 @@
   }
 }
 
-.chat-message .table-draw .table-results .table-result.card {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-  justify-content: space-between;
-  img.result-image {
-    flex-basis: auto;
-    height: 100px;
-    width: auto;
-    margin: 0;
-    border: none;
-    box-shadow: -1px 1px 3px rgb(0 0 0 / 50%);
+.chat-message {
+  .message-header .message-sender {
+    white-space: normal;
   }
-  .result-text {
-    margin: 0;
-    padding: 0;
-    font-size: 1.125em;
-    font-weight: bold;
-    line-height: 16px;
+  .initiative-draw {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    .result-text-card {
+      font-size: 1.5em;
+      font-weight: 700;
+      line-height: 1;
+      order: 2;
+    }
+    img.result-image {
+      flex-basis: auto;
+      height: 90px;
+      width: auto;
+      margin-right: 1em;
+      border: none;
+      box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
+      order: 1;
+    }
   }
 }

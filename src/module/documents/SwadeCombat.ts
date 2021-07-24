@@ -168,14 +168,10 @@ export default class SwadeCombat extends Combat {
 
       // Construct chat message data
       const template = `
-          <div class="table-draw">
-              <ol class="table-results">
-                  <li class="table-result card">
-                    <h4 class="result-text">${card!.name}</h4>
-                    <img class="result-image" src="${card!.data.img}">
-                  </li>
-              </ol>
-          </div>
+            <section class="initiative-draw">
+                <h4 class="result-text result-text-card">${card!.name}</h4>
+                <img class="result-image" src="${card!.data.img}">
+            </section>
           `;
 
       const messageData = mergeObject(
@@ -184,13 +180,12 @@ export default class SwadeCombat extends Combat {
             scene: game.scenes?.active?.id,
             actor: c!.actor ? c!.actor.id : null,
             token: c!.token!.id,
-            alias: c!.token!.name,
+            alias: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           },
           whisper:
             c!.token!.data.hidden || c!.hidden
               ? game!.users!.filter((u: User) => u.isGM)
               : [],
-          flavor: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           content: template,
         },
         options?.messageOptions,
