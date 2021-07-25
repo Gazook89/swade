@@ -139,6 +139,20 @@ Hooks.on(
 );
 
 Hooks.on(
+  'getActorDirectoryEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetActorDirectoryEntryContext(html, options);
+  },
+);
+
+Hooks.on(
+  'getActorEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCombatTrackerEntryContext(html, options);
+  },
+);
+
+Hooks.on(
   'renderCompendium',
   (
     app: Compendium<CompendiumCollection.Metadata>,

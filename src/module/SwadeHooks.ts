@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
+import CharacterSummarizer from './CharacterSummarizer';
 import * as chat from './chat';
 import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
@@ -135,7 +136,25 @@ export default class SwadeHooks {
 					<a><img src="${SWADE.wildCardIcons.regular}" class="wildcard-icon">${wildcard.data.name}</a>
 					`;
       }
-    }
+    }    
+  }
+
+  public static async onGetActorDirectoryEntryContext(
+    html: JQuery<HTMLElement>,
+    options: ContextMenu.Item[],
+  ) {
+    const newOptions: ContextMenu.Item[] = [];
+
+    // Invoke character summarizer on selected character
+    newOptions.push({
+      name: 'SWADE.ShowCharacterSummary',
+      icon: '<i class="fas fa-users"></i>',
+      callback: async (li) => {
+        const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
+        CharacterSummarizer.summarizeCharacters([selectedUser])
+      },
+    });
+    options.splice(0, 0, ...newOptions);
   }
 
   public static async onRenderCompendium(

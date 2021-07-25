@@ -6,22 +6,6 @@ import SwadeItem from './documents/item/SwadeItem';
  * Produce short, plaintext summaries of the most important aspects of an Actor's character sheet.
  */
 export default class CharacterSummarizer {
-  // For now, this code is unused:
-  // TODO: add a UI to invoke this
-  // In the meantime, for testing, it can be invoked by a macro:
-  /*
-    function showDialog(content) {
-    new Dialog({
-        title: "Character summary",
-        content: content,
-        buttons: {cancel: {label: "Ok"}}
-    }).render(true);
-    }
-
-    let a = game.actors.values().next().value;
-    let s = new game.swade.CharacterSummarizer(a);
-    showDialog(s.getSummary());
-    */
   actor: SwadeActor;
 
   constructor(actor: SwadeActor) {
@@ -34,6 +18,27 @@ export default class CharacterSummarizer {
         "Can't do character summariser against actor of type " + type,
       );
     }
+  }
+
+  static summarizeCharacters(chars: SwadeActor[]) {
+    for(const char of chars) {
+      let s = new game.swade.CharacterSummarizer(char);
+      CharacterSummarizer._showDialog(s.getSummary());
+    }
+  }
+  
+  static _showDialog(content: string) {
+    let d = new Dialog({
+     title: "Character Summary",
+     content: content,
+     buttons: {
+      close: {
+       label: "OK",
+      },
+     },
+     default: "close",
+    });
+    d.render(true);
   }
 
   getSummary() {
