@@ -158,7 +158,7 @@ SWADE.Incap: Ausgeschaltet!
 SWADE.Init: Initiative
 SWADE.ResetActionDeck: Aktionsdeck zurücksetzen
 SWADE.ActionDeckResetNotification: Aktionsdeck wurde zurückgesetzt
-SWADE.InitDraw: zieht für Initiative!
+SWADE.InitDraw: zog...
 SWADE.JokersWild: Joker's Wild
 SWADE.Addi: Zusätzlich
 SWADE.Status: Status
@@ -367,7 +367,7 @@ SWADE.SysMigrationWarning: >-
 SWADE.DeckShuffled: Kartens automatisch gemischt
 SWADE.BasePace: Basisbewegung
 SWADE.WarningPackLocked: |-
-  Sie können ein gesperrtes Kompendium nicht bearbeiten. 
+  Sie können ein gesperrtes Kompendium nicht bearbeiten.
   Bitte zuerst entsperren
 SWADE.ActionCardEditor: Aktionskarteneditor
 SWADE.CardFace: Kartenillustration

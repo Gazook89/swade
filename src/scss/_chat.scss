@@ -108,3 +108,29 @@
     }
   }
 }
+
+.chat-message {
+  .message-header .message-sender {
+    white-space: normal;
+  }
+  .initiative-draw {
+    display: flex;
+    align-items: center;
+    margin: .5em;
+    .result-text-card {
+      font-size: 1.5em;
+      font-weight: 700;
+      line-height: 1;
+      order: 2;
+      margin-left: 1em;
+    }
+    img.result-image {
+      flex-basis: auto;
+      height: 100px;
+      width: auto;
+      border: none;
+      box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
+      order: 1;
+    }
+  }
+}

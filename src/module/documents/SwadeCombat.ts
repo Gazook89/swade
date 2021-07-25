@@ -166,18 +166,15 @@ export default class SwadeCombat extends Combat {
         }
       }
 
+      // Generate random degree of rotation to give card slide tilt
+      const rotation = Math.ceil(Math.random() * (5 - 2) + 2) * (Math.round(Math.random()) ? 1 : -1);
+
       // Construct chat message data
       const template = `
-          <div class="table-draw">
-              <ol class="table-results">
-                  <li class="table-result flexrow">
-                      <img class="result-image" src="${card!.data.img}">
-                      <h4 class="result-text">
-                        @Compendium[${card!.pack}.${card!.id}]{${card!.name}}
-                      </h4>
-                  </li>
-              </ol>
-          </div>
+            <section class="initiative-draw">
+                <h4 class="result-text result-text-card">${card!.name}</h4>
+                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${card!.data.img}">
+            </section>
           `;
 
       const messageData = mergeObject(
@@ -186,13 +183,12 @@ export default class SwadeCombat extends Combat {
             scene: game.scenes?.active?.id,
             actor: c!.actor ? c!.actor.id : null,
             token: c!.token!.id,
-            alias: c!.token!.name,
+            alias: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           },
           whisper:
             c!.token!.data.hidden || c!.hidden
               ? game!.users!.filter((u: User) => u.isGM)
               : [],
-          flavor: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           content: template,
         },
         options?.messageOptions,
