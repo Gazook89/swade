@@ -266,6 +266,8 @@ SWADE.Follow: Folge {name}
 SWADE.Unfollow: Folge {name} nicht
 SWADE.MakeGroupLeader: Gruppenleiter machen
 SWADE.RemoveGroupLeader: Gruppenleiter entfernen
+SWADE.AddTokenFollowers: Ausgewählte Tokens als Follower hinzufügen
+SWADE.GroupByName: Nach Namen gruppieren
 SWADE.SetGroupColor: Gruppenfarbe einstellen
 SWADE.SelectColor: Wählen Sie eine Farbe
 SWADE.Holding: Aufgespart
@@ -367,7 +369,7 @@ SWADE.SysMigrationWarning: >-
 SWADE.DeckShuffled: Kartens automatisch gemischt
 SWADE.BasePace: Basisbewegung
 SWADE.WarningPackLocked: |-
-  Sie können ein gesperrtes Kompendium nicht bearbeiten. 
+  Sie können ein gesperrtes Kompendium nicht bearbeiten.
   Bitte zuerst entsperren
 SWADE.ActionCardEditor: Aktionskarteneditor
 SWADE.CardFace: Kartenillustration
