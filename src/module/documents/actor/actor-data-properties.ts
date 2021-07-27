@@ -34,6 +34,7 @@ type CharacterDataPropertiesData = CharacterDataSourceData & {
     speed: {
       adjusted: number;
     };
+    scale: number;
   };
 };
 

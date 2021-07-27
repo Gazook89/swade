@@ -119,6 +119,9 @@ export default class SwadeActor extends Actor {
       this.data.data.stats.speed.adjusted = adjustedPace;
     }
 
+    //set scale
+    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
+
     //die type bounding for attributes
     for (const attribute in this.data.data.attributes) {
       const key = `data.attributes.${attribute}.die.sides`;
@@ -403,6 +406,18 @@ export default class SwadeActor extends Actor {
     return retVal;
   }
 
+  calcScale(size: number): number {
+    let scale = 0;
+    if (Number.between(size, 20, 12)) scale = 6;
+    else if (Number.between(size, 11, 8)) scale = 4;
+    else if (Number.between(size, 7, 4)) scale = 2;
+    else if (Number.between(size, 3, -1)) scale = 0;
+    else if (size === -2) scale = -2;
+    else if (size === -3) scale = -4;
+    else if (size === -4) scale = -6;
+    return scale;
+  }
+
   /**
    * Function for shorcut roll in item (@str + 1d6)
    * return something like : {agi: "1d8x8+1", sma: "1d6x6", spi: "1d6x6", str: "1d6x6-1", vig: "1d6x6"}
@@ -647,7 +662,7 @@ export default class SwadeActor extends Actor {
     let driver: SwadeActor | undefined = undefined;
     if (driverId) {
       try {
-        driver = (await fromUuid(driverId)) as unknown as SwadeActor;
+        driver = ((await fromUuid(driverId)) as unknown) as SwadeActor;
       } catch (error) {
         ui.notifications?.error('The Driver could not be found!');
       }
