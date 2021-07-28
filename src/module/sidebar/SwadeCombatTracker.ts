@@ -13,6 +13,22 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
   activateListeners(html) {
     super.activateListeners(html);
+
+    //make combatants draggable for GMs
+    html
+      .find('#combat-tracker li.combatant')
+      .each((i: number, li: HTMLElement) => {
+        const id = li.dataset.combatantId;
+        //@ts-ignore
+        const comb = this.viewed.combatants.get(id, { strict: true });
+        if (comb.actor?.isOwner || game.user?.isGM) {
+          // Add draggable attribute and dragstart listener.
+          li.setAttribute('draggable', 'true');
+          li.classList.add('draggable');
+          li.addEventListener('dragstart', this._onDragStart, false);
+        }
+      });
+
     html.find('.combatant-control').click(this._onCombatantControl.bind(this));
     html
       .find('.combat-control[data-control=resetDeck]')

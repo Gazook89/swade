@@ -22,6 +22,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.20.4]
+
+### Added
+
+- Combatants can now be grouped by name
+  - Only appears if other combatants share the same name.
+  - Groups all combatants with the same name with the selected combatant as the leader.
+- Add Selected Tokens as Followers
+  - Appears only when there are tokens selected.
+  - Creates combatants for each of the selected tokens (unless one already exists), sets their groupIds, and then adds their card and suit values accordingly.
+
+### Changed
+
+- Combatants can now only be dragged by GMs and owners of the combatant's actor
+
+### Fixed
+
+- Fixed combatant sorting for unstarted combat encounters
+
 ## [v0.20.3]
 
 ### Fixed
