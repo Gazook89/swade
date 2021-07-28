@@ -529,7 +529,9 @@ export default class SwadeHooks {
           // Filter for tokens that do not already have combatants
           const newTokens = selectedTokens.filter((t) => !t.inCombat);
           // Filter for tokens that already have combatants to add them as followers later
-          const existingCombatantTokens = selectedTokens.filter((t) => t.inCombat);
+          const existingCombatantTokens = selectedTokens.filter(
+            (t) => t.inCombat,
+          );
           // Construct array of new combatants data
           const createData = newTokens?.map((t) => {
             return {
@@ -539,7 +541,10 @@ export default class SwadeHooks {
             };
           });
           // Create the combatants and create array of combatants created
-          const combatants = await game?.combat?.createEmbeddedDocuments('Combatant', createData);
+          const combatants = await game?.combat?.createEmbeddedDocuments(
+            'Combatant',
+            createData,
+          );
           // If there were preexisting combatants...
           if (existingCombatantTokens.length > 0) {
             // Push them into the combatants array
@@ -564,14 +569,16 @@ export default class SwadeHooks {
           }
         }
         let suitValue = targetCombatant.suitValue!;
-        const followers = game?.combat?.combatants.filter(f => f.groupId === targetCombatantId);
+        const followers = game?.combat?.combatants.filter(
+          (f) => f.groupId === targetCombatantId,
+        );
         if (followers) {
           for (const f of followers) {
             await f.update({
               flags: {
                 swade: {
                   cardValue: cardValue,
-                  suitValue: suitValue -= 0.01,
+                  suitValue: (suitValue -= 0.01),
                 },
               },
             });
@@ -586,13 +593,18 @@ export default class SwadeHooks {
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
         const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
-        return !!(game.combat?.combatants.find(c => c.name === targetCombatant.name && c.id !== targetCombatantId)!);
+        return !!game.combat?.combatants.find(
+          (c) => c.name === targetCombatant.name && c.id !== targetCombatantId,
+        )!;
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId, {strict: true});
+        const targetCombatant = game.combat?.combatants.get(targetCombatantId, {
+          strict: true,
+        });
         const matchingCombatants = game.combat?.combatants.filter(
-          (c) => c.name === targetCombatant?.name && c.id !== targetCombatant.id,
+          (c) =>
+            c.name === targetCombatant?.name && c.id !== targetCombatant.id,
         );
         if (matchingCombatants && targetCombatant) {
           await targetCombatant.unsetGroupId();
@@ -623,8 +635,7 @@ export default class SwadeHooks {
             const targetCombatant =
               game.combat?.combatants.get(targetCombatantId)!;
             return (
-              targetCombatant.groupId !== gl.id &&
-              targetCombatantId !== gl.id
+              targetCombatant.groupId !== gl.id && targetCombatantId !== gl.id
             );
           },
           callback: async (li) => {
@@ -885,7 +896,7 @@ export default class SwadeHooks {
       }
       if (creationData.length > 0) {
         //@ts-ignore
-        await actor.createEmbeddedDocuments('OwnedItem', creationData, {
+        await actor.createEmbeddedDocuments('Item', creationData, {
           renderSheet: null,
         });
       }

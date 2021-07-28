@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed combatant sorting for unstarted combat encounters
+- Races should now properly copy their contents again
 
 ## [v0.20.3]
 
