@@ -13,6 +13,22 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
   activateListeners(html) {
     super.activateListeners(html);
+
+    //make combatants draggable for GMs
+    html
+      .find('#combat-tracker li.combatant')
+      .each((i: number, li: HTMLElement) => {
+        const id = li.dataset.combatantId;
+        //@ts-ignore
+        const comb = this.viewed.combatants.get(id, { strict: true });
+        if (comb.actor?.isOwner || game.user?.isGM) {
+          // Add draggable attribute and dragstart listener.
+          li.setAttribute('draggable', 'true');
+          li.classList.add('draggable');
+          li.addEventListener('dragstart', this._onDragStart, false);
+        }
+      });
+
     html.find('.combatant-control').click(this._onCombatantControl.bind(this));
     html
       .find('.combat-control[data-control=resetDeck]')
@@ -135,66 +151,37 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Act Now
   async _onActNow(c: SwadeCombatant) {
     //@ts-ignore
-    const currentCombatant = this.viewed.combatant;
-    if (c.id === currentCombatant.id) {
+    let targetCombatant = this.viewed.combatant;
+    if (c.id === targetCombatant.id) {
       //@ts-ignore
-      const nextactiveCombatant = this.viewed.turns.find((c) => !c.roundHeld)!;
-      const nextActiveCardValue = nextactiveCombatant.cardValue;
-      const nextActiveSuitValue = nextactiveCombatant.suitValue!;
-      if (c.isGroupLeader) {
-        const followers = await this._getFollowers(c);
-        for await (const f of followers) {
-          if (f.cardValue === c.cardValue) {
-            await f.update({
-              flags: {
-                swade: {
-                  cardValue: nextActiveCardValue,
-                  suitValue: nextActiveSuitValue + 0.8,
-                  '-=roundHeld': null,
-                },
-              },
-            });
-          }
-        }
-      }
-      await c.update({
-        flags: {
-          swade: {
-            cardValue: nextActiveCardValue,
-            suitValue: nextActiveSuitValue + 0.9,
-            '-=roundHeld': null,
-          },
-        },
-      });
-    } else {
-      const currentCardValue = currentCombatant.cardValue;
-      const currentSuitValue = currentCombatant.suitValue!;
-      if (c.isGroupLeader) {
-        const followers = await this._getFollowers(c);
-        for await (const f of followers) {
-          if (f.cardValue === c.cardValue) {
-            await f.update({
-              flags: {
-                swade: {
-                  cardValue: currentCardValue,
-                  suitValue: currentSuitValue + 0.8,
-                  '-=roundHeld': null,
-                },
-              },
-            });
-          }
-        }
-      }
-      await c.update({
-        flags: {
-          swade: {
-            cardValue: currentCardValue,
-            suitValue: currentSuitValue + 0.9,
-            '-=roundHeld': null,
-          },
-        },
-      });
+      targetCombatant = this.viewed.turns.find((c) => !c.roundHeld)!;
     }
+    await c.update({
+      flags: {
+        swade: {
+          cardValue: targetCombatant.cardValue,
+          suitValue: targetCombatant.suitValue! + 0.01,
+          '-=roundHeld': null,
+        },
+      },
+    });
+    if (c.isGroupLeader) {
+      const followers = await this._getFollowers(c);
+      let s = c.suitValue!;
+      for await (const f of followers) {
+        s -= 0.001;
+        await f.update({
+          flags: {
+            swade: {
+              cardValue: c.cardValue,
+              suitValue: s,
+              '-=roundHeld': null,
+            },
+          },
+        });
+      }
+    }
+
     //@ts-ignore
     await this.viewed.update({
       //@ts-ignore
@@ -205,33 +192,32 @@ export default class SwadeCombatTracker extends CombatTracker {
   async _onActAfterCurrentCombatant(c: SwadeCombatant) {
     //@ts-ignore
     const currentCombatant = this.viewed.combatant;
-    const currentCardValue = currentCombatant.cardValue;
-    const currentSuitValue = currentCombatant.suitValue!;
-    if (c.isGroupLeader) {
-      const followers = await this._getFollowers(c);
-      for (const f of followers) {
-        if (f.cardValue === c.cardValue) {
-          await f.update({
-            flags: {
-              swade: {
-                cardValue: currentCardValue,
-                suitValue: currentSuitValue - 0.2,
-                '-=roundHeld': null,
-              },
-            },
-          });
-        }
-      }
-    }
     await c.update({
       flags: {
         swade: {
-          cardValue: currentCardValue,
-          suitValue: currentSuitValue - 0.1,
+          cardValue: currentCombatant.cardValue,
+          suitValue: currentCombatant.suitValue! - 0.01,
           '-=roundHeld': null,
         },
       },
     });
+    if (c.isGroupLeader) {
+      const followers = await this._getFollowers(c);
+      let s = c.suitValue!;
+      for await (const f of followers) {
+        s -= 0.001;
+        await f.update({
+          flags: {
+            swade: {
+              cardValue: c.cardValue,
+              suitValue: s,
+              '-=roundHeld': null,
+            },
+          },
+        });
+      }
+    }
+
     //@ts-ignore
     this.viewed.update({
       //@ts-ignore

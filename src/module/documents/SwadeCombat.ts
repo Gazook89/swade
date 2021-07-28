@@ -154,14 +154,14 @@ export default class SwadeCombat extends Combat {
         const followers =
           game.combats?.viewed?.combatants.filter((f) => f.groupId === c!.id) ??
           [];
-
-        const fSuitValue = newflags.suitValue + 0.89;
-        for await (const follower of followers) {
+        let s = newflags.suitValue;
+        for await (const f of followers) {
+          s -= 0.02;
           combatantUpdates.push({
-            _id: follower.id,
+            _id: f.id,
             initiative: initiative,
             'flags.swade': newflags,
-            'flags.swade.suitValue': fSuitValue,
+            'flags.swade.suitValue': s,
           });
         }
       }
@@ -276,29 +276,6 @@ export default class SwadeCombat extends Combat {
       }
     };
 
-    const aFollowerGroupId = getGroupLeaderFor(a)?.id;
-    const bFollowerGroupId = getGroupLeaderFor(b)?.id;
-
-    // both followers, in the same group -> name sort
-    if (
-      aFollowerGroupId &&
-      bFollowerGroupId &&
-      aFollowerGroupId === bFollowerGroupId
-    ) {
-      return nameSortCombatants(a, b);
-    }
-
-    // one is a follower of the other
-    if (aFollowerGroupId === b.id) return 1;
-    else if (bFollowerGroupId === a.id) return -1;
-
-    // one of them is a follower & not in the same group -> sort based on the leader instead
-    const aGroupLeader = getGroupLeaderFor(a);
-    const bGroupLeader = getGroupLeaderFor(b);
-    if (aFollowerGroupId && aGroupLeader) a = aGroupLeader;
-    if (bFollowerGroupId && bGroupLeader) b = bGroupLeader;
-
-    // both leaders/not grouped -> sort based on card, or name if no cards dealt yet
     return finalSort(a, b);
   }
 

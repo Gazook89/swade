@@ -60,7 +60,7 @@
 
     <ol id="combat-tracker" class="directory-list">
         {{#each turns}}
-        <li class="combatant actor directory-item flexrow draggable {{this.css}}"  data-combatant-id="{{this.id}}" draggable="true">
+        <li class="combatant actor directory-item flexrow {{this.css}}"  data-combatant-id="{{this.id}}">
             <div class="token-initiative" style="border-right-color: {{#if (isInGroup this.id)}}{{leaderColor this.id}}{{else if this.defeated}}#fff{{else}}{{groupColor this.id}}{{/if}}; {{#if this.defeated}}opacity: 0.3;{{/if}}">
                 {{#if this.hasRolled}}
                 <span class="initiative">{{this.initiative}}</span>
