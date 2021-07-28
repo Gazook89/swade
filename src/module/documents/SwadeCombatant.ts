@@ -1,3 +1,7 @@
+import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
+import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
+import { getCanvas } from '../util';
+
 declare global {
   interface DocumentClassConfig {
     Combatant: typeof SwadeCombatant;
@@ -21,14 +25,6 @@ declare global {
 }
 
 export default class SwadeCombatant extends Combatant {
-  async _onCreate(data: object, options: object, userId: string) {
-    super._onCreate;
-    await this.setCardValue(
-      game?.combat?.combatants?.map((c) => c.id).indexOf(this.id)! + 1,
-    );
-    await this.setSuitValue(this.cardValue!);
-  }
-
   get suitValue() {
     return this.getFlag('swade', 'suitValue');
   }
@@ -99,5 +95,27 @@ export default class SwadeCombatant extends Combatant {
 
   async setTurnLost(turnLost: boolean) {
     return this.setFlag('swade', 'turnLost', turnLost);
+  }
+
+  async _preCreate(
+    data: CombatantDataConstructorData,
+    options: DocumentModificationOptions,
+    user: User,
+  ) {
+    await super._preCreate(data, options, user);
+    const combatants = game?.combat?.combatants.size!;
+    const tokenIndex =
+      getCanvas()
+        .tokens?.controlled.map((t) => t.id)
+        .indexOf(data.tokenId!) ?? 0;
+    const sortValue = tokenIndex + combatants;
+    this.data.update({
+      flags: {
+        swade: {
+          cardValue: sortValue,
+          suitValue: sortValue,
+        },
+      },
+    });
   }
 }

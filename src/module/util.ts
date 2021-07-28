@@ -141,6 +141,7 @@ export async function shouldShowBennyAnimation(): Promise<boolean> {
   }
 }
 
+//TODO Revisit if still necessary or if this could be done better
 export function getCanvas(): Canvas {
   if (canvas instanceof Canvas && canvas.ready) {
     return canvas!;

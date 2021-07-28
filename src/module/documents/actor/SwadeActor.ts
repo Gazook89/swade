@@ -854,7 +854,7 @@ export default class SwadeActor extends Actor {
       //Set compendium source
       const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
 
-      const skillIndex: SwadeItem[] = (await game.packs
+      const skillIndex = (await game.packs
         ?.get(pack)
         ?.getDocuments()) as SwadeItem[];
 
