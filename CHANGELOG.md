@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - Groups all combatants with the same name with the selected combatant as the leader.
 - Add Selected Tokens as Followers
   - Appears only when there are tokens selected.
-  - Creates combatants for each of the selected tokens (unless one already exists), sets their groupIds, and then adds their card and suit values accordingly.
+  - Creates combatants for each of the selected tokens (unless one already exists)
 
 ### Changed
 
