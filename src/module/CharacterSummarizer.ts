@@ -7,6 +7,7 @@ import SwadeItem from './documents/item/SwadeItem';
  */
 export default class CharacterSummarizer {
   actor: SwadeActor;
+  summary: string;
 
   constructor(actor: SwadeActor) {
     this.actor = actor;
@@ -18,30 +19,84 @@ export default class CharacterSummarizer {
         "Can't do character summariser against actor of type " + type,
       );
     }
+    this.summary = this._makeSummary();
   }
 
   static summarizeCharacters(chars: SwadeActor[]) {
     for(const char of chars) {
       let s = new game.swade.CharacterSummarizer(char);
-      CharacterSummarizer._showDialog(s.getSummary());
+      CharacterSummarizer._showDialog(s);
     }
   }
   
-  static _showDialog(content: string) {
+  static _showDialog(summarizer: CharacterSummarizer) {
     let d = new Dialog({
-     title: "Character Summary",
-     content: content,
-     buttons: {
-      close: {
-       label: "OK",
+      title: game.i18n.localize('SWADE.CharacterSummary'),
+      content: summarizer.getSummary(),
+      buttons: {
+        close: {
+          label: game.i18n.localize('SWADE.Ok'),
+        },
+        copyHtml: {
+          label: game.i18n.localize('SWADE.CopyHtml'),
+          callback: () => { summarizer.copySummaryHtml() }
+        },  
+        copyMarkdown: {
+          label: game.i18n.localize('SWADE.CopyMarkdown'),
+          callback: () => { summarizer.copySummaryMarkdown() }
+        }   
       },
-     },
-     default: "close",
+      default: "close",
     });
     d.render(true);
   }
 
+  // Util method for calling this code from macros
   getSummary() {
+    return this.summary;
+  }
+
+  copySummaryHtml() {
+    this._copyToClipboard(this.summary);
+  }
+
+  copySummaryMarkdown() {
+    // as the HTML is so simple here, just going to convert
+    // it inline.
+    let markdownSummary = this.summary
+        .replace(/\<\/?p>/g, "\n")
+        .replace(/<br\/?>/g, "\n")
+        .replace(/<\/?strong>/g, "*")
+        .replace(/<h1>/g, "# ")
+        .replace(/<\/h1>/g, "\n")
+        .replace(/&mdash;/g, "—");
+
+    this._copyToClipboard(markdownSummary);
+  }
+
+  // this code taken from https://stackoverflow.com/a/65996386
+  _copyToClipboard(textToCopy: string) {
+    // navigator clipboard api needs a secure context (https)
+    if (navigator.clipboard && window.isSecureContext) {
+        // navigator clipboard api method
+        return navigator.clipboard.writeText(textToCopy);
+    } else {
+        // text area method
+        let textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        // make the textarea out of viewport
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+    }
+  }
+
+  _makeSummary() {
     let summary = `<h1>${this.actor.name}</h1>`;
 
     // Basic character information block
@@ -243,7 +298,7 @@ export default class CharacterSummarizer {
       list.push('&mdash;');
     }
     list.sort();
-    let val = `<p><strong>${name}: </strong>`;
+    let val = `<p><strong>${name}</strong>: `;
     val += list.join(', ');
     val += '</p>';
     return val;
