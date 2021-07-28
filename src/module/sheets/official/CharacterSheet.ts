@@ -79,6 +79,11 @@ export default class CharacterSheet extends ActorSheet {
       });
     }
 
+    //Display Advances on About tab
+    html.find('label.advances').on('click', async () => {
+      this._tabs[0].activate('description');
+    });
+
     //Toggle Conviction
     html.find('.conviction-toggle').on('click', async () => {
       const current = getProperty(
