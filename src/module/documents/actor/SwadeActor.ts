@@ -542,7 +542,7 @@ export default class SwadeActor extends Actor {
       retVal += Math.floor(vigMod / 2);
     }
     if (includeArmor) {
-      retVal += this.calcArmor() ?? 0;
+      retVal += this.calcArmor();
     }
     if (retVal < 1) retVal = 1;
     return retVal;
