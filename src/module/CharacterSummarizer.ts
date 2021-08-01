@@ -12,14 +12,18 @@ export default class CharacterSummarizer {
   constructor(actor: SwadeActor) {
     this.actor = actor;
 
-    const type: String = getProperty(actor.data, 'type');
-    if (type !== 'character' && type !== 'npc') {
-      // probably need better error checking than this
+    if (!CharacterSummarizer.isSupportedActorType(actor)) {
       ui.notifications?.error(
-        "Can't do character summariser against actor of type " + type,
-      );
+        "Can't do character summariser against actor of type " + actor.type);
+      this.summary = "";
+      return;
     }
     this.summary = this._makeSummary();
+  }
+
+  static isSupportedActorType(char: SwadeActor): boolean {
+    return (char.type === 'character' 
+        || char.type === 'npc');
   }
 
   static summarizeCharacters(chars: SwadeActor[]) {
@@ -30,6 +34,8 @@ export default class CharacterSummarizer {
   }
   
   static _showDialog(summarizer: CharacterSummarizer) {
+    if (summarizer.getSummary() === "") return;
+    
     let d = new Dialog({
       title: game.i18n.localize('SWADE.CharacterSummary'),
       content: summarizer.getSummary(),
