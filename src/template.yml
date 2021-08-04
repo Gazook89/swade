@@ -171,6 +171,9 @@ Item:
       quantity: 1
       weight: 0
       price: 0
+    arcaneDevice:
+      isArcaneDevice: false
+      powerPoints: {}
     equipable:
       equippable: false
       equipped: false
@@ -188,12 +191,15 @@ Item:
       - itemDescription
       - physicalItem
       - equipable
+      - arcaneDevice
       - vehicular
+      - actions
   weapon:
     templates:
       - itemDescription
       - physicalItem
       - equipable
+      - arcaneDevice
       - vehicular
       - actions
     damage: ''
@@ -210,6 +216,8 @@ Item:
       - itemDescription
       - physicalItem
       - equipable
+      - arcaneDevice
+      - actions
     minStr: ''
     armor: 0
     isNaturalArmor: false
@@ -223,6 +231,7 @@ Item:
       - itemDescription
       - physicalItem
       - equipable
+      - arcaneDevice
       - actions
     minStr: ''
     parry: 0
