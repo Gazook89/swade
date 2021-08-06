@@ -44,11 +44,11 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/official/sheet.html',
 
     //tabs
-    'systems/swade/templates/official/tabs/summary.html',
-    'systems/swade/templates/official/tabs/edges.html',
-    'systems/swade/templates/official/tabs/inventory.html',
-    'systems/swade/templates/official/tabs/powers.html',
-    'systems/swade/templates/official/tabs/description.html',
+    'systems/swade/templates/official/tabs/summary.hbs',
+    'systems/swade/templates/official/tabs/edges.hbs',
+    'systems/swade/templates/official/tabs/inventory.hbs',
+    'systems/swade/templates/official/tabs/powers.hbs',
+    'systems/swade/templates/official/tabs/description.hbs',
 
     //misc partials
     'systems/swade/templates/official/partials/attributes.html',
