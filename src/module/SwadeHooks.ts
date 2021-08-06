@@ -153,6 +153,10 @@ export default class SwadeHooks {
         const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
         CharacterSummarizer.summarizeCharacters([selectedUser])
       },
+      condition: (li) => {
+        const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
+        return CharacterSummarizer.isSupportedActorType(selectedUser);
+      }
     });
     options.splice(0, 0, ...newOptions);
   }
