@@ -21,6 +21,12 @@
           </label>
         </div>
         <div class="form-group">
+          <label class="check-container">{{localize "SWADE.ArcaneDevice"}}
+            <input type="checkbox" name="data.isArcaneDevice" {{checked data.data.isArcaneDevice}} data-dtype="Boolean" />
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="form-group">
           <label class="check-container"
             >{{localize "SWADE.NaturalArmor"}}
             <input
@@ -163,6 +169,10 @@
         {{> "systems/swade/templates/setting-fields.html"}} {{>
         "systems/swade/templates/items/partials/description.html"}}
       </section>
+    </div>
+    <div class="tab powers" data-group="primary" data-tab="powers">
+      {{> "systems/swade/templates/items/partials/powers.html"}}
+      <br />
     </div>
     <div class="tab" data-group="primary" data-tab="actions-effects">
       {{> "systems/swade/templates/items/partials/ae-header.html"}} {{>
