@@ -173,6 +173,9 @@ Item:
       price: 0
     arcaneDevice:
       isArcaneDevice: false
+      arcaneSkillDie:
+        sides: 4
+        modifier: 0
       powerPoints: {}
     equipable:
       equippable: false

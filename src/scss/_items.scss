@@ -81,6 +81,29 @@
       line-height: 24px;
       margin-left: 5px;
     }
+
+    .creators-arcane-skill {
+      display: flex;
+      justify-content: flex-start;
+      color: #fff;
+      select,
+      input {
+        color: $light-pastel-blue;
+        font-weight: bold;
+        background: rgba(255, 255, 255, 0.2);
+      }
+      select {
+        margin-left: 1em;
+        width: 60px;
+      }
+      input {
+        width: 40px;
+        &::placeholder {
+          color: #ccc;
+        }
+      }
+    }
+
     .arcane-tabs {
       display: flex;
       .arcane {

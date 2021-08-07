@@ -1,5 +1,16 @@
 <div class="flexrow">
   <div class="form-group header-field">
+    <div class="creators-arcane-skill">
+      <label for="die">{{localize "SWADE.ArcaneSkillDie"}}</label>
+      <span class="form-fields">
+        <select name="data.arcaneSkillDie.sides" id="die" data-dtype="Number">
+          {{#select data.data.arcaneSkillDie.sides}} {{>
+          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+        </select>
+        <input name="data.arcaneSkillDie.modifier" type="text" value="{{data.data.arcaneSkillDie.modifier}}"
+          placeholder="{{localize 'SWADE.Mod'}}" data-dtype="Number" />
+      </span>
+    </div>
     <!-- Global counter -->
     {{#unless settingrules.noPowerPoints}}
     <div class="power-counter" data-arcane="All">

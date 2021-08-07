@@ -28,6 +28,10 @@ interface PhysicalItem extends Equipable, ArcaneDevice, Actions {
 
 interface ArcaneDevice {
   isArcaneDevice: boolean;
+  arcaneSkillDie: {
+    sides: number;
+    modifier: number;
+  };
   powerPoints: {
     value: number;
     max: number;
