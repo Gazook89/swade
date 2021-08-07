@@ -59,7 +59,7 @@ SWADE.CoreSkillsDesc: >-
   Enter a comma-separated list of skill names to be defined as core skills for
   all actors
 SWADE.LinkAttr: Linked Attribute
-SWADE.ArcaneSkillDie: Arcane Skill Die
+SWADE.ArcaneSkill: Arcane Skill
 SWADE.Die: Die
 SWADE.WildDie: Wild Die
 SWADE.Mod: Modifier
