@@ -89,13 +89,12 @@
     ></a>
     {{#if (eq attr.type "skill")}}
     <div class="action-input-left form-group">
-      <label>{{localize "SWADE.RoF"}}</label>
+      <label> {{localize "SWADE.AltTrait"}}</label>
       <span class="form-fields">
         <input
           type="text"
-          name="data.actions.additional.{{key}}.rof"
-          value="{{attr.rof}}"
-          data-dtype="Number"
+          name="data.actions.additional.{{key}}.skillOverride"
+          value="{{attr.skillOverride}}"
         />
       </span>
     </div>
@@ -111,13 +110,9 @@
       </span>
     </div>
     <div class="action-input-left form-group">
-      <label> {{localize "SWADE.AltTrait"}}</label>
+      <label>{{localize "SWADE.RoF"}}</label>
       <span class="form-fields">
-        <input
-          type="text"
-          name="data.actions.additional.{{key}}.skillOverride"
-          value="{{attr.skillOverride}}"
-        />
+        <input type="text" name="data.actions.additional.{{key}}.rof" value="{{attr.rof}}" data-dtype="Number" />
       </span>
     </div>
     <div class="action-input-right form-group">
