@@ -303,6 +303,20 @@ export default class SwadeActor extends Actor {
     return this.rollSkill('', options, tempSkill);
   }
 
+  async makeArcaneDeviceSkillRoll(options: IRollOptions = {}, arcaneSkillDie) {
+    const tempSkill = new SwadeItem({
+      name: game.i18n.localize('SWADE.ArcaneSkill'),
+      type: 'skill',
+      data: {
+        die: arcaneSkillDie,
+        'wild-die': {
+          sides: 6,
+        },
+      },
+    });
+    return this.rollSkill('', options, tempSkill);
+  }
+
   async spendBenny() {
     if (this.data.type === 'vehicle') return;
     const currentBennies = getProperty(this.data, 'data.bennies.value');

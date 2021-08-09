@@ -147,6 +147,10 @@ export default class ItemChatCardHelper {
         if (roll) await this.subtractShots(actor, item.id!);
         Hooks.call('swadeAction', actor, item, action, roll, game.user!.id);
         break;
+      case 'arcane-device':
+        const arcaneSkillDie = getProperty(item.data, 'data.arcaneSkillDie');
+        roll = await actor.makeArcaneDeviceSkillRoll({}, arcaneSkillDie);
+        break;
       case 'reload':
         if (
           getProperty(item.data, 'data.currentShots') >=
@@ -406,6 +410,15 @@ export default class ItemChatCardHelper {
         currentPP = getProperty(actor.data, `data.powerPoints.${arcane}.value`);
         maxPP = getProperty(actor.data, `data.powerPoints.${arcane}.max`);
       }
+      //update message content
+      $(messageContent).find('.pp-counter .current-pp').first().text(currentPP);
+      $(messageContent).find('.pp-counter .max-pp').first().text(maxPP);
+    }
+
+    const isArcaneDevice = getProperty(item.data, 'data.isArcaneDevice');
+    if (isArcaneDevice) {
+      const currentPP = getProperty(item.data, 'data.powerPoints.value');
+      const maxPP = getProperty(item.data, 'data.powerPoints.max');
       //update message content
       $(messageContent).find('.pp-counter .current-pp').first().text(currentPP);
       $(messageContent).find('.pp-counter .max-pp').first().text(maxPP);
