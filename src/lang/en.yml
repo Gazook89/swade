@@ -60,6 +60,7 @@ SWADE.CoreSkillsDesc: >-
   all actors
 SWADE.LinkAttr: Linked Attribute
 SWADE.ArcaneSkill: Arcane Skill
+SWADE.ActivateArcaneDevice: Activate Device
 SWADE.Die: Die
 SWADE.WildDie: Wild Die
 SWADE.Mod: Modifier
