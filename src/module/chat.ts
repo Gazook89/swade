@@ -183,6 +183,24 @@ export function chatListeners(html: JQuery<HTMLElement>) {
       }
       await ItemChatCardHelper.refreshItemCard(actor, messageId);
     }
+
+    //handle Arcane Device Item Card PP adjustment
+    if (action === 'ad-pp-adjust') {
+      const adPPToAdjust = $(element)
+        .parents('.chat-card.item-card')
+        .find('input.ad-pp-adjust')
+        .val() as string;
+      const adjustment = element.getAttribute('data-adjust') as string;
+      const item = actor.items.get(itemId)!;
+      const key = 'data.powerPoints.value';
+      const oldPP = getProperty(item.data, key) as number;
+      if (adjustment === 'plus') {
+        await item.update({ [key]: oldPP + parseInt(adPPToAdjust, 10) });
+      } else if (adjustment === 'minus') {
+        await item.update({ [key]: oldPP - parseInt(adPPToAdjust, 10) });
+      }
+      await ItemChatCardHelper.refreshItemCard(actor, messageId);
+    }
   });
 }
 
