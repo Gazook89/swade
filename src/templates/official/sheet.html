@@ -93,22 +93,22 @@
   <main class="gridcell sheet-body">
     {{!-- Summary Tab --}}
     <section class="tab summary active" data-group="primary" data-tab="summary">
-      {{> "systems/swade/templates/official/tabs/summary.html"}}
+      {{> "systems/swade/templates/official/tabs/summary.hbs"}}
     </section>
 
     {{!-- Edges/Hindrances Tab --}}
     <section class="tab edges" data-group="primary" data-tab="edges">
-      {{> "systems/swade/templates/official/tabs/edges.html"}}
+      {{> "systems/swade/templates/official/tabs/edges.hbs"}}
     </section>
 
     {{!-- Inventory Tab --}}
     <section class="tab inventory" data-group="primary" data-tab="inventory">
-      {{> "systems/swade/templates/official/tabs/inventory.html"}}
+      {{> "systems/swade/templates/official/tabs/inventory.hbs"}}
     </section>
 
     {{!-- Powers Tab --}} {{#if actor.hasArcaneBackground}}
     <section class="tab powers" data-group="primary" data-tab="powers">
-      {{> "systems/swade/templates/official/tabs/powers.html"}}
+      {{> "systems/swade/templates/official/tabs/powers.hbs"}}
     </section>
     {{/if}} {{!-- Biography Tab --}}
     <section
@@ -116,7 +116,7 @@
       data-group="primary"
       data-tab="description"
     >
-      {{> "systems/swade/templates/official/tabs/description.html"}}
+      {{> "systems/swade/templates/official/tabs/description.hbs"}}
     </section>
   </main>
 

@@ -298,15 +298,8 @@ export default class CharacterSheet extends ActorSheet {
       }
     });
 
-    html.find('.edge-hindrance .item-name button').on('click', (ev) => {
-      $(ev.currentTarget)
-        .parents('.edge-hindrance')
-        .find('.description')
-        .slideToggle();
-    });
-
-    html.find('.power .item-name button').on('click', (ev) => {
-      $(ev.currentTarget).parents('.power').find('.description').slideToggle();
+    html.find('.item .item-name').on('click', (ev) => {
+      $(ev.currentTarget).parents('.item').find('.description').slideToggle();
     });
 
     html.find('.armor-display').on('click', () => {

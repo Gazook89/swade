@@ -341,7 +341,9 @@ export default class SwadeActor extends Actor {
 
   async getBenny() {
     if (this.data.type === 'vehicle') return;
-    if (game.settings.get('swade', 'notifyBennies')) {
+    const combatant = this.token?.combatant;
+    const notHiddenNPC = (!combatant?.isNPC || (combatant?.isNPC && !combatant?.hidden));
+    if (game.settings.get('swade', 'notifyBennies') && notHiddenNPC) {
       const message = await renderTemplate(SWADE.bennies.templates.add, {
         target: this,
         speaker: game.user,
