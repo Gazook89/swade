@@ -124,14 +124,6 @@ export default class SwadeItemSheet extends ItemSheet {
       );
     });
 
-    // Filter power list
-    html.find('.arcane-tabs .arcane').on('click', (ev: any) => {
-      const arcane = ev.currentTarget.dataset.arcane;
-      html.find('.arcane-tabs .arcane').removeClass('active');
-      ev.currentTarget.classList.add('active');
-      this._filterPowers(html, arcane);
-    });
-
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
