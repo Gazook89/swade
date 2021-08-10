@@ -310,33 +310,31 @@ export default class SwadeItemSheet extends ItemSheet {
     //@ts-ignore
     delete itemData['permission'];
 
+    let propertyName = '';
     if (
       this.item.data.type === 'ability' &&
       this.item.data.data.subtype === 'race'
     ) {
-      //pull the array from the flags, and push the new entry into it
-      const collection =
-        (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
-        [];
-      collection.push([randomID(), itemData]);
-      //save array back into flag
-      await this.item.setFlag('swade', 'embeddedAbilities', collection);
+      propertyName = 'embeddedAbilities';
     }
 
     if (
-      (this.item.data.type === 'gear' ||
+      (
+        this.item.data.type === 'gear' ||
         this.item.data.type === 'armor' ||
         this.item.data.type === 'shield' ||
-        this.item.data.type === 'weapon') &&
+        this.item.data.type === 'weapon'
+      ) &&
       item.data.type === 'power'
     ) {
-      //pull the array from the flags, and push the new entry into it
-      const collection =
-        (this.item.getFlag('swade', 'embeddedPowers') as [string, any][]) || [];
-      collection.push([randomID(), itemData]);
-      //save array back into flag
-      await this.item.setFlag('swade', 'embeddedPowers', collection);
+      propertyName = 'embeddedPowers'
     }
+    //pull the array from the flags, and push the new entry into it
+    const collection =
+      (this.item.getFlag('swade', propertyName) as [string, any][]) || [];
+    collection.push([randomID(), itemData]);
+    //save array back into flag
+    await this.item.setFlag('swade', propertyName, collection);
     return false;
   }
 }
