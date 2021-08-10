@@ -77,13 +77,28 @@
   <div class="pp-counter">
     <p>
       <span class="bold">{{#if data.arcane}}{{data.arcane}} {{/if}}{{localize "SWADE.PP"}}:</span>
-      {{log this}}
       <span class="current-pp">
+        {{#if data.arcane}}
+        {{#each actor.data.data.powerPoints as |ab|}}
+        {{#if (eq @key ../data.arcane)}}
+        {{ab.value}}
+        {{/if}}
+        {{/each}}
+        {{else}}
         {{powerPoints.value}}
+        {{/if}}
       </span>
       &nbsp;/&nbsp;
       <span class="max-pp">
+        {{#if data.arcane}}
+        {{#each actor.data.data.powerPoints as |ab|}}
+        {{#if (eq @key ../data.arcane)}}
+        {{ab.max}}
+        {{/if}}
+        {{/each}}
+        {{else}}
         {{powerPoints.max}}
+        {{/if}}
       </span>
     </p>
   </div>
