@@ -154,9 +154,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.additional-stats .roll').on('click', (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
-      const statData: AdditionalStat = this.item.data.data.additionalStats[
-        stat
-      ]!;
+      const statData = this.item.data.data.additionalStats[stat]!;
       let modifier = statData.modifier || '';
       if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
@@ -200,7 +198,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
     switch (this.item.type) {
       case 'weapon':
-        data['isWeapon'] = true && game.settings.get('swade', 'ammoManagement');
+        data['isWeapon'] = true;
         if (this.item.isOwned) {
           data['ammoList'] = this.actor!.itemTypes['gear'].map(
             (i) => i.data.name,
