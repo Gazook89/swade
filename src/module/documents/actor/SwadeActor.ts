@@ -109,19 +109,6 @@ export default class SwadeActor extends Actor {
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
 
-    //modify pace with wounds
-    if (game.settings.get('swade', 'enableWoundPace')) {
-      //bound maximum wound penalty to -3
-      const wounds = Math.min(this.data.data.wounds.value, 3);
-      const pace = this.data.data.stats.speed.value;
-      //make sure the pace doesn't go below 1
-      const adjustedPace = Math.max(pace - wounds, 1);
-      this.data.data.stats.speed.adjusted = adjustedPace;
-    }
-
-    //set scale
-    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
-
     //die type bounding for attributes
     for (const attribute in this.data.data.attributes) {
       const key = `data.attributes.${attribute}.die.sides`;
@@ -132,6 +119,27 @@ export default class SwadeActor extends Actor {
         setProperty(this.data, key, 12);
       }
     }
+
+    //modify pace with wounds
+    if (game.settings.get('swade', 'enableWoundPace')) {
+      //bound maximum wound penalty to -3
+      const wounds = Math.min(this.data.data.wounds.value, 3);
+      const pace = this.data.data.stats.speed.value;
+      //make sure the pace doesn't go below 1
+      const adjustedPace = Math.max(pace - wounds, 1);
+      this.data.data.stats.speed.adjusted = adjustedPace;
+    } else {
+      this.data.data.stats.speed.adjusted = this.data.data.stats.speed.value;
+    }
+
+    //set scale
+    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
+
+    //handle carry capacity
+    this.data.data.details.encumbrance = {
+      max: this.calcMaxCarryCapacity(),
+      value: this.calcInventoryWeight(),
+    };
 
     // Toughness calculation
     const shouldAutoCalcToughness = this.data.data.details.autoCalcToughness;
@@ -342,7 +350,8 @@ export default class SwadeActor extends Actor {
   async getBenny() {
     if (this.data.type === 'vehicle') return;
     const combatant = this.token?.combatant;
-    const notHiddenNPC = (!combatant?.isNPC || (combatant?.isNPC && !combatant?.hidden));
+    const notHiddenNPC =
+      !combatant?.isNPC || (combatant?.isNPC && !combatant?.hidden);
     if (game.settings.get('swade', 'notifyBennies') && notHiddenNPC) {
       const message = await renderTemplate(SWADE.bennies.templates.add, {
         target: this,
@@ -567,26 +576,36 @@ export default class SwadeActor extends Actor {
   /**
    * Calculates the maximum carry capacity based on the strength die and any adjustment steps
    */
-  calcMaxCarryCapacity(): number | undefined {
-    if (this.data.type === 'vehicle') return;
-    const strengthDie = getProperty(this.data, 'data.attributes.strength.die');
+  calcMaxCarryCapacity(): number {
+    if (this.data.type === 'vehicle') return 0;
+    const strengthDie = this.data.data.attributes.strength.die;
+    let stepAdjust = this.data.data.attributes.strength.encumbranceSteps * 2;
 
-    let stepAdjust =
-      getProperty(this.data, 'data.attributes.strength.encumbranceSteps') * 2;
+    //make sure the steps are not adjusted down
+    stepAdjust = Math.max(stepAdjust, 0);
 
-    if (stepAdjust < 0) stepAdjust = 0;
-
-    const encumbDie = strengthDie.sides + stepAdjust;
-
-    if (encumbDie > 12) encumbDie > 12;
+    //bound the adjusted strenght die to 12
+    const encumbDie = Math.min(strengthDie.sides + stepAdjust, 12);
 
     let capacity = 20 + 10 * (encumbDie - 4);
-
     if (strengthDie.modifier > 0) {
       capacity = capacity + 20 * strengthDie.modifier;
     }
-
     return capacity;
+  }
+
+  calcInventoryWeight(): number {
+    const items = [
+      ...this.itemTypes.shield,
+      ...this.itemTypes.weapon,
+      ...this.itemTypes.armor,
+      ...this.itemTypes.gear,
+    ];
+    let retVal = 0;
+    items.forEach((i: any) => {
+      retVal += i.data.weight * i.data.quantity;
+    });
+    return retVal;
   }
 
   calcParry(): number {
@@ -678,7 +697,7 @@ export default class SwadeActor extends Actor {
     let driver: SwadeActor | undefined = undefined;
     if (driverId) {
       try {
-        driver = ((await fromUuid(driverId)) as unknown) as SwadeActor;
+        driver = (await fromUuid(driverId)) as unknown as SwadeActor;
       } catch (error) {
         ui.notifications?.error('The Driver could not be found!');
       }

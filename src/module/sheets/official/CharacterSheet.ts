@@ -568,15 +568,6 @@ export default class CharacterSheet extends ActorSheet {
     }
     data.hasAdditionalStatsFields = Object.keys(additionalStats).length > 0;
 
-    //Encumbrance
-    data.inventoryWeight = this._calcInventoryWeight([
-      ...data.itemsByType['gear'],
-      ...data.itemsByType['weapon'],
-      ...data.itemsByType['armor'],
-      ...data.itemsByType['shield'],
-    ]);
-    data.maxCarryCapacity = this.actor.calcMaxCarryCapacity();
-
     //Deal with ABs and Powers
     const powers = {
       arcanes: {},
@@ -597,9 +588,7 @@ export default class CharacterSheet extends ActorSheet {
 
     for (const power of data.itemsByType.power) {
       const arcane = power.data.arcane;
-      if (!arcane) {
-        continue;
-      }
+      if (!arcane) continue;
       if (!powers.arcanes[arcane]) {
         powers.arcanes[arcane] = {
           valuePath: `data.powerPoints.${arcane}.value`,
@@ -673,14 +662,6 @@ export default class CharacterSheet extends ActorSheet {
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
     new game.swade.SwadeEntityTweaks(this.actor).render(true);
-  }
-
-  protected _calcInventoryWeight(items): number {
-    let retVal = 0;
-    items.forEach((i: any) => {
-      retVal += i.data.weight * i.data.quantity;
-    });
-    return retVal;
   }
 
   private _toggleEquipped(id: string, item: any): any {

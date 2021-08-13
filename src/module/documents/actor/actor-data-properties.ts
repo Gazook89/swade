@@ -36,6 +36,12 @@ type CharacterDataPropertiesData = CharacterDataSourceData & {
     };
     scale: number;
   };
+  details: {
+    encumbrance: {
+      max: number;
+      value: number;
+    };
+  };
 };
 
 type VehicleDataPropertiesData = VehicleDataSourceData & {
