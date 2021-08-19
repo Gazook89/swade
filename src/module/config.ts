@@ -82,6 +82,7 @@ export const SWADE = {
       'noPowerPoints',
       'wealthType',
       'currencyName',
+      'weightUnit',
     ],
   },
 

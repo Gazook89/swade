@@ -1,10 +1,7 @@
 import { SWADE } from './config';
 
-export default class SettingConfigurator extends FormApplication<
-  FormApplication.Options,
-  any
-> {
-  config: any;
+export default class SettingConfigurator extends FormApplication {
+  config: typeof SWADE.settingConfig;
   settingStats: any;
   constructor(object = {}, options) {
     super(object, options);
@@ -16,7 +13,7 @@ export default class SettingConfigurator extends FormApplication<
       ...super.defaultOptions,
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,
-      template: 'systems/swade/templates/setting-config.html',
+      template: 'systems/swade/templates/setting-config.hbs',
       classes: ['swade', 'setting-config'],
       scrollY: ['.sheet-body'],
       width: 600,
@@ -30,11 +27,8 @@ export default class SettingConfigurator extends FormApplication<
     };
   }
 
-  /**
-   * @override
-   */
-  getData() {
-    const settingFields = game.settings.get('swade', 'settingFields') as any;
+  getData(): any {
+    const settingFields = game.settings.get('swade', 'settingFields');
     const data = {
       settingRules: {},
       actorSettingStats: settingFields.actor,
@@ -176,6 +170,7 @@ export default class SettingConfigurator extends FormApplication<
     }
     return attributes;
   }
+
   private _buildCoreSkillPackChoices() {
     const retVal = {};
 
