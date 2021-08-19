@@ -384,3 +384,6 @@ SWADE.CharacterSummary: Charakterzusammenfassung
 SWADE.CopyHtml: HTML Kopieren
 SWADE.CopyMarkdown: Markdown Kopieren
 SWADE.InitCardDeck: Kartendeck für Initiative
+SWADE.Metric: Metrisch
+SWADE.Imperial: Imperial
+SWADE.WeightUnitLabel: Gewichtseinheit

@@ -386,3 +386,7 @@ SWADE.CharacterSummary: Character Summary
 SWADE.CopyHtml: Copy HTML
 SWADE.CopyMarkdown: Copy Markdown
 SWADE.InitCardDeck: Card Deck to use for Initiative
+SWADE.Imperial: Imperial
+SWADE.Metric: Metric
+SWADE.WeightUnitLabel: Unit of weight
+SWADE.WeightUnitDesc: Lorem Ipsum
