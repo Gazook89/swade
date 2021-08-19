@@ -379,9 +379,10 @@ SWADE.CardValue: Value
 SWADE.CardSuit: Suit
 SWADE.IsJoker: Is Joker
 SWADE.OpenACEditor: Open in Action Card Editor
-SWADE.Yes: Yes
-SWADE.No: No
+SWADE.Yes: 'Yes'
+SWADE.No: 'No'
 SWADE.ShowCharacterSummary: Show Character Summary
 SWADE.CharacterSummary: Character Summary
 SWADE.CopyHtml: Copy HTML
 SWADE.CopyMarkdown: Copy Markdown
+SWADE.InitCardDeck: Card Deck to use for Initiative

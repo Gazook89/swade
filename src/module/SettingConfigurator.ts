@@ -1,9 +1,12 @@
 import { SWADE } from './config';
 
-export default class SettingConfigurator extends FormApplication {
+export default class SettingConfigurator extends FormApplication<
+  FormApplication.Options,
+  any
+> {
   config: any;
   settingStats: any;
-  constructor(object = {}, options?: Application.RenderOptions) {
+  constructor(object = {}, options) {
     super(object, options);
     this.config = SWADE.settingConfig;
   }
@@ -30,7 +33,7 @@ export default class SettingConfigurator extends FormApplication {
   /**
    * @override
    */
-  getData(): any {
+  getData() {
     const settingFields = game.settings.get('swade', 'settingFields') as any;
     const data = {
       settingRules: {},
@@ -100,8 +103,9 @@ export default class SettingConfigurator extends FormApplication {
 
   async _resetSettings() {
     for (const setting of this.config.settings) {
-      const resetValue = game.settings.settings.get(`swade.${setting}`)!
-        .default;
+      const resetValue = game.settings.settings.get(
+        `swade.${setting}`,
+      )!.default;
       if (game.settings.get('swade', setting) !== resetValue) {
         await game.settings.set('swade', setting, resetValue);
       }

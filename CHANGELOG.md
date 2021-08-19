@@ -22,6 +22,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [Unreleased v0.21.0]
+
+### Added
+
+- Added encumbrance limit and current capacity to actor data model under `data.details.encumbrance`
+- Added additional translation strings
+
 ## [v0.20.4]
 
 ### Added
