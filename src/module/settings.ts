@@ -145,7 +145,7 @@ export function registerSettingRules() {
     choices: {
       currency: 'SWADE.Currency',
       wealthDie: 'SWADE.WealthDie',
-      none: 'SWADE.NoneOther',
+      none: 'SWADE.WealthSelectionNoneOther',
     },
     default: 'currency',
     config: false,
