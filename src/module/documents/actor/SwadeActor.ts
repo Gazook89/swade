@@ -8,7 +8,7 @@ import SwadeDice from '../../dice';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
-import { SwadeActorDataSource } from './actor-data-source';
+import { SwadeActorDataSource, TraitDie } from './actor-data-source';
 
 declare global {
   interface DocumentClassConfig {
@@ -110,14 +110,8 @@ export default class SwadeActor extends Actor {
     if (this.data.type === 'vehicle') return;
 
     //die type bounding for attributes
-    for (const attribute in this.data.data.attributes) {
-      const key = `data.attributes.${attribute}.die.sides`;
-      const sides = getProperty(this.data, key);
-      if (sides < 4 && sides !== 1) {
-        setProperty(this.data, key, 4);
-      } else if (sides > 12) {
-        setProperty(this.data, key, 12);
-      }
+    for (const attribute of Object.values(this.data.data.attributes)) {
+      attribute.die = this._boundTraitDie(attribute.die);
     }
 
     //modify pace with wounds
@@ -559,25 +553,23 @@ export default class SwadeActor extends Actor {
     return retVal;
   }
 
-  /**
-   * Calculates the maximum carry capacity based on the strength die and any adjustment steps
-   */
+  /** Calculates the maximum carry capacity based on the strength die and any adjustment steps */
   calcMaxCarryCapacity(): number {
     if (this.data.type === 'vehicle') return 0;
-    const strengthDie = this.data.data.attributes.strength.die;
-    let stepAdjust = this.data.data.attributes.strength.encumbranceSteps * 2;
-
-    //make sure the steps are not adjusted down
-    stepAdjust = Math.max(stepAdjust, 0);
-
+    const unit = game.settings.get('swade', 'weightUnit');
+    const strength = deepClone(this.data.data.attributes.strength);
+    const stepAdjust = Math.max(strength.encumbranceSteps * 2, 0);
+    strength.die.sides += stepAdjust;
     //bound the adjusted strenght die to 12
-    const encumbDie = Math.min(strengthDie.sides + stepAdjust, 12);
+    const encumbDie = this._boundTraitDie(strength.die);
 
-    let capacity = 20 + 10 * (encumbDie - 4);
-    if (strengthDie.modifier > 0) {
-      capacity = capacity + 20 * strengthDie.modifier;
+    if (unit === 'imperial') {
+      return this._calcImperialCapacity(encumbDie);
+    } else if (unit === 'metric') {
+      return this._calcMetricCapacity(encumbDie);
+    } else {
+      throw new Error(`Value ${unit} is an unkown value!`);
     }
-    return capacity;
   }
 
   calcInventoryWeight(): number {
@@ -588,8 +580,8 @@ export default class SwadeActor extends Actor {
       ...this.itemTypes.gear,
     ];
     let retVal = 0;
-    items.forEach((i: any) => {
-      retVal += i.data.weight * i.data.quantity;
+    items.forEach((i) => {
+      retVal += i.data.data['weight'] * i.data.data['quantity'];
     });
     return retVal;
   }
@@ -627,10 +619,8 @@ export default class SwadeActor extends Actor {
     return parryTotal;
   }
 
-  /**
-   * Helper Function for Vehicle Actors, to roll Maneuevering checks
-   */
-  async rollManeuverCheck(event: any = null) {
+  /** Helper Function for Vehicle Actors, to roll Maneuevering checks */
+  async rollManeuverCheck() {
     if (this.data.type !== 'vehicle') return;
     const driver = await this.getDriver();
 
@@ -650,8 +640,8 @@ export default class SwadeActor extends Actor {
     let totalHandling: number | string;
     totalHandling = handling + wounds;
 
+    //TODO Make this prettier
     // Calculate handling
-
     //Handling is capped at a certain penalty
     if (totalHandling < SWADE.vehicles.maxHandlingPenalty) {
       totalHandling = SWADE.vehicles.maxHandlingPenalty;
@@ -661,14 +651,13 @@ export default class SwadeActor extends Actor {
     }
 
     const options = {
-      event: event,
       additionalMods: [totalHandling],
     };
 
     //Find the operating skill
     const skill = driver.items.find(
       (i) => i.type === 'skill' && i.name === skillName,
-    ) as SwadeItem;
+    );
 
     if (skill) {
       driver.rollSkill(skill.id!, options);
@@ -763,6 +752,23 @@ export default class SwadeActor extends Actor {
       modifiers: ['x', ...modifiers],
       options: { flavor: flavor.replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '') },
     });
+  }
+
+  /**
+   * Thus
+   * @param die The die to adjust
+   * @returns the properly adjusted trait die
+   */
+  private _boundTraitDie(die: TraitDie): TraitDie {
+    const sides = die.sides;
+    if (sides < 4 && sides !== 1) {
+      die.sides = 4;
+    } else if (sides > 12) {
+      //const difference = sides - 12;
+      die.sides = 12;
+      //die.modifier += difference / 2;
+    }
+    return die;
   }
 
   private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
@@ -861,6 +867,16 @@ export default class SwadeActor extends Actor {
     }
 
     return [...mods.filter((m) => m.value)];
+  }
+
+  private _calcImperialCapacity(strength: TraitDie): number {
+    const modifier = Math.max(strength.modifier, 0);
+    return (strength.sides / 2 - 1 + modifier) * 20;
+  }
+
+  private _calcMetricCapacity(strength: TraitDie): number {
+    const modifier = Math.max(strength.modifier, 0);
+    return (strength.sides / 2 - 1 + modifier) * 10;
   }
 
   async _preCreate(

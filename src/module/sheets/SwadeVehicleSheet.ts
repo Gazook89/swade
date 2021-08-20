@@ -151,7 +151,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     //Maneuver Check
     html
       .find('#maneuverCheck')
-      .on('click', (event) => this.actor.rollManeuverCheck(event));
+      .on('click', () => this.actor.rollManeuverCheck());
   }
 
   /**

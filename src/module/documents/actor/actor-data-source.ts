@@ -6,6 +6,15 @@ declare global {
   }
 }
 
+export interface TraitDie {
+  sides: number;
+  modifier: number;
+}
+
+export interface WildDie {
+  sides: number;
+}
+
 export type SwadeActorDataSource =
   | SwadeCharacterDataSource
   | SwadeNpcDataSource
@@ -29,52 +38,27 @@ interface SwadeVehicleDataSource {
 export interface CharacterDataSourceData {
   attributes: {
     agility: {
-      die: {
-        sides: number;
-        modifier: number;
-      };
-      'wild-die': {
-        sides: number;
-      };
+      die: TraitDie;
+      'wild-die': WildDie;
     };
     smarts: {
-      die: {
-        sides: number;
-        modifier: number;
-      };
-      'wild-die': {
-        sides: number;
-      };
+      die: TraitDie;
+      'wild-die': WildDie;
       animal: boolean;
     };
     spirit: {
-      die: {
-        sides: number;
-        modifier: number;
-      };
-      'wild-die': {
-        sides: number;
-      };
+      die: TraitDie;
+      'wild-die': WildDie;
       unShakeBonus: number;
     };
     strength: {
-      die: {
-        sides: number;
-        modifier: number;
-      };
-      'wild-die': {
-        sides: number;
-      };
+      die: TraitDie;
+      'wild-die': WildDie;
       encumbranceSteps: number;
     };
     vigor: {
-      die: {
-        sides: number;
-        modifier: number;
-      };
-      'wild-die': {
-        sides: number;
-      };
+      die: TraitDie;
+      'wild-die': WildDie;
     };
   };
   stats: {
