@@ -38,7 +38,7 @@ export default class ActionCardEditor extends FormApplication {
       ...super.defaultOptions,
       id: SWADE.actionCardEditor.id,
       title: game.i18n.localize('SWADE.ActionCardEditor'),
-      template: 'systems/swade/templates/action-card-editor.html',
+      template: 'systems/swade/templates/action-card-editor.hbs',
       classes: ['swade', 'action-card-editor'],
       scrollY: ['.card-list'],
       width: 600,
