@@ -12,6 +12,7 @@ import SwadeEntityTweaks from './module/dialog/entity-tweaks';
 import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
+import SwadeActiveEffect from './module/documents/SwadeActiveEffect';
 import SwadeCombat from './module/documents/SwadeCombat';
 import SwadeCombatant from './module/documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
@@ -62,6 +63,7 @@ Hooks.once('init', () => {
   CONFIG.Item.documentClass = SwadeItem;
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.Combatant.documentClass = SwadeCombatant;
+  CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
 
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
