@@ -1,7 +1,7 @@
 <section class="flexrow">
   <div>
     {{localize "SWADE.CarryWeight"}}
-    <strong>{{data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}}</strong>
+    <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}}</strong>
   </div>
   <div class="form-group currency">
     {{#if (eq settingrules.wealthType "currency")}}
@@ -66,7 +66,7 @@
       </span>
       <span class="ap">{{item.data.ap}}</span>
       <span class="note">{{enrich item.data.notes}}</span>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="weight">{{formatNumber (times item.data.weight item.data.quantity)}}</span>
       <span class="item-controls">
         {{#if ../owner}}
         <button
@@ -120,7 +120,7 @@
       <span class="bonus"> {{item.data.armor}} </span>
       <span class="min-str">{{item.data.minStr}}</span>
       <span class="note">{{enrich item.data.notes}}</span>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="weight">{{formatNumber (times item.data.weight item.data.quantity)}}</span>
       <span class="item-controls">
         {{#if ../owner}}
         <button
@@ -173,7 +173,7 @@
       </button>
       <span class="parry">{{item.data.parry}}</span>
       <span class="cover">{{enrich item.data.cover}}</span>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="weight">{{formatNumber (times item.data.weight item.data.quantity)}}</span>
       <span class="item-controls">
         {{#if ../owner}}
         <button
@@ -218,7 +218,7 @@
       >
         (x{{item.data.quantity}}) {{item.name}}
       </button>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="weight">{{formatNumber (times item.data.weight item.data.quantity)}}</span>
       <span class="item-controls">
         {{#if ../owner}} {{#if item.data.equippable}}
         <button
