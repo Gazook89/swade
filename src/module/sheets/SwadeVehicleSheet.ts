@@ -30,7 +30,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   get template() {
     // Later you might want to return a different template
     // based on user permissions.
-    return 'systems/swade/templates/actors/vehicle-sheet.html';
+    return 'systems/swade/templates/actors/vehicle-sheet.hbs';
   }
 
   activateListeners(html: JQuery<HTMLElement>) {

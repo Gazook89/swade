@@ -1,31 +1,31 @@
 export const preloadHandlebarsTemplates = async function () {
   const templatePaths = [
     //Character Sheets
-    'systems/swade/templates/actors/npc-sheet.html',
-    'systems/swade/templates/actors/vehicle-sheet.html',
+    'systems/swade/templates/actors/npc-sheet.hbs',
+    'systems/swade/templates/actors/vehicle-sheet.hbs',
 
     //NPC partials
-    'systems/swade/templates/actors/partials/attributes.html',
-    'systems/swade/templates/actors/partials/npc-summary-tab.html',
-    'systems/swade/templates/actors/partials/powers-tab.html',
+    'systems/swade/templates/actors/partials/attributes.hbs',
+    'systems/swade/templates/actors/partials/npc-summary-tab.hbs',
+    'systems/swade/templates/actors/partials/powers-tab.hbs',
     'systems/swade/templates/setting-fields.hbs',
     'systems/swade/templates/shared-partials/action-card.hbs',
 
     //Vehicle Partials
-    'systems/swade/templates/actors/vehicle-partials/summary-tab.html',
-    'systems/swade/templates/actors/vehicle-partials/cargo-tab.html',
-    'systems/swade/templates/actors/vehicle-partials/description-tab.html',
-    'systems/swade/templates/actors/vehicle-partials/vitals.html',
+    'systems/swade/templates/actors/vehicle-partials/summary-tab.hbs',
+    'systems/swade/templates/actors/vehicle-partials/cargo-tab.hbs',
+    'systems/swade/templates/actors/vehicle-partials/description-tab.hbs',
+    'systems/swade/templates/actors/vehicle-partials/vitals.hbs',
 
     //Gear Cards
-    'systems/swade/templates/actors/partials/weapon-card.html',
-    'systems/swade/templates/actors/partials/armor-card.html',
-    'systems/swade/templates/actors/partials/powers-card.html',
-    'systems/swade/templates/actors/partials/shield-card.html',
-    'systems/swade/templates/actors/partials/misc-card.html',
+    'systems/swade/templates/actors/partials/weapon-card.hbs',
+    'systems/swade/templates/actors/partials/armor-card.hbs',
+    'systems/swade/templates/actors/partials/powers-card.hbs',
+    'systems/swade/templates/actors/partials/shield-card.hbs',
+    'systems/swade/templates/actors/partials/misc-card.hbs',
 
     //die type list
-    'systems/swade/templates/die-sides-options.html',
+    'systems/swade/templates/die-sides-options.hbs',
     'systems/swade/templates/attribute-select.hbs',
 
     // Chat
