@@ -26,7 +26,7 @@
         <span class="checkmark"></span>
       </label>
     </div>
-    {{/if}} {{> "systems/swade/templates/items/partials/description.html"}}
+    {{/if}} {{> "systems/swade/templates/items/partials/description.hbs"}}
     <br />
     {{#if (eq data.data.subtype "race")}}
     <header class="header-field flexrow">
@@ -34,7 +34,7 @@
     </header>
     {{{displayEmbedded data.flags.swade.embeddedAbilities}}} {{/if}} {{>
     "systems/swade/templates/setting-fields.html"}} {{>
-    "systems/swade/templates/items/partials/ae-header.html"}} {{>
+    "systems/swade/templates/items/partials/ae-header.hbs"}} {{>
     "systems/swade/templates/effect-list.html"}}
   </main>
 </form>
