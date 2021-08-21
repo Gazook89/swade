@@ -9,7 +9,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/actors/partials/npc-summary-tab.html',
     'systems/swade/templates/actors/partials/powers-tab.html',
     'systems/swade/templates/setting-fields.html',
-    'systems/swade/templates/shared-partials/action-card.html',
+    'systems/swade/templates/shared-partials/action-card.hbs',
 
     //Vehicle Partials
     'systems/swade/templates/actors/vehicle-partials/summary-tab.html',
@@ -32,8 +32,8 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/chat/roll-formula.html',
 
     //Items
-    'systems/swade/templates/items/partials/header.html',
-    'systems/swade/templates/items/partials/header-delete.html',
+    'systems/swade/templates/items/partials/header.hbs',
+    'systems/swade/templates/items/partials/header-delete.hbs',
     'systems/swade/templates/items/partials/description.html',
     'systems/swade/templates/items/partials/actions.html',
     'systems/swade/templates/items/partials/ae-header.html',
@@ -41,7 +41,7 @@ export const preloadHandlebarsTemplates = async function () {
 
     //official sheet
     //main sheet
-    'systems/swade/templates/official/sheet.html',
+    'systems/swade/templates/official/sheet.hbs',
 
     //tabs
     'systems/swade/templates/official/tabs/summary.hbs',
@@ -51,10 +51,10 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/official/tabs/description.hbs',
 
     //misc partials
-    'systems/swade/templates/official/partials/attributes.html',
-    'systems/swade/templates/official/partials/item-card.html',
-    'systems/swade/templates/official/partials/skill-card.html',
-    'systems/swade/templates/official/partials/setting-fields.html',
+    'systems/swade/templates/official/partials/attributes.hbs',
+    'systems/swade/templates/official/partials/item-card.hbs',
+    'systems/swade/templates/official/partials/skill-card.hbs',
+    'systems/swade/templates/official/partials/setting-fields.hbs',
 
     //Sidebar
     'systems/swade/templates/sidebar/combat-tracker.hbs',

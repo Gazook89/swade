@@ -21,6 +21,26 @@ export default class SwadeItem extends Item {
     return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
   }
 
+  get hasAmmoManagement(): boolean {
+    const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    return (
+      ammoManagement &&
+      this.data.type === 'weapon' &&
+      !this.isMeleeWeapon &&
+      !this.data.data.autoReload
+    );
+  }
+
+  get hasReloadButton(): boolean {
+    const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    return (
+      ammoManagement &&
+      this.data.type === 'weapon' &&
+      this.data.data.shots > 0 &&
+      !this.data.data.autoReload
+    );
+  }
+
   rollDamage(options: IRollOptions = {}) {
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
@@ -28,7 +48,7 @@ export default class SwadeItem extends Item {
     } else {
       return null;
     }
-    const actor = (this.actor as unknown) as SwadeActor;
+    const actor = this.actor as unknown as SwadeActor;
     const label = this.name;
     let ap = getProperty(this.data, 'data.ap');
 

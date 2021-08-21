@@ -1,16 +1,16 @@
 <div
   class="swade chat-card item-card"
-  data-actor-id="{{actor._id}}"
-  data-item-id="{{_id}}"
+  data-actor-id="{{actor.id}}"
+  data-item-id="{{id}}"
   data-token-id="{{tokenId}}"
 >
-  {{#unless (isEmpty data.notes)}}
+  {{#unless (isEmpty data.data.notes)}}
   <div class="chips">
     <p>
       <span class="bold"
         ><i class="fas fa-sticky-note"></i> {{localize "SWADE.Notes"}}:</span
       >
-      {{data.notes}}
+      {{data.data.notes}}
     </p>
   </div>
   {{/unless}} {{#if (eq type "armor")}}
@@ -19,21 +19,21 @@
       <span class="bold"
         ><i class="fas fa-shield-alt"></i> {{localize "SWADE.Armor"}}:</span
       >
-      {{data.armor}}
+      {{data.data.armor}}
     </p>
   </div>
-  {{/if}} {{#if (and (eq type "weapon") data.range)}}
+  {{/if}} {{#if (and (eq type "weapon") data.data.range)}}
   <div class="chips">
     <p>
       <span class="bold"><i class="fas fa-ruler-combined"></i> Range:</span>
-      {{data.range}}
+      {{data.data.range}}
     </p>
   </div>
-  {{/if}} {{#if (and (eq type "weapon") (gt data.ap '0'))}}
+  {{/if}} {{#if (and (eq type "weapon") (gt data.data.ap '0'))}}
   <div class="chips">
     <p>
       <span class="bold"><i class="fas fa-shield-alt"></i> AP:</span>
-      {{data.ap}}
+      {{data.data.ap}}
     </p>
   </div>
   {{/if}} {{#if (eq type "shield")}}
@@ -42,7 +42,7 @@
       <span class="bold"
         ><i class="fas fa-shield-alt"></i> {{localize "SWADE.Parry"}}:</span
       >
-      {{data.parry}}
+      {{data.data.parry}}
     </p>
   </div>
   {{/if}} {{#if hasAmmoManagement}}
@@ -51,11 +51,11 @@
       <span class="bold"
         ><i class="fas fa-dot-circle"></i> {{localize "SWADE.Mag"}}:</span
       >
-      <span class="current-shots">{{currentShots}}</span>&nbsp;/&nbsp;<span
+      <span class="current-shots">{{data.data.currentShots}}</span>&nbsp;/&nbsp;<span
         class="max-shots"
-        >{{shots}}</span
+        >{{data.data.shots}}</span
       >
-      {{#if data.ammo}}&nbsp;- &nbsp;{{data.ammo}}{{/if}}
+      {{#if data.data.ammo}}&nbsp;- &nbsp;{{data.data.ammo}}{{/if}}
     </p>
   </div>
   {{/if}}
@@ -72,7 +72,7 @@
   <div class="pp-counter">
     <p>
       <span class="bold"
-        >{{#if data.arcane}}{{data.arcane}} {{/if}}{{localize
+        >{{#if data.data.arcane}}{{data.data.arcane}} {{/if}}{{localize
         "SWADE.PP"}}:</span
       >
       <span class="current-pp">{{powerPoints.current}}</span>&nbsp;/&nbsp;<span
@@ -90,7 +90,7 @@
         <label>
           <strong>{{localize "SWADE.PPCost"}}: </strong>
         </label>
-        <input type="number" class="pp-adjust" value="{{data.pp}}" />
+        <input type="number" class="pp-adjust" value="{{data.data.pp}}" />
       </span>
       {{#unless powersTab}} {{#unless ../../../settingrules.noPowerPoints}}
       <span class="flexrow" style="display: flex">
@@ -129,11 +129,11 @@
     <h4 class="actions-subheading">
       <i class="fas fa-tint"></i> {{localize "SWADE.DmgRolls"}}
     </h4>
-    {{/if}} {{/unless}} {{#if data.damage}}
+    {{/if}} {{/unless}} {{#if data.data.damage}}
     <button class="card-button" data-action="damage">
-      {{#if powersTab}}<i class="fas fa-tint"></i> {{/if}}{{data.damage}}
+      {{#if powersTab}}<i class="fas fa-tint"></i> {{/if}}{{data.data.damage}}
     </button>
-    {{/if}} {{#if hasAdditionalActions}} {{#each data.actions.additional as
+    {{/if}} {{#if hasAdditionalActions}} {{#each data.data.actions.additional as
     |attr key|}} {{#if (eq attr.type "damage")}}
     <button class="card-button" data-action="{{key}}">
       {{#if ../powersTab}}<i class="fas fa-tint"></i> {{/if}}{{attr.name}}
