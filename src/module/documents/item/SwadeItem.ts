@@ -305,7 +305,6 @@ export default class SwadeItem extends Item {
     if (rollMode === 'selfroll') chatData.whisper = [game.user!.id!];
     if (rollMode === 'blindroll') chatData.blind = true;
 
-    console.log(chatData);
     // Create the chat message
     const chatCard = await ChatMessage.create(chatData);
     Hooks.call('swadeChatCard', this.actor, this, chatCard, game.user!.id);
