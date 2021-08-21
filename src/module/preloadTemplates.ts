@@ -8,7 +8,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/actors/partials/attributes.html',
     'systems/swade/templates/actors/partials/npc-summary-tab.html',
     'systems/swade/templates/actors/partials/powers-tab.html',
-    'systems/swade/templates/setting-fields.html',
+    'systems/swade/templates/setting-fields.hbs',
     'systems/swade/templates/shared-partials/action-card.hbs',
 
     //Vehicle Partials
@@ -26,7 +26,7 @@ export const preloadHandlebarsTemplates = async function () {
 
     //die type list
     'systems/swade/templates/die-sides-options.html',
-    'systems/swade/templates/attribute-select.html',
+    'systems/swade/templates/attribute-select.hbs',
 
     // Chat
     'systems/swade/templates/chat/roll-formula.html',
@@ -37,7 +37,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/items/partials/description.hbs',
     'systems/swade/templates/items/partials/actions.hbs',
     'systems/swade/templates/items/partials/ae-header.hbs',
-    'systems/swade/templates/effect-list.html',
+    'systems/swade/templates/effect-list.hbs',
 
     //official sheet
     //main sheet
