@@ -42,6 +42,7 @@ SWADE.Derived: Derived Stats
 SWADE.AttrAgi: Agility
 SWADE.AttrSma: Smarts
 SWADE.AnimalSmarts: Animal Smarts
+SWADE.AnimalSmartsMarker: A
 SWADE.AttrSpr: Spirit
 SWADE.AttrStr: Strength
 SWADE.AttrVig: Vigor
