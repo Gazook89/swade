@@ -2,7 +2,6 @@ import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/fo
 import { ItemAction } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import SwadeDice from '../../dice';
-import SwadeActor from '../actor/SwadeActor';
 
 declare global {
   interface DocumentClassConfig {
@@ -49,7 +48,7 @@ export default class SwadeItem extends Item {
     } else {
       return null;
     }
-    const actor = this.actor as unknown as SwadeActor;
+    const actor = this.actor!;
     const label = this.name;
     let ap = getProperty(this.data, 'data.ap');
 
