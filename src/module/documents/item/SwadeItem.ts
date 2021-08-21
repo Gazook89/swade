@@ -223,7 +223,8 @@ export default class SwadeItem extends Item {
     // Basic template rendering data
     const token = this.actor!.token;
 
-    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
+    //    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
+    const tokenId = token ? token.id : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const hasAmmoManagement =
       this.type === 'weapon' &&
@@ -282,6 +283,7 @@ export default class SwadeItem extends Item {
       speaker: {
         actor: this.actor!.id,
         token: tokenId,
+        scene: game.scenes?.active?.id,
         alias: this.actor!.name,
       },
       flags: { 'core.canPopout': true },
@@ -301,6 +303,7 @@ export default class SwadeItem extends Item {
     if (rollMode === 'selfroll') chatData['whisper'] = [game.user!.id];
     if (rollMode === 'blindroll') chatData['blind'] = true;
 
+    console.log(chatData);
     // Create the chat message
     const chatCard = await ChatMessage.create(chatData);
     Hooks.call('swadeChatCard', this.actor, this, chatCard, game.user!.id);
