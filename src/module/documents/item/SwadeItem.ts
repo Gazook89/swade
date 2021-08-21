@@ -271,7 +271,7 @@ export default class SwadeItem extends Item {
     };
 
     // Render the chat card template
-    const template = 'systems/swade/templates/chat/item-card.html';
+    const template = 'systems/swade/templates/chat/item-card.hbs';
     const html = await renderTemplate(template, templateData);
 
     // Basic chat message data

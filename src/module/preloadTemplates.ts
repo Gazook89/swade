@@ -29,7 +29,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/attribute-select.hbs',
 
     // Chat
-    'systems/swade/templates/chat/roll-formula.html',
+    'systems/swade/templates/chat/roll-formula.hbs',
 
     //Items
     'systems/swade/templates/items/partials/header.hbs',
