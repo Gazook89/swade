@@ -73,14 +73,14 @@
             {{localize "SWADE.Trapping"}}: {{data.data.trapping}}
           </div>
           <div class="enriched-description">{{enrich data.data.description}}</div>
-          {{> "systems/swade/templates/shared-partials/action-card.hbs"
-          powersTab=true}}
+          {{> "systems/swade/templates/shared-partials/action-card.hbs" powersTab=true}}
         </div>
       </div>
     </li>
     {{/unless}} {{/each}}
   </ul>
-  {{/if}} {{#each powers.arcanes as |arcane key|}}
+  {{/if}} 
+  {{#each powers.arcanes as |arcane key|}}
   <header class="section-header">
     <span class="name">{{key}}</span>
     {{#unless ../settingrules.noPowerPoints}}
@@ -144,8 +144,7 @@
             {{localize "SWADE.Trapping"}}: {{data.data.trapping}}
           </div>
           <div class="enriched-description">{{enrich data.data.description}}</div>
-          {{> "systems/swade/templates/shared-partials/action-card.hbs"
-          powersTab=true}}
+          {{> "systems/swade/templates/shared-partials/action-card.hbs" powersTab=true}}
         </div>
       </div>
     </li>

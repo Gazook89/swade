@@ -380,7 +380,7 @@ export default class CharacterSheet extends ActorSheet {
       const button = ev.currentTarget;
       const action = button.dataset.action!;
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      const item = this.actor.items.get(itemId)!;
+      const item = this.actor.items.get(itemId, { strict: true });
       const additionalMods = new Array<string>();
       const ppToAdjust = $(button)
         .parents('.chat-card.item-card')
@@ -412,7 +412,7 @@ export default class CharacterSheet extends ActorSheet {
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
         const adjustment = button.getAttribute('data-adjust') as string;
-        const power = this.actor.items.get(itemId)!;
+        const power = this.actor.items.get(itemId, { strict: true });
         let key = 'data.powerPoints.value';
         const arcane = getProperty(power.data, 'data.arcane');
         if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -427,25 +427,24 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     //Additional Stats roll
-    html.find('.additional-stats .roll').on('click', (ev) => {
+    html.find('.additional-stats .roll').on('click', async (ev) => {
       const button = ev.currentTarget;
-      const stat = button.dataset.stat;
-      const statData = getProperty(
-        this.actor.data,
-        `data.additionalStats.${stat}`,
-      ) as AdditionalStat;
+      const stat = button.dataset.stat!;
+      const statData = this.actor.data.data.additionalStats[stat]!;
       let modifier = statData.modifier || '';
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
       //return early if there's no data to roll
       if (!statData.value) return;
-      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate({ async: false })
-        .toMessage({
-          speaker: ChatMessage.getSpeaker(),
-          flavor: statData.label,
-        });
+      const roll = await new Roll(
+        `${statData.value}${modifier}`,
+        this.actor.getRollData(),
+      ).evaluate({ async: true });
+      roll.toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: statData.label,
+      });
     });
 
     //Wealth Die Roll
@@ -480,35 +479,29 @@ export default class CharacterSheet extends ActorSheet {
     for (const type in this.actor.itemTypes) {
       data.itemsByType[type] = this.actor.items.filter((i) => i.type === type);
     }
+    for (const item of Array.from(this.actor.items.values()) as any[]) {
+      // Basic template rendering data
+      const data = item.data;
+      const actions = item.data.data?.actions?.additional ?? {};
+      item.actions = [];
 
-    for (const type of Object.keys(this.actor.itemTypes)) {
-      for (const item of this.actor.itemTypes[type]) {
-        // Basic template rendering data
-
-        const actions = item.data.data?.actions?.additional;
-        item.hasAdditionalActions =
-          !!actions && Object.keys(actions).length > 0;
-
-        item.actions = [];
-
-        for (const action in actions) {
-          item.actions.push({
-            key: action,
-            type: actions[action].type,
-            name: actions[action].name,
-          });
-        }
-        item.hasDamage =
-          !!getProperty(item, 'data.damage') ||
-          !!item.actions.find((action) => action.type === 'damage');
-        item.skill =
-          getProperty(item, 'data.actions.skill') ||
-          !!item.actions.find((action) => action.type === 'skill');
-        item.hasSkillRoll =
-          ['weapon', 'power', 'shield'].includes(item.type) &&
-          !!getProperty(item, 'data.actions.skill');
-        item.powerPoints = this.getPowerPoints(item);
+      for (const action in actions) {
+        item.actions.push({
+          key: action,
+          type: actions[action].type,
+          name: actions[action].name,
+        });
       }
+      item.hasDamage =
+        !!getProperty(data, 'data.damage') ||
+        !!item.actions.find((action) => action.type === 'damage');
+      item.skill =
+        getProperty(data, 'data.actions.skill') ||
+        !!item.actions.find((action) => action.type === 'skill');
+      item.hasSkillRoll =
+        ['weapon', 'power', 'shield'].includes(data.type) &&
+        !!getProperty(data, 'data.actions.skill');
+      item.powerPoints = this.getPowerPoints(data);
     }
 
     //sort skills alphabetically
@@ -532,16 +525,18 @@ export default class CharacterSheet extends ActorSheet {
     }
     data.hasAdditionalStatsFields = Object.keys(additionalStats).length > 0;
 
+    const powerFilter = (i) => i.data.type === 'power';
     //Deal with ABs and Powers
     const powers = {
       arcanes: {},
-      arcanesCount: this.actor.itemTypes.power
+      arcanesCount: this.actor.items
+        .filter(powerFilter)
         .map((p) => {
           return p.data.data['arcane'];
         })
         .filter(Boolean).length,
       hasPowersWithoutArcane:
-        this.actor.itemTypes.power.reduce((acc, cur) => {
+        this.actor.items.filter(powerFilter).reduce((acc, cur) => {
           if (cur.data.data['arcane']) {
             return acc;
           } else {
@@ -550,7 +545,7 @@ export default class CharacterSheet extends ActorSheet {
         }, 0) > 0,
     };
 
-    for (const power of this.actor.itemTypes.power) {
+    for (const power of this.actor.items.filter(powerFilter)) {
       if (power.data.type !== 'power') continue;
       const arcane = power.data.data.arcane;
       if (!arcane) continue;
