@@ -391,3 +391,8 @@ SWADE.Imperial: Imperial
 SWADE.Metric: Metric
 SWADE.WeightUnitLabel: Unit of weight
 SWADE.WeightUnitDesc: Lorem Ipsum
+SWADE.UseAttributeShorts: Use shortened attribute names
+SWADE.UseAttributeShortsDesc: >-
+  Activate this option if you want to see abbreviated attribute names on the pc and npc sheets,
+  i.e. Agi instead of Agility, Sma instead of Smarts, etc. You'll need to close and reopen all
+  open sheets for this option to take effect.
