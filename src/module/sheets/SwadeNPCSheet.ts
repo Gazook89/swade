@@ -160,6 +160,9 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
   getData() {
     const data: any = super.getData();
+    
+    // Progress attribute abbreviation toggle
+    data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
 
     // Everything below here is only needed if user is not limited
     if (this.actor.limited) return data;

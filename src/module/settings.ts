@@ -12,6 +12,7 @@ declare global {
       'swade.autoLinkWildcards': boolean;
       'swade.notifyBennies': boolean;
       'swade.hideNpcItemChatCards': boolean;
+      'swade.useAttributeShorts': boolean;
       'swade.coreSkills': string;
       'swade.coreSkillsCompendium': string;
       'swade.wealthType': 'currency' | 'wealthDie' | 'none';
@@ -112,6 +113,15 @@ export function registerSettings() {
     name: game.i18n.localize('SWADE.HideNpcItemChatCards'),
     hint: game.i18n.localize('SWADE.HideNpcItemChatCardsDesc'),
     default: true,
+    scope: 'world',
+    type: Boolean,
+    config: true,
+  });
+
+  game.settings.register('swade', 'useAttributeShorts', {
+    name: game.i18n.localize('SWADE.UseAttributeShorts'),
+    hint: game.i18n.localize('SWADE.UseAttributeShortsDesc'),
+    default: false,
     scope: 'world',
     type: Boolean,
     config: true,

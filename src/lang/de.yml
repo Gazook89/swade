@@ -390,3 +390,8 @@ SWADE.Metric: Metrisch
 SWADE.Imperial: Imperial
 SWADE.WeightUnitLabel: Gewichtseinheit
 SWADE.WeightUnitDesc: Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch) gerechnet werden
+SWADE.UseAttributeShorts: Attributsnamen abkürzen
+SWADE.UseAttributeShortsDesc: >-
+  Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen als Abkürzungen angegeben,
+  also Ges statt Geschicklichkeit, Ver statt Verstand, etc. Schließe und öffne alle offenen Bögen wenn du
+  diese Einstellung änderst.

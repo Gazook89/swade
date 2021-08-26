@@ -587,6 +587,10 @@ export default class CharacterSheet extends ActorSheet {
       wealthType: game.settings.get('swade', 'wealthType'),
       currencyName: game.settings.get('swade', 'currencyName'),
     };
+
+    // Progress attribute abbreviation toggle
+    data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
+
     return data;
   }
 
