@@ -479,6 +479,7 @@ export default class CharacterSheet extends ActorSheet {
     for (const type in this.actor.itemTypes) {
       data.itemsByType[type] = this.actor.items.filter((i) => i.type === type);
     }
+    const ammoManagement = game.settings.get('swade', 'ammoManagement');
     for (const item of Array.from(this.actor.items.values()) as any[]) {
       // Basic template rendering data
       const data = item.data;
@@ -500,7 +501,15 @@ export default class CharacterSheet extends ActorSheet {
         !!item.actions.find((action) => action.type === 'skill');
       item.hasSkillRoll =
         ['weapon', 'power', 'shield'].includes(data.type) &&
-        !!getProperty(data, 'data.actions.skill');
+        getProperty(data, 'data.actions.skill');
+      item.hasAmmoManagement =
+        ammoManagement &&
+        item.type === 'weapon' &&
+        !item.isMeleeWeapon &&
+        !data.data.autoReload;
+      item.hasReloadButton =
+        ammoManagement && data.data.shots > 0 && !data.data.autoReload;
+
       item.powerPoints = this.getPowerPoints(data);
     }
 

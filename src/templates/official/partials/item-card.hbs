@@ -12,7 +12,7 @@
     {{#if (eq type 'gear')}} 
       {{{enrich data.data.description}}} 
     {{else}} 
-      {{>"systems/swade/templates/shared-partials/action-card.hbs"}}
+      {{>"systems/swade/templates/shared-partials/action-card.hbs" item=this}}
     {{/if}}
   </div>
 </li>

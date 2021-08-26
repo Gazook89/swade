@@ -1,53 +1,52 @@
-{{#if powersTab}}{{log this}}{{/if}}
 <div
   class="swade chat-card item-card"
-  data-actor-id="{{actor.id}}"
-  data-item-id="{{id}}"
+  data-actor-id="{{item.actor.id}}"
+  data-item-id="{{item.id}}"
   data-token-id="{{tokenId}}"
 >
-  {{#if data.data.notes}}
+  {{#if item.data.data.notes}}
   <div class="chips">
     <p>
       <span class="bold">
         <i class="fas fa-sticky-note"></i> {{localize "SWADE.Notes"}}:
       </span>
-      {{data.data.notes}}
+      {{item.data.data.notes}}
     </p>
   </div>
   {{/if}} 
-  {{#if (eq type "armor")}}
+  {{#if (eq item.type "armor")}}
   <div class="chips">
     <p>
       <span class="bold">
         <i class="fas fa-shield-alt"></i> {{localize "SWADE.Armor"}}:
       </span>
-      {{data.data.armor}}
+      {{item.data.data.armor}}
     </p>
   </div>
   {{/if}} 
-  {{#if (and (eq type "weapon") data.data.range)}}
+  {{#if (and (eq item.type "weapon") item.data.data.range)}}
   <div class="chips">
     <p>
       <span class="bold"><i class="fas fa-ruler-combined"></i> Range:</span>
-      {{data.data.range}}
+      {{item.data.data.range}}
     </p>
   </div>
   {{/if}} 
-  {{#if (and (eq type "weapon") (gt data.data.ap '0'))}}
+  {{#if (and (eq item.type "weapon") (gt item.data.data.ap '0'))}}
   <div class="chips">
     <p>
       <span class="bold"><i class="fas fa-shield-alt"></i> AP:</span>
-      {{data.data.ap}}
+      {{item.data.data.ap}}
     </p>
   </div>
   {{/if}} 
-  {{#if (eq type "shield")}}
+  {{#if (eq item.type "shield")}}
   <div class="chips">
     <p>
       <span class="bold">
         <i class="fas fa-shield-alt"></i> {{localize "SWADE.Parry"}}:
         </span>
-      {{data.data.parry}}
+      {{item.data.data.parry}}
     </p>
   </div>
   {{/if}} {{#if hasAmmoManagement}}
@@ -56,11 +55,11 @@
       <span class="bold"
         ><i class="fas fa-dot-circle"></i> {{localize "SWADE.Mag"}}:</span
       >
-      <span class="current-shots">{{data.data.currentShots}}</span>&nbsp;/&nbsp;<span
+      <span class="current-shots">{{item.data.data.currentShots}}</span>&nbsp;/&nbsp;<span
         class="max-shots"
-        >{{data.data.shots}}</span
+        >{{item.data.data.shots}}</span
       >
-      {{#if data.data.ammo}}&nbsp;- &nbsp;{{data.data.ammo}}{{/if}}
+      {{#if item.data.data.ammo}}&nbsp;- &nbsp;{{item.data.data.ammo}}{{/if}}
     </p>
   </div>
   {{/if}}
@@ -73,12 +72,12 @@
     {{/if}}
   </div>
 
-  {{#if (eq type "power")}} 
+  {{#if (eq item.type "power")}} 
     {{#unless powersTab}}
       <div class="pp-counter">
         <p>
           <span class="bold">
-            {{#if data.data.arcane}}{{data.data.arcane}} {{/if}}{{localize "SWADE.PP"}}:
+            {{#if item.data.data.arcane}}{{item.data.data.arcane}} {{/if}}{{localize "SWADE.PP"}}:
           </span>
           <span class="current-pp">{{powerPoints.current}}</span>&nbsp;/&nbsp;<span
             class="max-pp"
@@ -90,13 +89,13 @@
   {{/if}}
 
   <div class="card-buttons">
-    {{#if (eq type "power")}}
+    {{#if (eq item.type "power")}}
     <span class="flexcol">
       <span class="flexrow" style="display: flex">
         <label>
           <strong>{{localize "SWADE.PPCost"}}: </strong>
         </label>
-        <input type="number" class="pp-adjust" value="{{data.data.pp}}" />
+        <input type="number" class="pp-adjust" value="{{item.data.data.pp}}" />
       </span>
       {{#unless powersTab}} {{#unless ../../../settingrules.noPowerPoints}}
       <span class="flexrow" style="display: flex">
@@ -141,15 +140,15 @@
       </h4>
       {{/if}} 
     {{/unless}}
-    {{#if data.data.damage}}
+    {{#if item.data.data.damage}}
     <button class="card-button" data-action="damage">
-      {{#if powersTab}}<i class="fas fa-tint"></i> {{/if}}{{data.data.damage}}
+      {{#if powersTab}}<i class="fas fa-tint"></i> {{/if}}{{item.data.data.damage}}
     </button>
     {{/if}}
-    {{#each data.data.actions.additional as |attr key|}} 
+    {{#each actions as |attr key|}} 
       {{#if (eq attr.type "damage")}}
-        <button class="card-button" data-action="{{key}}">
-          {{#if ../powersTab}}<i class="fas fa-tint"></i> {{/if}}{{attr.name}}
+        <button class="card-button" data-action="{{attr.key}}">
+          {{#if ../powersTab}}<i class="fas fa-tint"></i>{{/if}} {{attr.name}}
         </button>
       {{/if}} 
     {{/each}}

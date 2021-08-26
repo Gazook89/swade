@@ -73,7 +73,7 @@
             {{localize "SWADE.Trapping"}}: {{data.data.trapping}}
           </div>
           <div class="enriched-description">{{enrich data.data.description}}</div>
-          {{> "systems/swade/templates/shared-partials/action-card.hbs" powersTab=true}}
+          {{> "systems/swade/templates/shared-partials/action-card.hbs" item=this powersTab=true}}
         </div>
       </div>
     </li>
@@ -144,7 +144,7 @@
             {{localize "SWADE.Trapping"}}: {{data.data.trapping}}
           </div>
           <div class="enriched-description">{{enrich data.data.description}}</div>
-          {{> "systems/swade/templates/shared-partials/action-card.hbs" powersTab=true}}
+          {{> "systems/swade/templates/shared-partials/action-card.hbs" item=this powersTab=true}}
         </div>
       </div>
     </li>
