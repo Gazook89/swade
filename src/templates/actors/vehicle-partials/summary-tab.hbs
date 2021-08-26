@@ -1,11 +1,11 @@
 <section class="flexrow" id="driver-bar">
-  {{> "systems/swade/templates/actors/vehicle-partials/vitals.html"}}
+  {{> "systems/swade/templates/actors/vehicle-partials/vitals.hbs"}}
 </section>
 <div class="flexrow">
   {{!-- Left panel --}}
   <div class="gear">
     <section>
-      {{> "systems/swade/templates/setting-fields.html"}}
+      {{> "systems/swade/templates/setting-fields.hbs"}}
       <header class="header-field flexrow">
         <div>
           <span>{{localize "SWADE.Mods"}}</span>
@@ -18,7 +18,7 @@
         <ol class="gear-list items-list">
           {{#each itemsByType.gear}} {{#if data.isVehicular}} {{#if
           data.equipped}}{{>
-          "systems/swade/templates/actors/partials/misc-card.html"
+          "systems/swade/templates/actors/partials/misc-card.hbs"
           owner=../owner}} {{/if}} {{/if}} {{/each}}
         </ol>
       </span>
@@ -36,7 +36,7 @@
       <span class="quickaccess-list">
         <ol class="gear-list items-list">
           {{#each itemsByType.edge}} {{>
-          "systems/swade/templates/actors/partials/misc-card.html"
+          "systems/swade/templates/actors/partials/misc-card.hbs"
           owner=../owner}} {{/each}}
         </ol>
       </span>
@@ -55,7 +55,7 @@
       <span class="quickaccess-list">
         <ol class="gear-list items-list">
           {{#each itemsByType.hindrance}} {{>
-          "systems/swade/templates/actors/partials/misc-card.html"
+          "systems/swade/templates/actors/partials/misc-card.hbs"
           owner=../owner}} {{/each}}
         </ol>
       </span>
@@ -79,7 +79,7 @@
       <ol class="gear-list weapon-list">
         {{#each itemsByType.weapon as |weapon id|}} {{#if
         weapon.data.isVehicular}} {{#if weapon.data.equipped}} {{>
-        "systems/swade/templates/actors/partials/weapon-card.html"
+        "systems/swade/templates/actors/partials/weapon-card.hbs"
         owner=../owner}} {{/if}}{{/if}} {{/each}}
       </ol>
     </span>

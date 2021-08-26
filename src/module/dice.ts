@@ -39,7 +39,7 @@ export default class SwadeDice {
     flags,
   }: RollHelperData): Promise<Roll | null> {
     return new Promise(async (resolve) => {
-      const template = 'systems/swade/templates/chat/roll-dialog.html';
+      const template = 'systems/swade/templates/chat/roll-dialog.hbs';
       const dialogData = {
         formula: roll.formula,
         rollMode: game.settings.get('core', 'rollMode'),

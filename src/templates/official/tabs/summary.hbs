@@ -107,7 +107,7 @@
 </div>
 
 <span class="attributes primary">
-  {{> "systems/swade/templates/official/partials/attributes.html"}}
+  {{> "systems/swade/templates/official/partials/attributes.hbs"}}
 </span>
 <span class="attributes derived">
   <header class="section-header">{{localize "SWADE.Derived"}}</header>
@@ -199,9 +199,8 @@
       </button>
     </header>
     <ol class="skill-list">
-      {{#each sortedSkills as |skill|}} {{>
-      "systems/swade/templates/official/partials/skill-card.html"
-      owner=../owner}} {{/each}}
+      {{#each sortedSkills as |skill|}}{{>
+      "systems/swade/templates/official/partials/skill-card.hbs"}} {{/each}}
     </ol>
   </div>
   <div class="note-footer">&nbsp;</div>
@@ -209,13 +208,13 @@
 <span class="quickaccess note-box">
   <div class="note-header">&nbsp;</div>
   <div class="note-main">
-    {{> "systems/swade/templates/official/partials/setting-fields.html"}}
+    {{> "systems/swade/templates/official/partials/setting-fields.hbs"}}
     <header class="section-header">
       <span class="name">{{localize "SWADE.QuickAccess"}}</span>
       <button
         type="button"
         class="item-create controls"
-        data-type="choice"
+      data-type="choice"
         data-equipped="true"
         data-choices="weapon,power,armor,shield,effect"
       >
@@ -223,22 +222,22 @@
       </button>
     </header>
     <ul class="effects-list">
-      {{#each data.effects}}
+      {{#each actor.effects}}
       <li
-        class="flexrow {{#unless origin}}active-effect{{/unless}} {{#if disabled}}disabled-effect{{/if}}"
-        data-effect-id="{{_id}}"
+        class="flexrow {{#unless data.origin}}active-effect{{/unless}} {{#if data.disabled}}disabled-effect{{/if}}"
+        data-effect-id="{{id}}"
       >
-        <img src="{{icon}}" alt="{{label}}" class="effect-icon" />
+        <img src="{{data.icon}}" alt="{{data.label}}" class="effect-icon" />
         {{#if origin}}
         <button
           type="button"
-          class="effect-label {{#if origin}}effect-action{{/if}}"
+          class="effect-label {{#if data.origin}}effect-action{{/if}}"
           data-action="open-origin"
         >
           {{label}}
         </button>
         {{else}}
-        <span class="effect-label">{{label}}</span>
+        <span class="effect-label">{{data.label}}</span>
         {{/if}}
         <span class="effect-controls">
           <button type="button" class="effect-action" data-action="toggle">
@@ -255,30 +254,30 @@
       {{/each}}
     </ul>
     <ol class="quick-list">
-      {{#each itemsByType.weapon as |weapon|}} {{#if weapon.data.equipped}} {{>
-      "systems/swade/templates/official/partials/item-card.html"}} {{/if}}
+      {{#each actor.itemTypes.weapon}} {{#if data.data.equipped}} {{>
+      "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     {{#if actor.hasArcaneBackground}}
     <ol class="quick-list">
-      {{#each itemsByType.power as |power|}} {{#if power.data.equipped}} {{>
-      "systems/swade/templates/official/partials/item-card.html"}} {{/if}}
+      {{#each actor.itemTypes.power}} {{#if data.data.equipped}} {{>
+      "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     {{/if}}
     <ol class="quick-list">
-      {{#each itemsByType.armor as |armor|}} {{#if armor.data.equipped}} {{>
-      "systems/swade/templates/official/partials/item-card.html"}} {{/if}}
+      {{#each actor.itemTypes.armor}} {{#if data.data.equipped}} {{>
+      "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     <ol class="quick-list">
-      {{#each itemsByType.shield as |shield|}} {{#if shield.data.equipped}} {{>
-      "systems/swade/templates/official/partials/item-card.html"}} {{/if}}
+      {{#each actor.itemTypes.shield}} {{#if data.data.equipped}} {{>
+      "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     <ol class="quick-list">
-      {{#each itemsByType.gear as |gear|}}{{#if gear.data.equipped}}{{>
-      "systems/swade/templates/official/partials/item-card.html"}}
+      {{#each actor.itemTypes.gear}}{{#if data.data.equipped}}{{>
+      "systems/swade/templates/official/partials/item-card.hbs"}}
       {{/if}}{{/each}}
     </ol>
   </div>

@@ -1,7 +1,7 @@
+import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
 import { ItemAction } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import SwadeDice from '../../dice';
-import SwadeActor from '../actor/SwadeActor';
 
 declare global {
   interface DocumentClassConfig {
@@ -28,7 +28,7 @@ export default class SwadeItem extends Item {
     } else {
       return null;
     }
-    const actor = (this.actor as unknown) as SwadeActor;
+    const actor = this.actor!;
     const label = this.name;
     let ap = getProperty(this.data, 'data.ap');
 
@@ -203,7 +203,8 @@ export default class SwadeItem extends Item {
     // Basic template rendering data
     const token = this.actor!.token;
 
-    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
+    //    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
+    const tokenId = token ? token.id : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const hasAmmoManagement =
       this.type === 'weapon' &&
@@ -251,17 +252,18 @@ export default class SwadeItem extends Item {
     };
 
     // Render the chat card template
-    const template = 'systems/swade/templates/chat/item-card.html';
+    const template = 'systems/swade/templates/chat/item-card.hbs';
     const html = await renderTemplate(template, templateData);
 
     // Basic chat message data
-    const chatData = {
+    const chatData: ChatMessageDataConstructorData = {
       user: game.user!.id,
       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       content: html,
       speaker: {
-        actor: this.actor!.id,
+        actor: this.parent!.id,
         token: tokenId,
+        scene: game.scenes?.active?.id,
         alias: this.actor!.name,
       },
       flags: { 'core.canPopout': true },
@@ -271,15 +273,17 @@ export default class SwadeItem extends Item {
       game.settings.get('swade', 'hideNpcItemChatCards') &&
       this.actor!.data.type === 'npc'
     ) {
-      chatData['whisper'] = game.users!.filter((u: User) => u.isGM);
+      chatData.whisper = game.users!.filter((u) => u.isGM).map((u) => u.id!);
     }
 
     // Toggle default roll mode
-    const rollMode = game.settings.get('core', 'rollMode') as string;
+    const rollMode = game.settings.get('core', 'rollMode');
     if (['gmroll', 'blindroll'].includes(rollMode))
-      chatData['whisper'] = ChatMessage.getWhisperRecipients('GM');
-    if (rollMode === 'selfroll') chatData['whisper'] = [game.user!.id];
-    if (rollMode === 'blindroll') chatData['blind'] = true;
+      chatData.whisper = ChatMessage.getWhisperRecipients('GM').map(
+        (u) => u.id!,
+      );
+    if (rollMode === 'selfroll') chatData.whisper = [game.user!.id!];
+    if (rollMode === 'blindroll') chatData.blind = true;
 
     // Create the chat message
     const chatCard = await ChatMessage.create(chatData);

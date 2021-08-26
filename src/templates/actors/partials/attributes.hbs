@@ -16,7 +16,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.agility.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.agility.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.agility.die.modifier"
@@ -42,7 +42,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.smarts.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.smarts.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.smarts.die.modifier"
@@ -65,7 +65,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.spirit.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.spirit.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.spirit.die.modifier"
@@ -89,7 +89,7 @@
         >
           {{#select data.data.attributes.strength.die.sides}}
           <option value="1">1</option>
-          {{> "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.strength.die.modifier"
@@ -112,7 +112,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.vigor.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.vigor.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.vigor.die.modifier"
