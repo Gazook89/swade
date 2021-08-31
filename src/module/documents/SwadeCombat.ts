@@ -169,12 +169,16 @@ export default class SwadeCombat extends Combat {
       // Generate random degree of rotation to give card slide tilt
       const min = 1;
       const max = 4;
-      const rotation = Math.floor((Math.random() * (max - min)) + min + 1) * (Math.round(Math.random()) ? 1 : -1);
+      const rotation =
+        Math.floor(Math.random() * (max - min) + min + 1) *
+        (Math.round(Math.random()) ? 1 : -1);
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
                 <h4 class="result-text result-text-card">${card!.name}</h4>
-                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${card!.data.img}">
+                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${
+        card!.data.img
+      }">
             </section>
           `;
 
@@ -285,7 +289,7 @@ export default class SwadeCombat extends Combat {
    * @returns an array with the drawn cards
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
-    const packName = game.settings.get('swade', 'cardDeck') as string;
+    const packName = game.settings.get('swade', 'cardDeck');
     let actionCardPack = game.packs!.get(packName)!;
     //@ts-ignore
     if (!actionCardPack || actionCardPack.index.length === 0) {
@@ -336,7 +340,7 @@ export default class SwadeCombat extends Combat {
     }
 
     let card: JournalEntry | undefined;
-    const template = 'systems/swade/templates/initiative/choose-card.html';
+    const template = 'systems/swade/templates/initiative/choose-card.hbs';
     const html = await renderTemplate(template, {
       data: {
         cards: cards,

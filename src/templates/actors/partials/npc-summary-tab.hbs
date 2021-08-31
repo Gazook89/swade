@@ -1,5 +1,5 @@
 <section class="flexrow grid-row --grid-row-npc-summary attributes-container">
-  {{> "systems/swade/templates/actors/partials/attributes.html"}}
+  {{> "systems/swade/templates/actors/partials/attributes.hbs"}}
   <div class="attributes secondary">
     <header class="header-field">
       <span>{{ localize "SWADE.Derived" }}</span>
@@ -169,7 +169,7 @@
       {{/each}}
     </section>
     <section class="gear">
-      {{> "systems/swade/templates/setting-fields.html"}}
+      {{> "systems/swade/templates/setting-fields.hbs"}}
     </section>
   </div>
   <div>
@@ -183,7 +183,7 @@
           ></a>
         </div>
       </header>
-      {{> "systems/swade/templates/effect-list.html"}}
+      {{> "systems/swade/templates/effect-list.hbs"}}
     </section>
     <section class="gear">
       <header class="header-field flexrow">
@@ -199,22 +199,22 @@
       <div class="quickaccess-list">
         <ol class="gear-list weapon-list">
           {{#each itemsByType.weapon}} {{>
-          "systems/swade/templates/actors/partials/weapon-card.html"
+          "systems/swade/templates/actors/partials/weapon-card.hbs"
           owner=../owner}} {{/each}}
         </ol>
         <ol class="gear-list armor-list">
           {{#each itemsByType.armor}} {{>
-          "systems/swade/templates/actors/partials/armor-card.html"
+          "systems/swade/templates/actors/partials/armor-card.hbs"
           owner=../owner}} {{/each}}
         </ol>
         <ol class="gear-list shield-list">
           {{#each itemsByType.shield}} {{>
-          "systems/swade/templates/actors/partials/shield-card.html"
+          "systems/swade/templates/actors/partials/shield-card.hbs"
           owner=../owner}} {{/each}}
         </ol>
         <ol class="gear-list items-list">
           {{#each itemsByType.gear}} {{>
-          "systems/swade/templates/actors/partials/misc-card.html"
+          "systems/swade/templates/actors/partials/misc-card.hbs"
           owner=../owner}} {{/each}}
         </ol>
       </div>

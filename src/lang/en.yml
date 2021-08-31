@@ -42,6 +42,7 @@ SWADE.Derived: Derived Stats
 SWADE.AttrAgi: Agility
 SWADE.AttrSma: Smarts
 SWADE.AnimalSmarts: Animal Smarts
+SWADE.AnimalSmartsMarker: A
 SWADE.AttrSpr: Spirit
 SWADE.AttrStr: Strength
 SWADE.AttrVig: Vigor
@@ -389,4 +390,12 @@ SWADE.InitCardDeck: Card Deck to use for Initiative
 SWADE.Imperial: Imperial
 SWADE.Metric: Metric
 SWADE.WeightUnitLabel: Unit of weight
-SWADE.WeightUnitDesc: Lorem Ipsum
+SWADE.WeightUnitDesc: >-
+  Sets whether weights are measured in pounds or kilogramms. Changing this will
+  NOT change the weights on items, only how the encumbrance is calculated
+SWADE.UseAttributeShorts: Use shortened attribute names
+SWADE.UseAttributeShortsDesc: >-
+  Activate this option if you want to see abbreviated attribute names on the pc
+  and npc sheets, i.e. Agi instead of Agility, Sma instead of Smarts, etc.
+  You'll need to close and reopen all open sheets for this option to take
+  effect.

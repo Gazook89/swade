@@ -30,7 +30,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   get template() {
     // Later you might want to return a different template
     // based on user permissions.
-    return 'systems/swade/templates/actors/vehicle-sheet.html';
+    return 'systems/swade/templates/actors/vehicle-sheet.hbs';
   }
 
   activateListeners(html: JQuery<HTMLElement>) {
@@ -176,12 +176,9 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
     data.inventory = this._determineCargo().sort(
       (a, b) => a!.name!.localeCompare(b.name!) ?? 0,
     );
-    console.log(data.inventory);
-
     data.inventoryWeight = 0;
     data.inventory.forEach((i: SwadeItem) => {
-      //@ts-ignore
-      data.inventoryWeight += i.data.data.weight * i.data.data.quantity;
+      data.inventoryWeight += i.data.data['weight'] * i.data.data['quantity'];
     });
 
     //Fetch Driver data

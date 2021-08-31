@@ -175,7 +175,7 @@ export default class SettingConfigurator extends FormApplication {
     const retVal = {};
 
     game.packs
-      ?.filter((p) => p.entity === 'Item')
+      ?.filter((p) => p.documentClass.documentName === 'Item')
       .forEach((p) => {
         retVal[p.collection] = `${p.metadata.label} (${p.metadata.package})`;
       });

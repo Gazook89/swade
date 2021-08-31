@@ -996,7 +996,7 @@ export default class SwadeHooks {
     ).length;
 
     //render and inject new HTML
-    const path = 'systems/swade/templates/combatant-config-cardlist.html';
+    const path = 'systems/swade/templates/combatant-config-cardlist.hbs';
     $(await renderTemplate(path, { cardList, numberOfJokers })).insertBefore(
       `#combatant-config-${options.document.id} footer`,
     );

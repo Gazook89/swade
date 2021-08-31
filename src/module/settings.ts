@@ -8,10 +8,12 @@ declare global {
       'swade.initiativeSound': boolean;
       'swade.autoInit': boolean;
       'swade.initMessage': boolean;
+      'swade.cardDeck': string;
       'swade.hideNPCWildcards': boolean;
       'swade.autoLinkWildcards': boolean;
       'swade.notifyBennies': boolean;
       'swade.hideNpcItemChatCards': boolean;
+      'swade.useAttributeShorts': boolean;
       'swade.coreSkills': string;
       'swade.coreSkillsCompendium': string;
       'swade.wealthType': 'currency' | 'wealthDie' | 'none';
@@ -116,6 +118,15 @@ export function registerSettings() {
     type: Boolean,
     config: true,
   });
+
+  game.settings.register('swade', 'useAttributeShorts', {
+    name: game.i18n.localize('SWADE.UseAttributeShorts'),
+    hint: game.i18n.localize('SWADE.UseAttributeShortsDesc'),
+    default: false,
+    scope: 'world',
+    type: Boolean,
+    config: true,
+  });
 }
 
 export function registerSettingRules() {
@@ -145,7 +156,7 @@ export function registerSettingRules() {
     choices: {
       currency: 'SWADE.Currency',
       wealthDie: 'SWADE.WealthDie',
-      none: 'SWADE.NoneOther',
+      none: 'SWADE.WealthSelectionNoneOther',
     },
     default: 'currency',
     config: false,

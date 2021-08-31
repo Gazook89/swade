@@ -1,13 +1,13 @@
 <form class="{{cssClass}} flexcol" autocomplete="off">
   {{!-- Item Sheet Header --}} {{>
-  "systems/swade/templates/items/partials/header-delete.html"}}
+  "systems/swade/templates/items/partials/header-delete.hbs"}}
   <main class="sheet-body">
     <div class="form-group">
       <label for="die">{{localize "SWADE.Die"}}</label>
       <span class="form-fields">
         <select name="data.die.sides" id="die" data-dtype="Number">
           {{#select data.data.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.die.modifier"
@@ -23,7 +23,7 @@
       <span class="form-fields">
         <select name="data.attribute" id="attribute" data-dtype="String">
           {{#select data.data.attribute}} {{>
-          "systems/swade/templates/attribute-select.html"}} {{/select}}
+          "systems/swade/templates/attribute-select.hbs"}} {{/select}}
         </select>
       </span>
     </div>
@@ -33,7 +33,7 @@
       <span class="form-fields">
         <select name="data.wild-die.sides" id="wild-die" data-dtype="Number">
           {{#select data.data.wild-die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
       </span>
     </div>
@@ -51,7 +51,7 @@
         />
       </span>
     </div>
-    {{> "systems/swade/templates/setting-fields.html"}} {{>
-    "systems/swade/templates/items/partials/description.html"}}
+    {{> "systems/swade/templates/setting-fields.hbs"}} {{>
+    "systems/swade/templates/items/partials/description.hbs"}}
   </main>
 </form>

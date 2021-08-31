@@ -14,28 +14,28 @@ export default class CharacterSummarizer {
 
     if (!CharacterSummarizer.isSupportedActorType(actor)) {
       ui.notifications?.error(
-        "Can't do character summariser against actor of type " + actor.type);
-      this.summary = "";
+        "Can't do character summariser against actor of type " + actor.type,
+      );
+      this.summary = '';
       return;
     }
     this.summary = this._makeSummary();
   }
 
   static isSupportedActorType(char: SwadeActor): boolean {
-    return (char.type === 'character' 
-        || char.type === 'npc');
+    return char.type === 'character' || char.type === 'npc';
   }
 
   static summarizeCharacters(chars: SwadeActor[]) {
-    for(const char of chars) {
+    for (const char of chars) {
       let s = new game.swade.CharacterSummarizer(char);
       CharacterSummarizer._showDialog(s);
     }
   }
-  
+
   static _showDialog(summarizer: CharacterSummarizer) {
-    if (summarizer.getSummary() === "") return;
-    
+    if (summarizer.getSummary() === '') return;
+
     let d = new Dialog({
       title: game.i18n.localize('SWADE.CharacterSummary'),
       content: summarizer.getSummary(),
@@ -45,14 +45,18 @@ export default class CharacterSummarizer {
         },
         copyHtml: {
           label: game.i18n.localize('SWADE.CopyHtml'),
-          callback: () => { summarizer.copySummaryHtml() }
-        },  
+          callback: () => {
+            summarizer.copySummaryHtml();
+          },
+        },
         copyMarkdown: {
           label: game.i18n.localize('SWADE.CopyMarkdown'),
-          callback: () => { summarizer.copySummaryMarkdown() }
-        }   
+          callback: () => {
+            summarizer.copySummaryMarkdown();
+          },
+        },
       },
-      default: "close",
+      default: 'close',
     });
     d.render(true);
   }
@@ -70,12 +74,12 @@ export default class CharacterSummarizer {
     // as the HTML is so simple here, just going to convert
     // it inline.
     let markdownSummary = this.summary
-        .replace(/\<\/?p>/g, "\n")
-        .replace(/<br\/?>/g, "\n")
-        .replace(/<\/?strong>/g, "*")
-        .replace(/<h1>/g, "# ")
-        .replace(/<\/h1>/g, "\n")
-        .replace(/&mdash;/g, "—");
+      .replace(/\<\/?p>/g, '\n')
+      .replace(/<br\/?>/g, '\n')
+      .replace(/<\/?strong>/g, '*')
+      .replace(/<h1>/g, '# ')
+      .replace(/<\/h1>/g, '\n')
+      .replace(/&mdash;/g, '—');
 
     this._copyToClipboard(markdownSummary);
   }
@@ -84,21 +88,21 @@ export default class CharacterSummarizer {
   _copyToClipboard(textToCopy: string) {
     // navigator clipboard api needs a secure context (https)
     if (navigator.clipboard && window.isSecureContext) {
-        // navigator clipboard api method
-        return navigator.clipboard.writeText(textToCopy);
+      // navigator clipboard api method
+      return navigator.clipboard.writeText(textToCopy);
     } else {
-        // text area method
-        let textArea = document.createElement("textarea");
-        textArea.value = textToCopy;
-        // make the textarea out of viewport
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        document.execCommand('copy');
-        textArea.remove();
+      // text area method
+      let textArea = document.createElement('textarea');
+      textArea.value = textToCopy;
+      // make the textarea out of viewport
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      textArea.remove();
     }
   }
 
@@ -208,10 +212,12 @@ export default class CharacterSummarizer {
           armor = getProperty(item.data, 'data.armor');
           weaponsAndArmour.push(`${item.name} (${armor})`);
           break;
-        case 'shield':  
+        case 'shield':
           shieldParry = getProperty(item.data, 'data.parry');
           shieldCover = getProperty(item.data, 'data.cover');
-          weaponsAndArmour.push(`${item.name} (+${shieldParry} / ${shieldCover})`);
+          weaponsAndArmour.push(
+            `${item.name} (+${shieldParry} / ${shieldCover})`,
+          );
           break;
         case 'gear':
           gear.push(item.name);
