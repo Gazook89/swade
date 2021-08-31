@@ -1,5 +1,4 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
-import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
@@ -474,11 +473,8 @@ export default class CharacterSheet extends ActorSheet {
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = SWADE.bennies.sheetImage;
-    data.itemsByType = {};
-    for (const type in this.actor.itemTypes) {
-      data.itemsByType[type] = this.actor.items.filter((i) => i.type === type);
-    }
+    data.bennyImageURL = CONFIG.SWADE.bennies.sheetImage;
+
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     for (const item of Array.from(this.actor.items.values()) as any[]) {
       // Basic template rendering data
@@ -590,6 +586,12 @@ export default class CharacterSheet extends ActorSheet {
 
     // Progress attribute abbreviation toggle
     data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
+
+    //weight unit
+    data.weightUnit = 'lbs';
+    if (game.settings.get('swade', 'weightUnit') === 'metric') {
+      data.weightUnit = 'kg';
+    }
 
     return data;
   }

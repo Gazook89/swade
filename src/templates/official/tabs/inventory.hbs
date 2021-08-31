@@ -1,7 +1,7 @@
 <section class="flexrow">
   <div>
     {{localize "SWADE.CarryWeight"}}
-    <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}}</strong>
+    <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}} {{weightUnit}}</strong>
   </div>
   <div class="form-group currency">
     {{#if (eq settingrules.wealthType "currency")}}
@@ -18,8 +18,7 @@
     <label><button class="roll">{{localize "SWADE.WealthDie"}}</button></label>
     <span class="form-fields">
       <select data-dtype="Number" name="data.details.wealth.die">
-        {{#select data.data.details.wealth.die}} {{>
-        "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
+        {{#select data.data.details.wealth.die}} {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
       </select>
       <input
         type="text"
