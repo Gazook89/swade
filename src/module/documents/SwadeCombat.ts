@@ -289,7 +289,7 @@ export default class SwadeCombat extends Combat {
    * @returns an array with the drawn cards
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
-    const packName = game.settings.get('swade', 'cardDeck') as string;
+    const packName = game.settings.get('swade', 'cardDeck');
     let actionCardPack = game.packs!.get(packName)!;
     //@ts-ignore
     if (!actionCardPack || actionCardPack.index.length === 0) {

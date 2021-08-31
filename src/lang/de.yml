@@ -317,7 +317,8 @@ SWADE.HideNpcItemChatCards: Verstecke NSC Item Chat Karten
 SWADE.HideNpcItemChatCardsDesc: >-
   Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch als
   Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
-SWADE.JokersWildDesc: Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein
+SWADE.JokersWildDesc:
+  Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein
   Joker als Aktionskarte gezogen wird.
 SWADE.ParryBase: Parade-Fertigkeit
 SWADE.ParryBaseDesc: >-
