@@ -14,7 +14,7 @@
     "check:lint": "eslint --ext .ts,.js ./src",
     "check:types": "tsc --noEmit",
     "prepare": "husky install",
-    "pretty-staged": "pretty-quick --staged"
+    "pretty-staged": "pretty-quick --staged --pattern '**/*.!(hbs)'"
   },
   "author": "FloRad",
   "license": "Apache License, Version 2.0",
