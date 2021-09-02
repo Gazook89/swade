@@ -80,27 +80,15 @@ export default class SwadeActor extends Actor {
   prepareBaseData() {
     if (this.data.type === 'vehicle') return;
     //auto calculations
-    const shouldAutoCalcToughness = getProperty(
-      this.data,
-      'data.details.autoCalcToughness',
-    ) as boolean;
-
-    if (shouldAutoCalcToughness) {
+    if (this.data.data.details.autoCalcToughness) {
       //if we calculate the toughness then we set the values to 0 beforehand so the active effects can be applies
-      const toughnessKey = 'data.stats.toughness.value';
-      const armorKey = 'data.stats.toughness.armor';
-      this.data.data;
-      setProperty(this.data, toughnessKey, 0);
-      setProperty(this.data, armorKey, 0);
+      this.data.data.stats.toughness.value = 0;
+      this.data.data.stats.toughness.armor = 0;
     }
 
-    const shouldAutoCalcParry = getProperty(
-      this.data,
-      'data.details.autoCalcParry',
-    ) as boolean;
-    if (shouldAutoCalcParry) {
+    if (this.data.data.details.autoCalcParry) {
       //same procedure as with Toughness
-      setProperty(this.data, 'data.stats.parry.value', 0);
+      this.data.data.stats.parry.value = 0;
     }
   }
 
@@ -367,9 +355,7 @@ export default class SwadeActor extends Actor {
     await this.update({ 'data.bennies.value': this.data.data.bennies.max });
   }
 
-  /**
-   * Calculates the total Wound Penalties
-   */
+  /** Calculates the total Wound Penalties */
   calcWoundPenalties(): number {
     let retVal = 0;
     const wounds = parseInt(getProperty(this.data, 'data.wounds.value'));
@@ -391,9 +377,7 @@ export default class SwadeActor extends Actor {
     return retVal * -1;
   }
 
-  /**
-   * Calculates the total Fatigue Penalties
-   */
+  /** Calculates the total Fatigue Penalties */
   calcFatiguePenalties(): number {
     let retVal = 0;
     const fatigue = parseInt(getProperty(this.data, 'data.fatigue.value'));
