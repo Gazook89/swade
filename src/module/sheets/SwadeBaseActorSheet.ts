@@ -188,7 +188,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     html.find('.add-effect').on('click', async (ev) => {
       const transfer = $(ev.currentTarget).data('transfer');
-      const effect = await ActiveEffect.create(
+      const effect = await CONFIG.ActiveEffect.documentClass.create(
         {
           label: game.i18n
             .localize('ENTITY.New')
