@@ -185,10 +185,10 @@ export function chatListeners(html: JQuery<HTMLElement>) {
     }
 
     //handle Arcane Device Item Card PP adjustment
-    if (action === 'ad-pp-adjust') {
+    if (action === 'arcane-device-pp-adjust') {
       const adPPToAdjust = $(element)
         .parents('.chat-card.item-card')
-        .find('input.ad-pp-adjust')
+        .find('input.arcane-device-pp-adjust')
         .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
       const item = actor.items.get(itemId)!;

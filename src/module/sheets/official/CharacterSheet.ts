@@ -385,9 +385,9 @@ export default class CharacterSheet extends ActorSheet {
         .parents('.chat-card.item-card')
         .find('input.pp-adjust')
         .val() as string;
-      const adPPToAdjust = $(button)
+      const arcaneDevicePPToAdjust = $(button)
         .parents('.chat-card.item-card')
-        .find('input.ad-pp-adjust')
+        .find('input.arcane-device-pp-adjust')
         .val() as string;
 
       //if it's a power and the No Power Points rule is in effect
@@ -429,15 +429,15 @@ export default class CharacterSheet extends ActorSheet {
       }
 
       //handle Arcane Device Item Card PP adjustment
-      if (action === 'ad-pp-adjust') {
+      if (action === 'arcane-device-pp-adjust') {
         const adjustment = button.getAttribute('data-adjust') as string;
         const item = this.actor.items.get(itemId)!;
         const key = 'data.powerPoints.value';
         let newPP = getProperty(item.data, key);
         if (adjustment === 'plus') {
-          newPP += parseInt(adPPToAdjust, 10);
+          newPP += parseInt(arcaneDevicePPToAdjust, 10);
         } else if (adjustment === 'minus') {
-          newPP -= parseInt(adPPToAdjust, 10);
+          newPP -= parseInt(arcaneDevicePPToAdjust, 10);
         }
         await item.update({ [key]: newPP });
       }
