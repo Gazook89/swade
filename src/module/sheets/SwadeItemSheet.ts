@@ -28,7 +28,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   get template() {
     const path = 'systems/swade/templates/items';
-    return `${path}/${this.item.type}.html`;
+    return `${path}/${this.item.type}.hbs`;
   }
 
   /**
@@ -39,7 +39,7 @@ export default class SwadeItemSheet extends ItemSheet {
     const buttons = super._getHeaderButtons();
 
     // Token Configuration
-    const canConfigure = game.user!.isGM || this.item.owner;
+    const canConfigure = game.user!.isGM || this.item.isOwner;
     if (this.options.editable && canConfigure) {
       const button: Application.HeaderButton = {
         label: 'Tweaks',
@@ -169,7 +169,7 @@ export default class SwadeItemSheet extends ItemSheet {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
       const statData = this.item.data.data.additionalStats[stat]!;
-      let modifier = statData.modifier || '';
+      let modifier = statData.modifier ?? '';
       if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }

@@ -1,5 +1,4 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
-import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
@@ -23,7 +22,7 @@ export default class CharacterSheet extends ActorSheet {
   }
 
   get template() {
-    return 'systems/swade/templates/official/sheet.html';
+    return 'systems/swade/templates/official/sheet.hbs';
   }
 
   activateListeners(html: JQuery): void {
@@ -188,26 +187,28 @@ export default class CharacterSheet extends ActorSheet {
     //Edit Item
     html.find('.item-edit').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'))!;
+      const item = this.actor.items.get(li.data('itemId'), { strict: true });
       item.sheet?.render(true);
     });
 
     //Show Item
     html.find('.item-show').on('click', (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
-      item?.show();
+      const item = this.actor.items.get(li.data('itemId'), { strict: true });
+      item.show();
     });
 
     // Delete Item
     html.find('.item-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
-      const ownedItem = this.actor.items.get(li.data('itemId'))!;
+      const item = this.actor.items.get(li.data('itemId'), {
+        strict: true,
+      });
       const template = `
       <form>
         <div style="text-align: center;">
           <p>
-          ${game.i18n.localize('Delete')} <strong>${ownedItem.name}</strong>?
+          ${game.i18n.localize('Delete')} <strong>${item.name}</strong>?
           </p>
         </div>
       </form>`;
@@ -215,7 +216,7 @@ export default class CharacterSheet extends ActorSheet {
         title: game.i18n.localize('Delete'),
         content: template,
         yes: () => {
-          li.slideUp(200, () => ownedItem.delete());
+          li.slideUp(200, () => item.delete());
         },
         no: () => {},
       });
@@ -378,7 +379,7 @@ export default class CharacterSheet extends ActorSheet {
       const button = ev.currentTarget;
       const action = button.dataset.action!;
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
-      const item = this.actor.items.get(itemId)!;
+      const item = this.actor.items.get(itemId, { strict: true });
       const additionalMods = new Array<string>();
       const ppToAdjust = $(button)
         .parents('.chat-card.item-card')
@@ -414,7 +415,7 @@ export default class CharacterSheet extends ActorSheet {
       //handle Power Item Card PP adjustment
       if (action === 'pp-adjust') {
         const adjustment = button.getAttribute('data-adjust') as string;
-        const power = this.actor.items.get(itemId)!;
+        const power = this.actor.items.get(itemId, { strict: true });
         let key = 'data.powerPoints.value';
         const arcane = getProperty(power.data, 'data.arcane');
         if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -443,25 +444,24 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     //Additional Stats roll
-    html.find('.additional-stats .roll').on('click', (ev) => {
+    html.find('.additional-stats .roll').on('click', async (ev) => {
       const button = ev.currentTarget;
-      const stat = button.dataset.stat;
-      const statData = getProperty(
-        this.actor.data,
-        `data.additionalStats.${stat}`,
-      ) as AdditionalStat;
+      const stat = button.dataset.stat!;
+      const statData = this.actor.data.data.additionalStats[stat]!;
       let modifier = statData.modifier || '';
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
       //return early if there's no data to roll
       if (!statData.value) return;
-      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate({ async: false })
-        .toMessage({
-          speaker: ChatMessage.getSpeaker(),
-          flavor: statData.label,
-        });
+      const roll = await new Roll(
+        `${statData.value}${modifier}`,
+        this.actor.getRollData(),
+      ).evaluate({ async: true });
+      roll.toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: statData.label,
+      });
     });
 
     //Wealth Die Roll
@@ -491,66 +491,46 @@ export default class CharacterSheet extends ActorSheet {
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = SWADE.bennies.sheetImage;
-    data.itemsByType = {};
-    for (const type of game.system.entityTypes.Item) {
-      data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
-    }
+    data.bennyImageURL = CONFIG.SWADE.bennies.sheetImage;
 
-    for (const type of Object.keys(data.itemsByType)) {
-      for (const item of data.itemsByType[type]) {
-        // Basic template rendering data
-        const ammoManagement = game.settings.get('swade', 'ammoManagement');
-        item.shots = getProperty(item, 'data.shots');
-        item.currentShots = getProperty(item, 'data.currentShots');
+    const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    for (const item of Array.from(this.actor.items.values()) as any[]) {
+      // Basic template rendering data
+      const data = item.data;
+      const actions = item.data.data?.actions?.additional ?? {};
+      item.actions = [];
 
-        item.isMeleeWeapon =
-          'weapon' &&
-          ((!item.shots && !item.currentShots) ||
-            (item.shots === '0' && item.currentShots === '0'));
-
-        const actions = getProperty(item, 'data.actions.additional');
-        item.hasAdditionalActions =
-          !!actions && Object.keys(actions).length > 0;
-
-        item.actions = [];
-
-        for (const action in actions) {
-          item.actions.push({
-            key: action,
-            type: actions[action].type,
-            name: actions[action].name,
-          });
-        }
-
-        item.actor = data.actor;
-        item.config = SWADE;
-        item.hasAmmoManagement =
-          item.type === 'weapon' &&
-          !item.isMeleeWeapon &&
-          ammoManagement &&
-          !getProperty(item, 'data.autoReload');
-        item.hasReloadButton =
-          ammoManagement &&
-          item.type === 'weapon' &&
-          getProperty(item, 'data.shots') > 0 &&
-          !getProperty(item, 'data.autoReload');
-        item.hasDamage =
-          !!getProperty(item, 'data.damage') ||
-          !!item.actions.find((action) => action.type === 'damage');
-        item.skill =
-          getProperty(item, 'data.actions.skill') ||
-          !!item.actions.find((action) => action.type === 'skill');
-        item.hasSkillRoll =
-          ['weapon', 'power', 'shield'].includes(item.type) &&
-          !!getProperty(item, 'data.actions.skill');
-        item.powerPoints = this.getPowerPoints(item);
+      for (const action in actions) {
+        item.actions.push({
+          key: action,
+          type: actions[action].type,
+          name: actions[action].name,
+        });
       }
+      item.hasDamage =
+        !!getProperty(data, 'data.damage') ||
+        !!item.actions.find((action) => action.type === 'damage');
+      item.skill =
+        getProperty(data, 'data.actions.skill') ||
+        !!item.actions.find((action) => action.type === 'skill');
+      item.hasSkillRoll =
+        ['weapon', 'power', 'shield'].includes(data.type) &&
+        getProperty(data, 'data.actions.skill');
+      item.hasAmmoManagement =
+        ammoManagement &&
+        item.type === 'weapon' &&
+        !item.isMeleeWeapon &&
+        !data.data.autoReload;
+      item.hasReloadButton =
+        ammoManagement && data.data.shots > 0 && !data.data.autoReload;
+
+      item.powerPoints = this.getPowerPoints(data);
     }
 
     //sort skills alphabetically
-    data.sortedSkills = data.itemsByType['skill'];
-    data.sortedSkills.sort((a, b) => a.name.localeCompare(b.name));
+    data.sortedSkills = this.actor.itemTypes.skill.sort((a, b) =>
+      a.name!.localeCompare(b.name!),
+    );
 
     data.currentBennies = [];
     const bennies = getProperty(
@@ -564,21 +544,23 @@ export default class CharacterSheet extends ActorSheet {
     const additionalStats: Record<string, AdditionalStat> =
       data.data.data.additionalStats || {};
     for (const attr of Object.values(additionalStats)) {
-      attr['isCheckbox'] = attr['dtype'] === 'Boolean';
+      attr['isCheckbox'] = attr.dtype === 'Boolean';
     }
     data.hasAdditionalStatsFields = Object.keys(additionalStats).length > 0;
 
+    const powerFilter = (i) => i.data.type === 'power';
     //Deal with ABs and Powers
     const powers = {
       arcanes: {},
-      arcanesCount: data.itemsByType.power
+      arcanesCount: this.actor.items
+        .filter(powerFilter)
         .map((p) => {
-          return p.data.arcane;
+          return p.data.data['arcane'];
         })
         .filter(Boolean).length,
       hasPowersWithoutArcane:
-        data.itemsByType.power.reduce((acc, cur) => {
-          if (cur.data.arcane) {
+        this.actor.items.filter(powerFilter).reduce((acc, cur) => {
+          if (cur.data.data['arcane']) {
             return acc;
           } else {
             return (acc += 1);
@@ -586,8 +568,9 @@ export default class CharacterSheet extends ActorSheet {
         }, 0) > 0,
     };
 
-    for (const power of data.itemsByType.power) {
-      const arcane = power.data.arcane;
+    for (const power of this.actor.items.filter(powerFilter)) {
+      if (power.data.type !== 'power') continue;
+      const arcane = power.data.data.arcane;
       if (!arcane) continue;
       if (!powers.arcanes[arcane]) {
         powers.arcanes[arcane] = {
@@ -603,17 +586,13 @@ export default class CharacterSheet extends ActorSheet {
       }
       powers.arcanes[arcane].powers.push(power);
     }
-
     data.powers = powers;
-
-    const shields = data.itemsByType['shield'];
     data.parry = 0;
-    if (shields) {
-      shields.forEach((shield: SwadeItem) => {
-        if (shield.data['equipped']) {
-          data.parry += parseInt(shield.data['parry']);
-        }
-      });
+    for (const shield of this.actor.itemTypes.shield) {
+      if (shield.data.type !== 'shield') continue;
+      if (shield.data.data.equipped) {
+        data.parry += shield.data.data.parry;
+      }
     }
     // Check for enabled optional rules
     data.settingrules = {
@@ -622,18 +601,30 @@ export default class CharacterSheet extends ActorSheet {
       wealthType: game.settings.get('swade', 'wealthType'),
       currencyName: game.settings.get('swade', 'currencyName'),
     };
+
+    // Progress attribute abbreviation toggle
+    data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
+
+    //weight unit
+    data.weightUnit = 'lbs';
+    if (game.settings.get('swade', 'weightUnit') === 'metric') {
+      data.weightUnit = 'kg';
+    }
+
     return data;
   }
 
-  getPowerPoints(item) {
-    if (item.type !== 'power') return {};
-
-    const arcane = getProperty(item, 'data.arcane');
-    let current = getProperty(item.actor, 'data.powerPoints.value');
-    let max = getProperty(item.actor, 'data.powerPoints.max');
+  getPowerPoints(item: SwadeItem) {
+    if (item.data.type !== 'power') return {};
+    const arcane = item.data.data.arcane;
+    let current = getProperty(item.actor!, 'data.data.data.powerPoints.value');
+    let max = getProperty(item.actor!, 'data.data.powerPoints.max');
     if (arcane) {
-      current = getProperty(item.actor, `data.powerPoints.${arcane}.value`);
-      max = getProperty(item.actor, `data.powerPoints.${arcane}.max`);
+      current = getProperty(
+        item.actor!,
+        `data.data.powerPoints.${arcane}.value`,
+      );
+      max = getProperty(item.actor!, `data.data.powerPoints.${arcane}.max`);
     }
     return { current, max };
   }
@@ -664,7 +655,7 @@ export default class CharacterSheet extends ActorSheet {
     new game.swade.SwadeEntityTweaks(this.actor).render(true);
   }
 
-  private _toggleEquipped(id: string, item: any): any {
+  protected _toggleEquipped(id: string, item: any): any {
     return {
       _id: id,
       data: {

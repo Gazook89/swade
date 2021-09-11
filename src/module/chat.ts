@@ -73,7 +73,7 @@ export async function formatRoll(
     }
   }
   // Replace default dice-formula with custom html;
-  const formulaTemplate = 'systems/swade/templates/chat/roll-formula.html';
+  const formulaTemplate = 'systems/swade/templates/chat/roll-formula.hbs';
   html
     .find('.dice-formula')
     .replaceWith(await renderTemplate(formulaTemplate, chatData));
@@ -128,7 +128,7 @@ export async function formatRoll(
       results.total! += mod + conviction;
     }
   }
-  const resultTemplate = 'systems/swade/templates/chat/roll-result.html';
+  const resultTemplate = 'systems/swade/templates/chat/roll-result.hbs';
   html
     .find('.dice-total')
     .replaceWith(await renderTemplate(resultTemplate, results));
@@ -279,9 +279,7 @@ export async function rerollFromChat(
   );
   const speaker = getProperty(message, 'data.speaker');
   const roll = message.roll!;
-  const actor = (ChatMessage.getSpeakerActor(
-    speaker,
-  )! as unknown) as SwadeActor;
+  const actor = ChatMessage.getSpeakerActor(speaker)! as unknown as SwadeActor;
   const currentBennies = getProperty(actor.data, 'data.bennies.value');
   const doSpendBenny = spendBenny && !!actor && actor.isWildcard;
 

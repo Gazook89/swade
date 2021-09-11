@@ -22,13 +22,12 @@ export default class SwadeHooks {
     game
       .packs!.filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
-        packChoices[
-          p.collection
-        ] = `${p.metadata.label} (${p.metadata.package})`;
+        const choice = `${p.metadata.label} (${p.metadata.package})`;
+        packChoices[p.collection] = choice;
       });
 
     game.settings.register('swade', 'cardDeck', {
-      name: 'Card Deck to use for Initiative',
+      name: game.i18n.localize('SWADE.InitCardDeck'), //Card Deck to use for Initiative',
       scope: 'world',
       type: String,
       config: true,
@@ -136,7 +135,7 @@ export default class SwadeHooks {
 					<a><img src="${SWADE.wildCardIcons.regular}" class="wildcard-icon">${wildcard.data.name}</a>
 					`;
       }
-    }    
+    }
   }
 
   public static async onGetActorDirectoryEntryContext(
@@ -151,12 +150,12 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-users"></i>',
       callback: async (li) => {
         const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
-        CharacterSummarizer.summarizeCharacters([selectedUser])
+        CharacterSummarizer.summarizeCharacters([selectedUser]);
       },
       condition: (li) => {
         const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
         return CharacterSummarizer.isSupportedActorType(selectedUser);
-      }
+      },
     });
     options.splice(0, 0, ...newOptions);
   }
@@ -997,7 +996,7 @@ export default class SwadeHooks {
     ).length;
 
     //render and inject new HTML
-    const path = 'systems/swade/templates/combatant-config-cardlist.html';
+    const path = 'systems/swade/templates/combatant-config-cardlist.hbs';
     $(await renderTemplate(path, { cardList, numberOfJokers })).insertBefore(
       `#combatant-config-${options.document.id} footer`,
     );

@@ -43,12 +43,12 @@ export const SWADE = {
 
   bennies: {
     templates: {
-      refresh: 'systems/swade/templates/chat/benny-refresh.html',
-      refreshAll: 'systems/swade/templates/chat/benny-refresh-all.html',
-      add: 'systems/swade/templates/chat/benny-add.html',
-      spend: 'systems/swade/templates/chat/benny-spend.html',
-      gmadd: 'systems/swade/templates/chat/benny-gmadd.html',
-      joker: 'systems/swade/templates/chat/jokers-wild.html',
+      refresh: 'systems/swade/templates/chat/benny-refresh.hbs',
+      refreshAll: 'systems/swade/templates/chat/benny-refresh-all.hbs',
+      add: 'systems/swade/templates/chat/benny-add.hbs',
+      spend: 'systems/swade/templates/chat/benny-spend.hbs',
+      gmadd: 'systems/swade/templates/chat/benny-gmadd.hbs',
+      joker: 'systems/swade/templates/chat/jokers-wild.hbs',
     },
     sheetImage: 'systems/swade/assets/bennie.webp',
     textures: {
@@ -82,6 +82,7 @@ export const SWADE = {
       'noPowerPoints',
       'wealthType',
       'currencyName',
+      'weightUnit',
     ],
   },
 

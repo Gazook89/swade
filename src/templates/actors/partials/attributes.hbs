@@ -5,7 +5,7 @@
   <div class="flexrow attributes-list">
     <div class="attribute" data-attribute="agility">
       <div class="attribute-label">
-        <a title="{{localize 'SWADE.Roll'}}">{{ localize "SWADE.AttrAgi" }}</a>
+        <a title="{{localize 'SWADE.Roll'}}">{{#if useAttributeShorts}}{{ localize "SWADE.AttrAgiShort" }}{{else}}{{ localize "SWADE.AttrAgi" }}{{/if}}</a>
       </div>
       <div class="flexrow">
         <select
@@ -16,7 +16,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.agility.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.agility.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.agility.die.modifier"
@@ -30,8 +30,8 @@
     <div class="attribute" data-attribute="smarts">
       <div class="attribute-label">
         <a title="{{localize 'SWADE.Roll'}}"
-          >{{ localize "SWADE.AttrSma" }}&nbsp;{{#if
-          data.data.attributes.smarts.animal}}(A){{/if}}</a
+          >{{#if useAttributeShorts}}{{ localize "SWADE.AttrSmaShort" }}{{else}}{{ localize "SWADE.AttrSma" }}{{/if}}
+          {{#if data.data.attributes.smarts.animal}}&nbsp;({{ localize "SWADE.AnimalSmartsMarker" }}){{/if}}</a
         >
       </div>
       <div class="flexrow">
@@ -42,7 +42,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.smarts.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.smarts.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.smarts.die.modifier"
@@ -55,7 +55,7 @@
     </div>
     <div class="attribute" data-attribute="spirit">
       <div class="attribute-label">
-        <a title="{{localize 'SWADE.Roll'}}">{{ localize "SWADE.AttrSpr" }}</a>
+        <a title="{{localize 'SWADE.Roll'}}">{{#if useAttributeShorts}}{{ localize "SWADE.AttrSprShort" }}{{else}}{{ localize "SWADE.AttrSpr" }}{{/if}}</a>
       </div>
       <div class="flexrow">
         <select
@@ -65,7 +65,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.spirit.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.spirit.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.spirit.die.modifier"
@@ -78,7 +78,7 @@
     </div>
     <div class="attribute" data-attribute="strength">
       <div class="attribute-label">
-        <a title="{{localize 'SWADE.Roll'}}">{{ localize "SWADE.AttrStr" }}</a>
+        <a title="{{localize 'SWADE.Roll'}}">{{#if useAttributeShorts}}{{ localize "SWADE.AttrStrShort" }}{{else}}{{ localize "SWADE.AttrStr" }}{{/if}}</a>
       </div>
       <div class="flexrow">
         <select
@@ -89,7 +89,7 @@
         >
           {{#select data.data.attributes.strength.die.sides}}
           <option value="1">1</option>
-          {{> "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.strength.die.modifier"
@@ -102,7 +102,7 @@
     </div>
     <div class="attribute" data-attribute="vigor">
       <div class="attribute-label">
-        <a title="{{localize 'SWADE.Roll'}}">{{ localize "SWADE.AttrVig" }}</a>
+        <a title="{{localize 'SWADE.Roll'}}">{{#if useAttributeShorts}}{{ localize "SWADE.AttrVigShort" }}{{else}}{{ localize "SWADE.AttrVig" }}{{/if}}</a>
       </div>
       <div class="flexrow">
         <select
@@ -112,7 +112,7 @@
           style="background-image:url('systems/swade/assets/dice/d{{data.data.attributes.vigor.die.sides}}-grey.svg')"
         >
           {{#select data.data.attributes.vigor.die.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input
           name="data.attributes.vigor.die.modifier"

@@ -1,7 +1,7 @@
 <section class="flexrow">
   <div>
     {{localize "SWADE.CarryWeight"}}
-    <strong>{{data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}}</strong>
+    <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}} {{weightUnit}}</strong>
   </div>
   <div class="form-group currency">
     {{#if (eq settingrules.wealthType "currency")}}
@@ -18,8 +18,7 @@
     <label><button class="roll">{{localize "SWADE.WealthDie"}}</button></label>
     <span class="form-fields">
       <select data-dtype="Number" name="data.details.wealth.die">
-        {{#select data.data.details.wealth.die}} {{>
-        "systems/swade/templates/die-sides-options.html"}} {{/select}}
+        {{#select data.data.details.wealth.die}} {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
       </select>
       <input
         type="text"
@@ -48,30 +47,30 @@
     </span>
   </header>
   <ul>
-    {{#each itemsByType.weapon as |item|}}
-    <li class="item weapon" data-item-id="{{item._id}}">
-      <img class="item-img" src="{{item.img}}" />
+    {{#each actor.itemTypes.weapon}}
+    <li class="item weapon" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" />
       <button
         type="button"
         class="name flexrow item-name"
-        title="{{item.name}}"
+        title="{{name}}"
       >
-        {{#if (gte item.data.quantity 2)}} (x{{item.data.quantity}}) {{/if}}
-        {{item.name}}
+        {{#if (gte data.data.quantity 2)}} (x{{data.data.quantity}}) {{/if}}
+        {{name}}
       </button>
       <span class="damage">
-        {{#if item.data.damage}}
-        <button type="button" class="damage-roll">{{item.data.damage}}</button>
+        {{#if data.data.damage}}
+        <button type="button" class="damage-roll">{{data.data.damage}}</button>
         {{/if}}
       </span>
-      <span class="ap">{{item.data.ap}}</span>
-      <span class="note">{{enrich item.data.notes}}</span>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="ap">{{data.data.ap}}</span>
+      <span class="note">{{enrich data.data.notes}}</span>
+      <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
-        {{#if ../owner}}
+        {{#if isOwner}}
         <button
           type="button"
-          class="item-toggle {{#unless item.data.equipped}}item-unequipped{{/unless}}"
+          class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
@@ -86,7 +85,7 @@
         </button>
         {{/if}}
       </span>
-      <div class="description">{{enrich item.data.description}}</div>
+      <div class="description">{{enrich data.data.description}}</div>
     </li>
     {{/each}}
   </ul>
@@ -106,26 +105,26 @@
     </span>
   </header>
   <ul>
-    {{#each itemsByType.armor as |item|}}
-    <li class="item armor" data-item-id="{{item._id}}">
-      <img class="item-img" src="{{item.img}}" />
+    {{#each actor.itemTypes.armor}}
+    <li class="item armor" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" />
       <button
         type="button"
         class="name flexrow item-name"
         title="{{item.name}}"
       >
-        {{#if (gte item.data.quantity 2)}} (x{{item.data.quantity}}) {{/if}}
-        {{item.name}}
+        {{#if (gte data.data.quantity 2)}} (x{{data.data.quantity}}) {{/if}}
+        {{name}}
       </button>
-      <span class="bonus"> {{item.data.armor}} </span>
-      <span class="min-str">{{item.data.minStr}}</span>
-      <span class="note">{{enrich item.data.notes}}</span>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="bonus"> {{data.data.armor}} </span>
+      <span class="min-str">{{data.data.minStr}}</span>
+      <span class="note">{{enrich data.data.notes}}</span>
+      <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
         {{#if ../owner}}
         <button
           type="button"
-          class="item-toggle {{#unless item.data.equipped}}item-unequipped{{/unless}}"
+          class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
@@ -140,7 +139,7 @@
         </button>
         {{/if}}
       </span>
-      <div class="description">{{enrich item.data.description}}</div>
+      <div class="description">{{enrich data.data.description}}</div>
     </li>
     {{/each}}
   </ul>
@@ -160,25 +159,25 @@
     </span>
   </header>
   <ul>
-    {{#each itemsByType.shield as |item|}}
-    <li class="item shield" data-item-id="{{item._id}}">
-      <img class="item-img" src="{{item.img}}" />
+    {{#each actor.itemTypes.shield}}
+    <li class="item shield" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" />
       <button
         type="button"
         class="name flexrow item-name"
-        title="{{item.name}}"
+        title="{{name}}"
       >
-        {{#if (gte item.data.quantity 2)}} (x{{item.data.quantity}}) {{/if}}
-        {{item.name}}
+        {{#if (gte data.data.quantity 2)}} (x{{data.data.quantity}}) {{/if}}
+        {{data.name}}
       </button>
-      <span class="parry">{{item.data.parry}}</span>
-      <span class="cover">{{enrich item.data.cover}}</span>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="parry">{{data.data.parry}}</span>
+      <span class="cover">{{enrich data.data.cover}}</span>
+      <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
-        {{#if ../owner}}
+        {{#if isOwner}}
         <button
           type="button"
-          class="item-toggle {{#unless item.data.equipped}}item-unequipped{{/unless}}"
+          class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
@@ -193,7 +192,7 @@
         </button>
         {{/if}}
       </span>
-      <div class="description">{{enrich item.data.description}}</div>
+      <div class="description">{{enrich data.data.description}}</div>
     </li>
     {{/each}}
   </ul>
@@ -208,22 +207,22 @@
     </span>
   </header>
   <ul>
-    {{#each itemsByType.gear as |item|}}
-    <li class="item misc" data-item-id="{{item._id}}">
-      <img class="item-img" src="{{item.img}}" />
+    {{#each actor.itemTypes.gear}}
+    <li class="item misc" data-item-id="{{id}}">
+      <img class="item-img" src="{{img}}" />
       <button
         type="button"
         class="name flexrow item-name"
-        title="{{item.name}}"
+        title="{{name}}"
       >
-        (x{{item.data.quantity}}) {{item.name}}
+        (x{{data.data.quantity}}) {{name}}
       </button>
-      <span class="weight">{{times item.data.weight item.data.quantity}}</span>
+      <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
-        {{#if ../owner}} {{#if item.data.equippable}}
+        {{#if isOwner}} {{#if data.data.equippable}}
         <button
           type="button"
-          class="item-toggle {{#unless item.data.equipped}}item-unequipped{{/unless}}"
+          class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
@@ -239,7 +238,7 @@
         </button>
         {{/if}}
       </span>
-      <div class="description">{{enrich item.data.description}}</div>
+      <div class="description">{{enrich data.data.description}}</div>
     </li>
     {{/each}}
   </ul>

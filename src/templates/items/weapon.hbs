@@ -1,6 +1,6 @@
 <form class="{{cssClass}} flexcol" autocomplete="off">
   {{!-- Item Sheet Header --}} {{>
-  "systems/swade/templates/items/partials/header.html"}}
+  "systems/swade/templates/items/partials/header.hbs"}}
   <main class="sheet-body flexrow">
     <div class="flexrow tab active" data-group="primary" data-tab="summary">
       <section class="item-stats">
@@ -185,8 +185,8 @@
         {{/if}} {{/if}}
       </section>
       <section>
-        {{> "systems/swade/templates/setting-fields.html"}} {{>
-        "systems/swade/templates/items/partials/description.html"}}
+        {{> "systems/swade/templates/setting-fields.hbs"}} {{>
+        "systems/swade/templates/items/partials/description.hbs"}}
       </section>
     </div>
     <div class="tab powers" data-group="primary" data-tab="powers">
@@ -194,9 +194,9 @@
       <br />
     </div>
     <div class="tab" data-group="primary" data-tab="actions-effects">
-      {{> "systems/swade/templates/items/partials/actions.html"}} {{>
-      "systems/swade/templates/items/partials/ae-header.html"}} {{>
-      "systems/swade/templates/effect-list.html"}}
+      {{> "systems/swade/templates/items/partials/actions.hbs"}} {{>
+      "systems/swade/templates/items/partials/ae-header.hbs"}} {{>
+      "systems/swade/templates/effect-list.hbs"}}
       <br />
     </div>
   </main>

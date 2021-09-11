@@ -1,4 +1,5 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
+import { TraitDie, WildDie } from '../actor/actor-data-source';
 
 declare global {
   interface SourceConfig {
@@ -127,13 +128,8 @@ interface PowerData extends ItemDescription, Equipable, Actions {
 interface SkillData extends ItemDescription {
   attribute: string;
   isCoreSkill: boolean;
-  die: {
-    sides: number;
-    modifier: number;
-  };
-  'wild-die': {
-    sides: number;
-  };
+  die: TraitDie;
+  'wild-die': WildDie;
 }
 
 interface AbilityData extends ItemDescription {
