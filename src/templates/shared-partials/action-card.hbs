@@ -107,12 +107,13 @@
     {{/unless}}
   {{/if}}
 
-{{#if data.isArcaneDevice}}
+{{#if item.data.data.isArcaneDevice}}
+{{log item}}
 <div class="pp-counter">
   <p>
     <span class="bold">{{localize "SWADE.ArcaneDevice"}} {{localize "SWADE.PP"}}:</span>
-    <span class="current-pp">{{data.powerPoints.value}}</span>&nbsp;/&nbsp;<span
-      class="max-pp">{{data.powerPoints.max}}</span>
+    <span class="current-pp">{{item.data.data.powerPoints.value}}</span>&nbsp;/&nbsp;<span
+      class="max-pp">{{item.data.data.powerPoints.max}}</span>
   </p>
 </div>
 {{/if}}
