@@ -316,7 +316,7 @@ export default class SwadeActor extends Actor {
         },
       },
     });
-    return this.rollSkill('', options, tempSkill);
+    return this.rollSkill(null, options, tempSkill);
   }
 
   async spendBenny() {
