@@ -57,14 +57,16 @@ export default class SwadeItemSheet extends ItemSheet {
     new SwadeEntityTweaks(this.item).render(true);
   }
 
+  protected _canBeArcaneDevice(itemType: string) {
+    const permissableTypes = ['gear', 'armor', 'shield', 'weapon'];
+    return permissableTypes.includes(itemType)
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
     if (
-      this.item.data.type === 'gear' ||
-      this.item.data.type === 'armor' ||
-      this.item.data.type === 'shield' ||
-      this.item.data.type === 'weapon' ||
+      this._canBeArcaneDevice(this.item.data.type) ||
       (this.item.type === 'ability' &&
         this.item.data.data['subtype'] === 'race')
     ) {
@@ -81,7 +83,7 @@ export default class SwadeItemSheet extends ItemSheet {
       const li = $(ev.currentTarget).parents('.item');
       const id = li.data('itemId');
       const map = new Map(
-        (this.item.getFlag('swade', 'embeddedPowers') as [string, any][]) || [],
+        (this.item.getFlag('swade', 'embeddedPowers') as [string, any][]) ?? [],
       );
       map.delete(id);
       this.item.setFlag('swade', 'embeddedPowers', Array.from(map));
@@ -317,15 +319,7 @@ export default class SwadeItemSheet extends ItemSheet {
       propertyName = 'embeddedAbilities';
     }
 
-    if (
-      (
-        this.item.data.type === 'gear' ||
-        this.item.data.type === 'armor' ||
-        this.item.data.type === 'shield' ||
-        this.item.data.type === 'weapon'
-      ) &&
-      item.data.type === 'power'
-    ) {
+    if (this._canBeArcaneDevice(this.item.data.type) && item.data.type === 'power') {
       propertyName = 'embeddedPowers'
     }
     //pull the array from the flags, and push the new entry into it
