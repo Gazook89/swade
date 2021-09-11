@@ -5,7 +5,7 @@
       <span class="form-fields">
         <select name="data.arcaneSkillDie.sides" id="die" data-dtype="Number">
           {{#select data.data.arcaneSkillDie.sides}} {{>
-          "systems/swade/templates/die-sides-options.html"}} {{/select}}
+          "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input name="data.arcaneSkillDie.modifier" type="text" value="{{data.data.arcaneSkillDie.modifier}}"
           placeholder="{{localize 'SWADE.Mod'}}" data-dtype="Number" />
