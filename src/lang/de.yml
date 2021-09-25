@@ -37,7 +37,7 @@ SWADE.Vuln: Verwundbar
 SWADE.Stunned: Betäubt
 SWADE.Entangled: Festgehalten
 SWADE.Bound: Gebunden
-SWADE.TraitMod: Trait Mod
+SWADE.TraitMod: Eigenschaftsmodifikator
 SWADE.SkillTest: Fertigkeitsprobe
 SWADE.AttributeTest: Attributssprobe
 SWADE.Attributes: Attribute
