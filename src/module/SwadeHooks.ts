@@ -7,6 +7,7 @@ import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
+import SwadeCombatant from './documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
@@ -455,7 +456,7 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    const newOptions: ContextMenu.Item[] = [];
+    const newOptions = new Array<ContextMenu.Item>();
 
     // Set as group leader
     newOptions.push({
@@ -563,10 +564,10 @@ export default class SwadeHooks {
             };
           });
           // Create the combatants and create array of combatants created
-          const combatants = await game?.combat?.createEmbeddedDocuments(
+          const combatants = (await game?.combat?.createEmbeddedDocuments(
             'Combatant',
             createData,
-          );
+          )) as Array<SwadeCombatant>;
           // If there were preexisting combatants...
           if (existingCombatantTokens.length > 0) {
             // Push them into the combatants array
@@ -947,7 +948,7 @@ export default class SwadeHooks {
     )!;
 
     const cards = (await cardPack.getDocuments()).sort(
-      (a: JournalEntry, b: JournalEntry) => {
+      (a: StoredDocument<JournalEntry>, b: StoredDocument<JournalEntry>) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
         const cardB = b.getFlag('swade', 'cardValue') as number;
         const card = cardA - cardB;

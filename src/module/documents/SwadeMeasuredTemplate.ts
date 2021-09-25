@@ -90,10 +90,10 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     // Cancel the workflow (right-click)
     this.handlers.rc = () => {
       this.layer?.preview?.removeChildren();
-      getCanvas().stage.off('mousemove', this.handlers.mm);
-      getCanvas().stage.off('mousedown', this.handlers.lc);
-      getCanvas().app.view.oncontextmenu = null;
-      getCanvas().app.view.onwheel = null;
+      getCanvas()!.stage!.off('mousemove', this.handlers.mm);
+      getCanvas()!.stage!.off('mousedown', this.handlers.lc);
+      getCanvas()!.app!.view.oncontextmenu = null;
+      getCanvas()!.app!.view.onwheel = null;
       this.initialLayer.activate();
     };
     // Confirm the workflow (left-click)
@@ -126,10 +126,10 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       this.refresh();
     };
     // Activate listeners
-    getCanvas().stage.on('mousemove', this.handlers.mm);
-    getCanvas().stage.on('mousedown', this.handlers.lc);
-    getCanvas().app.view.oncontextmenu = this.handlers.rc;
-    getCanvas().app.view.onwheel = this.handlers.mw;
+    getCanvas()!.stage!.on('mousemove', this.handlers.mm);
+    getCanvas()!.stage!.on('mousedown', this.handlers.lc);
+    getCanvas()!.app!.view.oncontextmenu = this.handlers.rc;
+    getCanvas()!.app!.view.onwheel = this.handlers.mw;
   }
   destroy(...args) {
     super.destroy(...args);
