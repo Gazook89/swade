@@ -67,6 +67,7 @@ interface WeaponData
   currentShots: number;
   ammo: string;
   autoReload: boolean;
+  parry: number;
 }
 
 interface GearData

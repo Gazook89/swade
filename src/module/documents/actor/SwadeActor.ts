@@ -574,33 +574,40 @@ export default class SwadeActor extends Actor {
   calcParry(): number {
     if (this.data.type === 'vehicle') 0;
     let parryTotal = 0;
-    const parryBase = game.settings.get('swade', 'parryBaseSkill') as string;
-    const parryBaseSkill = this.items.find(
-      (i: Item) => i.type === 'skill' && i.name === parryBase,
-    ) as Item;
+    const parryBase = game.settings.get('swade', 'parryBaseSkill');
+    const parryBaseSkill = this.itemTypes.skill.find(
+      (i) => i.name === parryBase,
+    );
 
-    const skillDie: number =
-      getProperty(parryBaseSkill, 'data.data.die.sides') || 0;
+    let skillDie = 0;
+    let skillMod = 0;
+    if (parryBaseSkill) {
+      skillDie = getProperty(parryBaseSkill, 'data.data.die.sides') ?? 0;
+      skillMod = getProperty(parryBaseSkill, 'data.data.die.modifier') ?? 0;
+    }
 
     //base parry calculation
     parryTotal = skillDie / 2 + 2;
 
     //add modifier if the skill die is 12
     if (skillDie >= 12) {
-      const skillMod: number =
-        getProperty(parryBaseSkill, 'data.data.die.modifier') || 0;
       parryTotal += Math.floor(skillMod / 2);
     }
 
     //add shields
-    const shields = this.items.filter((i) => i.type === 'shield');
-
-    for (const shield of shields) {
-      const isEquipped = getProperty(shield.data, 'data.equipped');
-      if (isEquipped) {
-        parryTotal += getProperty(shield.data, 'data.parry');
+    for (const shield of this.itemTypes.shield) {
+      if (shield.data.data['equipped']) {
+        parryTotal += getProperty(shield.data, 'data.parry') ?? 0;
       }
     }
+
+    //add equipped weapons
+    for (const weapon of this.itemTypes.weapon) {
+      if (weapon.data.data['equipped']) {
+        parryTotal += getProperty(weapon.data, 'data.parry') ?? 0;
+      }
+    }
+
     return parryTotal;
   }
 
