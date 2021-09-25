@@ -399,8 +399,6 @@ SWADE.UseAttributeShortsDesc: >-
   and npc sheets, i.e. Agi instead of Agility, Sma instead of Smarts, etc.
   You'll need to close and reopen all open sheets for this option to take
   effect.
-SWADE.BennyImage: ''
-SWADE.BennyImageDesc: ''
 SWADE.BennyImageSheet: Benny
 SWADE.BennyImageSheetDesc: Select which image to use for Bennies
 SWADE.Benny3DFront: Front Texture
