@@ -50,11 +50,6 @@ export const SWADE = {
       gmadd: 'systems/swade/templates/chat/benny-gmadd.hbs',
       joker: 'systems/swade/templates/chat/jokers-wild.hbs',
     },
-    sheetImage: 'systems/swade/assets/bennie.webp',
-    textures: {
-      front: 'systems/swade/assets/benny/benny-chip-front.png',
-      back: 'systems/swade/assets/benny/benny-chip-front.png',
-    },
   },
 
   vehicles: {
@@ -83,6 +78,9 @@ export const SWADE = {
       'wealthType',
       'currencyName',
       'weightUnit',
+      'bennyImageSheet',
+      'bennyImage3DFront',
+      'bennyImage3DBack',
     ],
   },
 

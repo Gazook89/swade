@@ -31,6 +31,9 @@ declare global {
       'swade.gmBennies': number;
       'swade.vehicleMods': boolean;
       'swade.vehicleEdges': boolean;
+      'swade.bennyImageSheet': string;
+      'swade.bennyImage3DBack': string;
+      'swade.bennyImage3DFront': string;
       'swade.settingFields': {
         actor: Record<string, AdditionalStat>;
         item: Record<string, AdditionalStat>;
@@ -297,5 +300,38 @@ export function registerSettingRules() {
     //@ts-ignore
     type: Object,
     config: false,
+  });
+
+  game.settings.register('swade', 'bennyImageSheet', {
+    name: game.i18n.localize('SWADE.BennyImageSheet'),
+    hint: game.i18n.localize('SWADE.BennyImageSheetDesc'),
+    type: String,
+    default: 'systems/swade/assets/bennie.webp',
+    scope: 'world',
+    config: false,
+    //@ts-ignore
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'bennyImage3DFront', {
+    name: game.i18n.localize('SWADE.Benny3DFront'),
+    hint: game.i18n.localize('SWADE.Benny3DFrontDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny-chip-front.png',
+    scope: 'world',
+    config: false,
+    //@ts-ignore
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'bennyImage3DBack', {
+    name: game.i18n.localize('SWADE.Benny3DBack'),
+    hint: game.i18n.localize('SWADE.Benny3DBackDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny-chip-front.png',
+    scope: 'world',
+    config: false,
+    //@ts-ignore
+    filePicker: 'image',
   });
 }

@@ -205,7 +205,9 @@ SWADE.VehicleEdges: Fahrzeug-Talente
 SWADE.VehicleEdgesDesc: Fahrzeuge nutzen Talente und Handicaps
 SWADE.SettingConf: Setting-Konfigurator
 SWADE.SettingConfLabel: Öffne Setting-Konfigurator
-SWADE.SettingConfDesc: Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten, Settingregeln, usw. einstellen.
+SWADE.SettingConfDesc: >-
+  Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten,
+  Settingregeln, usw. einstellen.
 SWADE.Formula: Formel
 SWADE.SitMod: Situativer Mod
 SWADE.RollMode: Wurfmodus
@@ -245,9 +247,9 @@ SWADE.Ammo: Munition
 SWADE.AmmoManagement: Munitionsmanagement
 SWADE.AmmoManagementDesc: >-
   Wenn diese Option aktiviert (und anwendbar) ist, wird die Munition vom Magazin
-  der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem eine Schaltfläche
-  zum nachladen und du kannst die Waffe nicht verwenden wenn nicht genügend
-  Munition verfügbar ist
+  der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem eine
+  Schaltfläche zum nachladen und du kannst die Waffe nicht verwenden wenn nicht
+  genügend Munition verfügbar ist
 SWADE.AutoReload: Braucht keine Aktion zum nachladen
 SWADE.Berserk: Berserkerrausch
 SWADE.BleedingOut: Verblutend
@@ -305,9 +307,10 @@ SWADE.VehicleAmmoFromInventory: Fahrzeuge nutzen Munition aus ihrem Inventar
 SWADE.WildDiePreset: Wildcard Würfel Voreinstellung
 SWADE.WildDiePresetDesc: >-
   Wähle ein DSN-Theme für den Wildcard-Würfel. Wähle "Custom", wenn ein eigener
-  erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht anders aussehen
-  soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel derzeit nur von
-  dir selber gesehen werden können. Andere Spieler werden diese anders sehen.
+  erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht anders
+  aussehen soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel derzeit
+  nur von dir selber gesehen werden können. Andere Spieler werden diese anders
+  sehen.
 SWADE.Trapping: Ausprägung
 SWADE.AddBenny: Einen Benny hinzufügen
 SWADE.CurrentBennies: Derzeitige Bennys
@@ -315,11 +318,11 @@ SWADE.RerollWithBenny: Mit Benny nochmal würfeln
 SWADE.FreeReroll: Freier Neuwurf
 SWADE.HideNpcItemChatCards: Verstecke NSC Item Chat Karten
 SWADE.HideNpcItemChatCardsDesc: >-
-  Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch als
-  Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
-SWADE.JokersWildDesc:
-  Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein
-  Joker als Aktionskarte gezogen wird.
+  Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch
+  als Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
+SWADE.JokersWildDesc: >-
+  Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein Joker als
+  Aktionskarte gezogen wird.
 SWADE.ParryBase: Parade-Fertigkeit
 SWADE.ParryBaseDesc: >-
   Der Name der Fertigkeit die zur Berechnung des Paradewerts benutzt wird
@@ -345,7 +348,8 @@ SWADE.WealthType: Kapitalsystem
 SWADE.WealthDie: Wohlstandswürfel
 SWADE.WealthSelectionNoneOther: Keines / Anderes
 SWADE.WealthTypeDesc: >-
-  Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden soll
+  Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden
+  soll
 SWADE.CurrencyName: Währungsname
 SWADE.CurrencyNameDesc: Benenne die gängigste Währung deines Settings
 SWADE.TraitRolls: Eigenschaftswürfe
@@ -372,8 +376,9 @@ SWADE.SysMigrationWarning: >-
   Der Vorgang wird versucht, es können jedoch Fehler auftreten.
 SWADE.DeckShuffled: Kartens automatisch gemischt
 SWADE.BasePace: Basisbewegung
-SWADE.WarningPackLocked: |-
-  Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium entsperren.
+SWADE.WarningPackLocked: >-
+  Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium
+  entsperren.
 SWADE.ActionCardEditor: Aktionskarteneditor
 SWADE.CardFace: Kartenillustration
 SWADE.CardValue: Wert
@@ -390,9 +395,14 @@ SWADE.InitCardDeck: Aktionskartendeck
 SWADE.Metric: Metrisch
 SWADE.Imperial: Imperial
 SWADE.WeightUnitLabel: Gewichtseinheit
-SWADE.WeightUnitDesc: Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch) gerechnet werden
+SWADE.WeightUnitDesc: >-
+  Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch)
+  gerechnet werden
 SWADE.UseAttributeShorts: Attributsnamen abkürzen
 SWADE.UseAttributeShortsDesc: >-
-  Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen als Abkürzungen angegeben,
-  also Ges statt Geschicklichkeit, Ver statt Verstand, etc. Schließe und öffne alle offenen Bögen wenn du
-  diese Einstellung änderst.
+  Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen
+  als Abkürzungen angegeben, also Ges statt Geschicklichkeit, Ver statt
+  Verstand, etc. Schließe und öffne alle offenen Bögen wenn du diese Einstellung
+  änderst.
+SWADE.BennyImageDesc: ''
+SWADE.3DBennies: 3D Bennies

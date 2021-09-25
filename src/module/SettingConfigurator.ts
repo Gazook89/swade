@@ -33,6 +33,7 @@ export default class SettingConfigurator extends FormApplication {
       settingRules: {},
       actorSettingStats: settingFields.actor,
       itemSettingStats: settingFields.item,
+      '3dBennies': !!game.dice3d,
       dtypes: {
         String: 'SWADE.String',
         Number: 'SWADE.Number',

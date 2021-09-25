@@ -1067,7 +1067,10 @@ export default class SwadeHooks {
     dice3d.addDicePreset(
       {
         type: 'db',
-        labels: [SWADE.bennies.textures.front, SWADE.bennies.textures.back],
+        labels: [
+          game.settings.get('swade', 'bennyImage3DFront'),
+          game.settings.get('swade', 'bennyImage3DBack'),
+        ],
         system: 'standard',
         colorset: 'black',
       },

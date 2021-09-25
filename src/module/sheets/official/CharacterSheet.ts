@@ -473,7 +473,7 @@ export default class CharacterSheet extends ActorSheet {
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = CONFIG.SWADE.bennies.sheetImage;
+    data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
 
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     for (const item of Array.from(this.actor.items.values()) as any[]) {
