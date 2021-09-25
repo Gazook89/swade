@@ -81,6 +81,7 @@ export const SWADE = {
       'bennyImageSheet',
       'bennyImage3DFront',
       'bennyImage3DBack',
+      'hardChoices',
     ],
   },
 

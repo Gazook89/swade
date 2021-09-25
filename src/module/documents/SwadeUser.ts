@@ -1,3 +1,5 @@
+import { createGmBennyAddMessage } from '../chat';
+
 declare global {
   interface DocumentClassConfig {
     User: typeof SwadeUser;
@@ -25,8 +27,7 @@ export default class SwadeUser extends User {
 
   async spendBenny() {
     if (this.isGM) {
-      await this.setFlag('swade', 'bennies', this.bennies - 1);
-      if (this.bennies == 0) return;
+      if (this.bennies === 0) return;
       const message = await renderTemplate(
         CONFIG.SWADE.bennies.templates.spend,
         {
@@ -57,6 +58,7 @@ export default class SwadeUser extends User {
   async getBenny() {
     if (this.isGM) {
       await this.setFlag('swade', 'bennies', this.bennies + 1);
+      createGmBennyAddMessage(this);
     } else if (this.character) {
       await this.character.getBenny();
     }

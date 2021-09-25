@@ -23,8 +23,15 @@ export default class Bennies {
     const npcWildcardsToRefresh = game.actors!.filter(
       (a) => !a.hasPlayerOwner && a.data.type === 'npc' && a.isWildcard,
     );
-    for (const actor of npcWildcardsToRefresh) {
-      await actor.refreshBennies(false);
+
+    if (game.settings.get('swade', 'hardChoices')) {
+      for await (const actor of npcWildcardsToRefresh) {
+        actor.update({ 'data.bennies.value': 0 });
+      }
+    } else {
+      for await (const actor of npcWildcardsToRefresh) {
+        actor.refreshBennies(false);
+      }
     }
 
     if (game.settings.get('swade', 'notifyBennies')) {

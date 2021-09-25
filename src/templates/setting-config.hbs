@@ -18,6 +18,18 @@
     <section id="bennies">
       <h2 class="module-header">{{localize "SWADE.Bennies"}}</h2>
       <div class="form-group">
+        <label>{{localize "SWADE.HardChoices"}}</label>
+        <div class="form-fields">
+          <input
+            type="checkbox"
+            name="settingRules.hardChoices"
+            data-dtype="Boolean"
+            {{checked settingRules.hardChoices}}
+          />
+        </div>
+        <p class="notes">{{localize "SWADE.HardChoicesDesc"}}</p>
+      </div>
+      <div class="form-group">
         <label>{{localize "SWADE.BennyImageSheet"}}</label>
         <div class="form-fields">
           {{filePicker target="settingRules.bennyImageSheet" type="image"}}
