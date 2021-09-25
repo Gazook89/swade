@@ -249,11 +249,6 @@ export default class SwadeCombat extends Combat {
       }
     }
 
-    const getGroupLeaderFor = (c: SwadeCombatant) => {
-      if (c.groupId)
-        return currentCombat?.combatants.get(c.groupId, { strict: true });
-    };
-
     /** Compares two tokens by initiative card */
     const cardSortCombatants = (a: SwadeCombatant, b: SwadeCombatant) => {
       const cardA = a.cardValue ?? 0;
