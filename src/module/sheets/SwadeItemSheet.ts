@@ -260,4 +260,15 @@ export default class SwadeItemSheet extends ItemSheet {
     await this.item.setFlag('swade', 'embeddedAbilities', collection);
     return false;
   }
+
+  /** @override */
+  _getSubmitData(updateData = {}) {
+    const data = super._getSubmitData(updateData);
+    // Prevent submitting overridden values
+    const overrides = foundry.utils.flattenObject(this.item.overrides);
+    for (const k of Object.keys(overrides)) {
+      delete data[k];
+    }
+    return data;
+  }
 }

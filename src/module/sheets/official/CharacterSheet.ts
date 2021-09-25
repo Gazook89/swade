@@ -700,7 +700,7 @@ export default class CharacterSheet extends ActorSheet {
       .localize('ENTITY.New')
       .replace('{entity}', game.i18n.localize('Active Effect'));
     if (name) possibleName = name;
-    await ActiveEffect.create(
+    await CONFIG.ActiveEffect.documentClass.create(
       {
         label: possibleName,
         icon: '/icons/svg/mystery-man-black.svg',

@@ -14,11 +14,18 @@ declare global {
  * @noInheritDoc
  */
 export default class SwadeItem extends Item {
+  overrides: DeepPartial<Record<string, string | number | boolean>> = {};
+
   get isMeleeWeapon(): boolean {
     if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
     return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
+  }
+
+  prepareBaseData() {
+    super.prepareBaseData();
+    if (!this.overrides) this.overrides = {};
   }
 
   rollDamage(options: IRollOptions = {}) {
@@ -357,11 +364,11 @@ export default class SwadeItem extends Item {
 
     if (this.parent) {
       const updates = new Array<string>();
-      for (const ae of this.actor?.effects.values()!) {
+      for (const ae of this.parent.effects.values()!) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push(ae.id!);
       }
-      await this.actor!.deleteEmbeddedDocuments('ActiveEffect', updates);
+      await this.parent.deleteEmbeddedDocuments('ActiveEffect', updates);
     }
   }
 
