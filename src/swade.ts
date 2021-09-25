@@ -16,6 +16,7 @@ import SwadeActiveEffect from './module/documents/SwadeActiveEffect';
 import SwadeCombat from './module/documents/SwadeCombat';
 import SwadeCombatant from './module/documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
+import SwadeUser from './module/documents/SwadeUser';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
@@ -64,6 +65,7 @@ Hooks.once('init', () => {
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.Combatant.documentClass = SwadeCombatant;
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
+  CONFIG.User.documentClass = SwadeUser;
 
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;

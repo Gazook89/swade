@@ -780,8 +780,7 @@ export default class SwadeHooks {
         icon: '<i class="fas fa-sync"></i>',
         condition: (li) => game.user!.isGM,
         callback: (li) => {
-          const user = game.users?.get(li[0].dataset.userId!)!;
-          Bennies.refresh(user);
+          game.users?.get(li[0].dataset.userId!)?.refreshBennies();
         },
       },
       {

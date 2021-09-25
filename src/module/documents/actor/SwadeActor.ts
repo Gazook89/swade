@@ -69,6 +69,11 @@ export default class SwadeActor extends Actor {
     return combatant?.hasJoker ?? false;
   }
 
+  get bennies() {
+    if (this.data.type === 'vehicle') return 0;
+    return this.data.data.bennies.value;
+  }
+
   /**
    * @returns an object that contains booleans which denote the current status of the actor
    */
