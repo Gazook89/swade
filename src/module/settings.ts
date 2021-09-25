@@ -34,6 +34,7 @@ declare global {
       'swade.bennyImageSheet': string;
       'swade.bennyImage3DBack': string;
       'swade.bennyImage3DFront': string;
+      'swade.hardChoices': boolean;
       'swade.settingFields': {
         actor: Record<string, AdditionalStat>;
         item: Record<string, AdditionalStat>;
@@ -333,5 +334,14 @@ export function registerSettingRules() {
     config: false,
     //@ts-ignore
     filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'hardChoices', {
+    name: game.i18n.localize('SWADE.HardChoices'),
+    hint: game.i18n.localize('SWADE.HardChoicesDesc'),
+    scope: 'world',
+    type: Boolean,
+    default: false,
+    config: false,
   });
 }

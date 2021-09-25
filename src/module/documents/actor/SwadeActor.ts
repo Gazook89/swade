@@ -69,6 +69,11 @@ export default class SwadeActor extends Actor {
     return combatant?.hasJoker ?? false;
   }
 
+  get bennies() {
+    if (this.data.type === 'vehicle') return 0;
+    return this.data.data.bennies.value;
+  }
+
   /**
    * @returns an object that contains booleans which denote the current status of the actor
    */
@@ -310,6 +315,12 @@ export default class SwadeActor extends Actor {
       ChatMessage.create(chatData);
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
+    if (game.settings.get('swade', 'hardChoices')) {
+      const gms = game.users!.filter((u) => u.isGM && u.active);
+      for await (const gm of gms) {
+        gm.getBenny();
+      }
+    }
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
       const benny = new Roll('1dB').evaluate({ async: false });
       game.dice3d.showForRoll(benny, game.user, true, null, false);
@@ -353,7 +364,11 @@ export default class SwadeActor extends Actor {
       };
       ChatMessage.create(chatData);
     }
-    await this.update({ 'data.bennies.value': this.data.data.bennies.max });
+    let newValue = this.data.data.bennies.max;
+    if (this.isWildcard && this.type === 'npc' && !this.hasPlayerOwner) {
+      newValue = 0;
+    }
+    await this.update({ 'data.bennies.value': newValue });
   }
 
   /** Calculates the total Wound Penalties */
