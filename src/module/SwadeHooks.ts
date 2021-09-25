@@ -340,69 +340,6 @@ export default class SwadeHooks {
     });
   }
 
-  public static async onUpdateCombatant(
-    combatant: any,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-    const user = game.users?.get(userId)!;
-    if (!game.user!.isGM || (game.userId !== userId && user.isGM)) return;
-
-    //return early if there's no flag updates
-    if (!getProperty(updateData, 'flags.swade')) return;
-
-    const jokersWild = game.settings.get('swade', 'jokersWild');
-    if (
-      jokersWild &&
-      getProperty(updateData, 'flags.swade.hasJoker') &&
-      !hasProperty(combatant, 'data.flags.swade.groupId')
-    ) {
-      const template = await renderTemplate(SWADE.bennies.templates.joker, {
-        speaker: game.user,
-      });
-      const isCombHostile =
-        combatant.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-
-      //Give bennies to PCs
-      if (combatant.actor.type === 'character') {
-        await ChatMessage.create({ user: game.user?.id!, content: template });
-        //filter combatants for PCs and give them bennies
-        const combatants =
-          game.combat?.combatants.filter(
-            (c) => c.actor!.data.type === 'character',
-          ) ?? [];
-        for (const combatant of combatants) {
-          const actor = combatant.actor as unknown as SwadeActor;
-          await actor.getBenny();
-        }
-      } else if (combatant.actor.type === 'npc' && isCombHostile) {
-        await ChatMessage.create({ user: game.user?.id!, content: template });
-        //give all GMs a benny
-        const gmUsers = game.users?.filter((u) => u.active && u.isGM)!;
-        for (const gm of gmUsers) {
-          const currBennies = (gm.getFlag('swade', 'bennies') as number) || 0;
-          await gm.setFlag('swade', 'bennies', currBennies + 1);
-          await chat.createGmBennyAddMessage(gm, true);
-        }
-
-        //give all enemy wildcards a benny
-        const enemyWCs =
-          game.combat?.combatants.filter((c) => {
-            const a = c.actor as unknown as SwadeActor;
-            const hostile =
-              c.token!.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-            return a.data.type === 'npc' && hostile && a.isWildcard;
-          }) ?? [];
-        for (const enemy of enemyWCs) {
-          const a = enemy.actor as unknown as SwadeActor;
-          await a.getBenny();
-        }
-      }
-    }
-  }
-
   public static async onRenderChatMessage(
     message: ChatMessage,
     html: JQuery<HTMLElement>,

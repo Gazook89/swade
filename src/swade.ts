@@ -171,13 +171,6 @@ Hooks.on(
     SwadeHooks.onRenderCombatTracker(app, html, data),
 );
 
-//TODO move to combatant class later?
-Hooks.on(
-  'updateCombatant',
-  (combatant: any, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onUpdateCombatant(combatant, updateData, options, userId),
-);
-
 // Add roll data to the message for formatting of dice pools
 Hooks.on(
   'renderChatMessage',
