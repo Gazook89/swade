@@ -94,6 +94,7 @@ export default class SwadeActor extends Actor {
 
   /** @override */
   prepareDerivedData() {
+    this._filterOverrides();
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
 
@@ -968,5 +969,15 @@ export default class SwadeActor extends Actor {
     if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
       ui.players?.render(true);
     }
+  }
+
+  private _filterOverrides() {
+    const overrides = foundry.utils.flattenObject(this.overrides);
+    for (const k of Object.keys(overrides)) {
+      if (k.startsWith('@')) {
+        delete overrides[k];
+      }
+    }
+    this.overrides = foundry.utils.expandObject(overrides);
   }
 }
