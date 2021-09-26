@@ -48,7 +48,7 @@ export default class SwadeUser extends User {
       );
       if (!!game.dice3d && dsnShowBennyAnimation) {
         const benny = await new Roll('1dB').evaluate();
-        game.dice3d.showForRoll(benny, game.user, true, null, false);
+        game.dice3d.showForRoll(benny, game.user!, true, null, false);
       }
     } else if (this.character) {
       await this.character.spendBenny();
