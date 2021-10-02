@@ -44,7 +44,7 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('canBeEquipped', (item: SwadeItem) => {
-    return item.data['equippable'] || item.data['isVehicular'];
+    return item.data.data['equippable'] || item.data.data['isVehicular'];
   });
 
   Handlebars.registerHelper('disabled', (value) => {
