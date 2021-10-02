@@ -1,7 +1,6 @@
 import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**
@@ -176,9 +175,8 @@ export default class SwadeItemSheet extends ItemSheet {
    */
   getData() {
     const data: any = super.getData();
-    data.data.isOwned = this.item.isOwned;
     data.config = SWADE;
-    const actor = this.item.actor as SwadeActor;
+    const actor = this.item.actor;
     const ownerIsWildcard = actor && actor.isWildcard;
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
