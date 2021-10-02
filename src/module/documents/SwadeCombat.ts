@@ -285,7 +285,7 @@ export default class SwadeCombat extends Combat {
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
     const packName = game.settings.get('swade', 'cardDeck');
-    let actionCardPack = game.packs!.get(packName)!;
+    let actionCardPack = game.packs!.get(packName, { strict: true });
     //@ts-ignore
     if (!actionCardPack || actionCardPack.index.length === 0) {
       console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
@@ -297,11 +297,13 @@ export default class SwadeCombat extends Combat {
       actionCardPack = game.packs!.get(SWADE.init.defaultCardCompendium)!;
     }
     const cards: JournalEntry[] = [];
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable);
-    //@ts-ignore
+    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
+      strict: true,
+    });
     const draw = await actionCardDeck.drawMany(count, { displayChat: false });
 
     for (const result of draw.results) {
+      //@ts-ignore
       const resultID = result.data.resultId;
       const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
       cards.push(card);

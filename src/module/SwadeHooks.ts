@@ -910,12 +910,14 @@ export default class SwadeHooks {
         options.document.data.flags.swade &&
         options.document.getFlag('swade', 'cardValue') === cardValue &&
         options.document.getFlag('swade', 'suitValue') === suitValue;
+
       //@ts-ignore
-      const isAvailable = cardTable.results.find(
+      const isDrawn = cardTable.results.find(
+        //@ts-ignore
         (r) => r.data.text === card.name,
-      ).drawn
-        ? 'text-decoration: line-through;'
-        : '';
+        //@ts-ignore
+      ).drawn;
+      const isAvailable = isDrawn ? 'text-decoration: line-through;' : '';
 
       cardList.push({
         cardValue,
