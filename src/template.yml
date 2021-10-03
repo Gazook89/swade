@@ -200,6 +200,7 @@ Item:
     range: ''
     rof: 1
     ap: 0
+    parry: 0
     minStr: ''
     shots: 0
     currentShots: 0

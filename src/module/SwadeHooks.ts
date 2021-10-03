@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
+import CharacterSummarizer from './CharacterSummarizer';
 import * as chat from './chat';
 import { SWADE } from './config';
 import DiceSettings from './DiceSettings';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
+import SwadeCombatant from './documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
+import {
+  DsnCustomWildDieColors,
+  DsnCustomWildDieOptions,
+} from './documents/SwadeUser';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
@@ -21,13 +28,12 @@ export default class SwadeHooks {
     game
       .packs!.filter((p) => p.documentClass.documentName === 'JournalEntry')
       .forEach((p) => {
-        packChoices[
-          p.collection
-        ] = `${p.metadata.label} (${p.metadata.package})`;
+        const choice = `${p.metadata.label} (${p.metadata.package})`;
+        packChoices[p.collection] = choice;
       });
 
     game.settings.register('swade', 'cardDeck', {
-      name: 'Card Deck to use for Initiative',
+      name: game.i18n.localize('SWADE.InitCardDeck'), //Card Deck to use for Initiative',
       scope: 'world',
       type: String,
       config: true,
@@ -136,6 +142,28 @@ export default class SwadeHooks {
 					`;
       }
     }
+  }
+
+  public static async onGetActorDirectoryEntryContext(
+    html: JQuery<HTMLElement>,
+    options: ContextMenu.Item[],
+  ) {
+    const newOptions: ContextMenu.Item[] = [];
+
+    // Invoke character summarizer on selected character
+    newOptions.push({
+      name: 'SWADE.ShowCharacterSummary',
+      icon: '<i class="fas fa-users"></i>',
+      callback: async (li) => {
+        const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
+        CharacterSummarizer.summarizeCharacters([selectedUser]);
+      },
+      condition: (li) => {
+        const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
+        return CharacterSummarizer.isSupportedActorType(selectedUser);
+      },
+    });
+    options.splice(0, 0, ...newOptions);
   }
 
   public static async onRenderCompendium(
@@ -317,69 +345,6 @@ export default class SwadeHooks {
     });
   }
 
-  public static async onUpdateCombatant(
-    combatant: any,
-    updateData: any,
-    options: any,
-    userId: string,
-  ) {
-    // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-    const user = game.users?.get(userId)!;
-    if (!game.user!.isGM || (game.userId !== userId && user.isGM)) return;
-
-    //return early if there's no flag updates
-    if (!getProperty(updateData, 'flags.swade')) return;
-
-    const jokersWild = game.settings.get('swade', 'jokersWild');
-    if (
-      jokersWild &&
-      getProperty(updateData, 'flags.swade.hasJoker') &&
-      !hasProperty(combatant, 'data.flags.swade.groupId')
-    ) {
-      const template = await renderTemplate(SWADE.bennies.templates.joker, {
-        speaker: game.user,
-      });
-      const isCombHostile =
-        combatant.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-
-      //Give bennies to PCs
-      if (combatant.actor.type === 'character') {
-        await ChatMessage.create({ user: game.user?.id!, content: template });
-        //filter combatants for PCs and give them bennies
-        const combatants =
-          game.combat?.combatants.filter(
-            (c) => c.actor!.data.type === 'character',
-          ) ?? [];
-        for (const combatant of combatants) {
-          const actor = combatant.actor as unknown as SwadeActor;
-          await actor.getBenny();
-        }
-      } else if (combatant.actor.type === 'npc' && isCombHostile) {
-        await ChatMessage.create({ user: game.user?.id!, content: template });
-        //give all GMs a benny
-        const gmUsers = game.users?.filter((u) => u.active && u.isGM)!;
-        for (const gm of gmUsers) {
-          const currBennies = (gm.getFlag('swade', 'bennies') as number) || 0;
-          await gm.setFlag('swade', 'bennies', currBennies + 1);
-          await chat.createGmBennyAddMessage(gm, true);
-        }
-
-        //give all enemy wildcards a benny
-        const enemyWCs =
-          game.combat?.combatants.filter((c) => {
-            const a = c.actor as unknown as SwadeActor;
-            const hostile =
-              c.token!.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-            return a.data.type === 'npc' && hostile && a.isWildcard;
-          }) ?? [];
-        for (const enemy of enemyWCs) {
-          const a = enemy.actor as unknown as SwadeActor;
-          await a.getBenny();
-        }
-      }
-    }
-  }
-
   public static async onRenderChatMessage(
     message: ChatMessage,
     html: JQuery<HTMLElement>,
@@ -433,7 +398,7 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    const newOptions: ContextMenu.Item[] = [];
+    const newOptions = new Array<ContextMenu.Item>();
 
     // Set as group leader
     newOptions.push({
@@ -541,10 +506,10 @@ export default class SwadeHooks {
             };
           });
           // Create the combatants and create array of combatants created
-          const combatants = await game?.combat?.createEmbeddedDocuments(
+          const combatants = (await game?.combat?.createEmbeddedDocuments(
             'Combatant',
             createData,
-          );
+          )) as Array<SwadeCombatant>;
           // If there were preexisting combatants...
           if (existingCombatantTokens.length > 0) {
             // Push them into the combatants array
@@ -758,8 +723,7 @@ export default class SwadeHooks {
         icon: '<i class="fas fa-sync"></i>',
         condition: (li) => game.user!.isGM,
         callback: (li) => {
-          const user = game.users?.get(li[0].dataset.userId!)!;
-          Bennies.refresh(user);
+          game.users?.get(li[0].dataset.userId!)?.refreshBennies();
         },
       },
       {
@@ -926,7 +890,7 @@ export default class SwadeHooks {
     )!;
 
     const cards = (await cardPack.getDocuments()).sort(
-      (a: JournalEntry, b: JournalEntry) => {
+      (a: StoredDocument<JournalEntry>, b: StoredDocument<JournalEntry>) => {
         const cardA = a.getFlag('swade', 'cardValue') as number;
         const cardB = b.getFlag('swade', 'cardValue') as number;
         const card = cardA - cardB;
@@ -951,12 +915,14 @@ export default class SwadeHooks {
         options.document.data.flags.swade &&
         options.document.getFlag('swade', 'cardValue') === cardValue &&
         options.document.getFlag('swade', 'suitValue') === suitValue;
+
       //@ts-ignore
-      const isAvailable = cardTable.results.find(
+      const isDrawn = cardTable.results.find(
+        //@ts-ignore
         (r) => r.data.text === card.name,
-      ).drawn
-        ? 'text-decoration: line-through;'
-        : '';
+        //@ts-ignore
+      ).drawn;
+      const isAvailable = isDrawn ? 'text-decoration: line-through;' : '';
 
       cardList.push({
         cardValue,
@@ -974,7 +940,7 @@ export default class SwadeHooks {
     ).length;
 
     //render and inject new HTML
-    const path = 'systems/swade/templates/combatant-config-cardlist.html';
+    const path = 'systems/swade/templates/combatant-config-cardlist.hbs';
     $(await renderTemplate(path, { cardList, numberOfJokers })).insertBefore(
       `#combatant-config-${options.document.id} footer`,
     );
@@ -998,7 +964,7 @@ export default class SwadeHooks {
     return false;
   }
 
-  public static onDiceSoNiceInit(dice3d: any) {
+  public static onDiceSoNiceInit(dice3d: Dice3D) {
     game.settings.registerMenu('swade', 'dice-config', {
       name: game.i18n.localize('SWADE.DiceConf'),
       label: game.i18n.localize('SWADE.DiceConfLabel'),
@@ -1007,9 +973,18 @@ export default class SwadeHooks {
       type: DiceSettings,
       restricted: false,
     });
+
+    game.settings.register('swade', 'dsnShowBennyAnimation', {
+      name: game.i18n.localize('SWADE.ShowBennyAnimation'),
+      hint: game.i18n.localize('SWADE.ShowBennyAnimationDesc'),
+      type: Boolean,
+      default: true,
+      config: false,
+      scope: 'client',
+    });
   }
 
-  public static onDiceSoNiceReady(dice3d: any) {
+  public static onDiceSoNiceReady(dice3d: Dice3D) {
     //@ts-expect-error Load the DiceColors file. This should work fine since the file is only present in the same situation in which the hook is fired
     import('/modules/dice-so-nice/DiceColors.js')
       .then((obj) => {
@@ -1020,11 +995,17 @@ export default class SwadeHooks {
 
     const customWilDieColors =
       game.user!.getFlag('swade', 'dsnCustomWildDieColors') ||
-      getProperty(SWADE, 'diceConfig.flags.dsnCustomWildDieColors.default');
+      (getProperty(
+        SWADE,
+        'diceConfig.flags.dsnCustomWildDieColors.default',
+      ) as DsnCustomWildDieColors);
 
     const customWilDieOptions =
       game.user!.getFlag('swade', 'dsnCustomWildDieOptions') ||
-      getProperty(SWADE, 'diceConfig.flags.dsnCustomWildDieOptions.default');
+      (getProperty(
+        SWADE,
+        'diceConfig.flags.dsnCustomWildDieOptions.default',
+      ) as DsnCustomWildDieOptions);
 
     dice3d.addColorset(
       {
@@ -1045,7 +1026,10 @@ export default class SwadeHooks {
     dice3d.addDicePreset(
       {
         type: 'db',
-        labels: [SWADE.bennies.textures.front, SWADE.bennies.textures.back],
+        labels: [
+          game.settings.get('swade', 'bennyImage3DFront'),
+          game.settings.get('swade', 'bennyImage3DBack'),
+        ],
         system: 'standard',
         colorset: 'black',
       },

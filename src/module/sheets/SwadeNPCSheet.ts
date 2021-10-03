@@ -24,19 +24,8 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     // Later you might want to return a different template
     // based on user permissions.
     if (!game.user?.isGM && this.actor.limited)
-      return 'systems/swade/templates/actors/limited-sheet.html';
-    return 'systems/swade/templates/actors/npc-sheet.html';
-  }
-
-  activateEditor(
-    name: string,
-    options?: TextEditor.Options,
-    initialContent?: string,
-  ) {
-    if (options && name === 'data.details.biography.value') {
-      options.toolbar = 'styleselect bullist hr table removeFormat save';
-    }
-    super.activateEditor(name, options, initialContent);
+      return 'systems/swade/templates/actors/limited-sheet.hbs';
+    return 'systems/swade/templates/actors/npc-sheet.hbs';
   }
 
   // Override to set resizable initial size
@@ -160,6 +149,9 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
   getData() {
     const data: any = super.getData();
+
+    // Progress attribute abbreviation toggle
+    data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
 
     // Everything below here is only needed if user is not limited
     if (this.actor.limited) return data;

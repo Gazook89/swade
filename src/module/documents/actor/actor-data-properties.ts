@@ -29,14 +29,21 @@ interface SwadeVehicleDataSource {
   type: 'vehicle';
 }
 
-type CharacterDataPropertiesData = CharacterDataSourceData & {
+export type CharacterDataPropertiesData = CharacterDataSourceData & {
   stats: {
     speed: {
       adjusted: number;
     };
+    scale: number;
+  };
+  details: {
+    encumbrance: {
+      max: number;
+      value: number;
+    };
   };
 };
 
-type VehicleDataPropertiesData = VehicleDataSourceData & {
+export type VehicleDataPropertiesData = VehicleDataSourceData & {
   //add derived data here
 };

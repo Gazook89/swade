@@ -17,6 +17,10 @@ export const registerCustomHelpers = function () {
     return a * b;
   });
 
+  Handlebars.registerHelper('formatNumber', function (number) {
+    return Math.round((number + Number.EPSILON) * 1000) / 1000;
+  });
+
   Handlebars.registerHelper('isEmpty', (element) => {
     if (typeof element === undefined) return true;
     if (Array.isArray(element) && element.length) return false;
@@ -40,7 +44,7 @@ export const registerCustomHelpers = function () {
   });
 
   Handlebars.registerHelper('canBeEquipped', (item: SwadeItem) => {
-    return item.data['equippable'] || item.data['isVehicular'];
+    return item.data.data['equippable'] || item.data.data['isVehicular'];
   });
 
   Handlebars.registerHelper('disabled', (value) => {

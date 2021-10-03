@@ -8,6 +8,7 @@
   // Content Tabs
   .tabs {
     border-bottom: 1px solid;
+    flex-grow: 0;
 
     .item {
       border: 1px solid $charcoal;

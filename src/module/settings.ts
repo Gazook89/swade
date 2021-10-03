@@ -1,16 +1,48 @@
+import { AdditionalStat } from '../interfaces/additional';
 import SettingConfigurator from './SettingConfigurator';
-export function registerSettings() {
-  /**
-   * Track the system version upon which point a migration was last applied
-   */
-  game.settings.register('swade', 'systemMigrationVersion', {
-    name: 'System Migration Version',
-    scope: 'world',
-    config: false,
-    type: String,
-    default: '0.0.0',
-  });
 
+declare global {
+  namespace ClientSettings {
+    interface Values {
+      'swade.systemMigrationVersion': string;
+      'swade.initiativeSound': boolean;
+      'swade.autoInit': boolean;
+      'swade.initMessage': boolean;
+      'swade.cardDeck': string;
+      'swade.hideNPCWildcards': boolean;
+      'swade.autoLinkWildcards': boolean;
+      'swade.notifyBennies': boolean;
+      'swade.hideNpcItemChatCards': boolean;
+      'swade.useAttributeShorts': boolean;
+      'swade.coreSkills': string;
+      'swade.coreSkillsCompendium': string;
+      'swade.wealthType': 'currency' | 'wealthDie' | 'none';
+      'swade.currencyName': string;
+      'swade.jokersWild': boolean;
+      'swade.parryBaseSkill': string;
+      'swade.weightUnit': 'imperial' | 'metric';
+      'swade.ammoManagement': boolean;
+      'swade.ammoFromInventory': boolean;
+      'swade.npcAmmo': boolean;
+      'swade.vehicleAmmo': boolean;
+      'swade.enableConviction': boolean;
+      'swade.enableWoundPace': boolean;
+      'swade.noPowerPoints': boolean;
+      'swade.gmBennies': number;
+      'swade.vehicleMods': boolean;
+      'swade.vehicleEdges': boolean;
+      'swade.bennyImageSheet': string;
+      'swade.bennyImage3DBack': string;
+      'swade.bennyImage3DFront': string;
+      'swade.hardChoices': boolean;
+      'swade.settingFields': {
+        actor: Record<string, AdditionalStat>;
+        item: Record<string, AdditionalStat>;
+      };
+    }
+  }
+}
+export function registerSettings() {
   game.settings.registerMenu('swade', 'setting-config', {
     name: game.i18n.localize('SWADE.SettingConf'),
     label: game.i18n.localize('SWADE.SettingConfLabel'),
@@ -18,6 +50,15 @@ export function registerSettings() {
     icon: 'fas fa-globe',
     type: SettingConfigurator,
     restricted: true,
+  });
+
+  /** Track the system version upon which point a migration was last applied */
+  game.settings.register('swade', 'systemMigrationVersion', {
+    name: 'System Migration Version',
+    scope: 'world',
+    config: false,
+    type: String,
+    default: '0.0.0',
   });
 
   game.settings.register('swade', 'initiativeSound', {
@@ -81,6 +122,15 @@ export function registerSettings() {
     type: Boolean,
     config: true,
   });
+
+  game.settings.register('swade', 'useAttributeShorts', {
+    name: game.i18n.localize('SWADE.UseAttributeShorts'),
+    hint: game.i18n.localize('SWADE.UseAttributeShortsDesc'),
+    default: false,
+    scope: 'world',
+    type: Boolean,
+    config: true,
+  });
 }
 
 export function registerSettingRules() {
@@ -110,7 +160,7 @@ export function registerSettingRules() {
     choices: {
       currency: 'SWADE.Currency',
       wealthDie: 'SWADE.WealthDie',
-      none: 'SWADE.NoneOther',
+      none: 'SWADE.WealthSelectionNoneOther',
     },
     default: 'currency',
     config: false,
@@ -140,6 +190,19 @@ export function registerSettingRules() {
     default: 'Fighting',
     scope: 'world',
     type: String,
+    config: false,
+  });
+
+  game.settings.register('swade', 'weightUnit', {
+    name: game.i18n.localize('SWADE.WeightUnitLabel'),
+    hint: game.i18n.localize('SWADE.WeightUnitDesc'),
+    default: 'imperial',
+    scope: 'world',
+    type: String,
+    choices: {
+      imperial: 'SWADE.Imperial',
+      metric: 'SWADE.Metric',
+    },
     config: false,
   });
 
@@ -235,7 +298,47 @@ export function registerSettingRules() {
     name: 'Arbitrary Setting Fields',
     default: { actor: {}, item: {} },
     scope: 'world',
+    //@ts-ignore
     type: Object,
+    config: false,
+  });
+
+  game.settings.register('swade', 'bennyImageSheet', {
+    name: game.i18n.localize('SWADE.BennyImageSheet'),
+    hint: game.i18n.localize('SWADE.BennyImageSheetDesc'),
+    type: String,
+    default: 'systems/swade/assets/bennie.webp',
+    scope: 'world',
+    config: false,
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'bennyImage3DFront', {
+    name: game.i18n.localize('SWADE.Benny3DFront'),
+    hint: game.i18n.localize('SWADE.Benny3DFrontDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny-chip-front.png',
+    scope: 'world',
+    config: false,
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'bennyImage3DBack', {
+    name: game.i18n.localize('SWADE.Benny3DBack'),
+    hint: game.i18n.localize('SWADE.Benny3DBackDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny-chip-front.png',
+    scope: 'world',
+    config: false,
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'hardChoices', {
+    name: game.i18n.localize('SWADE.HardChoices'),
+    hint: game.i18n.localize('SWADE.HardChoicesDesc'),
+    scope: 'world',
+    type: Boolean,
+    default: false,
     config: false,
   });
 }

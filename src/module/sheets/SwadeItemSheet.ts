@@ -1,7 +1,6 @@
 import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**
@@ -28,7 +27,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   get template() {
     const path = 'systems/swade/templates/items';
-    return `${path}/${this.item.type}.html`;
+    return `${path}/${this.item.type}.hbs`;
   }
 
   /**
@@ -39,7 +38,7 @@ export default class SwadeItemSheet extends ItemSheet {
     const buttons = super._getHeaderButtons();
 
     // Token Configuration
-    const canConfigure = game.user!.isGM || this.item.owner;
+    const canConfigure = game.user!.isGM || this.item.isOwner;
     if (this.options.editable && canConfigure) {
       const button: Application.HeaderButton = {
         label: 'Tweaks',
@@ -154,10 +153,8 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.additional-stats .roll').on('click', (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
-      const statData: AdditionalStat = this.item.data.data.additionalStats[
-        stat
-      ]!;
-      let modifier = statData.modifier || '';
+      const statData = this.item.data.data.additionalStats[stat]!;
+      let modifier = statData.modifier ?? '';
       if (!modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
@@ -178,9 +175,8 @@ export default class SwadeItemSheet extends ItemSheet {
    */
   getData() {
     const data: any = super.getData();
-    data.data.isOwned = this.item.isOwned;
     data.config = SWADE;
-    const actor = this.item.actor as SwadeActor;
+    const actor = this.item.actor;
     const ownerIsWildcard = actor && actor.isWildcard;
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
@@ -200,7 +196,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
     switch (this.item.type) {
       case 'weapon':
-        data['isWeapon'] = true && game.settings.get('swade', 'ammoManagement');
+        data['isWeapon'] = true;
         if (this.item.isOwned) {
           data['ammoList'] = this.actor!.itemTypes['gear'].map(
             (i) => i.data.name,
@@ -261,5 +257,16 @@ export default class SwadeItemSheet extends ItemSheet {
     //save array back into flag
     await this.item.setFlag('swade', 'embeddedAbilities', collection);
     return false;
+  }
+
+  /** @override */
+  _getSubmitData(updateData = {}) {
+    const data = super._getSubmitData(updateData);
+    // Prevent submitting overridden values
+    const overrides = foundry.utils.flattenObject(this.item.overrides);
+    for (const k of Object.keys(overrides)) {
+      delete data[k];
+    }
+    return data;
   }
 }

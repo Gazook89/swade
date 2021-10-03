@@ -4,8 +4,8 @@ permission:
   XGltUb0dWlJLkvbE: 3
 flags:
   swade:
-    cardValue: 99
-    suitValue: 98
+    cardValue: 98
+    suitValue: 99
     isJoker: true
 content: 'Blk J'
 img: systems/swade/assets/pokerDeck/black_joker.svg

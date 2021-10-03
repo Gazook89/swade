@@ -28,7 +28,7 @@ export default class SwadeEntityTweaks extends FormApplication {
    * @override
    */
   get template() {
-    return 'systems/swade/templates/actors/dialogs/tweaks-dialog.html';
+    return 'systems/swade/templates/actors/dialogs/tweaks-dialog.hbs';
   }
 
   /* -------------------------------------------- */

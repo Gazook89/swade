@@ -166,18 +166,20 @@ export default class SwadeCombat extends Combat {
         }
       }
 
+      // Generate random degree of rotation to give card slide tilt
+      const min = 1;
+      const max = 4;
+      const rotation =
+        Math.floor(Math.random() * (max - min) + min + 1) *
+        (Math.round(Math.random()) ? 1 : -1);
       // Construct chat message data
       const template = `
-          <div class="table-draw">
-              <ol class="table-results">
-                  <li class="table-result flexrow">
-                      <img class="result-image" src="${card!.data.img}">
-                      <h4 class="result-text">
-                        @Compendium[${card!.pack}.${card!.id}]{${card!.name}}
-                      </h4>
-                  </li>
-              </ol>
-          </div>
+            <section class="initiative-draw">
+                <h4 class="result-text result-text-card">${card!.name}</h4>
+                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${
+        card!.data.img
+      }">
+            </section>
           `;
 
       const messageData = mergeObject(
@@ -186,13 +188,12 @@ export default class SwadeCombat extends Combat {
             scene: game.scenes?.active?.id,
             actor: c!.actor ? c!.actor.id : null,
             token: c!.token!.id,
-            alias: c!.token!.name,
+            alias: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           },
           whisper:
             c!.token!.data.hidden || c!.hidden
               ? game!.users!.filter((u: User) => u.isGM)
               : [],
-          flavor: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           content: template,
         },
         options?.messageOptions,
@@ -248,11 +249,6 @@ export default class SwadeCombat extends Combat {
       }
     }
 
-    const getGroupLeaderFor = (c: SwadeCombatant) => {
-      if (c.groupId)
-        return currentCombat?.combatants.get(c.groupId, { strict: true });
-    };
-
     /** Compares two tokens by initiative card */
     const cardSortCombatants = (a: SwadeCombatant, b: SwadeCombatant) => {
       const cardA = a.cardValue ?? 0;
@@ -288,8 +284,8 @@ export default class SwadeCombat extends Combat {
    * @returns an array with the drawn cards
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
-    const packName = game.settings.get('swade', 'cardDeck') as string;
-    let actionCardPack = game.packs!.get(packName)!;
+    const packName = game.settings.get('swade', 'cardDeck');
+    let actionCardPack = game.packs!.get(packName, { strict: true });
     //@ts-ignore
     if (!actionCardPack || actionCardPack.index.length === 0) {
       console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
@@ -301,11 +297,13 @@ export default class SwadeCombat extends Combat {
       actionCardPack = game.packs!.get(SWADE.init.defaultCardCompendium)!;
     }
     const cards: JournalEntry[] = [];
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable);
-    //@ts-ignore
+    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
+      strict: true,
+    });
     const draw = await actionCardDeck.drawMany(count, { displayChat: false });
 
     for (const result of draw.results) {
+      //@ts-ignore
       const resultID = result.data.resultId;
       const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
       cards.push(card);
@@ -339,7 +337,7 @@ export default class SwadeCombat extends Combat {
     }
 
     let card: JournalEntry | undefined;
-    const template = 'systems/swade/templates/initiative/choose-card.html';
+    const template = 'systems/swade/templates/initiative/choose-card.hbs';
     const html = await renderTemplate(template, {
       data: {
         cards: cards,

@@ -18,10 +18,10 @@ ITEM.TypeSkill: Fertigkeit
 ITEM.TypePower: Macht
 SWADE.Name: Name
 SWADE.Tough: Robustheit
-SWADE.Race: Spezies
+SWADE.Race: Volk
 SWADE.Pace: Bew.
 SWADE.Running: Sprinten
-SWADE.RunningDie: Sprinten Würfel
+SWADE.RunningDie: Sprintwürfel
 SWADE.RollRun: Klicke zum Sprinten
 SWADE.Adv: Aufstiege
 SWADE.Rank: Rang
@@ -37,7 +37,7 @@ SWADE.Vuln: Verwundbar
 SWADE.Stunned: Betäubt
 SWADE.Entangled: Festgehalten
 SWADE.Bound: Gebunden
-SWADE.TraitMod: Trait Mod
+SWADE.TraitMod: Eigenschaftsmodifikator
 SWADE.SkillTest: Fertigkeitsprobe
 SWADE.AttributeTest: Attributssprobe
 SWADE.Attributes: Attribute
@@ -45,23 +45,24 @@ SWADE.Derived: Abgeleitete Werte
 SWADE.AttrAgi: Geschick
 SWADE.AttrSma: Verstand
 SWADE.AnimalSmarts: Tierische Intelligenz
+SWADE.AnimalSmartsMarker: T
 SWADE.AttrSpr: Willenskraft
 SWADE.AttrStr: Stärke
 SWADE.AttrVig: Konstitution
-SWADE.Tweaks: Tweaks
+SWADE.Tweaks: Einstellungen
 SWADE.AttrAgiShort: Ges
 SWADE.AttrSmaShort: Ver
 SWADE.AttrSprShort: Wil
 SWADE.AttrStrShort: Str
 SWADE.AttrVigShort: Kon
 SWADE.Skills: Fertigkeiten
-SWADE.Unskilled: Untrainiert
+SWADE.Unskilled: Ungeübt
 SWADE.LinkAttr: Verbundenes Attribut
 SWADE.Die: Würfel
 SWADE.WildDie: Wildcard-Würfel
 SWADE.Mod: Modifikator
 SWADE.BenniesSpend: Setze einen Benny ein
-SWADE.BenniesGive: Gib einen Benny
+SWADE.BenniesGive: Einen Benny geben
 SWADE.BenniesRefresh: Bennys auffrischen
 SWADE.AllBenniesRefresh: Alle Bennys auffrischen
 SWADE.BenniesRefreshMessage: Bennys wurden aufgefrischt!
@@ -70,7 +71,7 @@ SWADE.BenniesGMRefreshMessage: SL Bennys wurden aufgefrischt!
 SWADE.BenniesAddMessage: hat einen Benny erhalten!
 SWADE.BenniesGMAddMessage: hat einen Benny genommen!
 SWADE.BenniesSpendMessage: setzt einen Benny ein!
-SWADE.BenniesMax: Bennys Max
+SWADE.BenniesMax: Maximale Bennys
 SWADE.EditSkill: Fertigkeit ändern
 SWADE.EdEdge: Talent ändern
 SWADE.EdHind: Handicap ändern
@@ -130,7 +131,7 @@ SWADE.Hesitant: Zögerlich
 SWADE.LevelHeaded: Kühler Kopf
 SWADE.ImprovedLevelHeaded: Sehr kühler Kopf
 SWADE.AutoCalc: Automatische Berechnungen
-SWADE.InclArmor: Automatisch Robustheit berechnen, inclusive Rüstung
+SWADE.InclArmor: Automatisch Robustheit und Rüstung berechnen
 SWADE.Label: Etikett
 SWADE.HasMaxValue: Hat Maximalwert
 SWADE.Enabled: aktiviert
@@ -151,65 +152,67 @@ SWADE.Dur: Dauer
 SWADE.Trap: Ausprägung
 SWADE.Wound: Wunde
 SWADE.Wounds: Wunden
-SWADE.WoundsMax: Max Wunden
+SWADE.WoundsMax: Maximale Wunden
 SWADE.Fatigue: Erschöpfung
-SWADE.FatigueMax: Max Erschöpfung
+SWADE.FatigueMax: Maximale Erschöpfung
 SWADE.Incap: Ausgeschaltet!
 SWADE.Init: Initiative
 SWADE.ResetActionDeck: Aktionsdeck zurücksetzen
 SWADE.ActionDeckResetNotification: Aktionsdeck wurde zurückgesetzt
-SWADE.InitDraw: zieht für Initiative!
-SWADE.JokersWild: Joker's Wild
+SWADE.InitDraw: zog...
+SWADE.JokersWild: Bennys für Joker
 SWADE.Addi: Zusätzlich
 SWADE.Status: Status
-SWADE.Handling: Handling
-SWADE.Topspeed: Höchstgeschwindigkeit
+SWADE.Handling: Manövrierf.
+SWADE.Topspeed: Höchstgeschw.
 SWADE.OutOfControl: Außer Kontrolle
 SWADE.Wrecked: Zerstört
 SWADE.Item: Gegenstand
 SWADE.Cargo: Fracht
-SWADE.MaxCargo: Maximum Fracht-Gewicht
+SWADE.MaxCargo: Maximales Fracht-Gewicht
 SWADE.CargoWeight: Fracht-Gewicht
 SWADE.Mods: Mods
 SWADE.ModSlots: Mod-Plätze
 SWADE.MaxMods: Maximum Mods
 SWADE.Operator: Operator
 SWADE.ManCheck: Manöver-Probe
-SWADE.AltSkill: Alternative Fertigkeit
+SWADE.AltSkill: Fertigkeitsname
 SWADE.Class: Klassifikation
-SWADE.Vehicular: Fahrzeug Waffe
-SWADE.VehicleMod: Fahrzeug Mod
+SWADE.Vehicular: Fahrzeugwaffe
+SWADE.VehicleMod: Fahrzeugmod
 SWADE.CardSound: Kartengeräusch
 SWADE.CardSoundDesc: Kurzen Ton beim Ziehen der Aktionskarten abspielen
 SWADE.AutoInit: Automatische Initiative
 SWADE.AutoInitDesc: Aktionskarten jede Runde automatisch ziehen
 SWADE.CreateInitChat: Chatnachrichten für Initiative
 SWADE.HideWC: NSC Wildcards verstecken
-SWADE.HideWCDesc: Den Spielern nicht anzeigen, welche NSCs Wildcards sind
+SWADE.HideWCDesc: Spielern nicht anzeigen, welche NSCs Wildcards sind
 SWADE.EnableConv: Entschlossenheit
-SWADE.EnableConvDesc: Setting-Regel Entschlossenheit verwenden
-SWADE.EnableWoundPace: Bewegung durch Wunden modifizieren
+SWADE.EnableConvDesc: Settingregel "Entschlossenheit" verwenden
+SWADE.EnableWoundPace: Wunden beeinflussen Bewegung
 SWADE.EnableWoundPaceDesc: Wenn aktiviert, wird die Bewegung automatisch durch Wunden angepasst
 SWADE.AutoLink: NSC Wildcards mit Token verbinden
 SWADE.AutoLinkDesc: >-
   NSC Wildcards beim Umschalten zwischen Statist und Wildcard mit Token
   verbinden
 SWADE.GmBennies: SL Bennys
-SWADE.GmBenniesDesc: Voreinstellung, wie viele Bennys der SL bei Auffrischen erhält
+SWADE.GmBenniesDesc: Anzahl Bennys die du als SL beim auffrischen selbiger erhälst
 SWADE.EnableBennyNotify: Nachrichten zu Bennys
 SWADE.EnableBennyNotifyDesc: Zeige Chatnachricht beim Nehmen, Einsetzen oder Auffrischen von Bennys
-SWADE.VehicleMods: Fahrzeug Modifikationen
+SWADE.VehicleMods: Fahrzeug-Modifikationen
 SWADE.VehicleModsDesc: Fahrzeuge nutzen Modifikations-Plätze
 SWADE.VehicleEdges: Fahrzeug-Talente
 SWADE.VehicleEdgesDesc: Fahrzeuge nutzen Talente und Handicaps
-SWADE.SettingConf: Setting Konfigurator
-SWADE.SettingConfLabel: Öffne Setting Konfigurator
-SWADE.SettingConfDesc: Sytemfeineinstellungen für dein Setting
+SWADE.SettingConf: Setting-Konfigurator
+SWADE.SettingConfLabel: Öffne Setting-Konfigurator
+SWADE.SettingConfDesc: >-
+  Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten,
+  Settingregeln, usw. einstellen.
 SWADE.Formula: Formel
 SWADE.SitMod: Situativer Mod
 SWADE.RollMode: Wurfmodus
 SWADE.RollExample: z.B. +1d6x= oder -2
-SWADE.Roll: Probe
+SWADE.Roll: Probe auf
 SWADE.RollRaise: Steigerungswurf
 SWADE.GroupRoll: Gruppenprobe
 SWADE.Ok: OK
@@ -223,7 +226,7 @@ SWADE.Scale: Größenkategorie
 SWADE.PickACard: Wähle eine Karte für
 SWADE.NoCardsLeft: Es sind nicht genug Karten im Deck!
 SWADE.OldCard: Alte Karte
-SWADE.ActionCard: Aktiionskarte
+SWADE.ActionCard: Aktionskarte
 SWADE.ConvictionActivate: aktiviert Entschlossenheit!
 SWADE.ConvictionExtend: Entschlossenheit einsetzen?
 SWADE.ConvictionEnd: schwankt in der Entschlossenheit
@@ -236,18 +239,18 @@ SWADE.GM: Spielleiter
 SWADE.Vehicles: Fahrzeuge
 SWADE.AddStats: Weitere Werte
 SWADE.Actors: Akteur
-SWADE.Items: Gegenstände
+SWADE.Items: Items
 SWADE.Max: Max
 SWADE.Curr: Aktuell
 SWADE.Aiming: Zielen
 SWADE.Ammo: Munition
 SWADE.AmmoManagement: Munitionsmanagement
 SWADE.AmmoManagementDesc: >-
-  Wenn diese Option aktiviert und anwendbar ist, wird die Munition vom Magazin
-  der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem einen neuen
-  Nachladeknopf und du kannst keinene Angriffe ausführen, wenn nicht genügend
-  Munition verfügbar ist
-SWADE.AutoReload: Braucht keine Nachladenaktion
+  Wenn diese Option aktiviert (und anwendbar) ist, wird die Munition vom Magazin
+  der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem eine
+  Schaltfläche zum nachladen und du kannst die Waffe nicht verwenden wenn nicht
+  genügend Munition verfügbar ist
+SWADE.AutoReload: Braucht keine Aktion zum nachladen
 SWADE.Berserk: Berserkerrausch
 SWADE.BleedingOut: Verblutend
 SWADE.CoverShield: Deckung - Schild
@@ -269,7 +272,7 @@ SWADE.RemoveGroupLeader: Gruppenleiter entfernen
 SWADE.AddTokenFollowers: Ausgewählte Tokens als Follower hinzufügen
 SWADE.GroupByName: Nach Namen gruppieren
 SWADE.SetGroupColor: Gruppenfarbe einstellen
-SWADE.SelectColor: Wählen Sie eine Farbe
+SWADE.SelectColor: Wähle eine Farbe
 SWADE.Holding: Aufgespart
 SWADE.Invisible: Unsichtbar
 SWADE.Hold: Abwarten
@@ -282,8 +285,8 @@ SWADE.NotEnoughAmmo: Du hast nicht genug Munition für diese Aktion
 SWADE.NotEnoughAmmoToReload: Es gibt nicht genug Munition zum nachladen
 SWADE.OfficialSheet: Offizielles Blatt
 SWADE.OnFire: Brennend
-SWADE.OpSkill: Steuerfertigkeit
-SWADE.PCAmmoFromInventory: Spielercharactere laden Munition aus ihrem Inventar nach
+SWADE.OpSkill: Manöverfertigkeit
+SWADE.PCAmmoFromInventory: SCs laden Munition aus ihrem Inventar nach
 SWADE.PCAmmoFromInventoryDesc: >-
   Wenn diese Option aktiviert ist, kann die Option zum Einstellen eines
   "Ausrüstung" gegenstands als Munition festgelegt werden und wird beim
@@ -303,25 +306,28 @@ SWADE.Torch: Lichtquelle
 SWADE.VehicleAmmoFromInventory: Fahrzeuge nutzen Munition aus ihrem Inventar
 SWADE.WildDiePreset: Wildcard Würfel Voreinstellung
 SWADE.WildDiePresetDesc: >-
-  Wähle ein DSN-Theme für den Wild Die. Wähle "Custom", wenn ein eigener
-  erstellt werden soll, oder "Kein" wenn der Wild Die nicht anders aussehen
-  soll. Bitte beachten Sie, dass selbst erstellte Wild Dies derzeit nur von
-  Ihnen gesehen werden können. Andere Spieler werden sie anders sehen.
+  Wähle ein DSN-Theme für den Wildcard-Würfel. Wähle "Custom", wenn ein eigener
+  erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht anders
+  aussehen soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel derzeit
+  nur von dir selber gesehen werden können. Andere Spieler werden diese anders
+  sehen.
 SWADE.Trapping: Ausprägung
-SWADE.AddBenny: Einen Bennie hinzufügen
-SWADE.CurrentBennies: Derzeitige Bennies
-SWADE.RerollWithBenny: Mit Bennie nochmal würfeln
+SWADE.AddBenny: Einen Benny hinzufügen
+SWADE.CurrentBennies: Derzeitige Bennys
+SWADE.RerollWithBenny: Mit Benny nochmal würfeln
 SWADE.FreeReroll: Freier Neuwurf
 SWADE.HideNpcItemChatCards: Verstecke NSC Item Chat Karten
 SWADE.HideNpcItemChatCardsDesc: >-
-  Wenn diese Option aktiviert ist, werden NPC-Item-Chat-Karten automatisch als
-  Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
-SWADE.JokersWildDesc: Gibts jedem Spielercharakter einen Benny wenn eine/r einen Joker zieht
-SWADE.ParryBase: Parade basis Fertigkeit
+  Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch
+  als Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
+SWADE.JokersWildDesc: >-
+  Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein Joker als
+  Aktionskarte gezogen wird.
+SWADE.ParryBase: Parade-Fertigkeit
 SWADE.ParryBaseDesc: >-
-  Der Name der Fertigkeit welche zur errechnung des Paradewerts hernagezogen
-  wird
-SWADE.AutoCalcParry: Automatisch Parade berechnen, inclusive Schilde
+  Der Name der Fertigkeit die zur Berechnung des Paradewerts benutzt wird
+  (Normalerweise Kämpfen)
+SWADE.AutoCalcParry: Automatisch Parade berechnen, inklusive Schilde
 SWADE.Subtype: Unterkategorie
 SWADE.SpecialAbility: Spezialfähigkeit
 SWADE.SpecialAbilities: Spezialfähigkeiten
@@ -336,41 +342,43 @@ SWADE.Number: Nummer
 SWADE.Checkbox: Checkbox
 SWADE.NoPowerPoints: Keine Machtpunkte
 SWADE.NoPowerPointsDesc: >-
-  Wenn diese Option aktiviert ist, werden alle Machtpunkte-Interaktionen
+  Wenn diese Option aktiviert ist, werden alle Machtpunkt-Interaktionen
   ausgeblendet
-SWADE.WealthType: Wohlstandstyp
-SWADE.WealthDie: Wohlstand
-SWADE.NoneOther: Keiner / Anderer
+SWADE.WealthType: Kapitalsystem
+SWADE.WealthDie: Wohlstandswürfel
+SWADE.WealthSelectionNoneOther: Keines / Anderes
 SWADE.WealthTypeDesc: >-
-  Wählen Sie aus, wie der Charakterreichtum und die Währung verfolgt werden
-  sollen
+  Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden
+  soll
 SWADE.CurrencyName: Währungsname
-SWADE.CurrencyNameDesc: Benennen Sie Ihre Währung
+SWADE.CurrencyNameDesc: Benenne die gängigste Währung deines Settings
 SWADE.TraitRolls: Eigenschaftswürfe
 SWADE.Trait: Eigenschaft
 SWADE.AltTrait: Alternative Eigenschaft
-SWADE.ClickSuggestions: Klicken Sie hier für Vorschläge
+SWADE.ClickSuggestions: Klicke hier für Vorschläge
 SWADE.Quick: Schnell
 SWADE.BonusDamage: Bonusschaden
+SWADE.CoreSkill: Grundfertigkeit
+SWADE.CoreSkills: Grundfertigkeiten
 SWADE.CoreSkillsDesc: >-
-  Geben Sie eine durch Beistriche getrennte Liste von Fertigkeitsnamen ein, die
-  als Grundfertigkeiten für alle Spielercharaktere definiert werden sollen
-SWADE.CoreSkillsPackDesc: Wählen Sie aus welchem ​​Kompendium die Grundfertigkeiten bezogen werden
+  Gib hier die Namen der Grundfertigkeiten deines Settings an. Zum Beispiel so:
+  Allgemeinwissen, Athletik, Heimlichkeit, Überreden, Wahrnehmung
+SWADE.CoreSkillsPackDesc: Wähle aus, aus welchem ​​Kompendium die Grundfertigkeiten bezogen werden
 SWADE.Joker: Joker
 SWADE.DmgRolls: Schadenswürfe
-SWADE.SubtractPPDesc: MP Kosten von verfügbaren MP abziehen
-SWADE.AddPPDesc: MP Kosten zu den verfügbaren MP hinzurechnen
+SWADE.SubtractPPDesc: MP-Kosten von den verfügbaren MP abziehen
+SWADE.AddPPDesc: MP-Kosten zu den verfügbaren MP hinzurechnen
 SWADE.RightClickZoom: Für eine größere Ansicht rechtsklicken
 SWADE.SysMigrationWarning: >-
-  Ihre SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können
+  Deine SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können
   nicht zuverlässig auf die neueste Version migriert werden.
 
   Der Vorgang wird versucht, es können jedoch Fehler auftreten.
 SWADE.DeckShuffled: Kartens automatisch gemischt
 SWADE.BasePace: Basisbewegung
-SWADE.WarningPackLocked: |-
-  Sie können ein gesperrtes Kompendium nicht bearbeiten.
-  Bitte zuerst entsperren
+SWADE.WarningPackLocked: >-
+  Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium
+  entsperren.
 SWADE.ActionCardEditor: Aktionskarteneditor
 SWADE.CardFace: Kartenillustration
 SWADE.CardValue: Wert
@@ -379,3 +387,21 @@ SWADE.CardSuit: Symbol
 SWADE.OpenACEditor: Im Aktionskarteneditor öffnen
 SWADE.Yes: Ja
 SWADE.No: Nein
+SWADE.ShowCharacterSummary: Charakterzusammenfassung Anzeigen
+SWADE.CharacterSummary: Charakterzusammenfassung
+SWADE.CopyHtml: HTML Kopieren
+SWADE.CopyMarkdown: Markdown kopieren
+SWADE.InitCardDeck: Aktionskartendeck
+SWADE.Metric: Metrisch
+SWADE.Imperial: Imperial
+SWADE.WeightUnitLabel: Gewichtseinheit
+SWADE.WeightUnitDesc: >-
+  Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch)
+  gerechnet werden
+SWADE.UseAttributeShorts: Attributsnamen abkürzen
+SWADE.UseAttributeShortsDesc: >-
+  Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen
+  als Abkürzungen angegeben, also Ges statt Geschicklichkeit, Ver statt
+  Verstand, etc. Schließe und öffne alle offenen Bögen wenn du diese Einstellung
+  änderst.
+SWADE.3DBennies: 3D Bennies

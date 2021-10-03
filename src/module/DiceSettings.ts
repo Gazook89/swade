@@ -9,7 +9,8 @@ export default class DiceSettings extends FormApplication {
   constructor(object = {}, options = {}) {
     super(object, options);
     this.config = SWADE.diceConfig;
-    this.customWildDieDefaultColors = this.config.flags.dsnCustomWildDieColors.default;
+    this.customWildDieDefaultColors =
+      this.config.flags.dsnCustomWildDieColors.default;
   }
 
   static get defaultOptions() {
@@ -17,7 +18,7 @@ export default class DiceSettings extends FormApplication {
       ...super.defaultOptions,
       id: SWADE.diceConfig.id,
       title: SWADE.diceConfig.title,
-      template: 'systems/swade/templates/dice-config.html',
+      template: 'systems/swade/templates/dice-config.hbs',
       classes: ['swade', 'dice-config', 'dice-so-nice'],
       width: 500,
       height: 'auto' as const,
@@ -157,7 +158,7 @@ export default class DiceSettings extends FormApplication {
     const fontList = {
       auto: game.i18n.localize('DICESONICE.FontAuto'),
     };
-    game.dice3d.box.dicefactory.fontFamilies.forEach((font) => {
+    game.dice3d?.box.dicefactory.fontFamilies.forEach((font) => {
       fontList[font] = font;
     });
     fontList['auto'] = game.i18n.localize('DICESONICE.FontAuto');

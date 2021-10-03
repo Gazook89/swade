@@ -1,10 +1,11 @@
+import { Dice3D } from './interfaces/DiceSoNice';
 import SwadeGame from './interfaces/SwadeGame';
 import { SWADE } from './module/config';
 
 declare global {
   interface Game {
-    dice3d: any;
     swade: SwadeGame;
+    dice3d?: Dice3D;
   }
 
   interface LenientGlobalVariableTypes {

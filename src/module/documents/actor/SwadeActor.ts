@@ -8,7 +8,7 @@ import SwadeDice from '../../dice';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
-import { SwadeActorDataSource } from './actor-data-source';
+import { SwadeActorDataSource, TraitDie } from './actor-data-source';
 
 declare global {
   interface DocumentClassConfig {
@@ -69,6 +69,11 @@ export default class SwadeActor extends Actor {
     return combatant?.hasJoker ?? false;
   }
 
+  get bennies() {
+    if (this.data.type === 'vehicle') return 0;
+    return this.data.data.bennies.value;
+  }
+
   /**
    * @returns an object that contains booleans which denote the current status of the actor
    */
@@ -80,34 +85,28 @@ export default class SwadeActor extends Actor {
   prepareBaseData() {
     if (this.data.type === 'vehicle') return;
     //auto calculations
-    const shouldAutoCalcToughness = getProperty(
-      this.data,
-      'data.details.autoCalcToughness',
-    ) as boolean;
-
-    if (shouldAutoCalcToughness) {
+    if (this.data.data.details.autoCalcToughness) {
       //if we calculate the toughness then we set the values to 0 beforehand so the active effects can be applies
-      const toughnessKey = 'data.stats.toughness.value';
-      const armorKey = 'data.stats.toughness.armor';
-      this.data.data;
-      setProperty(this.data, toughnessKey, 0);
-      setProperty(this.data, armorKey, 0);
+      this.data.data.stats.toughness.value = 0;
+      this.data.data.stats.toughness.armor = 0;
     }
 
-    const shouldAutoCalcParry = getProperty(
-      this.data,
-      'data.details.autoCalcParry',
-    ) as boolean;
-    if (shouldAutoCalcParry) {
+    if (this.data.data.details.autoCalcParry) {
       //same procedure as with Toughness
-      setProperty(this.data, 'data.stats.parry.value', 0);
+      this.data.data.stats.parry.value = 0;
     }
   }
 
   /** @override */
   prepareDerivedData() {
+    this._filterOverrides();
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
+
+    //die type bounding for attributes
+    for (const attribute of Object.values(this.data.data.attributes)) {
+      attribute.die = this._boundTraitDie(attribute.die);
+    }
 
     //modify pace with wounds
     if (game.settings.get('swade', 'enableWoundPace')) {
@@ -117,18 +116,18 @@ export default class SwadeActor extends Actor {
       //make sure the pace doesn't go below 1
       const adjustedPace = Math.max(pace - wounds, 1);
       this.data.data.stats.speed.adjusted = adjustedPace;
+    } else {
+      this.data.data.stats.speed.adjusted = this.data.data.stats.speed.value;
     }
 
-    //die type bounding for attributes
-    for (const attribute in this.data.data.attributes) {
-      const key = `data.attributes.${attribute}.die.sides`;
-      const sides = getProperty(this.data, key);
-      if (sides < 4 && sides !== 1) {
-        setProperty(this.data, key, 4);
-      } else if (sides > 12) {
-        setProperty(this.data, key, 12);
-      }
-    }
+    //set scale
+    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
+
+    //handle carry capacity
+    this.data.data.details.encumbrance = {
+      max: this.calcMaxCarryCapacity(),
+      value: this.calcInventoryWeight(),
+    };
 
     // Toughness calculation
     const shouldAutoCalcToughness = this.data.data.details.autoCalcToughness;
@@ -316,15 +315,24 @@ export default class SwadeActor extends Actor {
       ChatMessage.create(chatData);
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
+    if (game.settings.get('swade', 'hardChoices')) {
+      const gms = game.users!.filter((u) => u.isGM && u.active);
+      for await (const gm of gms) {
+        gm.getBenny();
+      }
+    }
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
       const benny = new Roll('1dB').evaluate({ async: false });
-      game.dice3d.showForRoll(benny, game.user, true, null, false);
+      game.dice3d.showForRoll(benny, game.user!, true, null, false);
     }
   }
 
   async getBenny() {
     if (this.data.type === 'vehicle') return;
-    if (game.settings.get('swade', 'notifyBennies')) {
+    const combatant = this.token?.combatant;
+    const notHiddenNPC =
+      !combatant?.isNPC || (combatant?.isNPC && !combatant?.hidden);
+    if (game.settings.get('swade', 'notifyBennies') && notHiddenNPC) {
       const message = await renderTemplate(SWADE.bennies.templates.add, {
         target: this,
         speaker: game.user,
@@ -356,12 +364,20 @@ export default class SwadeActor extends Actor {
       };
       ChatMessage.create(chatData);
     }
-    await this.update({ 'data.bennies.value': this.data.data.bennies.max });
+    let newValue = this.data.data.bennies.max;
+    const hardChoices = game.settings.get('swade', 'hardChoices');
+    if (
+      hardChoices &&
+      this.isWildcard &&
+      this.type === 'npc' &&
+      !this.hasPlayerOwner
+    ) {
+      newValue = 0;
+    }
+    await this.update({ 'data.bennies.value': newValue });
   }
 
-  /**
-   * Calculates the total Wound Penalties
-   */
+  /** Calculates the total Wound Penalties */
   calcWoundPenalties(): number {
     let retVal = 0;
     const wounds = parseInt(getProperty(this.data, 'data.wounds.value'));
@@ -383,9 +399,7 @@ export default class SwadeActor extends Actor {
     return retVal * -1;
   }
 
-  /**
-   * Calculates the total Fatigue Penalties
-   */
+  /** Calculates the total Fatigue Penalties */
   calcFatiguePenalties(): number {
     let retVal = 0;
     const fatigue = parseInt(getProperty(this.data, 'data.fatigue.value'));
@@ -401,6 +415,18 @@ export default class SwadeActor extends Actor {
       retVal -= 2;
     }
     return retVal;
+  }
+
+  calcScale(size: number): number {
+    let scale = 0;
+    if (Number.between(size, 20, 12)) scale = 6;
+    else if (Number.between(size, 11, 8)) scale = 4;
+    else if (Number.between(size, 7, 4)) scale = 2;
+    else if (Number.between(size, 3, -1)) scale = 0;
+    else if (size === -2) scale = -2;
+    else if (size === -3) scale = -4;
+    else if (size === -4) scale = -6;
+    return scale;
   }
 
   /**
@@ -527,74 +553,87 @@ export default class SwadeActor extends Actor {
       retVal += Math.floor(vigMod / 2);
     }
     if (includeArmor) {
-      retVal += this.calcArmor() ?? 0;
+      retVal += this.calcArmor();
     }
     if (retVal < 1) retVal = 1;
     return retVal;
   }
 
-  /**
-   * Calculates the maximum carry capacity based on the strength die and any adjustment steps
-   */
-  calcMaxCarryCapacity(): number | undefined {
-    if (this.data.type === 'vehicle') return;
-    const strengthDie = getProperty(this.data, 'data.attributes.strength.die');
+  /** Calculates the maximum carry capacity based on the strength die and any adjustment steps */
+  calcMaxCarryCapacity(): number {
+    if (this.data.type === 'vehicle') return 0;
+    const unit = game.settings.get('swade', 'weightUnit');
+    const strength = deepClone(this.data.data.attributes.strength);
+    const stepAdjust = Math.max(strength.encumbranceSteps * 2, 0);
+    strength.die.sides += stepAdjust;
+    //bound the adjusted strenght die to 12
+    const encumbDie = this._boundTraitDie(strength.die);
 
-    let stepAdjust =
-      getProperty(this.data, 'data.attributes.strength.encumbranceSteps') * 2;
-
-    if (stepAdjust < 0) stepAdjust = 0;
-
-    const encumbDie = strengthDie.sides + stepAdjust;
-
-    if (encumbDie > 12) encumbDie > 12;
-
-    let capacity = 20 + 10 * (encumbDie - 4);
-
-    if (strengthDie.modifier > 0) {
-      capacity = capacity + 20 * strengthDie.modifier;
+    if (unit === 'imperial') {
+      return this._calcImperialCapacity(encumbDie);
+    } else if (unit === 'metric') {
+      return this._calcMetricCapacity(encumbDie);
+    } else {
+      throw new Error(`Value ${unit} is an unkown value!`);
     }
+  }
 
-    return capacity;
+  calcInventoryWeight(): number {
+    const items = [
+      ...this.itemTypes.shield,
+      ...this.itemTypes.weapon,
+      ...this.itemTypes.armor,
+      ...this.itemTypes.gear,
+    ];
+    let retVal = 0;
+    items.forEach((i) => {
+      retVal += i.data.data['weight'] * i.data.data['quantity'];
+    });
+    return retVal;
   }
 
   calcParry(): number {
     if (this.data.type === 'vehicle') 0;
     let parryTotal = 0;
-    const parryBase = game.settings.get('swade', 'parryBaseSkill') as string;
-    const parryBaseSkill = this.items.find(
-      (i: Item) => i.type === 'skill' && i.name === parryBase,
-    ) as Item;
+    const parryBase = game.settings.get('swade', 'parryBaseSkill');
+    const parryBaseSkill = this.itemTypes.skill.find(
+      (i) => i.name === parryBase,
+    );
 
-    const skillDie: number =
-      getProperty(parryBaseSkill, 'data.data.die.sides') || 0;
+    let skillDie = 0;
+    let skillMod = 0;
+    if (parryBaseSkill) {
+      skillDie = getProperty(parryBaseSkill, 'data.data.die.sides') ?? 0;
+      skillMod = getProperty(parryBaseSkill, 'data.data.die.modifier') ?? 0;
+    }
 
     //base parry calculation
     parryTotal = skillDie / 2 + 2;
 
     //add modifier if the skill die is 12
     if (skillDie >= 12) {
-      const skillMod: number =
-        getProperty(parryBaseSkill, 'data.data.die.modifier') || 0;
       parryTotal += Math.floor(skillMod / 2);
     }
 
     //add shields
-    const shields = this.items.filter((i) => i.type === 'shield');
-
-    for (const shield of shields) {
-      const isEquipped = getProperty(shield.data, 'data.equipped');
-      if (isEquipped) {
-        parryTotal += getProperty(shield.data, 'data.parry');
+    for (const shield of this.itemTypes.shield) {
+      if (shield.data.data['equipped']) {
+        parryTotal += getProperty(shield.data, 'data.parry') ?? 0;
       }
     }
+
+    //add equipped weapons
+    for (const weapon of this.itemTypes.weapon) {
+      if (weapon.data.data['equipped']) {
+        parryTotal += getProperty(weapon.data, 'data.parry') ?? 0;
+      }
+    }
+
     return parryTotal;
   }
 
-  /**
-   * Helper Function for Vehicle Actors, to roll Maneuevering checks
-   */
-  async rollManeuverCheck(event: any = null) {
+  /** Helper Function for Vehicle Actors, to roll Maneuevering checks */
+  async rollManeuverCheck() {
     if (this.data.type !== 'vehicle') return;
     const driver = await this.getDriver();
 
@@ -614,8 +653,8 @@ export default class SwadeActor extends Actor {
     let totalHandling: number | string;
     totalHandling = handling + wounds;
 
+    //TODO Make this prettier
     // Calculate handling
-
     //Handling is capped at a certain penalty
     if (totalHandling < SWADE.vehicles.maxHandlingPenalty) {
       totalHandling = SWADE.vehicles.maxHandlingPenalty;
@@ -625,14 +664,13 @@ export default class SwadeActor extends Actor {
     }
 
     const options = {
-      event: event,
       additionalMods: [totalHandling],
     };
 
     //Find the operating skill
     const skill = driver.items.find(
       (i) => i.type === 'skill' && i.name === skillName,
-    ) as SwadeItem;
+    );
 
     if (skill) {
       driver.rollSkill(skill.id!, options);
@@ -727,6 +765,23 @@ export default class SwadeActor extends Actor {
       modifiers: ['x', ...modifiers],
       options: { flavor: flavor.replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '') },
     });
+  }
+
+  /**
+   * Thus
+   * @param die The die to adjust
+   * @returns the properly adjusted trait die
+   */
+  private _boundTraitDie(die: TraitDie): TraitDie {
+    const sides = die.sides;
+    if (sides < 4 && sides !== 1) {
+      die.sides = 4;
+    } else if (sides > 12) {
+      //const difference = sides - 12;
+      die.sides = 12;
+      //die.modifier += difference / 2;
+    }
+    return die;
   }
 
   private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
@@ -825,6 +880,16 @@ export default class SwadeActor extends Actor {
     }
 
     return [...mods.filter((m) => m.value)];
+  }
+
+  private _calcImperialCapacity(strength: TraitDie): number {
+    const modifier = Math.max(strength.modifier, 0);
+    return (strength.sides / 2 - 1 + modifier) * 20;
+  }
+
+  private _calcMetricCapacity(strength: TraitDie): number {
+    const modifier = Math.max(strength.modifier, 0);
+    return (strength.sides / 2 - 1 + modifier) * 10;
   }
 
   async _preCreate(
@@ -932,5 +997,15 @@ export default class SwadeActor extends Actor {
     if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
       ui.players?.render(true);
     }
+  }
+
+  private _filterOverrides() {
+    const overrides = foundry.utils.flattenObject(this.overrides);
+    for (const k of Object.keys(overrides)) {
+      if (k.startsWith('@')) {
+        delete overrides[k];
+      }
+    }
+    this.overrides = foundry.utils.expandObject(overrides);
   }
 }

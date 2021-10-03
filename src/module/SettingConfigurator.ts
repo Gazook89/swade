@@ -1,9 +1,9 @@
 import { SWADE } from './config';
 
 export default class SettingConfigurator extends FormApplication {
-  config: any;
+  config: typeof SWADE.settingConfig;
   settingStats: any;
-  constructor(object = {}, options?: Application.RenderOptions) {
+  constructor(object = {}, options) {
     super(object, options);
     this.config = SWADE.settingConfig;
   }
@@ -13,7 +13,7 @@ export default class SettingConfigurator extends FormApplication {
       ...super.defaultOptions,
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,
-      template: 'systems/swade/templates/setting-config.html',
+      template: 'systems/swade/templates/setting-config.hbs',
       classes: ['swade', 'setting-config'],
       scrollY: ['.sheet-body'],
       width: 600,
@@ -27,15 +27,13 @@ export default class SettingConfigurator extends FormApplication {
     };
   }
 
-  /**
-   * @override
-   */
   getData(): any {
-    const settingFields = game.settings.get('swade', 'settingFields') as any;
+    const settingFields = game.settings.get('swade', 'settingFields');
     const data = {
       settingRules: {},
       actorSettingStats: settingFields.actor,
       itemSettingStats: settingFields.item,
+      '3dBennies': !!game.dice3d,
       dtypes: {
         String: 'SWADE.String',
         Number: 'SWADE.Number',
@@ -100,8 +98,9 @@ export default class SettingConfigurator extends FormApplication {
 
   async _resetSettings() {
     for (const setting of this.config.settings) {
-      const resetValue = game.settings.settings.get(`swade.${setting}`)!
-        .default;
+      const resetValue = game.settings.settings.get(
+        `swade.${setting}`,
+      )!.default;
       if (game.settings.get('swade', setting) !== resetValue) {
         await game.settings.set('swade', setting, resetValue);
       }
@@ -172,11 +171,12 @@ export default class SettingConfigurator extends FormApplication {
     }
     return attributes;
   }
+
   private _buildCoreSkillPackChoices() {
     const retVal = {};
 
     game.packs
-      ?.filter((p) => p.entity === 'Item')
+      ?.filter((p) => p.documentClass.documentName === 'Item')
       .forEach((p) => {
         retVal[p.collection] = `${p.metadata.label} (${p.metadata.package})`;
       });
