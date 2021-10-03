@@ -123,4 +123,6 @@ interface DiceColorsetData {
   font: string;
   // is an object containing the fontScale for as many dice types as wanted. Here bellow is the default scale applied when a dice type is omitted.
   fontScale?: Record<string, number>;
+  // Set to 'hidden' if you do not want this colorset to be visible in the players' theme list. Useful for internal colorsets.
+  visibility?: 'hidden';
 }
