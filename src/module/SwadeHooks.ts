@@ -973,6 +973,15 @@ export default class SwadeHooks {
       type: DiceSettings,
       restricted: false,
     });
+
+    game.settings.register('swade', 'dsnShowBennyAnimation', {
+      name: game.i18n.localize('SWADE.ShowBennyAnimation'),
+      hint: game.i18n.localize('SWADE.ShowBennyAnimationDesc'),
+      type: Boolean,
+      default: true,
+      config: false,
+      scope: 'client',
+    });
   }
 
   public static onDiceSoNiceReady(dice3d: Dice3D) {
