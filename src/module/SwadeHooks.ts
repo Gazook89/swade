@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
@@ -9,6 +10,10 @@ import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
+import {
+  DsnCustomWildDieColors,
+  DsnCustomWildDieOptions,
+} from './documents/SwadeUser';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
@@ -959,7 +964,7 @@ export default class SwadeHooks {
     return false;
   }
 
-  public static onDiceSoNiceInit(dice3d: any) {
+  public static onDiceSoNiceInit(dice3d: Dice3D) {
     game.settings.registerMenu('swade', 'dice-config', {
       name: game.i18n.localize('SWADE.DiceConf'),
       label: game.i18n.localize('SWADE.DiceConfLabel'),
@@ -970,7 +975,7 @@ export default class SwadeHooks {
     });
   }
 
-  public static onDiceSoNiceReady(dice3d: any) {
+  public static onDiceSoNiceReady(dice3d: Dice3D) {
     //@ts-expect-error Load the DiceColors file. This should work fine since the file is only present in the same situation in which the hook is fired
     import('/modules/dice-so-nice/DiceColors.js')
       .then((obj) => {
@@ -981,11 +986,17 @@ export default class SwadeHooks {
 
     const customWilDieColors =
       game.user!.getFlag('swade', 'dsnCustomWildDieColors') ||
-      getProperty(SWADE, 'diceConfig.flags.dsnCustomWildDieColors.default');
+      (getProperty(
+        SWADE,
+        'diceConfig.flags.dsnCustomWildDieColors.default',
+      ) as DsnCustomWildDieColors);
 
     const customWilDieOptions =
       game.user!.getFlag('swade', 'dsnCustomWildDieOptions') ||
-      getProperty(SWADE, 'diceConfig.flags.dsnCustomWildDieOptions.default');
+      (getProperty(
+        SWADE,
+        'diceConfig.flags.dsnCustomWildDieOptions.default',
+      ) as DsnCustomWildDieOptions);
 
     dice3d.addColorset(
       {

@@ -8,7 +8,9 @@ declare global {
   interface FlagConfig {
     User: {
       swade: {
-        bennies: number;
+        bennies?: number;
+        dsnCustomWildDieColors: DsnCustomWildDieColors;
+        dsnCustomWildDieOptions: DsnCustomWildDieOptions;
         [key: string]: unknown;
       };
     };
@@ -73,4 +75,16 @@ export default class SwadeUser extends User {
       await this.character.refreshBennies(displayToChat);
     }
   }
+}
+
+export interface DsnCustomWildDieColors {
+  labelColor: string;
+  diceColor: string;
+  outlineColor: string;
+  edgeColor: string;
+}
+export interface DsnCustomWildDieOptions {
+  texture: Array<string>;
+  material: 'plastic' | 'metal' | 'glass' | 'wood' | 'chrome';
+  font: string;
 }
