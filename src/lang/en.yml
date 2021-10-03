@@ -399,7 +399,7 @@ SWADE.UseAttributeShortsDesc: >-
   You'll need to close and reopen all open sheets for this option to take
   effect.
 SWADE.BennyImageSheet: Benny
-SWADE.BennyImageSheetDesc: Select which image to use for Bennies
+SWADE.BennyImageSheetDesc: Select which image to use for Bennies on the Character Sheet
 SWADE.Benny3DFront: Front Texture
 SWADE.Benny3DFrontDesc: Front exture of the 3D Benny
 SWADE.Benny3DBack: Back Texture

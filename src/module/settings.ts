@@ -310,7 +310,6 @@ export function registerSettingRules() {
     default: 'systems/swade/assets/bennie.webp',
     scope: 'world',
     config: false,
-    //@ts-ignore
     filePicker: 'image',
   });
 
@@ -321,7 +320,6 @@ export function registerSettingRules() {
     default: 'systems/swade/assets/benny/benny-chip-front.png',
     scope: 'world',
     config: false,
-    //@ts-ignore
     filePicker: 'image',
   });
 
@@ -332,7 +330,6 @@ export function registerSettingRules() {
     default: 'systems/swade/assets/benny/benny-chip-front.png',
     scope: 'world',
     config: false,
-    //@ts-ignore
     filePicker: 'image',
   });
 
