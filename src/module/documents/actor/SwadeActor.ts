@@ -365,7 +365,13 @@ export default class SwadeActor extends Actor {
       ChatMessage.create(chatData);
     }
     let newValue = this.data.data.bennies.max;
-    if (this.isWildcard && this.type === 'npc' && !this.hasPlayerOwner) {
+    const hardChoices = game.settings.get('swade', 'hardChoices');
+    if (
+      hardChoices &&
+      this.isWildcard &&
+      this.type === 'npc' &&
+      !this.hasPlayerOwner
+    ) {
       newValue = 0;
     }
     await this.update({ 'data.bennies.value': newValue });
