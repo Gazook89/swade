@@ -348,7 +348,6 @@ SWADE.NoPowerPoints: No Power Points
 SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions
 SWADE.WealthType: Wealth Type
 SWADE.WealthDie: Wealth
-SWADE.NoneOther: None / Other
 SWADE.WealthTypeDesc: Choose how to track character wealth and currency
 SWADE.CurrencyName: Currency Name
 SWADE.CurrencyNameDesc: Name your currency
@@ -409,3 +408,4 @@ SWADE.ChangeBennyWarning: Changing these settings will require you to refresh th
 SWADE.3DBennies: 3D Bennies
 SWADE.HardChoices: Hard Choices
 SWADE.HardChoicesDesc: Checking this will enable the Hard Choices rule
+SWADE.WealthSelectionNoneOther: None/Other
