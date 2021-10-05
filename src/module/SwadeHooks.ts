@@ -12,7 +12,7 @@ import SwadeCombatant from './documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
+  DsnCustomWildDieOptions
 } from './documents/SwadeUser';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
@@ -972,15 +972,6 @@ export default class SwadeHooks {
       icon: 'fas fa-dice',
       type: DiceSettings,
       restricted: false,
-    });
-
-    game.settings.register('swade', 'dsnShowBennyAnimation', {
-      name: game.i18n.localize('SWADE.ShowBennyAnimation'),
-      hint: game.i18n.localize('SWADE.ShowBennyAnimationDesc'),
-      type: Boolean,
-      default: true,
-      config: false,
-      scope: 'client',
     });
   }
 

@@ -1,4 +1,5 @@
 import { createGmBennyAddMessage } from '../chat';
+import { shouldShowBennyAnimation } from '../util';
 
 declare global {
   interface DocumentClassConfig {
@@ -11,6 +12,7 @@ declare global {
         bennies?: number;
         dsnCustomWildDieColors: DsnCustomWildDieColors;
         dsnCustomWildDieOptions: DsnCustomWildDieOptions;
+        dsnShowBennyAnimation: boolean;
         [key: string]: unknown;
       };
     };
@@ -44,10 +46,7 @@ export default class SwadeUser extends User {
         ChatMessage.create(chatData);
       }
       await this.setFlag('swade', 'bennies', this.bennies - 1);
-      const dsnShowBennyAnimation = game.settings.get(
-        'swade',
-        'dsnShowBennyAnimation',
-      );
+      const dsnShowBennyAnimation = await shouldShowBennyAnimation();
       if (!!game.dice3d && dsnShowBennyAnimation) {
         const benny = await new Roll('1dB').evaluate();
         game.dice3d.showForRoll(benny, game.user!, true, null, false);

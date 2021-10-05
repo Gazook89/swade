@@ -126,7 +126,7 @@ export function notificationExists(string: string, localize = false): boolean {
 }
 
 export async function shouldShowBennyAnimation(): Promise<boolean> {
-  const value = game.user?.getFlag('swade', 'dsnShowBennyAnimation') as boolean;
+  const value = game.user?.getFlag('swade', 'dsnShowBennyAnimation');
   const defaultValue = getProperty(
     SWADE,
     'diceConfig.flags.dsnShowBennyAnimation.default',
