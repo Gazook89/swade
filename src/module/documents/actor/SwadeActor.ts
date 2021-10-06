@@ -685,7 +685,7 @@ export default class SwadeActor extends Actor {
     let driver: SwadeActor | undefined = undefined;
     if (driverId) {
       try {
-        driver = (await fromUuid(driverId)) as unknown as SwadeActor;
+        driver = (await fromUuid(driverId)) as SwadeActor;
       } catch (error) {
         ui.notifications?.error('The Driver could not be found!');
       }
