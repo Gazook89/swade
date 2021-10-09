@@ -1,7 +1,3 @@
-import {
-  DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
-} from '../../interfaces/DiceIntegration';
 import { createGmBennyAddMessage } from '../chat';
 import { shouldShowBennyAnimation } from '../util';
 
@@ -78,4 +74,16 @@ export default class SwadeUser extends User {
       await this.character.refreshBennies(displayToChat);
     }
   }
+}
+
+export interface DsnCustomWildDieColors {
+  labelColor: string;
+  diceColor: string;
+  outlineColor: string;
+  edgeColor: string;
+}
+export interface DsnCustomWildDieOptions {
+  texture: Array<string>;
+  material: 'plastic' | 'metal' | 'glass' | 'wood' | 'chrome';
+  font: string;
 }

@@ -1,12 +1,5 @@
-import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateConfig';
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
 import { getCanvas } from '../util';
-
-declare global {
-  interface ObjectClassConfig {
-    MeasuredTemplate: SwadeMeasuredTemplate;
-  }
-}
 
 export default class SwadeMeasuredTemplate extends MeasuredTemplate {
   moveTime = 0;
@@ -18,24 +11,14 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     lc: () => {},
     mw: () => {},
   };
-
   /**
    * A factory method to create a SwadeMeasuredTemplate instance using provided preset
    * @param preset the preset to use.
-   * @returns The constructed template object or null if no preset was found
+   * @returns SwadeTemplate | null
    */
-  static fromPreset(preset: TemplatePreset | string) {
-    if (CONFIG.SWADE.activeTemplate) {
-      CONFIG.SWADE.activeTemplate.destroy();
-      CONFIG.SWADE.activeTemplate = null;
-    }
-    CONFIG.SWADE.activeTemplate = this._constructPreset(preset);
-    if (CONFIG.SWADE.activeTemplate) CONFIG.SWADE.activeTemplate.drawPreview();
-  }
-
-  static _constructPreset(preset: TemplatePreset | string) {
+  static fromPreset(preset: TemplatePreset) {
     // Prepare template data
-    const templateBaseData: MeasuredTemplateConstructorDataData = {
+    const templateData: ConstructorData = {
       user: game.user!.id,
       distance: 0,
       direction: 0,
@@ -43,26 +26,34 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       y: 0,
       fillColor: game.user!.data.color,
     };
-
-    const presetProtype = CONFIG.SWADE.templates.find(
-      (c) => c.button.name === preset,
-    );
-    if (!presetProtype) return null;
-
     //Set template data based on preset option
-
-    const document = CONFIG.MeasuredTemplate.documentClass;
-    const template = new document(
-      foundry.utils.mergeObject(templateBaseData, presetProtype.data),
-      {
-        parent: getCanvas().scene as Scene,
-      },
-    );
-
-    //Return the template constructed from the item data
-    return new this(template);
+    switch (preset) {
+      case TemplatePreset.CONE:
+        templateData.t = 'cone';
+        templateData.distance = 9;
+        break;
+      case TemplatePreset.SBT:
+        templateData.t = 'circle';
+        templateData.distance = 1;
+        break;
+      case TemplatePreset.MBT:
+        templateData.t = 'circle';
+        templateData.distance = 2;
+        break;
+      case TemplatePreset.LBT:
+        templateData.t = 'circle';
+        templateData.distance = 3;
+        break;
+      default:
+        return null;
+    }
+    // Return the template constructed from the item data
+    const cls = CONFIG.MeasuredTemplate.documentClass;
+    //@ts-ignore
+    const template = new cls(templateData, { parent: getCanvas().scene });
+    const object = new this(template);
+    return object;
   }
-
   /* -------------------------------------------- */
   /**
    * Creates a preview of the template
@@ -96,7 +87,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       this.refresh();
       this.moveTime = now;
     };
-
     // Cancel the workflow (right-click)
     this.handlers.rc = () => {
       this.layer?.preview?.removeChildren();
@@ -106,9 +96,8 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       getCanvas()!.app!.view.onwheel = null;
       this.initialLayer.activate();
     };
-
     // Confirm the workflow (left-click)
-    this.handlers.lc = async (event) => {
+    this.handlers.lc = (event) => {
       event.stopPropagation();
       this.handlers.rc(event);
       // Confirm final snapped position
@@ -119,12 +108,12 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       );
       this.data.update(destination);
       // Create the template
-      await getCanvas().scene?.createEmbeddedDocuments('MeasuredTemplate', [
-        this.data.toObject(),
-      ]);
-      this.destroy();
+      getCanvas()
+        .scene?.createEmbeddedDocuments('MeasuredTemplate', [
+          this.data.toObject(),
+        ])
+        .then(() => this.destroy());
     };
-
     // Rotate the template by 3 degree increments (mouse-wheel)
     this.handlers.mw = (event) => {
       if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
@@ -142,12 +131,10 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     getCanvas()!.app!.view.oncontextmenu = this.handlers.rc;
     getCanvas()!.app!.view.onwheel = this.handlers.mw;
   }
-
   destroy(...args) {
     super.destroy(...args);
     this.handlers.rc();
   }
-
   protected _getConeShape(
     direction: number,
     angle: number,
@@ -209,3 +196,7 @@ interface MouseInterActionHandlers {
   lc: (...args) => void;
   mw: (...args) => void;
 }
+
+type ConstructorData = Parameters<
+  foundry.data.MeasuredTemplateData['_initializeSource']
+>[0];

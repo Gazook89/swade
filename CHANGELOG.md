@@ -22,12 +22,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
-## [v0.21.1]
-
-### Fixed
-
-- Restored the ability for items to be reordered via Drag&Drop
-
 ## [v0.21.0]
 
 ### Added

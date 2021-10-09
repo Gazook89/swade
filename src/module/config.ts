@@ -1,8 +1,4 @@
-import { TemplateConfig } from '../interfaces/TemplateConfig';
-import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
-import { TemplatePreset } from './enums/TemplatePresetEnum';
-
-export const SWADE: SwadeConfig = {
+export const SWADE = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
   ██╔════╝██║    ██║██╔══██╗██╔══██╗██╔════╝
@@ -99,6 +95,11 @@ export const SWADE: SwadeConfig = {
     id: 'actionCardEditor',
   },
 
+  templates: {
+    preloadPromise: null as Promise<Handlebars.TemplateDelegate<any>[]> | null,
+    templatesPreloaded: false,
+  },
+
   statusEffects: [
     {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
@@ -128,7 +129,7 @@ export const SWADE: SwadeConfig = {
         {
           key: 'data.stats.parry.modifier',
           value: 4,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          mode: 2,
         },
       ],
     },
@@ -245,12 +246,12 @@ export const SWADE: SwadeConfig = {
         {
           key: 'data.stats.toughness.value',
           value: 0,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          mode: 2,
         },
         {
           key: 'data.stats.toughness.armor',
           value: 0,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          mode: 2,
         },
       ],
     },
@@ -261,63 +262,6 @@ export const SWADE: SwadeConfig = {
     compendium: 'systems/swade/assets/ui/wildcard-dark.svg',
   },
 
-  templates: [
-    {
-      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
-      button: {
-        name: 'swcone',
-        title: 'SWADE.Cone',
-        icon: 'text-icon cone',
-        visible: true,
-        button: true,
-        onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.CONE);
-        },
-      },
-    },
-    {
-      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
-      button: {
-        name: 'sbt',
-        title: 'SWADE.SBT',
-        icon: 'text-icon sbt',
-        visible: true,
-        button: true,
-        onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.SBT);
-        },
-      },
-    },
-    {
-      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
-      button: {
-        name: 'mbt',
-        title: 'SWADE.MBT',
-        icon: 'text-icon mbt',
-        visible: true,
-        button: true,
-        onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.MBT);
-        },
-      },
-    },
-    {
-      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
-      button: {
-        name: 'lbt',
-        title: 'SWADE.LBT',
-        icon: 'text-icon lbt',
-        visible: true,
-        button: true,
-        onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.LBT);
-        },
-      },
-    },
-  ],
-
-  activeTemplate: null,
-
   dsnColorSets: {},
 
   dsnTextureList: {},
@@ -326,102 +270,3 @@ export const SWADE: SwadeConfig = {
 
   allowedActorFlags: [],
 };
-
-export interface SwadeConfig {
-  ASCII: string;
-  attributes: {
-    agility: {
-      long: string;
-      short: string;
-    };
-    smarts: {
-      long: string;
-      short: string;
-    };
-    spirit: {
-      long: string;
-      short: string;
-    };
-    strength: {
-      long: string;
-      short: string;
-    };
-    vigor: {
-      long: string;
-      short: string;
-    };
-  };
-
-  init: {
-    defaultCardCompendium: string;
-    cardTable: string;
-  };
-
-  packChoices: Record<string, string>;
-
-  imagedrop: {
-    height: number;
-  };
-
-  bennies: {
-    templates: {
-      refresh: string;
-      refreshAll: string;
-      add: string;
-      spend: string;
-      gmadd: string;
-      joker: string;
-    };
-  };
-
-  vehicles: {
-    maxHandlingPenalty: number;
-    opSkills: Array<string>;
-  };
-
-  settingConfig: {
-    id: string;
-    title: string;
-    settings: Array<string>;
-  };
-
-  diceConfig: {
-    id: string;
-    title: string;
-    flags: Record<string, any>;
-  };
-
-  actionCardEditor: {
-    id: string;
-  };
-
-  statusEffects: Array<StatusEffect>;
-
-  wildCardIcons: {
-    regular: string;
-    compendium: string;
-  };
-
-  templates: Array<TemplateConfig>;
-
-  activeTemplate: null | SwadeMeasuredTemplate;
-
-  dsnColorSets: any;
-  dsnTextureList: any;
-
-  raceLocalizationKey: string;
-  allowedActorFlags: Array<string>;
-}
-
-interface StatusEffect {
-  icon: string;
-  id: string;
-  label: string;
-  changes?: Array<StatusEffectChanges>;
-}
-
-interface StatusEffectChanges {
-  key: string;
-  value: string | number;
-  mode: number;
-}

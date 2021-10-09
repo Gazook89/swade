@@ -471,16 +471,12 @@ export default class CharacterSheet extends ActorSheet {
   }
 
   getData() {
-    if (this.actor.data.type === 'vehicle') return {};
     const data: any = super.getData();
-    const items = Array.from(this.actor.items.values()).sort(
-      (a, b) => (a.data.sort || 0) - (b.data.sort || 0),
-    );
 
     data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
-    const ammoManagement = game.settings.get('swade', 'ammoManagement');
 
-    for (const item of items as any[]) {
+    const ammoManagement = game.settings.get('swade', 'ammoManagement');
+    for (const item of Array.from(this.actor.items.values()) as any[]) {
       // Basic template rendering data
       const data = item.data;
       const actions = item.data.data?.actions?.additional ?? {};
@@ -508,29 +504,21 @@ export default class CharacterSheet extends ActorSheet {
         !item.isMeleeWeapon &&
         !data.data.autoReload;
       item.hasReloadButton =
-        ammoManagement &&
-        item.type === 'weapon' &&
-        data.data.shots > 0 &&
-        !data.data.autoReload;
+        ammoManagement && data.data.shots > 0 && !data.data.autoReload;
 
       item.powerPoints = this.getPowerPoints(data);
     }
 
-    data.itemTypes = Object.fromEntries(
-      game.system.entityTypes.Item.map((t) => [t, new Array<SwadeItem>()]),
-    );
-    for (const i of items) {
-      data.itemTypes[i.data.type].push(i);
-    }
-
     //sort skills alphabetically
-    data.sortedSkills = data.itemTypes.skill.sort((a, b) =>
+    data.sortedSkills = this.actor.itemTypes.skill.sort((a, b) =>
       a.name!.localeCompare(b.name!),
     );
 
     data.currentBennies = [];
-
-    const bennies = this.actor.data.data.bennies.value;
+    const bennies = getProperty(
+      this.actor.data,
+      'data.bennies.value',
+    ) as number;
     for (let i = 0; i < bennies; i++) {
       data.currentBennies.push(i + 1);
     }
@@ -542,17 +530,19 @@ export default class CharacterSheet extends ActorSheet {
     }
     data.hasAdditionalStatsFields = Object.keys(additionalStats).length > 0;
 
+    const powerFilter = (i) => i.data.type === 'power';
     //Deal with ABs and Powers
     const powers = {
       arcanes: {},
-      arcanesCount: data.itemTypes.power
-        .map((p: SwadeItem) => {
-          if (p.data.type === 'power') return p.data.data.arcane;
+      arcanesCount: this.actor.items
+        .filter(powerFilter)
+        .map((p) => {
+          return p.data.data['arcane'];
         })
         .filter(Boolean).length,
       hasPowersWithoutArcane:
-        data.itemTypes.power.reduce((acc: number, cur: SwadeItem) => {
-          if (cur.data.type === 'power' && cur.data.data.arcane) {
+        this.actor.items.filter(powerFilter).reduce((acc, cur) => {
+          if (cur.data.data['arcane']) {
             return acc;
           } else {
             return (acc += 1);
@@ -560,7 +550,7 @@ export default class CharacterSheet extends ActorSheet {
         }, 0) > 0,
     };
 
-    for (const power of data.itemTypes.power) {
+    for (const power of this.actor.items.filter(powerFilter)) {
       if (power.data.type !== 'power') continue;
       const arcane = power.data.data.arcane;
       if (!arcane) continue;
