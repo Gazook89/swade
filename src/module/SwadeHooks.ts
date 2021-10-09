@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  DsnCustomWildDieColors,
+  DsnCustomWildDieOptions,
+} from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
@@ -10,10 +14,6 @@ import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
-import {
-  DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
-} from './documents/SwadeUser';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
