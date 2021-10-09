@@ -254,29 +254,29 @@
       {{/each}}
     </ul>
     <ol class="quick-list">
-      {{#each actor.itemTypes.weapon}} {{#if data.data.equipped}} {{>
+      {{#each itemTypes.weapon}} {{#if data.data.equipped}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     {{#if actor.hasArcaneBackground}}
     <ol class="quick-list">
-      {{#each actor.itemTypes.power}} {{#if data.data.equipped}} {{>
+      {{#each itemTypes.power}} {{#if data.data.equipped}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     {{/if}}
     <ol class="quick-list">
-      {{#each actor.itemTypes.armor}} {{#if data.data.equipped}} {{>
+      {{#each itemTypes.armor}} {{#if data.data.equipped}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     <ol class="quick-list">
-      {{#each actor.itemTypes.shield}} {{#if data.data.equipped}} {{>
+      {{#each itemTypes.shield}} {{#if data.data.equipped}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     <ol class="quick-list">
-      {{#each actor.itemTypes.gear}}{{#if data.data.equipped}}{{>
+      {{#each itemTypes.gear}}{{#if data.data.equipped}}{{>
       "systems/swade/templates/official/partials/item-card.hbs"}}
       {{/if}}{{/each}}
     </ol>

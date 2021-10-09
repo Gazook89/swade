@@ -83,6 +83,9 @@ Hooks.once('init', () => {
   registerSettings();
   registerSettingRules();
 
+  //Preload Handlebars templates
+  preloadHandlebarsTemplates();
+
   // Register sheets
   Actors.unregisterSheet('core', ActorSheet);
   Items.unregisterSheet('core', ItemSheet);
@@ -110,13 +113,6 @@ Hooks.once('init', () => {
 
   // Drop a journal image to a tile (for cards)
   listenJournalDrop();
-
-  // TODO revisit if necessary
-  //Preload Handlebars templates
-  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  SWADE.templates.preloadPromise.then(() => {
-    SWADE.templates.templatesPreloaded = true;
-  });
 });
 
 Hooks.once('ready', async () => SwadeHooks.onReady());

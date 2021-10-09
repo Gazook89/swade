@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  DsnCustomWildDieColors,
+  DsnCustomWildDieOptions,
+} from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './ActionCardEditor';
 import Bennies from './bennies';
@@ -9,12 +13,6 @@ import DiceSettings from './DiceSettings';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
-import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
-import {
-  DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
-} from './documents/SwadeUser';
-import { TemplatePreset } from './enums/TemplatePresetEnum';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
@@ -739,59 +737,7 @@ export default class SwadeHooks {
 
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
-    let template: SwadeMeasuredTemplate | null = null;
-    const templateCls = CONFIG.MeasuredTemplate
-      .objectClass as typeof SwadeMeasuredTemplate;
-    const newButtons: SceneControlTool[] = [
-      {
-        name: 'swcone',
-        title: 'SWADE.Cone',
-        icon: 'text-icon cone',
-        visible: true,
-        button: true,
-        onClick: () => {
-          if (template) template.destroy();
-          template = templateCls.fromPreset(TemplatePreset.CONE);
-          if (template) template.drawPreview();
-        },
-      },
-      {
-        name: 'sbt',
-        title: 'SWADE.SBT',
-        icon: 'text-icon sbt',
-        visible: true,
-        button: true,
-        onClick: () => {
-          if (template) template.destroy();
-          template = templateCls.fromPreset(TemplatePreset.SBT);
-          if (template) template.drawPreview();
-        },
-      },
-      {
-        name: 'mbt',
-        title: 'SWADE.MBT',
-        icon: 'text-icon mbt',
-        visible: true,
-        button: true,
-        onClick: () => {
-          if (template) template.destroy();
-          template = templateCls.fromPreset(TemplatePreset.MBT);
-          if (template) template.drawPreview();
-        },
-      },
-      {
-        name: 'lbt',
-        title: 'SWADE.LBT',
-        icon: 'text-icon lbt',
-        visible: true,
-        button: true,
-        onClick: () => {
-          if (template) template.destroy();
-          template = templateCls.fromPreset(TemplatePreset.LBT);
-          if (template) template.drawPreview();
-        },
-      },
-    ];
+    const newButtons = CONFIG.SWADE.templates.map((t) => t.button);
     measure.tools.splice(measure.tools.length - 1, 0, ...newButtons);
   }
 
