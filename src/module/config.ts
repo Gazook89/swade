@@ -95,11 +95,6 @@ export const SWADE = {
     id: 'actionCardEditor',
   },
 
-  templates: {
-    preloadPromise: null as Promise<Handlebars.TemplateDelegate<any>[]> | null,
-    templatesPreloaded: false,
-  },
-
   statusEffects: [
     {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
