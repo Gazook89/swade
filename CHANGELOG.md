@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [v0.21.1]
 
+### Changed
+
+- Refactored the way the one-click template Presets are added to the menu.
+
 ### Fixed
 
 - Restored the ability for items to be reordered via Drag&Drop
