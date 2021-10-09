@@ -1,4 +1,8 @@
-export const SWADE = {
+import { TemplateConfig } from '../interfaces/TemplateConfig';
+import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
+import { TemplatePreset } from './enums/TemplatePresetEnum';
+
+export const SWADE: SwadeConfig = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
   ██╔════╝██║    ██║██╔══██╗██╔══██╗██╔════╝
@@ -124,7 +128,7 @@ export const SWADE = {
         {
           key: 'data.stats.parry.modifier',
           value: 4,
-          mode: 2,
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -241,12 +245,12 @@ export const SWADE = {
         {
           key: 'data.stats.toughness.value',
           value: 0,
-          mode: 2,
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
           key: 'data.stats.toughness.armor',
           value: 0,
-          mode: 2,
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -257,6 +261,63 @@ export const SWADE = {
     compendium: 'systems/swade/assets/ui/wildcard-dark.svg',
   },
 
+  templates: [
+    {
+      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
+      button: {
+        name: 'swcone',
+        title: 'SWADE.Cone',
+        icon: 'text-icon cone',
+        visible: true,
+        button: true,
+        onClick: () => {
+          SwadeMeasuredTemplate.fromPreset(TemplatePreset.CONE);
+        },
+      },
+    },
+    {
+      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
+      button: {
+        name: 'sbt',
+        title: 'SWADE.SBT',
+        icon: 'text-icon sbt',
+        visible: true,
+        button: true,
+        onClick: () => {
+          SwadeMeasuredTemplate.fromPreset(TemplatePreset.SBT);
+        },
+      },
+    },
+    {
+      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
+      button: {
+        name: 'mbt',
+        title: 'SWADE.MBT',
+        icon: 'text-icon mbt',
+        visible: true,
+        button: true,
+        onClick: () => {
+          SwadeMeasuredTemplate.fromPreset(TemplatePreset.MBT);
+        },
+      },
+    },
+    {
+      data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
+      button: {
+        name: 'lbt',
+        title: 'SWADE.LBT',
+        icon: 'text-icon lbt',
+        visible: true,
+        button: true,
+        onClick: () => {
+          SwadeMeasuredTemplate.fromPreset(TemplatePreset.LBT);
+        },
+      },
+    },
+  ],
+
+  activeTemplate: null,
+
   dsnColorSets: {},
 
   dsnTextureList: {},
@@ -265,3 +326,102 @@ export const SWADE = {
 
   allowedActorFlags: [],
 };
+
+export interface SwadeConfig {
+  ASCII: string;
+  attributes: {
+    agility: {
+      long: string;
+      short: string;
+    };
+    smarts: {
+      long: string;
+      short: string;
+    };
+    spirit: {
+      long: string;
+      short: string;
+    };
+    strength: {
+      long: string;
+      short: string;
+    };
+    vigor: {
+      long: string;
+      short: string;
+    };
+  };
+
+  init: {
+    defaultCardCompendium: string;
+    cardTable: string;
+  };
+
+  packChoices: Record<string, string>;
+
+  imagedrop: {
+    height: number;
+  };
+
+  bennies: {
+    templates: {
+      refresh: string;
+      refreshAll: string;
+      add: string;
+      spend: string;
+      gmadd: string;
+      joker: string;
+    };
+  };
+
+  vehicles: {
+    maxHandlingPenalty: number;
+    opSkills: Array<string>;
+  };
+
+  settingConfig: {
+    id: string;
+    title: string;
+    settings: Array<string>;
+  };
+
+  diceConfig: {
+    id: string;
+    title: string;
+    flags: Record<string, any>;
+  };
+
+  actionCardEditor: {
+    id: string;
+  };
+
+  statusEffects: Array<StatusEffect>;
+
+  wildCardIcons: {
+    regular: string;
+    compendium: string;
+  };
+
+  templates: Array<TemplateConfig>;
+
+  activeTemplate: null | SwadeMeasuredTemplate;
+
+  dsnColorSets: any;
+  dsnTextureList: any;
+
+  raceLocalizationKey: string;
+  allowedActorFlags: Array<string>;
+}
+
+interface StatusEffect {
+  icon: string;
+  id: string;
+  label: string;
+  changes?: Array<StatusEffectChanges>;
+}
+
+interface StatusEffectChanges {
+  key: string;
+  value: string | number;
+  mode: number;
+}
