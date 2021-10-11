@@ -1,7 +1,6 @@
 import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/entity-tweaks';
-import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**
@@ -192,9 +191,8 @@ export default class SwadeItemSheet extends ItemSheet {
    */
   getData() {
     const data: any = super.getData();
-    data.data.isOwned = this.item.isOwned;
     data.config = SWADE;
-    const actor = this.item.actor as SwadeActor;
+    const actor = this.item.actor;
     const ownerIsWildcard = actor && actor.isWildcard;
     if (ownerIsWildcard || !this.item.isOwned) {
       data.data.ownerIsWildcard = true;
@@ -329,5 +327,16 @@ export default class SwadeItemSheet extends ItemSheet {
     //save array back into flag
     await this.item.setFlag('swade', propertyName, collection);
     return false;
+  }
+
+  /** @override */
+  _getSubmitData(updateData = {}) {
+    const data = super._getSubmitData(updateData);
+    // Prevent submitting overridden values
+    const overrides = foundry.utils.flattenObject(this.item.overrides);
+    for (const k of Object.keys(overrides)) {
+      delete data[k];
+    }
+    return data;
   }
 }

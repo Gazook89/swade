@@ -15,6 +15,52 @@
         <p class="notes">{{localize "SWADE.GmBenniesDesc"}}</p>
       </div>
     </section>
+    <section id="bennies">
+      <h2 class="module-header">{{localize "SWADE.Bennies"}}</h2>
+      <div class="form-group">
+        <label>{{localize "SWADE.HardChoices"}}</label>
+        <div class="form-fields">
+          <input
+            type="checkbox"
+            name="settingRules.hardChoices"
+            data-dtype="Boolean"
+            {{checked settingRules.hardChoices}}
+          />
+        </div>
+        <p class="notes">{{localize "SWADE.HardChoicesDesc"}}</p>
+      </div>
+      <div class="form-group">
+        <label>{{localize "SWADE.BennyImageSheet"}}</label>
+        <div class="form-fields">
+          {{filePicker target="settingRules.bennyImageSheet" type="image"}}
+          <input type="text" name="settingRules.bennyImageSheet" value="{{settingRules.bennyImageSheet}}" data-dtype="String"/>
+        </div>
+        <p class="notes">{{localize "SWADE.BennyImageSheetDesc"}}</p>
+      </div>
+
+      {{#if 3dBennies}}
+        <h3>{{localize "SWADE.3DBennies"}}</h3>
+        <p class="notification info" style="margin: 0 5px 10px 5px;">
+          {{localize "SWADE.ChangeBennyWarning"}}
+        </p>
+        <div class="form-group">
+          <label>{{localize "SWADE.Benny3DFront"}}</label>
+          <div class="form-fields">
+            {{filePicker target="settingRules.bennyImage3DFront" type="image"}}
+            <input type="text" name="settingRules.bennyImage3DFront" value="{{settingRules.bennyImage3DFront}}" data-dtype="String"/>
+          </div>
+          <p class="notes">{{localize "SWADE.Benny3DFrontDesc"}}</p>
+        </div>
+        <div class="form-group">
+          <label>{{localize "SWADE.Benny3DBack"}}</label>
+          <div class="form-fields">
+            {{filePicker target="settingRules.bennyImage3DBack" type="image"}}
+            <input type="text" name="settingRules.bennyImage3DBack" value="{{settingRules.bennyImage3DBack}}" data-dtype="String"/>
+          </div>
+          <p class="notes">{{localize "SWADE.Benny3DBackDesc"}}</p>
+        </div>
+      {{/if}}
+    </section>
     <section id="characters">
       <h2 class="module-header">{{localize "SWADE.Actors"}}</h2>
       <div class="form-group">

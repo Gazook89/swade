@@ -22,12 +22,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
-## [Unreleased v0.21.0]
+## [v0.21.1]
+
+### Changed
+
+- Refactored the way the one-click template Presets are added to the menu.
+
+### Fixed
+
+- Restored the ability for items to be reordered via Drag&Drop
+
+## [v0.21.0]
 
 ### Added
 
 - Added encumbrance limit and current capacity to actor data model under `data.details.encumbrance`
+- Added the ability to toggle between metric and imperial Encumbrance limit calculation. This option can be found in the Setting Configurator.Please keep in mind that changing this will **not** change the weight values of items.
+- Added an option to use abbreviated Attribute names for PCs/NPCs. The setting is _global_ and can be found in the system settings.
 - Added additional translation strings
+- Clicking the name of an item in the Gear tab now expands a box to reveal the description, bringing the UX in line with the powers and Edges/Hindrances.
+- Added Support for the _Hard Choices_ rule. Enabling this means that all NPC wildcards (without player owners) set their bennies to 0 when refreshed and Whenever a player character spends a benny the GM will be awarded one. For the full experience, please set the GM bennies to 0 in the setting configurator.
+- Added a `Parry` slot on weapons. All _equipped_ weapons are now factored into the parry score calculation.
+- Added support to modify owned Item via Active Effects (such as skills.). The syntax for the Attribute Key is as follows `@<Type>{<Item name or ID>}[<Attribute Key on the item>]`. As a practical example, to modify the die type on the Notice skill the Attribute Key is `@Skill{Notice}[data.die.sides]`
+- Added the ability to Select the images used for Bennies on the character sheet and the 3D Bennies (if DSN is installed and activated). This setting can be found in the Setting Configurator. Please keep in mind that changing the 3D bennies will require you to reload the page and changing the Character sheet bennies will require you to reopen the sheet.
+
+### Changed
+
+- The encumbrance value on the character sheet is now properly truncated to 3 decimal points
+- The ammo field on weapons is now always shown.
+
+### Fixed
+
+- The Active Effect controls on the Item sheet are now disabled again if the item is owned by an actor
+- Vehicle weapons now count towards the mod slots again
+- The Equipped toggle should now work properly again on the Item sheet
+- Restored all TinyMCE controls for the Description on the NPC sheet
+- Pace now displays properly when not using the automatic adjustment
+- Hidden Combatants now no longer generate chat messages when recieving a Benny.
 
 ## [v0.20.4]
 

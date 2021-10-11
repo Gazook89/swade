@@ -1,8 +1,8 @@
-<header class="header-field flexrow">
-  <span style="flex: 1">{{localize "SWADE.Effects"}}</span>
-  {{#unless data.data.isOwned}}
-  <a class="header-field-add add-effect" data-transfer="true">
-    <i class="fa fa-plus"></i>
-  </a>
+<header class='header-field flexrow'>
+  <span style='flex: 1'>{{localize 'SWADE.Effects'}}</span>
+  {{#unless item.isOwned}}
+    <a class='header-field-add add-effect' data-transfer='true'>
+      <i class='fa fa-plus'></i>
+    </a>
   {{/unless}}
 </header>

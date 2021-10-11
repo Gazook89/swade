@@ -351,7 +351,6 @@ SWADE.NoPowerPoints: No Power Points
 SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions
 SWADE.WealthType: Wealth Type
 SWADE.WealthDie: Wealth
-SWADE.NoneOther: None / Other
 SWADE.WealthTypeDesc: Choose how to track character wealth and currency
 SWADE.CurrencyName: Currency Name
 SWADE.CurrencyNameDesc: Name your currency
@@ -402,3 +401,14 @@ SWADE.UseAttributeShortsDesc: >-
   and npc sheets, i.e. Agi instead of Agility, Sma instead of Smarts, etc.
   You'll need to close and reopen all open sheets for this option to take
   effect.
+SWADE.BennyImageSheet: Benny
+SWADE.BennyImageSheetDesc: Select which image to use for Bennies on the Character Sheet
+SWADE.Benny3DFront: Front Texture
+SWADE.Benny3DFrontDesc: Front exture of the 3D Benny
+SWADE.Benny3DBack: Back Texture
+SWADE.Benny3DBackDesc: Back texture of the 3D Benny
+SWADE.ChangeBennyWarning: Changing these settings will require you to refresh the page!
+SWADE.3DBennies: 3D Bennies
+SWADE.HardChoices: Hard Choices
+SWADE.HardChoicesDesc: Checking this will enable the Hard Choices rule
+SWADE.WealthSelectionNoneOther: None/Other

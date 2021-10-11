@@ -28,17 +28,6 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     return 'systems/swade/templates/actors/npc-sheet.hbs';
   }
 
-  activateEditor(
-    name: string,
-    options?: TextEditor.Options,
-    initialContent?: string,
-  ) {
-    if (options && name === 'data.details.biography.value') {
-      options.toolbar = 'styleselect bullist hr table removeFormat save';
-    }
-    super.activateEditor(name, options, initialContent);
-  }
-
   // Override to set resizable initial size
   async _renderInner(data) {
     const html = await super._renderInner(data);

@@ -12,9 +12,11 @@ import SwadeEntityTweaks from './module/dialog/entity-tweaks';
 import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
+import SwadeActiveEffect from './module/documents/SwadeActiveEffect';
 import SwadeCombat from './module/documents/SwadeCombat';
 import SwadeCombatant from './module/documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
+import SwadeUser from './module/documents/SwadeUser';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
@@ -62,6 +64,8 @@ Hooks.once('init', () => {
   CONFIG.Item.documentClass = SwadeItem;
   CONFIG.Combat.documentClass = SwadeCombat;
   CONFIG.Combatant.documentClass = SwadeCombatant;
+  CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
+  CONFIG.User.documentClass = SwadeUser;
 
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
@@ -165,13 +169,6 @@ Hooks.on(
   'renderCombatTracker',
   (app: SwadeCombatTracker, html: JQuery<HTMLElement>, data: any) =>
     SwadeHooks.onRenderCombatTracker(app, html, data),
-);
-
-//TODO move to combatant class later?
-Hooks.on(
-  'updateCombatant',
-  (combatant: any, updateData: any, options: any, userId: string) =>
-    SwadeHooks.onUpdateCombatant(combatant, updateData, options, userId),
 );
 
 // Add roll data to the message for formatting of dice pools

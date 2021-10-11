@@ -31,8 +31,7 @@ export async function createActionCardTable(
 
   //If it's a rebuild call, delete all entries and then repopulate them
   if (rebuild) {
-    //@ts-ignore
-    const deletions = cardTable.results.map((i) => i.id);
+    const deletions = cardTable.results.map((i: TableResult) => i.id!);
     await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
   }
 
@@ -127,7 +126,7 @@ export function notificationExists(string: string, localize = false): boolean {
 }
 
 export async function shouldShowBennyAnimation(): Promise<boolean> {
-  const value = game.user?.getFlag('swade', 'dsnShowBennyAnimation') as boolean;
+  const value = game.user?.getFlag('swade', 'dsnShowBennyAnimation');
   const defaultValue = getProperty(
     SWADE,
     'diceConfig.flags.dsnShowBennyAnimation.default',

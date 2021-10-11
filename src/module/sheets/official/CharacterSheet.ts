@@ -491,7 +491,7 @@ export default class CharacterSheet extends ActorSheet {
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = CONFIG.SWADE.bennies.sheetImage;
+    data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
 
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     for (const item of Array.from(this.actor.items.values()) as any[]) {
@@ -718,7 +718,7 @@ export default class CharacterSheet extends ActorSheet {
       .localize('ENTITY.New')
       .replace('{entity}', game.i18n.localize('Active Effect'));
     if (name) possibleName = name;
-    await ActiveEffect.create(
+    await CONFIG.ActiveEffect.documentClass.create(
       {
         label: possibleName,
         icon: '/icons/svg/mystery-man-black.svg',

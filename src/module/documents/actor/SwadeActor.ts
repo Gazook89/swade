@@ -69,6 +69,11 @@ export default class SwadeActor extends Actor {
     return combatant?.hasJoker ?? false;
   }
 
+  get bennies() {
+    if (this.data.type === 'vehicle') return 0;
+    return this.data.data.bennies.value;
+  }
+
   /**
    * @returns an object that contains booleans which denote the current status of the actor
    */
@@ -80,32 +85,21 @@ export default class SwadeActor extends Actor {
   prepareBaseData() {
     if (this.data.type === 'vehicle') return;
     //auto calculations
-    const shouldAutoCalcToughness = getProperty(
-      this.data,
-      'data.details.autoCalcToughness',
-    ) as boolean;
-
-    if (shouldAutoCalcToughness) {
+    if (this.data.data.details.autoCalcToughness) {
       //if we calculate the toughness then we set the values to 0 beforehand so the active effects can be applies
-      const toughnessKey = 'data.stats.toughness.value';
-      const armorKey = 'data.stats.toughness.armor';
-      this.data.data;
-      setProperty(this.data, toughnessKey, 0);
-      setProperty(this.data, armorKey, 0);
+      this.data.data.stats.toughness.value = 0;
+      this.data.data.stats.toughness.armor = 0;
     }
 
-    const shouldAutoCalcParry = getProperty(
-      this.data,
-      'data.details.autoCalcParry',
-    ) as boolean;
-    if (shouldAutoCalcParry) {
+    if (this.data.data.details.autoCalcParry) {
       //same procedure as with Toughness
-      setProperty(this.data, 'data.stats.parry.value', 0);
+      this.data.data.stats.parry.value = 0;
     }
   }
 
   /** @override */
   prepareDerivedData() {
+    this._filterOverrides();
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
 
@@ -335,9 +329,15 @@ export default class SwadeActor extends Actor {
       ChatMessage.create(chatData);
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
+    if (game.settings.get('swade', 'hardChoices')) {
+      const gms = game.users!.filter((u) => u.isGM && u.active);
+      for await (const gm of gms) {
+        gm.getBenny();
+      }
+    }
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
       const benny = new Roll('1dB').evaluate({ async: false });
-      game.dice3d.showForRoll(benny, game.user, true, null, false);
+      game.dice3d.showForRoll(benny, game.user!, true, null, false);
     }
   }
 
@@ -378,12 +378,20 @@ export default class SwadeActor extends Actor {
       };
       ChatMessage.create(chatData);
     }
-    await this.update({ 'data.bennies.value': this.data.data.bennies.max });
+    let newValue = this.data.data.bennies.max;
+    const hardChoices = game.settings.get('swade', 'hardChoices');
+    if (
+      hardChoices &&
+      this.isWildcard &&
+      this.type === 'npc' &&
+      !this.hasPlayerOwner
+    ) {
+      newValue = 0;
+    }
+    await this.update({ 'data.bennies.value': newValue });
   }
 
-  /**
-   * Calculates the total Wound Penalties
-   */
+  /** Calculates the total Wound Penalties */
   calcWoundPenalties(): number {
     let retVal = 0;
     const wounds = parseInt(getProperty(this.data, 'data.wounds.value'));
@@ -405,9 +413,7 @@ export default class SwadeActor extends Actor {
     return retVal * -1;
   }
 
-  /**
-   * Calculates the total Fatigue Penalties
-   */
+  /** Calculates the total Fatigue Penalties */
   calcFatiguePenalties(): number {
     let retVal = 0;
     const fatigue = parseInt(getProperty(this.data, 'data.fatigue.value'));
@@ -603,33 +609,40 @@ export default class SwadeActor extends Actor {
   calcParry(): number {
     if (this.data.type === 'vehicle') 0;
     let parryTotal = 0;
-    const parryBase = game.settings.get('swade', 'parryBaseSkill') as string;
-    const parryBaseSkill = this.items.find(
-      (i: Item) => i.type === 'skill' && i.name === parryBase,
-    ) as Item;
+    const parryBase = game.settings.get('swade', 'parryBaseSkill');
+    const parryBaseSkill = this.itemTypes.skill.find(
+      (i) => i.name === parryBase,
+    );
 
-    const skillDie: number =
-      getProperty(parryBaseSkill, 'data.data.die.sides') || 0;
+    let skillDie = 0;
+    let skillMod = 0;
+    if (parryBaseSkill) {
+      skillDie = getProperty(parryBaseSkill, 'data.data.die.sides') ?? 0;
+      skillMod = getProperty(parryBaseSkill, 'data.data.die.modifier') ?? 0;
+    }
 
     //base parry calculation
     parryTotal = skillDie / 2 + 2;
 
     //add modifier if the skill die is 12
     if (skillDie >= 12) {
-      const skillMod: number =
-        getProperty(parryBaseSkill, 'data.data.die.modifier') || 0;
       parryTotal += Math.floor(skillMod / 2);
     }
 
     //add shields
-    const shields = this.items.filter((i) => i.type === 'shield');
-
-    for (const shield of shields) {
-      const isEquipped = getProperty(shield.data, 'data.equipped');
-      if (isEquipped) {
-        parryTotal += getProperty(shield.data, 'data.parry');
+    for (const shield of this.itemTypes.shield) {
+      if (shield.data.data['equipped']) {
+        parryTotal += getProperty(shield.data, 'data.parry') ?? 0;
       }
     }
+
+    //add equipped weapons
+    for (const weapon of this.itemTypes.weapon) {
+      if (weapon.data.data['equipped']) {
+        parryTotal += getProperty(weapon.data, 'data.parry') ?? 0;
+      }
+    }
+
     return parryTotal;
   }
 
@@ -686,7 +699,7 @@ export default class SwadeActor extends Actor {
     let driver: SwadeActor | undefined = undefined;
     if (driverId) {
       try {
-        driver = (await fromUuid(driverId)) as unknown as SwadeActor;
+        driver = (await fromUuid(driverId)) as SwadeActor;
       } catch (error) {
         ui.notifications?.error('The Driver could not be found!');
       }
@@ -998,5 +1011,15 @@ export default class SwadeActor extends Actor {
     if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
       ui.players?.render(true);
     }
+  }
+
+  private _filterOverrides() {
+    const overrides = foundry.utils.flattenObject(this.overrides);
+    for (const k of Object.keys(overrides)) {
+      if (k.startsWith('@')) {
+        delete overrides[k];
+      }
+    }
+    this.overrides = foundry.utils.expandObject(overrides);
   }
 }

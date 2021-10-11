@@ -86,6 +86,17 @@
           /></span>
         </div>
         <div class="form-group">
+          <label for="data.parry">{{localize "SWADE.Parry"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.parry"
+              type="text"
+              value="{{signedString data.data.parry}}"
+              placeholder="{{localize 'SWADE.Parry'}}"
+              data-dtype="Number"
+          /></span>
+        </div>
+        <div class="form-group">
           <label for="data.ap">{{localize "SWADE.Ap"}}</label>
           <span class="form-fields">
             <input
@@ -112,17 +123,17 @@
           <span class="form-fields">
             <input
               name="data.currentShots"
-              type="text"
+              type="number"
               value="{{data.data.currentShots}}"
               placeholder="{{localize 'SWADE.Mag'}}"
-              data-dtype="String"
+              data-dtype="Number"
             />
             <input
               name="data.shots"
-              type="text"
+              type="number"
               value="{{data.data.shots}}"
               placeholder="0"
-              data-dtype="String"
+              data-dtype="Number"
             />
           </span>
         </div>

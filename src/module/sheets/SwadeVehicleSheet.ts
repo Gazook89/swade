@@ -292,7 +292,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   private _calcModSlotsUsed(): number {
     const mods = this.actor.items.filter(
       (i: SwadeItem) =>
-        i.data.type === 'gear' &&
+        (i.data.type === 'gear' || i.data.type === 'weapon') &&
         i.data.data.isVehicular &&
         i.data.data.equipped,
     );
