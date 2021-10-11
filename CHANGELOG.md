@@ -22,6 +22,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.21.2]
+
+### Changed
+
+- Changed the `CONFIG.SWADE.templates` global variable to `CONFIG.SWADE.measuredTemplatePresets`
+- Changed the `CONFIG.SWADE.activeTemplate` global variable to `CONFIG.SWADE.activeMeasuredTemplatePreview`
+
+### Fixed
+
+- Fixed a small issue with the Tweaks window behaving wierdly when editing values which were affected by an Active Effect
+
 ## [v0.21.1]
 
 ### Changed

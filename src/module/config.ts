@@ -261,7 +261,7 @@ export const SWADE: SwadeConfig = {
     compendium: 'systems/swade/assets/ui/wildcard-dark.svg',
   },
 
-  templates: [
+  measuredTemplatePresets: [
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
       button: {
@@ -316,7 +316,7 @@ export const SWADE: SwadeConfig = {
     },
   ],
 
-  activeTemplate: null,
+  activeMeasuredTemplatePreview: null,
 
   dsnColorSets: {},
 
@@ -402,9 +402,9 @@ export interface SwadeConfig {
     compendium: string;
   };
 
-  templates: Array<TemplateConfig>;
+  measuredTemplatePresets: Array<TemplateConfig>;
 
-  activeTemplate: null | SwadeMeasuredTemplate;
+  activeMeasuredTemplatePreview: null | SwadeMeasuredTemplate;
 
   dsnColorSets: any;
   dsnTextureList: any;

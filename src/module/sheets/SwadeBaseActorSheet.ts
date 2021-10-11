@@ -1,7 +1,7 @@
 import { AdditionalStat } from '../../interfaces/additional';
 import * as chat from '../chat';
 import { SWADE } from '../config';
-import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
 import SwadeDice from '../dice';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';

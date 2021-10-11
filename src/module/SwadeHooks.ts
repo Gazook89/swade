@@ -737,7 +737,9 @@ export default class SwadeHooks {
 
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
-    const newButtons = CONFIG.SWADE.templates.map((t) => t.button);
+    const newButtons = CONFIG.SWADE.measuredTemplatePresets.map(
+      (t) => t.button,
+    );
     measure.tools.splice(measure.tools.length - 1, 0, ...newButtons);
   }
 

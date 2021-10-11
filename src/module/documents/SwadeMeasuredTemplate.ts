@@ -2,17 +2,17 @@ import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateCo
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
 import { getCanvas } from '../util';
 
-declare global {
-  interface ObjectClassConfig {
-    MeasuredTemplate: SwadeMeasuredTemplate;
-  }
-}
+// declare global {
+//   interface PlaceableObjectClassConfig {
+//     MeasuredTemplate: typeof SwadeMeasuredTemplate;
+//   }
+// }
 
 export default class SwadeMeasuredTemplate extends MeasuredTemplate {
-  moveTime = 0;
+  private moveTime = 0;
   //The initially active CanvasLayer to re-activate after the workflow is complete
-  initialLayer: CanvasLayer;
-  handlers: MouseInterActionHandlers = {
+  private initialLayer: CanvasLayer;
+  private handlers: MouseInterActionHandlers = {
     mm: () => {},
     rc: () => {},
     lc: () => {},
@@ -25,15 +25,16 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
    * @returns The constructed template object or null if no preset was found
    */
   static fromPreset(preset: TemplatePreset | string) {
-    if (CONFIG.SWADE.activeTemplate) {
-      CONFIG.SWADE.activeTemplate.destroy();
-      CONFIG.SWADE.activeTemplate = null;
+    if (CONFIG.SWADE.activeMeasuredTemplatePreview) {
+      CONFIG.SWADE.activeMeasuredTemplatePreview.destroy();
+      CONFIG.SWADE.activeMeasuredTemplatePreview = null;
     }
-    CONFIG.SWADE.activeTemplate = this._constructPreset(preset);
-    if (CONFIG.SWADE.activeTemplate) CONFIG.SWADE.activeTemplate.drawPreview();
+    CONFIG.SWADE.activeMeasuredTemplatePreview = this._constructPreset(preset);
+    if (CONFIG.SWADE.activeMeasuredTemplatePreview)
+      CONFIG.SWADE.activeMeasuredTemplatePreview.drawPreview();
   }
 
-  static _constructPreset(preset: TemplatePreset | string) {
+  private static _constructPreset(preset: TemplatePreset | string) {
     // Prepare template data
     const templateBaseData: MeasuredTemplateConstructorDataData = {
       user: game.user!.id,
@@ -44,15 +45,13 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       fillColor: game.user!.data.color,
     };
 
-    const presetProtype = CONFIG.SWADE.templates.find(
+    const presetProtype = CONFIG.SWADE.measuredTemplatePresets.find(
       (c) => c.button.name === preset,
     );
     if (!presetProtype) return null;
 
     //Set template data based on preset option
-
-    const document = CONFIG.MeasuredTemplate.documentClass;
-    const template = new document(
+    const template = new CONFIG.MeasuredTemplate.documentClass(
       foundry.utils.mergeObject(templateBaseData, presetProtype.data),
       {
         parent: getCanvas().scene as Scene,
@@ -108,7 +107,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     };
 
     // Confirm the workflow (left-click)
-    this.handlers.lc = async (event) => {
+    this.handlers.lc = (event) => {
       event.stopPropagation();
       this.handlers.rc(event);
       // Confirm final snapped position
@@ -119,10 +118,11 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       );
       this.data.update(destination);
       // Create the template
-      await getCanvas().scene?.createEmbeddedDocuments('MeasuredTemplate', [
-        this.data.toObject(),
-      ]);
-      this.destroy();
+      getCanvas()
+        .scene?.createEmbeddedDocuments('MeasuredTemplate', [
+          this.data.toObject(),
+        ])
+        .then(() => this.destroy());
     };
 
     // Rotate the template by 3 degree increments (mouse-wheel)
