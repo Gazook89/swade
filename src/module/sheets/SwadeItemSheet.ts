@@ -1,6 +1,6 @@
 import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
-import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**

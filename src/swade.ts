@@ -8,7 +8,7 @@
 import SwadeGame from './interfaces/SwadeGame';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
-import SwadeEntityTweaks from './module/dialog/entity-tweaks';
+import SwadeEntityTweaks from './module/dialog/SwadeEntityTweaks';
 import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
@@ -76,7 +76,7 @@ Hooks.once('init', () => {
   //register custom status effects
   CONFIG.statusEffects = SWADE.statusEffects;
 
-  //@ts-ignore
+  //@ts-expect-error Not yet implemented in Types
   CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
 
   // Register custom system settings
@@ -94,6 +94,7 @@ Hooks.once('init', () => {
   });
   Actors.registerSheet('swade', SwadeNPCSheet, {
     types: ['npc'],
+    makeDefault: true,
     label: 'SWADE.CommunityNPCSheet',
   });
   Actors.registerSheet('swade', SwadeVehicleSheet, {

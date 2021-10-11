@@ -1,5 +1,5 @@
 import CharacterSummarizer from '../module/CharacterSummarizer';
-import SwadeEntityTweaks from '../module/dialog/entity-tweaks';
+import SwadeEntityTweaks from '../module/dialog/SwadeEntityTweaks';
 import ItemChatCardHelper from '../module/ItemChatCardHelper';
 import * as migrations from '../module/migration';
 import SwadeSocketHandler from '../module/SwadeSocketHandler';
