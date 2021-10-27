@@ -270,7 +270,7 @@ export const SWADE = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
       button: {
-        name: 'swcone',
+        name: TemplatePreset.CONE,
         title: 'SWADE.Cone',
         icon: 'text-icon cone',
         visible: true,
@@ -283,7 +283,7 @@ export const SWADE = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
       button: {
-        name: 'sbt',
+        name: TemplatePreset.SBT,
         title: 'SWADE.SBT',
         icon: 'text-icon sbt',
         visible: true,
@@ -296,7 +296,7 @@ export const SWADE = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
       button: {
-        name: 'mbt',
+        name: TemplatePreset.MBT,
         title: 'SWADE.MBT',
         icon: 'text-icon mbt',
         visible: true,
@@ -309,7 +309,7 @@ export const SWADE = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
       button: {
-        name: 'lbt',
+        name: TemplatePreset.LBT,
         title: 'SWADE.LBT',
         icon: 'text-icon lbt',
         visible: true,
