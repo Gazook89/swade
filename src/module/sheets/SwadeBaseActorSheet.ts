@@ -430,7 +430,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     const template = `
       <form><div class="form-group">
-        <label>${game.i18n.localize('SWADE.Ed')} ${targetLabel}</label> 
+        <label>${game.i18n.localize('SWADE.Ed')} ${targetLabel}</label>
         <input name="modifier" value="${targetPropertyValue}" type="text"/>
       </div></form>`;
     new Dialog({

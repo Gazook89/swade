@@ -13,7 +13,7 @@
       {{item.data.data.notes}}
     </p>
   </div>
-  {{/if}} 
+  {{/if}}
   {{#if (eq item.type "armor")}}
   <div class="chips">
     <p>
@@ -23,7 +23,7 @@
       {{item.data.data.armor}}
     </p>
   </div>
-  {{/if}} 
+  {{/if}}
   {{#if (and (eq item.type "weapon") item.data.data.range)}}
   <div class="chips">
     <p>
@@ -31,7 +31,7 @@
       {{item.data.data.range}}
     </p>
   </div>
-  {{/if}} 
+  {{/if}}
   {{#if (and (eq item.type "weapon") (gt item.data.data.ap '0'))}}
   <div class="chips">
     <p>
@@ -39,7 +39,7 @@
       {{item.data.data.ap}}
     </p>
   </div>
-  {{/if}} 
+  {{/if}}
   {{#if (eq item.type "shield")}}
   <div class="chips">
     <p>
@@ -72,21 +72,51 @@
     {{/if}}
   </div>
 
-  {{#if (eq item.type "power")}} 
+  {{#if (eq item.type "power")}}
     {{#unless powersTab}}
       <div class="pp-counter">
         <p>
           <span class="bold">
             {{#if item.data.data.arcane}}{{item.data.data.arcane}} {{/if}}{{localize "SWADE.PP"}}:
           </span>
-          <span class="current-pp">{{powerPoints.current}}</span>&nbsp;/&nbsp;<span
-            class="max-pp"
-            >{{powerPoints.max}}</span
-          >
+                <span class="current-pp">
+                  {{#if data.arcane}}
+                  {{#each actor.data.data.powerPoints as |ab|}}
+                  {{#if (eq @key ../data.arcane)}}
+                  {{ab.value}}
+                  {{/if}}
+                  {{/each}}
+                  {{else}}
+                  {{powerPoints.current}}
+                  {{/if}}
+                </span>
+                &nbsp;/&nbsp;
+                <span class="max-pp">
+                  {{#if data.arcane}}
+                  {{#each actor.data.data.powerPoints as |ab|}}
+                  {{#if (eq @key ../data.arcane)}}
+                  {{ab.max}}
+                  {{/if}}
+                  {{/each}}
+                  {{else}}
+                  {{powerPoints.max}}
+                  {{/if}}
+                </span>
         </p>
       </div>
-    {{/unless}} 
+    {{/unless}}
   {{/if}}
+
+{{#if item.data.data.isArcaneDevice}}
+{{log item}}
+<div class="pp-counter">
+  <p>
+    <span class="bold">{{localize "SWADE.ArcaneDevice"}} {{localize "SWADE.PP"}}:</span>
+    <span class="current-pp">{{item.data.data.powerPoints.value}}</span>&nbsp;/&nbsp;<span
+      class="max-pp">{{item.data.data.powerPoints.max}}</span>
+  </p>
+</div>
+{{/if}}
 
   <div class="card-buttons">
     {{#if (eq item.type "power")}}
@@ -117,7 +147,29 @@
         </button>
       </span>
     </span>
-    {{/unless}} {{/unless}} {{/if}} {{#unless powersTab}} {{#if hasSkillRoll}}
+    {{/unless}} {{/unless}} {{/if}}
+        {{#if item.data.data.isArcaneDevice}}
+        <span class="flexcol">
+          <span class="flexrow" style="display: flex">
+            <label>
+              <strong>{{localize "SWADE.PPCost"}}: </strong>
+            </label>
+            <input type="number" class="arcane-device-pp-adjust" value="1" />
+          </span>
+          {{#unless ../../../settingrules.noPowerPoints}}
+          <span class="flexrow" style="display: flex">
+            <button class="card-button" data-action="arcane-device-pp-adjust" data-adjust="plus" title="{{localize 'SWADE.AddPPDesc'}}">
+              &plus; {{localize "SWADE.Add"}}
+            </button>
+            <button class="card-button" data-action="arcane-device-pp-adjust" data-adjust="minus"
+              title="{{localize 'SWADE.SubtractPPDesc'}}">
+              &minus; {{localize "SWADE.Subtract"}}
+            </button>
+          </span>
+          {{/unless}}
+        </span>
+        {{/if}}
+    {{#unless powersTab}} {{#if hasSkillRoll}}
     <h4 class="actions-subheading">
       <i class="fas fa-bullseye"></i> {{localize "SWADE.TraitRolls"}}
     </h4>
@@ -125,32 +177,37 @@
     <button class="card-button" data-action="formula">
       {{#if powersTab}}<i class="fas fa-hand-sparkles"></i> {{/if}}{{skill}}
     </button>
-    {{/if}}  
-    {{#each actions as |attr key|}} 
+    {{/if}}
+    {{#each actions as |attr key|}}
       {{#if (eq attr.type "skill")}}
         <button class="card-button" data-action="{{attr.key}}">
           {{#if powersTab}}<i class="fas fa-hand-sparkles"></i> {{/if}}{{attr.name}}
         </button>
-      {{/if}} 
-    {{/each}} 
+      {{/if}}
+    {{/each}}
+    {{#if item.data.data.isArcaneDevice}}
+    <button class="card-button" data-action="arcane-device">
+      {{localize "SWADE.ActivateArcaneDevice"}}
+    </button>
+    {{/if}}
     {{#unless powersTab}}
       {{#if hasDamage }}
       <h4 class="actions-subheading">
         <i class="fas fa-tint"></i> {{localize "SWADE.DmgRolls"}}
       </h4>
-      {{/if}} 
+      {{/if}}
     {{/unless}}
     {{#if item.data.data.damage}}
     <button class="card-button" data-action="damage">
       {{#if powersTab}}<i class="fas fa-tint"></i> {{/if}}{{item.data.data.damage}}
     </button>
     {{/if}}
-    {{#each actions as |attr key|}} 
+    {{#each actions as |attr key|}}
       {{#if (eq attr.type "damage")}}
         <button class="card-button" data-action="{{attr.key}}">
           {{#if ../powersTab}}<i class="fas fa-tint"></i>{{/if}} {{attr.name}}
         </button>
-      {{/if}} 
+      {{/if}}
     {{/each}}
   </div>
 </div>

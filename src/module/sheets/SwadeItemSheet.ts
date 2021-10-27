@@ -56,12 +56,18 @@ export default class SwadeItemSheet extends ItemSheet {
     new SwadeEntityTweaks(this.item).render(true);
   }
 
+  protected _canBeArcaneDevice(itemType: string) {
+    const permissableTypes = ['gear', 'armor', 'shield', 'weapon'];
+    return permissableTypes.includes(itemType)
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
     if (
-      this.item.type === 'ability' &&
-      this.item.data.data['subtype'] === 'race'
+      this._canBeArcaneDevice(this.item.data.type) ||
+      (this.item.type === 'ability' &&
+        this.item.data.data['subtype'] === 'race')
     ) {
       this.form!.ondrop = (ev) => this._onDrop(ev);
     }
@@ -70,6 +76,16 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.item-delete').on('click', () => {
       this.close();
       this.item.delete();
+    });
+    // Update Item
+    html.find('.power-delete').on('click', async (ev) => {
+      const li = $(ev.currentTarget).parents('.item');
+      const id = li.data('itemId');
+      const map = new Map(
+        (this.item.getFlag('swade', 'embeddedPowers') as [string, any][]) ?? [],
+      );
+      map.delete(id);
+      this.item.setFlag('swade', 'embeddedPowers', Array.from(map));
     });
 
     html.find('.profile-img').on('contextmenu', () => {
@@ -209,6 +225,50 @@ export default class SwadeItemSheet extends ItemSheet {
     return data;
   }
 
+  // Override to set resizable initial size
+  async _renderInner(data) {
+    const html = await super._renderInner(data);
+    this.form = html[0];
+
+    // Resize resizable classes
+    const resizable = (html as JQuery).find('.resizable');
+    resizable.each((_, el) => {
+      const heightDelta =
+        (this.position.height as number) - (this.options.height as number);
+      el.style.height = `${heightDelta + parseInt(el.dataset.baseSize!)}px`;
+    });
+
+    // Filter power list
+    const arcane = !this.options['activeArcane']
+      ? 'All'
+      : this.options['activeArcane'];
+    (html as JQuery).find('.arcane-tabs .arcane').removeClass('active');
+    (html as JQuery).find(`[data-arcane='${arcane}']`).addClass('active');
+    this._filterPowers(html as JQuery, arcane);
+
+    return html;
+  }
+
+  protected _filterPowers(html: JQuery, arcane: string) {
+    this.options['activeArcane'] = arcane;
+    // Show, hide powers
+    html.find('.power').each((id: number, pow: any) => {
+      if (pow.dataset.arcane == arcane || arcane == 'All') {
+        pow.classList.add('active');
+      } else {
+        pow.classList.remove('active');
+      }
+    });
+    // Show, Hide powerpoints
+    html.find('.power-counter').each((id: number, ct: any) => {
+      if (ct.dataset.arcane == arcane) {
+        ct.classList.add('active');
+      } else {
+        ct.classList.remove('active');
+      }
+    });
+  }
+
   async _onDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
@@ -249,13 +309,23 @@ export default class SwadeItemSheet extends ItemSheet {
     //@ts-ignore
     delete itemData['permission'];
 
+    let propertyName = '';
+    if (
+      this.item.data.type === 'ability' &&
+      this.item.data.data.subtype === 'race'
+    ) {
+      propertyName = 'embeddedAbilities';
+    }
+
+    if (this._canBeArcaneDevice(this.item.data.type) && item.data.type === 'power') {
+      propertyName = 'embeddedPowers'
+    }
     //pull the array from the flags, and push the new entry into it
     const collection =
-      (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
-      [];
+      (this.item.getFlag('swade', propertyName) as [string, any][]) || [];
     collection.push([randomID(), itemData]);
     //save array back into flag
-    await this.item.setFlag('swade', 'embeddedAbilities', collection);
+    await this.item.setFlag('swade', propertyName, collection);
     return false;
   }
 

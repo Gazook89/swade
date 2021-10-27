@@ -21,10 +21,22 @@ export type SwadeItemDataSource =
   | SkillItemDataSource
   | AbilityItemDataSource;
 
-interface PhysicalItem {
+interface PhysicalItem extends Equipable, ArcaneDevice, Actions {
   weight: number;
   price: number;
   quantity: number;
+}
+
+interface ArcaneDevice {
+  isArcaneDevice: boolean;
+  arcaneSkillDie: {
+    sides: number;
+    modifier: number;
+  };
+  powerPoints: {
+    value: number;
+    max: number;
+  } & Record<string, { value: number; max: number }>;
 }
 
 interface Equipable {
@@ -55,9 +67,7 @@ interface Actions {
 interface WeaponData
   extends PhysicalItem,
     ItemDescription,
-    Equipable,
-    Vehicular,
-    Actions {
+    Vehicular {
   damage: string;
   range: string;
   rof: number;
@@ -73,10 +83,9 @@ interface WeaponData
 interface GearData
   extends ItemDescription,
     PhysicalItem,
-    Equipable,
     Vehicular {}
 
-interface ArmorData extends ItemDescription, PhysicalItem, Equipable {
+interface ArmorData extends ItemDescription, PhysicalItem {
   minStr: string;
   armor: number | string;
   isNaturalArmor: boolean;
@@ -88,7 +97,7 @@ interface ArmorData extends ItemDescription, PhysicalItem, Equipable {
   };
 }
 
-interface ShieldData extends ItemDescription, PhysicalItem, Equipable, Actions {
+interface ShieldData extends ItemDescription, PhysicalItem {
   minStr: string;
   parry: number;
   cover: number;

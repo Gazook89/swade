@@ -36,6 +36,17 @@
         </div>
         {{/if}}
         <div class="form-group">
+          <label class="check-container">{{localize "SWADE.ArcaneDevice"}}
+            <input
+            type="checkbox"
+            name="data.isArcaneDevice"
+            {{checked data.data.isArcaneDevice}}
+            data-dtype="Boolean"
+            />
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="form-group">
           <label class="check-container"
             >{{localize "SWADE.VehicleMod"}}
             <input
@@ -100,6 +111,10 @@
         {{> "systems/swade/templates/setting-fields.hbs"}} {{>
         "systems/swade/templates/items/partials/description.hbs"}}
       </section>
+    </div>
+    <div class="tab powers" data-group="primary" data-tab="powers">
+      {{> "systems/swade/templates/items/partials/powers.hbs"}}
+      <br />
     </div>
     <div class="tab" data-group="primary" data-tab="actions-effects">
       {{> "systems/swade/templates/items/partials/ae-header.hbs"}} {{>
