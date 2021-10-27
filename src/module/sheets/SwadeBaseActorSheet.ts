@@ -122,7 +122,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     });
 
     //Running Die
-    html.find('.running-die').on('click', (ev) => {
+    html.find('.running-die').on('click', async (ev) => {
       const runningDie = getProperty(
         this.actor.data,
         'data.stats.speed.runningDie',
@@ -146,7 +146,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       const runningRoll = new Roll(rollFormula);
 
       if (ev.shiftKey) {
-        runningRoll.evaluate({ async: false }).toMessage({
+        await runningRoll.evaluate();
+        await runningRoll.toMessage({
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           flavor: game.i18n.localize('SWADE.Running'),
         });
@@ -201,7 +202,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       this.actor.effects.get(effect?.id!)?.sheet.render(true);
     });
 
-    html.find('.additional-stats .roll').on('click', (ev) => {
+    html.find('.additional-stats .roll').on('click', async (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
       const statData = getProperty(
@@ -212,12 +213,15 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       if (!!modifier && !modifier.match(/^[+-]/)) {
         modifier = '+' + modifier;
       }
-      new Roll(`${statData.value}${modifier}`, this.actor.getRollData())
-        .evaluate({ async: false })
-        .toMessage({
-          speaker: ChatMessage.getSpeaker(),
-          flavor: statData.label,
-        });
+      const roll = new Roll(
+        `${statData.value}${modifier}`,
+        this.actor.getRollData(),
+      );
+      await roll.evaluate();
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: statData.label,
+      });
     });
   }
 

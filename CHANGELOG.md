@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [v0.22.0]
 
+### Changed
+
+- Moved all roll evaluation from synchronous to asynchronous in order to future-proof the rolls
+
 ### Fixed
 
 - The running die now coirrectly uses the adjusted pace for the total distance

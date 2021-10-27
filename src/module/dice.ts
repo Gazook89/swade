@@ -109,7 +109,7 @@ export default class SwadeDice {
     });
   }
 
-  static _handleRoll({
+  static async _handleRoll({
     form = null,
     raise = false,
     actor = null,
@@ -182,8 +182,8 @@ export default class SwadeDice {
     //End of Workaround
     // Convert the roll to a chat message and return the roll
     const newRoll = Roll.fromTerms(terms, roll.options);
-    newRoll.evaluate({ async: false });
-    newRoll.toMessage(
+    await newRoll.evaluate();
+    await newRoll.toMessage(
       {
         speaker: speaker,
         flavor: flavor,

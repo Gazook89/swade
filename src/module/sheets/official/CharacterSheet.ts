@@ -145,7 +145,7 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     //Running Die
-    html.find('.running-die').on('click', () => {
+    html.find('.running-die').on('click', async () => {
       if (this.actor.data.type === 'vehicle') return;
       const runningDie = this.actor.data.data.stats.speed.runningDie;
       const runningMod = this.actor.data.data.stats.speed.runningMod;
@@ -157,7 +157,9 @@ export default class CharacterSheet extends ActorSheet {
         rollFormula = rollFormula + runningMod;
       }
 
-      new Roll(rollFormula).evaluate({ async: false }).toMessage({
+      const roll = await new Roll(rollFormula);
+      await roll.evaluate();
+      await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: game.i18n.localize('SWADE.Running'),
       });
@@ -430,11 +432,12 @@ export default class CharacterSheet extends ActorSheet {
       }
       //return early if there's no data to roll
       if (!statData.value) return;
-      const roll = await new Roll(
+      const roll = new Roll(
         `${statData.value}${modifier}`,
         this.actor.getRollData(),
-      ).evaluate({ async: true });
-      roll.toMessage({
+      );
+      await roll.evaluate();
+      await roll.toMessage({
         speaker: ChatMessage.getSpeaker(),
         flavor: statData.label,
       });
