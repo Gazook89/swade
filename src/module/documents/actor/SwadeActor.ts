@@ -336,8 +336,13 @@ export default class SwadeActor extends Actor {
       }
     }
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
-      const benny = new Roll('1dB').evaluate({ async: false });
-      game.dice3d.showForRoll(benny, game.user!, true, null, false);
+      game.dice3d.showForRoll(
+        await new Roll('1dB').evaluate(),
+        game.user!,
+        true,
+        null,
+        false,
+      );
     }
   }
 
@@ -356,9 +361,8 @@ export default class SwadeActor extends Actor {
       };
       ChatMessage.create(chatData);
     }
-    const actorData = this.data as any;
     await this.update({
-      'data.bennies.value': actorData.data.bennies.value + 1,
+      'data.bennies.value': this.data.data.bennies.value + 1,
     });
   }
 

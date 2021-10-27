@@ -145,25 +145,21 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     //Running Die
-    html.find('.running-die').on('click', () => {
-      const runningDie = getProperty(
-        this.actor.data,
-        'data.stats.speed.runningDie',
-      );
-      const runningMod = getProperty(
-        this.actor.data,
-        'data.stats.speed.runningMod',
-      );
-      const pace = getProperty(this.actor.data, 'data.stats.speed.value');
+    html.find('.running-die').on('click', async () => {
+      if (this.actor.data.type === 'vehicle') return;
+      const runningDie = this.actor.data.data.stats.speed.runningDie;
+      const runningMod = this.actor.data.data.stats.speed.runningMod;
+      const pace = this.actor.data.data.stats.speed.adjusted;
       let rollFormula = `1d${runningDie}`;
-
-      rollFormula = rollFormula.concat(`+${pace}`);
+      rollFormula = rollFormula + `+${pace}`;
 
       if (runningMod && runningMod !== 0) {
-        rollFormula = rollFormula.concat(runningMod);
+        rollFormula = rollFormula + runningMod;
       }
 
-      new Roll(rollFormula).evaluate({ async: false }).toMessage({
+      const roll = await new Roll(rollFormula);
+      await roll.evaluate();
+      await roll.toMessage({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: game.i18n.localize('SWADE.Running'),
       });
@@ -454,11 +450,12 @@ export default class CharacterSheet extends ActorSheet {
       }
       //return early if there's no data to roll
       if (!statData.value) return;
-      const roll = await new Roll(
+      const roll = new Roll(
         `${statData.value}${modifier}`,
         this.actor.getRollData(),
-      ).evaluate({ async: true });
-      roll.toMessage({
+      );
+      await roll.evaluate();
+      await roll.toMessage({
         speaker: ChatMessage.getSpeaker(),
         flavor: statData.label,
       });

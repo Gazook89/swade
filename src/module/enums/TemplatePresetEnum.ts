@@ -1,5 +1,5 @@
 export enum TemplatePreset {
-  CONE = 'cone',
+  CONE = 'swcone',
   SBT = 'sbt',
   MBT = 'mbt',
   LBT = 'lbt',

@@ -1,11 +1,18 @@
+import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateConfig';
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
 import { getCanvas } from '../util';
 
+// declare global {
+//   interface PlaceableObjectClassConfig {
+//     MeasuredTemplate: typeof SwadeMeasuredTemplate;
+//   }
+// }
+
 export default class SwadeMeasuredTemplate extends MeasuredTemplate {
-  moveTime = 0;
+  private moveTime = 0;
   //The initially active CanvasLayer to re-activate after the workflow is complete
-  initialLayer: CanvasLayer;
-  handlers: MouseInterActionHandlers = {
+  private initialLayer: CanvasLayer;
+  private handlers: MouseInterActionHandlers = {
     mm: () => {},
     rc: () => {},
     lc: () => {},
@@ -16,9 +23,19 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
    * @param preset the preset to use.
    * @returns SwadeTemplate | null
    */
-  static fromPreset(preset: TemplatePreset) {
+  static fromPreset(preset: TemplatePreset | string) {
+    if (CONFIG.SWADE.activeMeasuredTemplatePreview) {
+      CONFIG.SWADE.activeMeasuredTemplatePreview.destroy();
+      CONFIG.SWADE.activeMeasuredTemplatePreview = null;
+    }
+    CONFIG.SWADE.activeMeasuredTemplatePreview = this._constructPreset(preset);
+    if (CONFIG.SWADE.activeMeasuredTemplatePreview)
+      CONFIG.SWADE.activeMeasuredTemplatePreview.drawPreview();
+  }
+
+  private static _constructPreset(preset: TemplatePreset | string) {
     // Prepare template data
-    const templateData: ConstructorData = {
+    const templateBaseData: MeasuredTemplateConstructorDataData = {
       user: game.user!.id,
       distance: 0,
       direction: 0,
@@ -26,33 +43,22 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       y: 0,
       fillColor: game.user!.data.color,
     };
+
+    const presetProtype = CONFIG.SWADE.measuredTemplatePresets.find(
+      (c) => c.button.name === preset,
+    );
+    if (!presetProtype) return null;
+
     //Set template data based on preset option
-    switch (preset) {
-      case TemplatePreset.CONE:
-        templateData.t = 'cone';
-        templateData.distance = 9;
-        break;
-      case TemplatePreset.SBT:
-        templateData.t = 'circle';
-        templateData.distance = 1;
-        break;
-      case TemplatePreset.MBT:
-        templateData.t = 'circle';
-        templateData.distance = 2;
-        break;
-      case TemplatePreset.LBT:
-        templateData.t = 'circle';
-        templateData.distance = 3;
-        break;
-      default:
-        return null;
-    }
-    // Return the template constructed from the item data
-    const cls = CONFIG.MeasuredTemplate.documentClass;
-    //@ts-ignore
-    const template = new cls(templateData, { parent: getCanvas().scene });
-    const object = new this(template);
-    return object;
+    const template = new CONFIG.MeasuredTemplate.documentClass(
+      foundry.utils.mergeObject(templateBaseData, presetProtype.data),
+      {
+        parent: getCanvas().scene as Scene,
+      },
+    );
+
+    //Return the template constructed from the item data
+    return new this(template);
   }
   /* -------------------------------------------- */
   /**
@@ -131,10 +137,12 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     getCanvas()!.app!.view.oncontextmenu = this.handlers.rc;
     getCanvas()!.app!.view.onwheel = this.handlers.mw;
   }
+
   destroy(...args) {
     super.destroy(...args);
     this.handlers.rc();
   }
+
   protected _getConeShape(
     direction: number,
     angle: number,
@@ -196,7 +204,3 @@ interface MouseInterActionHandlers {
   lc: (...args) => void;
   mw: (...args) => void;
 }
-
-type ConstructorData = Parameters<
-  foundry.data.MeasuredTemplateData['_initializeSource']
->[0];

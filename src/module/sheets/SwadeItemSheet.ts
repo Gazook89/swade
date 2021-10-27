@@ -1,6 +1,6 @@
 import { AdditionalStat } from '../../interfaces/additional';
 import { SWADE } from '../config';
-import SwadeEntityTweaks from '../dialog/entity-tweaks';
+import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**
@@ -166,7 +166,7 @@ export default class SwadeItemSheet extends ItemSheet {
       this.item.setFlag('swade', 'embeddedAbilities', Array.from(map));
     });
 
-    html.find('.additional-stats .roll').on('click', (ev) => {
+    html.find('.additional-stats .roll').on('click', async (ev) => {
       const button = ev.currentTarget;
       const stat = button.dataset.stat;
       const statData = this.item.data.data.additionalStats[stat]!;
@@ -176,12 +176,12 @@ export default class SwadeItemSheet extends ItemSheet {
       }
       //return of there's no value to roll
       if (!statData.value) return;
-      new Roll(`1d${statData.value}${modifier}`)
-        .evaluate({ async: false })
-        .toMessage({
-          speaker: ChatMessage.getSpeaker(),
-          flavor: `${this.item.name} - ${statData.label}`,
-        });
+      const roll = new Roll(`1d${statData.value}${modifier}`);
+      await roll.evaluate();
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker(),
+        flavor: `${this.item.name} - ${statData.label}`,
+      });
     });
   }
 
