@@ -9,10 +9,12 @@
     </div>
   </header>
   <div class="card-content" style="display: none">
-    {{#if (eq type 'gear')}} 
-      {{{enrich data.data.description}}} 
-    {{else}} 
-      {{>"systems/swade/templates/shared-partials/action-card.hbs" item=this}}
-    {{/if}}
+  {{#if (or actions.length data.data.isArcaneDevice) }}
+    {{>"systems/swade/templates/shared-partials/action-card.hbs" item=this}}
+  {{else}}
+  {{#if data.data.description}}
+    {{{enrich data.data.description}}}
+  {{/if}}
+  {{/if}}
   </div>
 </li>
