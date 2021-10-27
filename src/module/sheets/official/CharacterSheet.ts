@@ -146,21 +146,15 @@ export default class CharacterSheet extends ActorSheet {
 
     //Running Die
     html.find('.running-die').on('click', () => {
-      const runningDie = getProperty(
-        this.actor.data,
-        'data.stats.speed.runningDie',
-      );
-      const runningMod = getProperty(
-        this.actor.data,
-        'data.stats.speed.runningMod',
-      );
-      const pace = getProperty(this.actor.data, 'data.stats.speed.value');
+      if (this.actor.data.type === 'vehicle') return;
+      const runningDie = this.actor.data.data.stats.speed.runningDie;
+      const runningMod = this.actor.data.data.stats.speed.runningMod;
+      const pace = this.actor.data.data.stats.speed.adjusted;
       let rollFormula = `1d${runningDie}`;
-
-      rollFormula = rollFormula.concat(`+${pace}`);
+      rollFormula = rollFormula + `+${pace}`;
 
       if (runningMod && runningMod !== 0) {
-        rollFormula = rollFormula.concat(runningMod);
+        rollFormula = rollFormula + runningMod;
       }
 
       new Roll(rollFormula).evaluate({ async: false }).toMessage({

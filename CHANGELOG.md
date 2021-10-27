@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.0]
+
+### Fixed
+
+- The running die now coirrectly uses the adjusted pace for the total distance
+
 ## [v0.21.2]
 
 ### Changed
