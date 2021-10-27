@@ -174,13 +174,15 @@
     </span>
     {{/if}}
 
-    {{#if hasSkillRoll}}
     {{#unless powersTab}}
+    {{#if (or hasSkillRoll item.data.data.isArcaneDevice)}}
     <h4 class="actions-subheading">
       <i class="fas fa-bullseye"></i> {{localize "SWADE.TraitRolls"}}
     </h4>
+    {{/if}}
     {{/unless}}
 
+    {{#if hasSkillRoll}}
     <button class="card-button" data-action="formula">
       {{#if powersTab}}<i class="fas fa-hand-sparkles"></i> {{/if}}{{skill}}
     </button>
