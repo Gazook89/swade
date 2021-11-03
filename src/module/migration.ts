@@ -7,7 +7,6 @@ import {
 export async function migrateWorld() {
   ui.notifications?.info(
     `Applying SWADE System Migration for version ${game.system.data.version}. Please be patient and do not close your game or shut down your server.`,
-    { permanent: true },
   );
 
   // Migrate World Actors
