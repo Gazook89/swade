@@ -1,6 +1,6 @@
 <form class="{{cssClass}} flexcol" autocomplete="off">
-  {{!-- Item Sheet Header --}} {{>
-  "systems/swade/templates/items/partials/header-delete.hbs"}}
+  {{!-- Item Sheet Header --}}
+  {{> "systems/swade/templates/items/partials/header-delete.hbs"}}
   <main class="sheet-body">
     <div class="form-group">
       <label for="die">{{localize "SWADE.Die"}}</label>
@@ -51,7 +51,7 @@
         />
       </span>
     </div>
-    {{> "systems/swade/templates/setting-fields.hbs"}} {{>
-    "systems/swade/templates/items/partials/description.hbs"}}
+    {{> "systems/swade/templates/setting-fields.hbs"}}
+    {{> "systems/swade/templates/items/partials/description.hbs"}}
   </main>
 </form>
