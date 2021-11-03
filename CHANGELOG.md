@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Moved all roll evaluation from synchronous to asynchronous in order to future-proof the rolls
+- The weapon Item Sheet now properly saves AP as a number. A migration has been provided to fix items that have AP saved as a text
 
 ### Fixed
 
