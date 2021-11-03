@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - The running die now coirrectly uses the adjusted pace for the total distance
+- Fixed an issue where Vehicle modslots where not properly calculated
 
 ## [v0.21.2]
 
