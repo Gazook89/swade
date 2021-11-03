@@ -3,6 +3,9 @@
   max-height: 740px;
   .header-field {
     padding: 1px;
+    & + .item {
+      padding-top: 2px;
+    }
   }
   .sheet-header {
     .profile-img-container {
@@ -35,6 +38,7 @@
   }
   .editor {
     height: 200px;
+    padding: 2px;
   }
 
   .vitals-container {
