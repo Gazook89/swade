@@ -175,7 +175,7 @@ export default class SwadeCombat extends Combat {
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
-                <h4 class="result-text result-text-card">@Compendium[${card.pack}.${card.id}]{${card.name}}</h4>
+                <h4 class="result-text result-text-card">@Compendium[${card!.pack}.${card!.id}]{${card!.name}}</h4>
                 <img class="result-image" style="transform: rotate(${rotation}deg)" src="${
         card!.data.img
       }">
