@@ -552,29 +552,36 @@ export default class SwadeActor extends Actor {
    */
   calcToughness(includeArmor = true): number {
     if (this.data.type === 'vehicle') return 0;
-    let retVal = 0;
-    const vigor = getProperty(this.data, 'data.attributes.vigor.die.sides');
-    const vigMod = parseInt(
-      getProperty(this.data, 'data.attributes.vigor.die.modifier'),
-    );
-    const toughMod = parseInt(
-      getProperty(this.data, 'data.stats.toughness.modifier'),
-    );
+    let finalToughness = 0;
 
-    retVal = Math.round(vigor / 2) + 2;
+    //get the base values we need
+    const vigor = this.data.data.attributes.vigor.die.sides;
+    const vigMod = this.data.data.attributes.vigor.die.modifier;
+    const toughMod = this.data.data.stats.toughness.modifier;
 
-    const size = parseInt(getProperty(this.data, 'data.stats.size')) || 0;
-    retVal += size;
+    finalToughness = Math.round(vigor / 2) + 2;
 
-    retVal += toughMod;
+    const size = this.data.data.stats.size ?? 0;
+    finalToughness += size;
+    finalToughness += toughMod;
+
     if (vigMod > 0) {
-      retVal += Math.floor(vigMod / 2);
+      finalToughness += Math.floor(vigMod / 2);
     }
+
+    //add the toughness from the armor
+    for (const armor of this.itemTypes.armor) {
+      if (armor.data.type !== 'armor') continue;
+      if (armor.data.data.equipped && armor.data.data.locations.torso) {
+        finalToughness += armor.data.data.toughness;
+      }
+    }
+
     if (includeArmor) {
-      retVal += this.calcArmor();
+      finalToughness += this.calcArmor();
     }
-    if (retVal < 1) retVal = 1;
-    return retVal;
+
+    return Math.max(finalToughness, 1);
   }
 
   /** Calculates the maximum carry capacity based on the strength die and any adjustment steps */

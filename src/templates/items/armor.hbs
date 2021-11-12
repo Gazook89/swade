@@ -55,9 +55,20 @@
           <span class="form-fields">
             <input
               name="data.armor"
-              type="text"
+              type="number"
               value="{{data.data.armor}}"
               placeholder="{{localize 'SWADE.Armor'}}"
+              data-dtype="Number"
+          /></span>
+        </div>
+                <div class="form-group">
+          <label for="data.armor">{{localize "SWADE.Tough"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.toughness"
+              type="number"
+              value="{{data.data.toughness}}"
+              placeholder="{{localize 'SWADE.Tough'}}"
               data-dtype="Number"
           /></span>
         </div>

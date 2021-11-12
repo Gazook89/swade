@@ -64,10 +64,7 @@ interface Actions {
   };
 }
 
-interface WeaponData
-  extends PhysicalItem,
-    ItemDescription,
-    Vehicular {
+interface WeaponData extends PhysicalItem, ItemDescription, Vehicular {
   damage: string;
   range: string;
   rof: number;
@@ -80,14 +77,12 @@ interface WeaponData
   parry: number;
 }
 
-interface GearData
-  extends ItemDescription,
-    PhysicalItem,
-    Vehicular {}
+interface GearData extends ItemDescription, PhysicalItem, Vehicular {}
 
 interface ArmorData extends ItemDescription, PhysicalItem {
   minStr: string;
   armor: number | string;
+  toughness: number;
   isNaturalArmor: boolean;
   locations: {
     head: boolean;

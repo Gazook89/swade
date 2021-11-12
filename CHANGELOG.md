@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [v0.22.0]
 
+### Added
+
+- Added the ability for Armor to have a toughness bonus. This bonus is only applied when the armor is marked as torso and is equiped.
+
 ### Changed
 
 - Moved all roll evaluation from synchronous to asynchronous in order to future-proof the rolls

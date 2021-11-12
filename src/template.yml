@@ -223,6 +223,7 @@ Item:
       - actions
     minStr: ''
     armor: 0
+    toughness: 0
     isNaturalArmor: false
     locations:
       head: false
