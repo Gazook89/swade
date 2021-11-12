@@ -27,8 +27,7 @@ export default class ItemChatCardHelper {
     }
 
     // Validate permission to proceed with the roll
-    const isTargetted = action === 'save';
-    if (!(isTargetted || game.user!.isGM || message.isAuthor)) return null;
+    if (!(game.user!.isGM || message.isAuthor)) return null;
 
     // Get the Actor from a synthetic Token
     const actor = this.getChatCardActor(card);
@@ -74,11 +73,9 @@ export default class ItemChatCardHelper {
       const [sceneId, tokenId] = tokenKey.split('.');
       const scene = game.scenes?.get(sceneId);
       if (!scene) return null;
-      //@ts-ignore
-      const token = scene.getEmbeddedDocument('Token', tokenId);
+      const token = scene.tokens.get(tokenId);
       if (!token) return null;
-      //@ts-ignore
-      return token.actor!;
+      return token.actor;
     }
 
     // Case 2 - use Actor ID directory

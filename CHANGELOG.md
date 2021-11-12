@@ -22,6 +22,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.21.3]
+
+### Fixed
+
+- Fixed a small issue that would prevent chat cards from being used with unlinked token actors
+- Item chat cards will now be generated with the tokens parent scene saved, not the currently active scene
+
 ## [v0.21.2]
 
 ### Changed
