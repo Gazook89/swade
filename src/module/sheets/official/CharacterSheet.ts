@@ -1,4 +1,5 @@
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
+import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
@@ -124,8 +125,8 @@ export default class CharacterSheet extends ActorSheet {
     //Roll Attribute
     html.find('.attribute-label').on('click', (ev) => {
       const element = ev.currentTarget as Element;
-      const attribute = element.parentElement!.dataset.attribute!;
-      //@ts-ignore
+      const attribute = element.parentElement!.dataset
+        .attribute! as keyof typeof SWADE.attributes;
       this.actor.rollAttribute(attribute);
     });
 

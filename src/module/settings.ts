@@ -298,7 +298,7 @@ export function registerSettingRules() {
     name: 'Arbitrary Setting Fields',
     default: { actor: {}, item: {} },
     scope: 'world',
-    //@ts-ignore
+    //@ts-expect-error The types can't really cope with this but Foundry can
     type: Object,
     config: false,
   });
