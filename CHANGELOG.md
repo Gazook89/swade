@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
-## [v0.22.0]
+## [v0.21.3]
 
 ### Added
 
@@ -35,7 +35,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- The running die now coirrectly uses the adjusted pace for the total distance
+- Fixed a small issue that would prevent chat cards from being used with unlinked token actors
+- Item chat cards will now be generated with the tokens parent scene saved, not the currently active scene
+- The running die now correctly uses the adjusted pace for the total distance
 - Fixed an issue where Vehicle modslots where not properly calculated
 
 ## [v0.21.2]
