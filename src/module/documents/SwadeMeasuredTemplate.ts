@@ -18,11 +18,10 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     lc: () => {},
     mw: () => {},
   };
-
   /**
    * A factory method to create a SwadeMeasuredTemplate instance using provided preset
    * @param preset the preset to use.
-   * @returns The constructed template object or null if no preset was found
+   * @returns SwadeTemplate | null
    */
   static fromPreset(preset: TemplatePreset | string) {
     if (CONFIG.SWADE.activeMeasuredTemplatePreview) {
@@ -61,7 +60,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     //Return the template constructed from the item data
     return new this(template);
   }
-
   /* -------------------------------------------- */
   /**
    * Creates a preview of the template
@@ -95,7 +93,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       this.refresh();
       this.moveTime = now;
     };
-
     // Cancel the workflow (right-click)
     this.handlers.rc = () => {
       this.layer?.preview?.removeChildren();
@@ -105,7 +102,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       getCanvas()!.app!.view.onwheel = null;
       this.initialLayer.activate();
     };
-
     // Confirm the workflow (left-click)
     this.handlers.lc = (event) => {
       event.stopPropagation();
@@ -124,7 +120,6 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
         ])
         .then(() => this.destroy());
     };
-
     // Rotate the template by 3 degree increments (mouse-wheel)
     this.handlers.mw = (event) => {
       if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window

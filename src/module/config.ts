@@ -2,7 +2,7 @@ import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 
-export const SWADE: SwadeConfig = {
+export const SWADE = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
   ██╔════╝██║    ██║██╔══██╗██╔══██╗██╔════╝
@@ -99,6 +99,11 @@ export const SWADE: SwadeConfig = {
     id: 'actionCardEditor',
   },
 
+  templates: {
+    preloadPromise: null as Promise<Handlebars.TemplateDelegate<any>[]> | null,
+    templatesPreloaded: false,
+  },
+
   statusEffects: [
     {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
@@ -128,7 +133,7 @@ export const SWADE: SwadeConfig = {
         {
           key: 'data.stats.parry.modifier',
           value: 4,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          mode: 2,
         },
       ],
     },
@@ -245,12 +250,12 @@ export const SWADE: SwadeConfig = {
         {
           key: 'data.stats.toughness.value',
           value: 0,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          mode: 2,
         },
         {
           key: 'data.stats.toughness.armor',
           value: 0,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+          mode: 2,
         },
       ],
     },
@@ -265,7 +270,7 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
       button: {
-        name: 'swcone',
+        name: TemplatePreset.CONE,
         title: 'SWADE.Cone',
         icon: 'text-icon cone',
         visible: true,
@@ -278,7 +283,7 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
       button: {
-        name: 'sbt',
+        name: TemplatePreset.SBT,
         title: 'SWADE.SBT',
         icon: 'text-icon sbt',
         visible: true,
@@ -291,7 +296,7 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
       button: {
-        name: 'mbt',
+        name: TemplatePreset.MBT,
         title: 'SWADE.MBT',
         icon: 'text-icon mbt',
         visible: true,
@@ -304,7 +309,7 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
       button: {
-        name: 'lbt',
+        name: TemplatePreset.LBT,
         title: 'SWADE.LBT',
         icon: 'text-icon lbt',
         visible: true,
@@ -404,7 +409,7 @@ export interface SwadeConfig {
 
   measuredTemplatePresets: Array<TemplateConfig>;
 
-  activeMeasuredTemplatePreview: null | SwadeMeasuredTemplate;
+  activeMeasuredTemplatePreview: SwadeMeasuredTemplate | null;
 
   dsnColorSets: any;
   dsnTextureList: any;

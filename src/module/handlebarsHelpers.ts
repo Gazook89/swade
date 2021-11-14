@@ -28,9 +28,9 @@ export const registerCustomHelpers = function () {
   });
 
   // Sheet
-  Handlebars.registerHelper('localizeSkillAttribute', (attribute) => {
+  Handlebars.registerHelper('localizeSkillAttribute', (attribute, useShorthand = false) => {
     if (!attribute) return '';
-    return game.i18n.localize(SWADE.attributes[attribute].long);
+    return game.i18n.localize(useShorthand? SWADE.attributes[attribute].short : SWADE.attributes[attribute].long);
   });
 
   Handlebars.registerHelper('modifier', (str) => {

@@ -297,7 +297,12 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
         i.data.data.equipped,
     );
     let retVal = 0;
-    mods.forEach((m) => (retVal += getProperty(m.data, 'data.mods') as number));
+    for (const m of mods) {
+      if (m.data.type !== 'weapon' && m.data.type !== 'gear') continue;
+      const slots = m.data.data.mods ?? 0;
+      const quantity = m.data.data.quantity ?? 0;
+      retVal += slots * quantity;
+    }
     return retVal;
   }
 

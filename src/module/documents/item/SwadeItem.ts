@@ -208,10 +208,10 @@ export default class SwadeItem extends Item {
    */
   async show() {
     // Basic template rendering data
-    const token = this.actor!.token;
+    if (!this.actor) return;
+    const token = this.actor.token;
 
-    //    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
-    const tokenId = token ? token.id : null;
+    const tokenId = token ? `${token.parent!.id}.${token.id}` : null;
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
     const hasAmmoManagement =
       this.type === 'weapon' &&
@@ -268,13 +268,14 @@ export default class SwadeItem extends Item {
       type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       content: html,
       speaker: {
-        actor: this.parent!.id,
+        actor: this.parent?.id,
         token: tokenId,
-        scene: game.scenes?.active?.id,
-        alias: this.actor!.name,
+        scene: token?.parent?.id,
+        alias: this.parent?.name,
       },
       flags: { 'core.canPopout': true },
     };
+    ChatMessage.getSpeaker();
 
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&

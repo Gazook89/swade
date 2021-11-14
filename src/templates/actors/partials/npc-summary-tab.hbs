@@ -119,12 +119,12 @@
         </div>
       </header>
       {{#each itemsByType.edge as |edge id|}}
-      <span class="item" data-item-id="{{edge._id}}">
+      <div class="item" data-item-id="{{edge._id}}">
         <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
           {{#unless @first}}&nbsp;{{/unless}}{{edge.name}}{{#unless
           @last}},{{/unless}}
         </a>
-      </span>
+      </div>
       {{/each}}
     </section>
     <section class="gear hindrances">
@@ -139,13 +139,13 @@
         </div>
       </header>
       {{#each itemsByType.hindrance as |hindrance id|}}
-      <span class="item" data-item-id="{{hindrance._id}}">
+      <div class="item" data-item-id="{{hindrance._id}}">
         <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
           {{#unless @first}}&nbsp;{{/unless}}{{hindrance.name}} {{#if
           hindrance.data.major}}{{localize "SWADE.Major"}}{{/if}}{{#unless
           @last}},{{/unless}}
         </a>
-      </span>
+      </div>
       {{/each}}
     </section>
     <section class="gear abilities">
@@ -160,12 +160,12 @@
         </div>
       </header>
       {{#each itemsByType.ability as |ability id|}}
-      <span class="item" data-item-id="{{ability._id}}">
+      <div class="item" data-item-id="{{ability._id}}">
         <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
           {{#unless @first}}&nbsp;{{/unless}}{{ability.name}}{{#unless
           @last}},{{/unless}}
         </a>
-      </span>
+      </div>
       {{/each}}
     </section>
     <section class="gear">

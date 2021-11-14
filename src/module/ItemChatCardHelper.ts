@@ -27,8 +27,7 @@ export default class ItemChatCardHelper {
     }
 
     // Validate permission to proceed with the roll
-    const isTargetted = action === 'save';
-    if (!(isTargetted || game.user!.isGM || message.isAuthor)) return null;
+    if (!(game.user!.isGM || message.isAuthor)) return null;
 
     // Get the Actor from a synthetic Token
     const actor = this.getChatCardActor(card);
@@ -74,11 +73,9 @@ export default class ItemChatCardHelper {
       const [sceneId, tokenId] = tokenKey.split('.');
       const scene = game.scenes?.get(sceneId);
       if (!scene) return null;
-      //@ts-ignore
-      const token = scene.getEmbeddedDocument('Token', tokenId);
+      const token = scene.tokens.get(tokenId);
       if (!token) return null;
-      //@ts-ignore
-      return token.actor!;
+      return token.actor;
     }
 
     // Case 2 - use Actor ID directory
@@ -146,6 +143,10 @@ export default class ItemChatCardHelper {
         }
         if (roll) await this.subtractShots(actor, item.id!);
         Hooks.call('swadeAction', actor, item, action, roll, game.user!.id);
+        break;
+      case 'arcane-device':
+        const arcaneSkillDie = getProperty(item.data, 'data.arcaneSkillDie');
+        roll = await actor.makeArcaneDeviceSkillRoll({}, arcaneSkillDie);
         break;
       case 'reload':
         if (
@@ -406,6 +407,15 @@ export default class ItemChatCardHelper {
         currentPP = getProperty(actor.data, `data.powerPoints.${arcane}.value`);
         maxPP = getProperty(actor.data, `data.powerPoints.${arcane}.max`);
       }
+      //update message content
+      $(messageContent).find('.pp-counter .current-pp').first().text(currentPP);
+      $(messageContent).find('.pp-counter .max-pp').first().text(maxPP);
+    }
+
+    const isArcaneDevice = getProperty(item.data, 'data.isArcaneDevice');
+    if (isArcaneDevice) {
+      const currentPP = getProperty(item.data, 'data.powerPoints.value');
+      const maxPP = getProperty(item.data, 'data.powerPoints.max');
       //update message content
       $(messageContent).find('.pp-counter .current-pp').first().text(currentPP);
       $(messageContent).find('.pp-counter .max-pp').first().text(maxPP);

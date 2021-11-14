@@ -28,7 +28,7 @@ export default class CharacterSummarizer {
 
   static summarizeCharacters(chars: SwadeActor[]) {
     for (const char of chars) {
-      let s = new game.swade.CharacterSummarizer(char);
+      const s = new game.swade.CharacterSummarizer(char);
       CharacterSummarizer._showDialog(s);
     }
   }
@@ -36,7 +36,7 @@ export default class CharacterSummarizer {
   static _showDialog(summarizer: CharacterSummarizer) {
     if (summarizer.getSummary() === '') return;
 
-    let d = new Dialog({
+    const d = new Dialog({
       title: game.i18n.localize('SWADE.CharacterSummary'),
       content: summarizer.getSummary(),
       buttons: {
@@ -73,7 +73,7 @@ export default class CharacterSummarizer {
   copySummaryMarkdown() {
     // as the HTML is so simple here, just going to convert
     // it inline.
-    let markdownSummary = this.summary
+    const markdownSummary = this.summary
       .replace(/\<\/?p>/g, '\n')
       .replace(/<br\/?>/g, '\n')
       .replace(/<\/?strong>/g, '*')
@@ -92,7 +92,7 @@ export default class CharacterSummarizer {
       return navigator.clipboard.writeText(textToCopy);
     } else {
       // text area method
-      let textArea = document.createElement('textarea');
+      const textArea = document.createElement('textarea');
       textArea.value = textToCopy;
       // make the textarea out of viewport
       textArea.style.position = 'fixed';

@@ -21,6 +21,12 @@
           </label>
         </div>
         <div class="form-group">
+          <label class="check-container">{{localize "SWADE.ArcaneDevice"}}
+            <input type="checkbox" name="data.isArcaneDevice" {{checked data.data.isArcaneDevice}} data-dtype="Boolean" />
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="form-group">
           <label class="check-container"
             >{{localize "SWADE.NaturalArmor"}}
             <input
@@ -49,9 +55,20 @@
           <span class="form-fields">
             <input
               name="data.armor"
-              type="text"
+              type="number"
               value="{{data.data.armor}}"
               placeholder="{{localize 'SWADE.Armor'}}"
+              data-dtype="Number"
+          /></span>
+        </div>
+                <div class="form-group">
+          <label for="data.armor">{{localize "SWADE.Tough"}}</label>
+          <span class="form-fields">
+            <input
+              name="data.toughness"
+              type="number"
+              value="{{data.data.toughness}}"
+              placeholder="{{localize 'SWADE.Tough'}}"
               data-dtype="Number"
           /></span>
         </div>
@@ -164,9 +181,14 @@
         "systems/swade/templates/items/partials/description.hbs"}}
       </section>
     </div>
+    <div class="tab powers" data-group="primary" data-tab="powers">
+      {{> "systems/swade/templates/items/partials/powers.hbs"}}
+      <br />
+    </div>
     <div class="tab" data-group="primary" data-tab="actions-effects">
-      {{> "systems/swade/templates/items/partials/ae-header.hbs"}} {{>
-      "systems/swade/templates/effect-list.hbs"}}
+      {{> "systems/swade/templates/items/partials/actions.hbs"}}
+      {{> "systems/swade/templates/items/partials/ae-header.hbs"}}
+      {{> "systems/swade/templates/effect-list.hbs"}}
       <br />
     </div>
   </main>

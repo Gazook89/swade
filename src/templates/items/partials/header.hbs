@@ -20,8 +20,12 @@
     </h1>
   </div>
 </header>
+
 <nav class='tabs' data-group='primary' style='margin-bottom: 5px'>
   <a class='item active' data-tab='summary'>{{localize 'SWADE.Desc'}}</a>
+  {{#if data.data.isArcaneDevice}}
+  <a class="item active" data-tab="powers">{{localize "SWADE.Pow"}}</a>
+  {{/if}}
   <a class='item' data-tab='actions-effects'>{{localize
       'SWADE.ActionsEffects'
     }}</a>

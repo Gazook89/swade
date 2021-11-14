@@ -1,6 +1,6 @@
 <form class="{{cssClass}} flexcol" autocomplete="off">
-  {{!-- Item Sheet Header --}} {{>
-  "systems/swade/templates/items/partials/header.hbs"}}
+  {{!-- Item Sheet Header --}}
+  {{> "systems/swade/templates/items/partials/header.hbs"}}
   <main class="sheet-body flexrow">
     <div class="flexrow tab active" data-group="primary" data-tab="summary">
       <section class="item-stats">
@@ -17,6 +17,12 @@
               data.data.equipped}}
               data-dtype="Boolean"
             />
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="check-container">{{localize "SWADE.ArcaneDevice"}}
+            <input type="checkbox" name="data.isArcaneDevice" {{checked data.data.isArcaneDevice}} data-dtype="Boolean" />
             <span class="checkmark"></span>
           </label>
         </div>
@@ -95,10 +101,10 @@
           <span class="form-fields">
             <input
               name="data.ap"
-              type="text"
+              type="number"
               value="{{data.data.ap}}"
               placeholder="{{localize 'SWADE.Ap'}}"
-              data-dtype="String"
+              data-dtype="Number"
           /></span>
         </div>
         <div class="form-group">
@@ -190,14 +196,18 @@
         {{/if}} {{/if}}
       </section>
       <section>
-        {{> "systems/swade/templates/setting-fields.hbs"}} {{>
-        "systems/swade/templates/items/partials/description.hbs"}}
+        {{> "systems/swade/templates/setting-fields.hbs"}}
+        {{> "systems/swade/templates/items/partials/description.hbs"}}
       </section>
     </div>
+    <div class="tab powers" data-group="primary" data-tab="powers">
+      {{> "systems/swade/templates/items/partials/powers.hbs"}}
+      <br />
+    </div>
     <div class="tab" data-group="primary" data-tab="actions-effects">
-      {{> "systems/swade/templates/items/partials/actions.hbs"}} {{>
-      "systems/swade/templates/items/partials/ae-header.hbs"}} {{>
-      "systems/swade/templates/effect-list.hbs"}}
+      {{> "systems/swade/templates/items/partials/actions.hbs"}}
+      {{> "systems/swade/templates/items/partials/ae-header.hbs"}}
+      {{> "systems/swade/templates/effect-list.hbs"}}
       <br />
     </div>
   </main>

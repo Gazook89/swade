@@ -36,6 +36,7 @@ export const preloadHandlebarsTemplates = async function () {
     'systems/swade/templates/items/partials/header-delete.hbs',
     'systems/swade/templates/items/partials/description.hbs',
     'systems/swade/templates/items/partials/actions.hbs',
+    'systems/swade/templates/items/partials/powers.hbs',
     'systems/swade/templates/items/partials/ae-header.hbs',
     'systems/swade/templates/effect-list.hbs',
 

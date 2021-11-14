@@ -50,6 +50,7 @@ export default class SwadeCombatGroupColor extends FormApplication<
     $(this.form!).find('#groupColor').val(groupColor);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async _updateObject(event, formData: GroupColorPickerData) {}
 }
 

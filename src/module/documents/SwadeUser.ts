@@ -1,7 +1,3 @@
-import {
-  DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
-} from '../../interfaces/DiceIntegration';
 import { createGmBennyAddMessage } from '../chat';
 import { shouldShowBennyAnimation } from '../util';
 
@@ -52,8 +48,13 @@ export default class SwadeUser extends User {
       await this.setFlag('swade', 'bennies', this.bennies - 1);
       const dsnShowBennyAnimation = await shouldShowBennyAnimation();
       if (!!game.dice3d && dsnShowBennyAnimation) {
-        const benny = await new Roll('1dB').evaluate();
-        game.dice3d.showForRoll(benny, game.user!, true, null, false);
+        game.dice3d.showForRoll(
+          await new Roll('1dB').evaluate(),
+          game.user!,
+          true,
+          null,
+          false,
+        );
       }
     } else if (this.character) {
       await this.character.spendBenny();
@@ -78,4 +79,16 @@ export default class SwadeUser extends User {
       await this.character.refreshBennies(displayToChat);
     }
   }
+}
+
+export interface DsnCustomWildDieColors {
+  labelColor: string;
+  diceColor: string;
+  outlineColor: string;
+  edgeColor: string;
+}
+export interface DsnCustomWildDieOptions {
+  texture: Array<string>;
+  material: 'plastic' | 'metal' | 'glass' | 'wood' | 'chrome';
+  font: string;
 }
