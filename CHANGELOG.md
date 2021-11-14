@@ -27,11 +27,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - Added the ability for Armor to have a toughness bonus. This bonus is only applied when the armor is marked as torso and is equiped.
+- Added the first iteration support for _Arcane Devices_. Any weapon, armor, shield or gear item can now be designated to be an Arcane Device, allowing you to add powers to it and store power points.
+  1. Create or open a physical item. This can be from within a character's inventory as well.
+  1. Mark the checkbox to indicate the item is an Arcane Device.
+  1. On the item's Powers tab, enter the amount of Power Points stored.
+  1. Drag and drop a power to add it to the item. Powers can be dragged from a character's list of powers or from elsewhere. If desired, you can delete any unwanted powers.
+  1. Set the creator's arcane skill. This is used for the new "Activate Device" button on the item/chat cards.
 
 ### Changed
 
 - Moved all roll evaluation from synchronous to asynchronous in order to future-proof the rolls
 - The weapon Item Sheet now properly saves AP as a number. A migration has been provided to fix items that have AP saved as a text
+- Shortened Attribute names are now also applied to the skill list on the character sheet
 
 ### Fixed
 
