@@ -781,7 +781,8 @@ export default class SwadeActor extends Actor {
   ): Die {
     return new Die({
       faces: sides,
-      //@ts-ignore
+      //FIXME revisit once types are updated
+      //@ts-expect-error Types are too strict here
       modifiers: ['x', ...modifiers],
       options: { flavor: flavor.replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '') },
     });
@@ -807,7 +808,8 @@ export default class SwadeActor extends Actor {
   private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
     const die = new Die({
       faces: sides,
-      //@ts-ignore
+      //FIXME revisit once types are updated
+      //@ts-expect-error Types are too strict here
       modifiers: ['x', ...modifiers],
       options: {
         flavor: game.i18n.localize('SWADE.WildDie'),
