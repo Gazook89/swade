@@ -7,6 +7,15 @@ declare global {
   interface DocumentClassConfig {
     Item: typeof SwadeItem;
   }
+  interface FlagConfig {
+    Item: {
+      swade: {
+        embeddedAbilities: [string, any][];
+        embeddedPowers: [string, any][];
+        [key: string]: unknown;
+      };
+    };
+  }
 }
 
 /**

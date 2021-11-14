@@ -769,9 +769,7 @@ export default class SwadeHooks {
       await actor.update({ 'data.details.species.name': item.name });
       //process embedded documents
       const map = new Map<string, Record<string, unknown>>(
-        (item.getFlag('swade', 'embeddedAbilities') as Array<
-          [string, Record<string, unknown>]
-        >) ?? [],
+        item.getFlag('swade', 'embeddedAbilities') ?? [],
       );
       const creationData = new Array<Record<string, unknown>>();
       for (const entry of map.values()) {

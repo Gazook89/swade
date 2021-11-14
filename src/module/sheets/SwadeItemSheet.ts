@@ -4,7 +4,7 @@ import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**
- * @noInheritDoc
+@noInheritDoc
  */
 export default class SwadeItemSheet extends ItemSheet {
   static get defaultOptions() {
@@ -58,7 +58,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   protected _canBeArcaneDevice(itemType: string) {
     const permissableTypes = ['gear', 'armor', 'shield', 'weapon'];
-    return permissableTypes.includes(itemType)
+    return permissableTypes.includes(itemType);
   }
 
   activateListeners(html) {
@@ -81,9 +81,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.power-delete').on('click', async (ev) => {
       const li = $(ev.currentTarget).parents('.item');
       const id = li.data('itemId');
-      const map = new Map(
-        (this.item.getFlag('swade', 'embeddedPowers') as [string, any][]) ?? [],
-      );
+      const map = new Map(this.item.getFlag('swade', 'embeddedPowers') ?? []);
       map.delete(id);
       this.item.setFlag('swade', 'embeddedPowers', Array.from(map));
     });
@@ -159,8 +157,7 @@ export default class SwadeItemSheet extends ItemSheet {
       ev.preventDefault();
       const id = ev.currentTarget.dataset.id;
       const map = new Map(
-        (this.item.getFlag('swade', 'embeddedAbilities') as [string, any][]) ||
-          [],
+        this.item.getFlag('swade', 'embeddedAbilities') ?? [],
       );
       map.delete(id);
       this.item.setFlag('swade', 'embeddedAbilities', Array.from(map));
@@ -317,8 +314,11 @@ export default class SwadeItemSheet extends ItemSheet {
       propertyName = 'embeddedAbilities';
     }
 
-    if (this._canBeArcaneDevice(this.item.data.type) && item.data.type === 'power') {
-      propertyName = 'embeddedPowers'
+    if (
+      this._canBeArcaneDevice(this.item.data.type) &&
+      item.data.type === 'power'
+    ) {
+      propertyName = 'embeddedPowers';
     }
     //pull the array from the flags, and push the new entry into it
     const collection =
