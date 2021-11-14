@@ -5,6 +5,7 @@ import { ITraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
+import { ArmorLocation } from '../../enums/ArmorLocationsEnum';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
@@ -72,6 +73,33 @@ export default class SwadeActor extends Actor {
   get bennies() {
     if (this.data.type === 'vehicle') return 0;
     return this.data.data.bennies.value;
+  }
+
+  get armorPerLocation(): ArmorPerLocation {
+    if (this.data.type === 'vehicle') {
+      return { head: 0, arms: 0, legs: 0, torso: 0 };
+    }
+
+    /**
+     * @param location The location of the armor such as head, torso, arms or legs
+     * @returns The total amount of armor for that location
+     */
+    //FIXME Add armor layering logic
+    const getArmorForLocation = (location: ArmorLocation): number => {
+      return this.items.reduce((acc: number, cur: SwadeItem) => {
+        if (cur.data.type === 'armor' && cur.data.data.locations[location]) {
+          return acc + Number(cur.data.data.armor);
+        }
+        return acc;
+      }, 0);
+    };
+
+    return {
+      head: getArmorForLocation(ArmorLocation.HEAD),
+      torso: getArmorForLocation(ArmorLocation.TORSO),
+      arms: getArmorForLocation(ArmorLocation.ARMS),
+      legs: getArmorForLocation(ArmorLocation.LEGS),
+    };
   }
 
   /**
@@ -235,7 +263,7 @@ export default class SwadeActor extends Actor {
   }
 
   rollSkill(
-    skillId: string | null,
+    skillId: string | null | undefined,
     options: IRollOptions = { rof: 1 },
     tempSkill?: SwadeItem,
   ): Promise<Roll | null> | Roll {
@@ -663,9 +691,7 @@ export default class SwadeActor extends Actor {
     const driver = await this.getDriver();
 
     //Return early if no driver was found
-    if (!driver) {
-      return;
-    }
+    if (!driver) return;
 
     //Get skillname
     let skillName = this.data.data.driver.skill;
@@ -673,35 +699,22 @@ export default class SwadeActor extends Actor {
       skillName = this.data.data.driver.skillAlternative;
     }
 
+    // Calculate handling
     const handling = this.data.data.handling;
     const wounds = this.calcWoundPenalties();
-    let totalHandling: number | string;
-    totalHandling = handling + wounds;
+    const basePenalty = handling + wounds;
 
-    //TODO Make this prettier
-    // Calculate handling
     //Handling is capped at a certain penalty
-    if (totalHandling < SWADE.vehicles.maxHandlingPenalty) {
-      totalHandling = SWADE.vehicles.maxHandlingPenalty;
-    }
-    if (totalHandling > 0) {
-      totalHandling = `+${totalHandling}`;
-    }
-
-    const options = {
-      additionalMods: [totalHandling],
-    };
-
-    //Find the operating skill
-    const skill = driver.items.find(
-      (i) => i.type === 'skill' && i.name === skillName,
+    const totalHandling = Math.max(
+      basePenalty,
+      SWADE.vehicles.maxHandlingPenalty,
     );
 
-    if (skill) {
-      driver.rollSkill(skill.id!, options);
-    } else {
-      driver.makeUnskilledAttempt(options);
-    }
+    //Find the operating skill
+    const skill = driver.itemTypes.skill.find((i) => i.name === skillName);
+    driver.rollSkill(skill?.id, {
+      additionalMods: [totalHandling.signedString()],
+    });
   }
 
   async getDriver(): Promise<SwadeActor | undefined> {
@@ -1033,4 +1046,11 @@ export default class SwadeActor extends Actor {
     }
     this.overrides = foundry.utils.expandObject(overrides);
   }
+}
+
+export interface ArmorPerLocation {
+  head: number;
+  arms: number;
+  torso: number;
+  legs: number;
 }
