@@ -37,9 +37,14 @@ export default class SwadeCombat extends Combat {
     const initMessages: Record<string, unknown>[] = [];
     let isRedraw = false;
     let skipMessage = false;
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable);
-    //@ts-ignore
-    if (ids.length > actionCardDeck.results.filter((r) => !r.drawn).length) {
+    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
+      strict: true,
+    });
+    //FIXME Check on TableResultData
+    if (
+      //@ts-expect-error Property doesn't seem to be defined in TabelResultData
+      ids.length > actionCardDeck.results.filter((r) => !r.data.drawn).length
+    ) {
       ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return this;
     }
@@ -175,7 +180,9 @@ export default class SwadeCombat extends Combat {
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
-                <h4 class="result-text result-text-card">@Compendium[${card!.pack}.${card!.id}]{${card!.name}}</h4>
+                <h4 class="result-text result-text-card">@Compendium[${
+                  card!.pack
+                }.${card!.id}]{${card!.name}}</h4>
                 <img class="result-image" style="transform: rotate(${rotation}deg)" src="${
         card!.data.img
       }">
@@ -421,14 +428,12 @@ export default class SwadeCombat extends Combat {
     );
   }
 
-  //@ts-ignore
   async resetAll() {
     const updates = this._getInitResetUpdates();
     await this.updateEmbeddedDocuments('Combatant', updates);
     return this.update({ turn: 0 });
   }
 
-  //@ts-ignore
   async startCombat() {
     //Init autoroll
     await super.startCombat();
@@ -468,7 +473,8 @@ export default class SwadeCombat extends Combat {
     // Update the encounter
     return this.update(
       { round: round, turn: next },
-      //@ts-ignore
+      //FIXME return once types are updated
+      //@ts-expect-error The property doesn't seem to be defined in the types
       { advanceTime: CONFIG.time.turnTime },
     );
   }
@@ -486,8 +492,9 @@ export default class SwadeCombat extends Combat {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
-        //@ts-ignore
-        await game.tables?.getName(SWADE.init.cardTable)!.reset();
+        await game
+          .tables!.getName(SWADE.init.cardTable, { strict: true })
+          .reset();
         ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
       const updates = this._getInitResetUpdates();
@@ -550,8 +557,9 @@ export default class SwadeCombat extends Combat {
 
     //reset the deck when combat is ended
     if (jokerDrawn) {
-      //@ts-ignore
-      await game.tables!.getName(SWADE.init.cardTable)?.reset();
+      await game
+        .tables!.getName(SWADE.init.cardTable, { strict: true })
+        .reset();
       ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
     }
   }

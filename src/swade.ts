@@ -160,7 +160,7 @@ Hooks.on(
 Hooks.on(
   'renderCompendium',
   (
-    app: Compendium<CompendiumCollection.Metadata>,
+    app: CompendiumCollection<CompendiumCollection.Metadata>,
     html: JQuery<HTMLElement>,
     data: any,
   ) => SwadeHooks.onRenderCompendium(app, html, data),
@@ -212,7 +212,7 @@ Hooks.on('dropActorSheetData', (actor, sheet, data) =>
 
 Hooks.on(
   'renderCombatantConfig',
-  (app: FormApplication, html: JQuery<HTMLElement>, options: any) =>
+  (app: CombatantConfig, html: JQuery<HTMLElement>, options: any) =>
     SwadeHooks.onRenderCombatantConfig(app, html, options),
 );
 
