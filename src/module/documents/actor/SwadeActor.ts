@@ -511,9 +511,6 @@ export default class SwadeActor extends Actor {
    */
   calcArmor(): number {
     if (this.data.type === 'vehicle') return 0;
-    const getArmorValue = (value: string | number): number => {
-      return typeof value === 'number' ? value : parseInt(value, 10);
-    };
 
     let totalArmorVal = 0;
 
@@ -521,31 +518,26 @@ export default class SwadeActor extends Actor {
     const armors = this.itemTypes.armor.map((i) =>
       i.data.type === 'armor' ? i.data : null,
     );
-    const armorList =
-      armors.filter((i) => {
+
+    const armorList = armors
+      .filter((i) => {
         const isEquipped = i?.data.equipped;
         const coversTorso = i?.data.locations.torso;
         const isNaturalArmor = i?.data.isNaturalArmor;
         return isEquipped && !isNaturalArmor && coversTorso;
-      }) || [];
-    armorList.sort((a, b) => {
-      const aValue = getArmorValue(a!.data.armor);
-      const bValue = getArmorValue(b!.data.armor);
-      if (aValue < bValue) {
-        return 1;
-      }
-      if (aValue > bValue) {
-        return -1;
-      }
-      return 0;
-    });
+      })
+      .sort((a, b) => {
+        const aValue = Number(a!.data.armor);
+        const bValue = Number(b!.data.armor);
+        return bValue - aValue;
+      });
 
     if (armorList.length === 1) {
-      totalArmorVal = getArmorValue(armorList[0]!.data.armor);
+      totalArmorVal = Number(armorList[0]!.data.armor);
     } else if (armorList.length > 1) {
       totalArmorVal =
-        getArmorValue(armorList[0]!.data.armor) +
-        Math.floor(getArmorValue(armorList[1]!.data.armor) / 2);
+        Number(armorList[0]!.data.armor) +
+        Math.floor(Number(armorList[1]!.data.armor) / 2);
     }
 
     const naturalArmors = armors.filter((i) => {
@@ -556,7 +548,7 @@ export default class SwadeActor extends Actor {
     });
 
     for (const armor of naturalArmors) {
-      totalArmorVal += getArmorValue(armor!.data.armor);
+      totalArmorVal += Number(armor!.data.armor);
     }
 
     return totalArmorVal;
@@ -922,6 +914,7 @@ export default class SwadeActor extends Actor {
    */
   private _getArmorForLocation(location: ArmorLocation): number {
     //FIXME Add armor layering logic
+
     return this.items.reduce((acc: number, cur: SwadeItem) => {
       if (cur.data.type === 'armor' && cur.data.data.locations[location]) {
         return acc + Number(cur.data.data.armor);
@@ -954,7 +947,7 @@ export default class SwadeActor extends Actor {
     );
 
     this.data.token.update(tokenData);
-    const coreSkillList = game.settings.get('swade', 'coreSkills') as string;
+    const coreSkillList = game.settings.get('swade', 'coreSkills');
     //only do this if this is a PC with no prior skills
     if (
       coreSkillList &&
@@ -965,11 +958,13 @@ export default class SwadeActor extends Actor {
       const coreSkills = coreSkillList.split(',').map((s) => s.trim());
 
       //Set compendium source
-      const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
+      const pack = game.packs.get(
+        game.settings.get('swade', 'coreSkillsCompendium'),
+        { strict: true },
+      );
 
-      const skillIndex = (await game.packs
-        ?.get(pack)
-        ?.getDocuments()) as SwadeItem[];
+      //@ts-ignore
+      const skillIndex = (await pack.getDocuments()) as SwadeItem[];
 
       // extract skill data
       const skills = skillIndex
@@ -984,7 +979,7 @@ export default class SwadeActor extends Actor {
             name: skillName,
             type: 'skill',
             img: 'systems/swade/assets/icons/skill.svg',
-            //@ts-ignore
+            //@ts-expect-error We're just adding some base data for a skill here.
             data: {
               attribute: '',
             },
@@ -993,15 +988,16 @@ export default class SwadeActor extends Actor {
       }
 
       //set all the skills to be core skills
-      //@ts-ignore
-      skills.forEach((s) => (s.data.isCoreSkill = true));
+      for (const skill of skills) {
+        if (skill.type === 'skill') skill.data.isCoreSkill = true;
+      }
 
       //Add the Untrained skill
       skills.push({
         name: 'Untrained',
         type: 'skill',
         img: 'systems/swade/assets/icons/skill.svg',
-        //@ts-ignore
+        //@ts-expect-error We're just adding some base data for a skill here.
         data: {
           attribute: '',
           die: {
