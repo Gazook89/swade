@@ -124,8 +124,7 @@ export default class CharacterSheet extends ActorSheet {
 
     //Roll Attribute
     html.find('.attribute-label').on('click', (ev) => {
-      const element = ev.currentTarget as Element;
-      const attribute = element.parentElement!.dataset
+      const attribute = ev.currentTarget.parentElement!.dataset
         .attribute! as keyof typeof SWADE.attributes;
       this.actor.rollAttribute(attribute);
     });
