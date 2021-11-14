@@ -405,10 +405,10 @@ async function packageBuild() {
 
       // Initialize the zip file
       const zipName = `${manifest.file.name}-v${manifest.file.version}.zip`;
-      const zipFile = fs.createWriteStream(path.join('package', zipName));
+      const zipFileStream = fs.createWriteStream(path.join('package', zipName));
       const zip = archiver('zip', { zlib: { level: 9 } });
 
-      zipFile.on('close', () => {
+      zipFileStream.on('close', () => {
         console.log(chalk.green(zip.pointer() + ' total bytes'));
         console.log(chalk.green(`Zip file ${zipName} has been written`));
         return resolve();
@@ -418,11 +418,13 @@ async function packageBuild() {
         throw err;
       });
 
-      zip.pipe(zipFile);
+      //pipe the archive to the stream
+      zip.pipe(zipFileStream);
 
       // Add the directory with the final code
       zip.directory('dist/', manifest.file.name);
 
+      //finalize the archive
       zip.finalize();
     } catch (err) {
       return reject(err);
