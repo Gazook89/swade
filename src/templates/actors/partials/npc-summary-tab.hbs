@@ -119,7 +119,7 @@
       </header>
       <ul class="items-list">
         {{#each itemsByType.edge as |edge id|}}
-        <li class="item" data-item-id="{{edge._id}}">
+        <li class="item edge-hindrance" data-item-id="{{edge._id}}">
           <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
             {{#unless @first}}&nbsp;{{/unless}}{{edge.name}}{{#unless
             @last}},{{/unless}}
@@ -141,7 +141,7 @@
       </header>
       <ul class="items-list">
         {{#each itemsByType.hindrance as |hindrance id|}}
-        <li class="item" data-item-id="{{hindrance._id}}">
+        <div class="item edge-hindrance" data-item-id="{{hindrance._id}}">
           <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
             {{#unless @first}}&nbsp;{{/unless}}{{hindrance.name}} {{#if
             hindrance.data.major}}{{localize "SWADE.Major"}}{{/if}}{{#unless
@@ -164,7 +164,7 @@
       </header>
       <ul class="items-list">
         {{#each itemsByType.ability as |ability id|}}
-        <li class="item" data-item-id="{{ability._id}}">
+        <li class="item edge-hindrance" data-item-id="{{ability._id}}">
           <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
             {{#unless @first}}&nbsp;{{/unless}}{{ability.name}}{{#unless
             @last}},{{/unless}}
