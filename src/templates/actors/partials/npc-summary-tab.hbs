@@ -90,12 +90,11 @@
           ></a>
         </div>
       </header>
-      <div class="skills-list">
+      <ul class="items-list skills-list">
         {{#each itemsByType.skill as |skill id|}}
-        <span
+        <li
           class="skill item"
           data-item-id="{{skill._id}}"
-          style="display: inline-block"
         >
           <a
             class="contextmenu-edit"
@@ -105,9 +104,9 @@
             d{{skill.data.die.sides}}{{modifier
             skill.data.die.modifier}}{{#unless @last}},{{/unless}}
           </a>
-        </span>
+        </li>
         {{/each}}
-      </div>
+      </ul>
     </section>
     <section class="gear edges">
       <header class="header-field flexrow">
@@ -118,14 +117,16 @@
           <a class="item-create" data-type="edge"><i class="fa fa-plus"></i></a>
         </div>
       </header>
-      {{#each itemsByType.edge as |edge id|}}
-      <div class="item" data-item-id="{{edge._id}}">
-        <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
-          {{#unless @first}}&nbsp;{{/unless}}{{edge.name}}{{#unless
-          @last}},{{/unless}}
-        </a>
-      </div>
-      {{/each}}
+      <ul class="items-list">
+        {{#each itemsByType.edge as |edge id|}}
+        <li class="item" data-item-id="{{edge._id}}">
+          <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
+            {{#unless @first}}&nbsp;{{/unless}}{{edge.name}}{{#unless
+            @last}},{{/unless}}
+          </a>
+        </li>
+        {{/each}}
+      </ul>
     </section>
     <section class="gear hindrances">
       <header class="header-field flexrow">
@@ -138,15 +139,17 @@
           ></a>
         </div>
       </header>
-      {{#each itemsByType.hindrance as |hindrance id|}}
-      <div class="item" data-item-id="{{hindrance._id}}">
-        <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
-          {{#unless @first}}&nbsp;{{/unless}}{{hindrance.name}} {{#if
-          hindrance.data.major}}{{localize "SWADE.Major"}}{{/if}}{{#unless
-          @last}},{{/unless}}
-        </a>
-      </div>
-      {{/each}}
+      <ul class="items-list">
+        {{#each itemsByType.hindrance as |hindrance id|}}
+        <li class="item" data-item-id="{{hindrance._id}}">
+          <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
+            {{#unless @first}}&nbsp;{{/unless}}{{hindrance.name}} {{#if
+            hindrance.data.major}}{{localize "SWADE.Major"}}{{/if}}{{#unless
+            @last}},{{/unless}}
+          </a>
+        </li>
+        {{/each}}
+      </ul>
     </section>
     <section class="gear abilities">
       <header class="header-field flexrow">
@@ -159,14 +162,16 @@
           ></a>
         </div>
       </header>
-      {{#each itemsByType.ability as |ability id|}}
-      <div class="item" data-item-id="{{ability._id}}">
-        <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
-          {{#unless @first}}&nbsp;{{/unless}}{{ability.name}}{{#unless
-          @last}},{{/unless}}
-        </a>
-      </div>
-      {{/each}}
+      <ul class="items-list">
+        {{#each itemsByType.ability as |ability id|}}
+        <li class="item" data-item-id="{{ability._id}}">
+          <a class="item-control item-edit" title="{{localize 'SWADE.Ed'}}">
+            {{#unless @first}}&nbsp;{{/unless}}{{ability.name}}{{#unless
+            @last}},{{/unless}}
+          </a>
+        </li>
+        {{/each}}
+      </ul>
     </section>
     <section class="gear">
       {{> "systems/swade/templates/setting-fields.hbs"}}
