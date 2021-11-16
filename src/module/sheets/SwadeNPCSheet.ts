@@ -111,10 +111,10 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
-      html.find('div.item.edge-hindrance').each((i, div) => {
+      html.find('li.item.edge-hindrance').each((i, li) => {
         // Add draggable attribute and dragstart listener.
-        div.setAttribute('draggable', 'true');
-        div.addEventListener('dragstart', handler, false);
+        li.setAttribute('draggable', 'true');
+        li.addEventListener('dragstart', handler, false);
       });
     }
 
