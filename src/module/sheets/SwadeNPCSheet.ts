@@ -59,22 +59,6 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
-/*       // Find all items on the character sheet.
-      html.find('span.item.skill').each((i, li) => {
-        // Add draggable attribute and dragstart listener.
-        li.setAttribute('draggable', 'true');
-        li.addEventListener('dragstart', handler, false);
-      });
-      html.find('li.item.weapon').each((i, li) => {
-        // Add draggable attribute and dragstart listener.
-        li.setAttribute('draggable', 'true');
-        li.addEventListener('dragstart', handler, false);
-      });
-      html.find('li.item.power').each((i, li) => {
-        // Add draggable attribute and dragstart listener.
-        li.setAttribute('draggable', 'true');
-        li.addEventListener('dragstart', handler, false);
-      }); */
       // Find all items on the character sheet.
       html.find('li.item.skill').each((i, li) => {
         // Add draggable attribute and dragstart listener.
