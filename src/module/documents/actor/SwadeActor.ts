@@ -28,10 +28,7 @@ export default class SwadeActor extends Actor {
     if (this.data.type === 'vehicle') {
       return false;
     } else {
-      return (
-        getProperty(this.data, 'data.wildcard') ||
-        this.data.type === 'character'
-      );
+      return this.data.data.wildcard || this.data.type === 'character';
     }
   }
 
@@ -39,13 +36,13 @@ export default class SwadeActor extends Actor {
    * @returns true when the actor has an arcane background or a special ability that grants powers.
    */
   get hasArcaneBackground(): boolean {
-    const abEdges = this.itemTypes.edge.filter((i) =>
-      getProperty(i, 'data.data.isArcaneBackground'),
+    const abEdge = this.itemTypes.edge.find(
+      (i) => i.data.type === 'edge' && i.data.data.isArcaneBackground,
     );
-    const abAbilities = this.itemTypes.ability.filter((i) =>
-      getProperty(i, 'data.data.grantsPowers'),
+    const abAbility = this.itemTypes.ability.find(
+      (i) => i.data.type === 'ability' && i.data.data.grantsPowers,
     );
-    return abEdges.length > 0 || abAbilities.length > 0;
+    return !!abEdge || !!abAbility;
   }
 
   /**
@@ -493,8 +490,8 @@ export default class SwadeActor extends Actor {
       const skills = this.itemTypes.skill;
       for (const skill of skills) {
         if (skill.data.type !== 'skill') continue;
-        const skillDie = skill.data.data.die.sides;
-        const skillMod = skill.data.data.die.modifier;
+        const skillDie = Number(skill.data.data.die.sides);
+        const skillMod = Number(skill.data.data.die.modifier);
         const name = skill.name!.slugify({ strict: true });
         retVal[name] = `1d${skillDie}x[${skill.name}]${
           skillMod !== 0 ? skillMod.signedString() : ''
