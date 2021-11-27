@@ -9,7 +9,7 @@ data:
   attribute: smarts
   die:
     sides: 4
-    modifier: ''
+    modifier: 0
   wild-die:
     sides: 6
 flags: {}

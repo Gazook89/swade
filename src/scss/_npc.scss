@@ -57,14 +57,22 @@
 
   // Summary
   .skills {
-    margin: 5px 0;
-    overflow: auto;
     .skills-list {
       span {
         a:hover {
           border-bottom: 1px dotted #293133;
         }
       }
+    }
+  }
+
+  .left-panel .items-list {
+    margin: 5px 0;
+    padding: 0;
+    overflow: auto;
+
+    .item {
+      display: inline-block
     }
   }
 

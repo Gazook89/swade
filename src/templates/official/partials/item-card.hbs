@@ -9,7 +9,7 @@
     </div>
   </header>
   <div class="card-content" style="display: none">
-  {{#if (or actions.length data.data.isArcaneDevice) }}
+  {{#if (or data.data.actions.skill data.data.actions.dmgMod data.data.actions.skillMod data.data.actions.additional.length data.data.isArcaneDevice)}}
     {{>"systems/swade/templates/shared-partials/action-card.hbs" item=this}}
   {{else}}
   {{#if data.data.description}}

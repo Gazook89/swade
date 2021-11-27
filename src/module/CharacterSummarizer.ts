@@ -14,7 +14,7 @@ export default class CharacterSummarizer {
 
     if (!CharacterSummarizer.isSupportedActorType(actor)) {
       ui.notifications?.error(
-        "Can't do character summariser against actor of type " + actor.type,
+        `Can't do character summariser against actor of type ${actor.type}`,
       );
       this.summary = '';
       return;
@@ -74,7 +74,7 @@ export default class CharacterSummarizer {
     // as the HTML is so simple here, just going to convert
     // it inline.
     const markdownSummary = this.summary
-      .replace(/\<\/?p>/g, '\n')
+      .replace(/<\/?p>/g, '\n')
       .replace(/<br\/?>/g, '\n')
       .replace(/<\/?strong>/g, '*')
       .replace(/<h1>/g, '# ')

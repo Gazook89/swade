@@ -7,6 +7,15 @@ declare global {
   interface DocumentClassConfig {
     Item: typeof SwadeItem;
   }
+  interface FlagConfig {
+    Item: {
+      swade: {
+        embeddedAbilities: [string, any][];
+        embeddedPowers: [string, any][];
+        [key: string]: unknown;
+      };
+    };
+  }
 }
 
 /**
@@ -378,7 +387,7 @@ export default class SwadeItem extends Item {
 
     if (this.parent && hasProperty(changed, 'data.equipped')) {
       const updates = new Array<Record<string, unknown>>();
-      for (const ae of this.actor?.effects.values()!) {
+      for (const ae of this.parent.effects.values()!) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push({ _id: ae.id, disabled: !changed.data.equipped });
       }

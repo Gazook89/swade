@@ -18,9 +18,8 @@ export default class SwadeCombatTracker extends CombatTracker {
     html
       .find('#combat-tracker li.combatant')
       .each((i: number, li: HTMLElement) => {
-        const id = li.dataset.combatantId;
-        //@ts-ignore
-        const comb = this.viewed.combatants.get(id, { strict: true });
+        const id = li.dataset.combatantId!;
+        const comb = this.viewed!.combatants.get(id, { strict: true });
         if (comb.actor?.isOwner || game.user?.isGM) {
           // Add draggable attribute and dragstart listener.
           li.setAttribute('draggable', 'true');
@@ -37,8 +36,9 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Reset the Action Deck
   async _onResetActionDeck(event) {
     event.stopImmediatePropagation();
-    const cardTable = game.tables?.getName(SWADE.init.cardTable)!;
-    //@ts-ignore
+    const cardTable = game.tables!.getName(SWADE.init.cardTable, {
+      strict: true,
+    });
     cardTable.reset();
     ui.notifications?.info(
       game.i18n.localize('SWADE.ActionDeckResetNotification'),
@@ -50,8 +50,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     event.stopImmediatePropagation();
     const btn = event.currentTarget;
     const li = btn.closest('.combatant');
-    //@ts-ignore
-    const c = this.viewed.combatants.get(li.dataset.combatantId)!;
+    const c = this.viewed!.combatants.get(li.dataset.combatantId)!;
     // Switch control action
     switch (btn.dataset.control) {
       // Toggle combatant defeated flag to reallocate potential followers.
@@ -75,8 +74,7 @@ export default class SwadeCombatTracker extends CombatTracker {
   async _onToggleDefeatedStatus(c: SwadeCombatant) {
     await super._onToggleDefeatedStatus(c);
     if (c.isGroupLeader) {
-      //@ts-ignore
-      const newLeader = await this.viewed.combatants.find(
+      const newLeader = await this.viewed!.combatants.find(
         (f) => f.groupId === c.id && !f.data.defeated,
       )!;
       await newLeader.update({
@@ -101,13 +99,11 @@ export default class SwadeCombatTracker extends CombatTracker {
   async _onToggleHoldStatus(c: SwadeCombatant) {
     if (!c.roundHeld) {
       // Add flag for on hold to show icon on token
-      //@ts-ignore
-      await c.setRoundHeld(this.viewed.round);
+      await c.setRoundHeld(this.viewed!.round);
       if (c.isGroupLeader) {
         const followers = await this._getFollowers(c);
         for (const f of followers) {
-          //@ts-ignore
-          await f.setRoundHeld(this.viewed.round);
+          await f.setRoundHeld(this.viewed!.round);
         }
       }
     } else {
@@ -119,8 +115,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     if (!c.turnLost) {
       const groupId = c.groupId;
       if (groupId) {
-        //@ts-ignore
-        const leader = await this.viewed.combatants.find(
+        const leader = await this.viewed!.combatants.find(
           (l) => l.id === groupId,
         );
         if (leader) {
@@ -140,8 +135,7 @@ export default class SwadeCombatTracker extends CombatTracker {
       await c.update({
         flags: {
           swade: {
-            //@ts-ignore
-            roundHeld: this.viewed.round,
+            roundHeld: this.viewed!.round,
             '-=turnLost': null,
           },
         },
@@ -150,11 +144,9 @@ export default class SwadeCombatTracker extends CombatTracker {
   }
   // Act Now
   async _onActNow(c: SwadeCombatant) {
-    //@ts-ignore
-    let targetCombatant = this.viewed.combatant;
+    let targetCombatant = this.viewed!.combatant;
     if (c.id === targetCombatant.id) {
-      //@ts-ignore
-      targetCombatant = this.viewed.turns.find((c) => !c.roundHeld)!;
+      targetCombatant = this.viewed!.turns.find((c) => !c.roundHeld)!;
     }
     await c.update({
       flags: {
@@ -182,16 +174,13 @@ export default class SwadeCombatTracker extends CombatTracker {
       }
     }
 
-    //@ts-ignore
-    await this.viewed.update({
-      //@ts-ignore
+    await this.viewed?.update({
       turn: await this.viewed.turns.indexOf(c),
     });
   }
   // Act After Current Combatant
   async _onActAfterCurrentCombatant(c: SwadeCombatant) {
-    //@ts-ignore
-    const currentCombatant = this.viewed.combatant;
+    const currentCombatant = this.viewed!.combatant;
     await c.update({
       flags: {
         swade: {
@@ -218,9 +207,7 @@ export default class SwadeCombatTracker extends CombatTracker {
       }
     }
 
-    //@ts-ignore
-    this.viewed.update({
-      //@ts-ignore
+    this.viewed?.update({
       turn: await this.viewed.turns.indexOf(currentCombatant),
     });
   }

@@ -145,8 +145,10 @@ export default class ItemChatCardHelper {
         Hooks.call('swadeAction', actor, item, action, roll, game.user!.id);
         break;
       case 'arcane-device':
-        const arcaneSkillDie = getProperty(item.data, 'data.arcaneSkillDie');
-        roll = await actor.makeArcaneDeviceSkillRoll({}, arcaneSkillDie);
+        roll = await actor.makeArcaneDeviceSkillRoll(
+          {},
+          getProperty(item.data, 'data.arcaneSkillDie'),
+        );
         break;
       case 'reload':
         if (

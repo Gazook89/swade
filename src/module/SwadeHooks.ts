@@ -110,16 +110,14 @@ export default class SwadeHooks {
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
     const found = html.find('.entity-name');
-    //@ts-ignore
-    let wildcards = app.entities.filter(
-      (a) => a.isWildcard && a.hasPlayerOwner,
-    );
+    //FIXME once types are updated
+    //@ts-expect-error Not yet typed
+    const actors: Array<SwadeActor> = app.documents;
+    let wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
 
     //if the player is not a GM, then don't mark the NPC wildcards
     if (!game.settings.get('swade', 'hideNPCWildcards') || game.user!.isGM) {
-      //@ts-ignore
-      const npcWildcards = app.entities.filter(
-        //@ts-ignore
+      const npcWildcards = actors.filter(
         (a) => a.isWildcard && !a.hasPlayerOwner,
       );
       wildcards = wildcards.concat(npcWildcards);
@@ -161,19 +159,15 @@ export default class SwadeHooks {
   }
 
   public static async onRenderCompendium(
-    //@ts-ignore
-    app: Compendium,
+    app: CompendiumCollection<CompendiumCollection.Metadata>,
     html: JQuery<HTMLElement>,
     data: any,
   ) {
     //Mark Wildcards in the compendium
-    if (app.entity === 'Actor') {
-      const content = await app.getContent();
-      const wildcards = content.filter(
-        //@ts-ignore
-        (entity: SwadeActor) => entity.isWildcard,
-      );
-      const ids: string[] = wildcards.map((e) => e.id);
+    if (app.documentName === 'Actor') {
+      const content = (await app.getDocuments()) as Array<SwadeActor>;
+      const wildcards = content.filter((entity) => entity.isWildcard);
+      const ids: string[] = wildcards.map((e) => e.id!);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {
@@ -198,8 +192,7 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
         const pack = game.packs!.get(li.data('pack'))!;
-
-        const isJE = pack.documentClass.documentName === 'JournalEntry';
+        const isJE = pack.documentName === 'JournalEntry';
         return isJE && game.user!.isGM;
       },
       callback: async (li) => {
@@ -760,8 +753,9 @@ export default class SwadeHooks {
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
       let item: SwadeItem;
       if ('pack' in data) {
-        const pack = game.packs?.get(data.pack)!;
-        item = (await pack.getDocument(data.id)) as SwadeItem;
+        const pack = game.packs?.get(data.pack, { strict: true });
+        //@ts-ignore
+        item = (await pack.getDocument(data.id)!) as SwadeItem;
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data, {});
       } else {
@@ -773,14 +767,11 @@ export default class SwadeHooks {
 
       //set name
       await actor.update({ 'data.details.species.name': item.name });
-      //process embedded entities
-      const map = new Map<string, SwadeItem['data']>(
-        (item.getFlag('swade', 'embeddedAbilities') as [
-          string,
-          SwadeItem['data'],
-        ][]) || [],
+      //process embedded documents
+      const map = new Map<string, Record<string, unknown>>(
+        item.getFlag('swade', 'embeddedAbilities') ?? [],
       );
-      const creationData = new Array<SwadeItem['data']>();
+      const creationData = new Array<Record<string, unknown>>();
       for (const entry of map.values()) {
         //if the item isn't a skill, then push it to the new items
         if (entry.type !== 'skill') {
@@ -803,8 +794,8 @@ export default class SwadeHooks {
         }
       }
       if (creationData.length > 0) {
-        //@ts-ignore
         await actor.createEmbeddedDocuments('Item', creationData, {
+          //@ts-ignore
           renderSheet: null,
         });
       }
@@ -818,7 +809,7 @@ export default class SwadeHooks {
   }
 
   public static async onRenderCombatantConfig(
-    app: FormApplication,
+    app: CombatantConfig,
     html: JQuery<HTMLElement>,
     options: any,
   ) {
@@ -847,7 +838,9 @@ export default class SwadeHooks {
     ) as JournalEntry[];
 
     //prep list of cards for selection
-    const cardTable = game.tables?.getName(SWADE.init.cardTable)!;
+    const cardTable = game.tables!.getName(SWADE.init.cardTable, {
+      strict: true,
+    });
 
     const cardList: any[] = [];
     for (const card of cards) {
@@ -856,16 +849,13 @@ export default class SwadeHooks {
       const color =
         suitValue === 2 || suitValue === 3 ? 'color: red;' : 'color: black;';
       const isDealt =
-        options.document.data.flags.swade &&
         options.document.getFlag('swade', 'cardValue') === cardValue &&
         options.document.getFlag('swade', 'suitValue') === suitValue;
 
-      //@ts-ignore
-      const isDrawn = cardTable.results.find(
-        //@ts-ignore
-        (r) => r.data.text === card.name,
-        //@ts-ignore
-      ).drawn;
+      const foundCard = cardTable.results.find(
+        (r) => r.data['text'] === card.name,
+      );
+      const isDrawn = foundCard?.data['drawn'];
       const isAvailable = isDrawn ? 'text-decoration: line-through;' : '';
 
       cardList.push({

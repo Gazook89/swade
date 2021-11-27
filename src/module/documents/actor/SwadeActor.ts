@@ -5,6 +5,7 @@ import { ITraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
 import SwadeDice from '../../dice';
+import { ArmorLocation } from '../../enums/ArmorLocationsEnum';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
@@ -27,10 +28,7 @@ export default class SwadeActor extends Actor {
     if (this.data.type === 'vehicle') {
       return false;
     } else {
-      return (
-        getProperty(this.data, 'data.wildcard') ||
-        this.data.type === 'character'
-      );
+      return this.data.data.wildcard || this.data.type === 'character';
     }
   }
 
@@ -38,13 +36,13 @@ export default class SwadeActor extends Actor {
    * @returns true when the actor has an arcane background or a special ability that grants powers.
    */
   get hasArcaneBackground(): boolean {
-    const abEdges = this.itemTypes.edge.filter((i) =>
-      getProperty(i, 'data.data.isArcaneBackground'),
+    const abEdge = this.itemTypes.edge.find(
+      (i) => i.data.type === 'edge' && i.data.data.isArcaneBackground,
     );
-    const abAbilities = this.itemTypes.ability.filter((i) =>
-      getProperty(i, 'data.data.grantsPowers'),
+    const abAbility = this.itemTypes.ability.find(
+      (i) => i.data.type === 'ability' && i.data.data.grantsPowers,
     );
-    return abEdges.length > 0 || abAbilities.length > 0;
+    return !!abEdge || !!abAbility;
   }
 
   /**
@@ -72,6 +70,19 @@ export default class SwadeActor extends Actor {
   get bennies() {
     if (this.data.type === 'vehicle') return 0;
     return this.data.data.bennies.value;
+  }
+
+  get armorPerLocation(): ArmorPerLocation {
+    if (this.data.type === 'vehicle') {
+      return { head: 0, arms: 0, legs: 0, torso: 0 };
+    }
+
+    return {
+      head: this._getArmorForLocation(ArmorLocation.HEAD),
+      torso: this._getArmorForLocation(ArmorLocation.TORSO),
+      arms: this._getArmorForLocation(ArmorLocation.ARMS),
+      legs: this._getArmorForLocation(ArmorLocation.LEGS),
+    };
   }
 
   /**
@@ -235,7 +246,7 @@ export default class SwadeActor extends Actor {
   }
 
   rollSkill(
-    skillId: string | null,
+    skillId: string | null | undefined,
     options: IRollOptions = { rof: 1 },
     tempSkill?: SwadeItem,
   ): Promise<Roll | null> | Roll {
@@ -468,7 +479,7 @@ export default class SwadeActor extends Actor {
     return out;
   }
 
-  //@ts-ignore
+  //@ts-expect-error The definition in the types is too strict so I opted to override it here
   getRollData(): Record<string, number | string> {
     const retVal = this.getRollShortcuts();
     retVal['wounds'] = this.data.data.wounds.value || 0;
@@ -478,14 +489,16 @@ export default class SwadeActor extends Actor {
     } else {
       const skills = this.itemTypes.skill;
       for (const skill of skills) {
-        const skillDie = getProperty(skill.data, 'data.die.sides');
-        let skillMod = getProperty(skill.data, 'data.die.modifier');
-        skillMod = skillMod !== 0 ? parseInt(skillMod).signedString() : '';
+        if (skill.data.type !== 'skill') continue;
+        const skillDie = Number(skill.data.data.die.sides);
+        const skillMod = Number(skill.data.data.die.modifier);
         const name = skill.name!.slugify({ strict: true });
-        retVal[name] = `1d${skillDie}x[${skill.name}]${skillMod}`;
+        retVal[name] = `1d${skillDie}x[${skill.name}]${
+          skillMod !== 0 ? skillMod.signedString() : ''
+        }`;
       }
       retVal['fatigue'] = this.data.data.fatigue.value || 0;
-      retVal['pace'] = this.data.data.stats.speed.value || 0;
+      retVal['pace'] = this.data.data.stats.speed.adjusted || 0;
     }
     return retVal;
   }
@@ -495,9 +508,6 @@ export default class SwadeActor extends Actor {
    */
   calcArmor(): number {
     if (this.data.type === 'vehicle') return 0;
-    const getArmorValue = (value: string | number): number => {
-      return typeof value === 'number' ? value : parseInt(value, 10);
-    };
 
     let totalArmorVal = 0;
 
@@ -505,31 +515,26 @@ export default class SwadeActor extends Actor {
     const armors = this.itemTypes.armor.map((i) =>
       i.data.type === 'armor' ? i.data : null,
     );
-    const armorList =
-      armors.filter((i) => {
+
+    const armorList = armors
+      .filter((i) => {
         const isEquipped = i?.data.equipped;
         const coversTorso = i?.data.locations.torso;
         const isNaturalArmor = i?.data.isNaturalArmor;
         return isEquipped && !isNaturalArmor && coversTorso;
-      }) || [];
-    armorList.sort((a, b) => {
-      const aValue = getArmorValue(a!.data.armor);
-      const bValue = getArmorValue(b!.data.armor);
-      if (aValue < bValue) {
-        return 1;
-      }
-      if (aValue > bValue) {
-        return -1;
-      }
-      return 0;
-    });
+      })
+      .sort((a, b) => {
+        const aValue = Number(a!.data.armor);
+        const bValue = Number(b!.data.armor);
+        return bValue - aValue;
+      });
 
     if (armorList.length === 1) {
-      totalArmorVal = getArmorValue(armorList[0]!.data.armor);
+      totalArmorVal = Number(armorList[0]!.data.armor);
     } else if (armorList.length > 1) {
       totalArmorVal =
-        getArmorValue(armorList[0]!.data.armor) +
-        Math.floor(getArmorValue(armorList[1]!.data.armor) / 2);
+        Number(armorList[0]!.data.armor) +
+        Math.floor(Number(armorList[1]!.data.armor) / 2);
     }
 
     const naturalArmors = armors.filter((i) => {
@@ -540,7 +545,7 @@ export default class SwadeActor extends Actor {
     });
 
     for (const armor of naturalArmors) {
-      totalArmorVal += getArmorValue(armor!.data.armor);
+      totalArmorVal += Number(armor!.data.armor);
     }
 
     return totalArmorVal;
@@ -663,9 +668,7 @@ export default class SwadeActor extends Actor {
     const driver = await this.getDriver();
 
     //Return early if no driver was found
-    if (!driver) {
-      return;
-    }
+    if (!driver) return;
 
     //Get skillname
     let skillName = this.data.data.driver.skill;
@@ -673,35 +676,22 @@ export default class SwadeActor extends Actor {
       skillName = this.data.data.driver.skillAlternative;
     }
 
+    // Calculate handling
     const handling = this.data.data.handling;
     const wounds = this.calcWoundPenalties();
-    let totalHandling: number | string;
-    totalHandling = handling + wounds;
+    const basePenalty = handling + wounds;
 
-    //TODO Make this prettier
-    // Calculate handling
     //Handling is capped at a certain penalty
-    if (totalHandling < SWADE.vehicles.maxHandlingPenalty) {
-      totalHandling = SWADE.vehicles.maxHandlingPenalty;
-    }
-    if (totalHandling > 0) {
-      totalHandling = `+${totalHandling}`;
-    }
-
-    const options = {
-      additionalMods: [totalHandling],
-    };
-
-    //Find the operating skill
-    const skill = driver.items.find(
-      (i) => i.type === 'skill' && i.name === skillName,
+    const totalHandling = Math.max(
+      basePenalty,
+      SWADE.vehicles.maxHandlingPenalty,
     );
 
-    if (skill) {
-      driver.rollSkill(skill.id!, options);
-    } else {
-      driver.makeUnskilledAttempt(options);
-    }
+    //Find the operating skill
+    const skill = driver.itemTypes.skill.find((i) => i.name === skillName);
+    driver.rollSkill(skill?.id, {
+      additionalMods: [totalHandling.signedString()],
+    });
   }
 
   async getDriver(): Promise<SwadeActor | undefined> {
@@ -761,7 +751,9 @@ export default class SwadeActor extends Actor {
 
     const rollMods = this._buildTraitRollModifiers(skillData, options);
     rollMods.forEach((m) =>
-      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
+      finalTerms.push(
+        ...Roll.parse(`${m.value}[${m.label}]`, this.getRollData()),
+      ),
     );
 
     if (useConviction) {
@@ -786,7 +778,8 @@ export default class SwadeActor extends Actor {
   ): Die {
     return new Die({
       faces: sides,
-      //@ts-ignore
+      //FIXME revisit once types are updated
+      //@ts-expect-error Types are too strict here
       modifiers: ['x', ...modifiers],
       options: { flavor: flavor.replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '') },
     });
@@ -812,7 +805,8 @@ export default class SwadeActor extends Actor {
   private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
     const die = new Die({
       faces: sides,
-      //@ts-ignore
+      //FIXME revisit once types are updated
+      //@ts-expect-error Types are too strict here
       modifiers: ['x', ...modifiers],
       options: {
         flavor: game.i18n.localize('SWADE.WildDie'),
@@ -837,7 +831,7 @@ export default class SwadeActor extends Actor {
     data: any,
     options: IRollOptions,
   ): ITraitRollModifier[] {
-    const mods: ITraitRollModifier[] = [];
+    const mods = new Array<ITraitRollModifier>();
 
     //Trait modifier
     const itemMod = parseInt(data.die.modifier);
@@ -887,20 +881,16 @@ export default class SwadeActor extends Actor {
 
     //Status penalites
     if (this.data.type !== 'vehicle') {
-      const isDistracted = this.data.data.status.isDistracted;
-      const isEntangled = this.data.data.status.isEntangled;
-      const entangled: ITraitRollModifier = {
-        label: game.i18n.localize('SWADE.Entangled'),
-        value: '-2',
-      };
-      const distracted: ITraitRollModifier = {
-        label: game.i18n.localize('SWADE.Distr'),
-        value: '-2',
-      };
-      if (isEntangled) {
-        mods.push(entangled);
-      } else if (isDistracted) {
-        mods.push(distracted);
+      if (this.data.data.status.isEntangled) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Entangled'),
+          value: '-2',
+        });
+      } else if (this.data.data.status.isDistracted) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Distr'),
+          value: '-2',
+        });
       }
     }
 
@@ -917,6 +907,31 @@ export default class SwadeActor extends Actor {
     return (strength.sides / 2 - 1 + modifier) * 10;
   }
 
+  /**
+   * @param location The location of the armor such as head, torso, arms or legs
+   * @returns The total amount of armor for that location
+   */
+  private _getArmorForLocation(location: ArmorLocation): number {
+    //FIXME Add armor layering logic
+
+    return this.items.reduce((acc: number, cur: SwadeItem) => {
+      if (cur.data.type === 'armor' && cur.data.data.locations[location]) {
+        return acc + Number(cur.data.data.armor);
+      }
+      return acc;
+    }, 0);
+  }
+
+  private _filterOverrides() {
+    const overrides = foundry.utils.flattenObject(this.overrides);
+    for (const k of Object.keys(overrides)) {
+      if (k.startsWith('@')) {
+        delete overrides[k];
+      }
+    }
+    this.overrides = foundry.utils.expandObject(overrides);
+  }
+
   async _preCreate(
     data: ActorDataConstructorData,
     options: DocumentModificationOptions,
@@ -931,7 +946,7 @@ export default class SwadeActor extends Actor {
     );
 
     this.data.token.update(tokenData);
-    const coreSkillList = game.settings.get('swade', 'coreSkills') as string;
+    const coreSkillList = game.settings.get('swade', 'coreSkills');
     //only do this if this is a PC with no prior skills
     if (
       coreSkillList &&
@@ -942,11 +957,13 @@ export default class SwadeActor extends Actor {
       const coreSkills = coreSkillList.split(',').map((s) => s.trim());
 
       //Set compendium source
-      const pack = game.settings.get('swade', 'coreSkillsCompendium') as string;
+      const pack = game.packs.get(
+        game.settings.get('swade', 'coreSkillsCompendium'),
+        { strict: true },
+      );
 
-      const skillIndex = (await game.packs
-        ?.get(pack)
-        ?.getDocuments()) as SwadeItem[];
+      //@ts-ignore
+      const skillIndex = (await pack.getDocuments()) as SwadeItem[];
 
       // extract skill data
       const skills = skillIndex
@@ -961,7 +978,7 @@ export default class SwadeActor extends Actor {
             name: skillName,
             type: 'skill',
             img: 'systems/swade/assets/icons/skill.svg',
-            //@ts-ignore
+            //@ts-expect-error We're just adding some base data for a skill here.
             data: {
               attribute: '',
             },
@@ -970,15 +987,16 @@ export default class SwadeActor extends Actor {
       }
 
       //set all the skills to be core skills
-      //@ts-ignore
-      skills.forEach((s) => (s.data.isCoreSkill = true));
+      for (const skill of skills) {
+        if (skill.type === 'skill') skill.data.isCoreSkill = true;
+      }
 
       //Add the Untrained skill
       skills.push({
         name: 'Untrained',
         type: 'skill',
         img: 'systems/swade/assets/icons/skill.svg',
-        //@ts-ignore
+        //@ts-expect-error We're just adding some base data for a skill here.
         data: {
           attribute: '',
           die: {
@@ -1023,14 +1041,11 @@ export default class SwadeActor extends Actor {
       ui.players?.render(true);
     }
   }
+}
 
-  private _filterOverrides() {
-    const overrides = foundry.utils.flattenObject(this.overrides);
-    for (const k of Object.keys(overrides)) {
-      if (k.startsWith('@')) {
-        delete overrides[k];
-      }
-    }
-    this.overrides = foundry.utils.expandObject(overrides);
-  }
+export interface ArmorPerLocation {
+  head: number;
+  arms: number;
+  torso: number;
+  legs: number;
 }
