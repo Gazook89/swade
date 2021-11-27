@@ -22,6 +22,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.21.4]
+
+### Fixed
+
+- Fixed a small issue with the display of items on the NPC sheet
+- Made all items on the NPC sheet draggable
+- Fixed an issue which would prevent the quickaccess from displaying properly
+
 ## [v0.21.3]
 
 ### Added
