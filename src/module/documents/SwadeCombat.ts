@@ -423,7 +423,7 @@ export default class SwadeCombat extends Combat {
     const content = (await actionCardPack?.getDocuments()) as JournalEntry[];
     return content.find(
       (c) =>
-        c.getFlag('swade', 'cardValue') === cardValue ??
+        c.getFlag('swade', 'cardValue') === cardValue &&
         c.getFlag('swade', 'suitValue') === cardSuit,
     );
   }
