@@ -230,7 +230,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     data.config = SWADE;
 
     data.itemsByType = {};
-    for (const type of game.system.entityTypes.Item) {
+    //@ts-ignore
+    for (const type of game.system.documentTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
     }
     data.itemsByType['skill'].sort((a: SwadeItem, b: SwadeItem) =>
