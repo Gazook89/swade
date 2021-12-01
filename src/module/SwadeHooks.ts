@@ -125,7 +125,7 @@ export default class SwadeHooks {
 
     for (let i = 0; i < found.length; i++) {
       const element = found[i];
-      const enitityId = element.parentElement!.dataset.entityId;
+      const enitityId = element.parentElement!.dataset.documentId;
       const wildcard = wildcards.find((a) => a.id === enitityId);
 
       if (wildcard) {
@@ -147,11 +147,11 @@ export default class SwadeHooks {
       name: 'SWADE.ShowCharacterSummary',
       icon: '<i class="fas fa-users"></i>',
       callback: async (li) => {
-        const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
+        const selectedUser = game.actors?.get(li[0].dataset.documentId!)!;
         CharacterSummarizer.summarizeCharacters([selectedUser]);
       },
       condition: (li) => {
-        const selectedUser = game.actors?.get(li[0].dataset.entityId!)!;
+        const selectedUser = game.actors?.get(li[0].dataset.documentId!)!;
         return CharacterSummarizer.isSupportedActorType(selectedUser);
       },
     });
