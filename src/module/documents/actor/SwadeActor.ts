@@ -72,19 +72,6 @@ export default class SwadeActor extends Actor {
     return this.data.data.bennies.value;
   }
 
-  get armorPerLocation(): ArmorPerLocation {
-    if (this.data.type === 'vehicle') {
-      return { head: 0, arms: 0, legs: 0, torso: 0 };
-    }
-
-    return {
-      head: this._getArmorForLocation(ArmorLocation.HEAD),
-      torso: this._getArmorForLocation(ArmorLocation.TORSO),
-      arms: this._getArmorForLocation(ArmorLocation.ARMS),
-      legs: this._getArmorForLocation(ArmorLocation.LEGS),
-    };
-  }
-
   /**
    * @returns an object that contains booleans which denote the current status of the actor
    */
