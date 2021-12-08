@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
+  DsnCustomWildDieOptions
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './ActionCardEditor';
@@ -110,8 +111,6 @@ export default class SwadeHooks {
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
     const found = html.find('.entity-name');
-    //FIXME once types are updated
-    //@ts-expect-error Not yet typed
     const actors: Array<SwadeActor> = app.documents;
     let wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
 
@@ -191,19 +190,22 @@ export default class SwadeHooks {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
-        const pack = game.packs!.get(li.data('pack'))!;
-        const isJE = pack.documentName === 'JournalEntry';
-        return isJE && game.user!.isGM;
+        const pack = game.packs.get(li.data('pack'), {
+          strict: true,
+        });
+        return pack.documentName === 'JournalEntry' && game.user!.isGM;
       },
       callback: async (li) => {
-        const pack = game.packs!.get(li.data('pack'))!;
+        const pack = game.packs.get(li.data('pack'), {
+          strict: true,
+        }) as CompendiumCollection<JournalMetadata>;
         if (pack.locked) {
-          ui.notifications?.warn(game.i18n.localize('SWADE.WarningPackLocked'));
-        } else {
-          //@ts-ignore
-          const editor = await ActionCardEditor.fromPack(pack);
-          editor.render(true);
+          return ui.notifications?.warn('SWADE.WarningPackLocked', {
+            localize: true,
+          });
         }
+        const editor = await ActionCardEditor.fromPack(pack);
+        editor.render(true);
       },
     };
     options.push(obj);
@@ -751,15 +753,16 @@ export default class SwadeHooks {
     }
     //handle race item creation
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
-      let item: SwadeItem;
+      let item: SwadeItem | StoredDocument<SwadeItem>;
       if ('pack' in data) {
-        const pack = game.packs?.get(data.pack, { strict: true });
-        //@ts-ignore
-        item = (await pack.getDocument(data.id)!) as SwadeItem;
+        const pack = game.packs.get(data.pack, {
+          strict: true,
+        }) as CompendiumCollection<ItemMetadata>;
+        item = (await pack.getDocument(data.id)) as StoredDocument<SwadeItem>;
       } else if ('actorId' in data) {
-        item = new SwadeItem(data.data, {});
+        item = new SwadeItem(data.data);
       } else {
-        item = game.items?.get(data.id)!;
+        item = game.items!.get(data.id, { strict: true });
       }
       const isRightItemTypeAndSubtype =
         item.data.type === 'ability' && item.data.data.subtype === 'race';
@@ -820,22 +823,20 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const cardPack = game.packs?.get(
-      game.settings.get('swade', 'cardDeck') as string,
-    )!;
+    const cardPack = game.packs!.get(game.settings.get('swade', 'cardDeck'), {
+      strict: true,
+    }) as CompendiumCollection<JournalMetadata>;
 
-    const cards = (await cardPack.getDocuments()).sort(
-      (a: StoredDocument<JournalEntry>, b: StoredDocument<JournalEntry>) => {
-        const cardA = a.getFlag('swade', 'cardValue') as number;
-        const cardB = b.getFlag('swade', 'cardValue') as number;
-        const card = cardA - cardB;
-        if (card !== 0) return card;
-        const suitA = a.getFlag('swade', 'suitValue') as number;
-        const suitB = b.getFlag('swade', 'suitValue') as number;
-        const suit = suitA - suitB;
-        return suit;
-      },
-    ) as JournalEntry[];
+    const cards = (await cardPack.getDocuments()).sort((a, b) => {
+      const cardA = a.getFlag('swade', 'cardValue') as number;
+      const cardB = b.getFlag('swade', 'cardValue') as number;
+      const card = cardA - cardB;
+      if (card !== 0) return card;
+      const suitA = a.getFlag('swade', 'suitValue') as number;
+      const suitB = b.getFlag('swade', 'suitValue') as number;
+      const suit = suitA - suitB;
+      return suit;
+    });
 
     //prep list of cards for selection
     const cardTable = game.tables!.getName(SWADE.init.cardTable, {
@@ -890,7 +891,7 @@ export default class SwadeHooks {
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as string;
 
-      game.combat?.combatants.get(options.document.id)!.update({
+      game.combat?.combatants.get(options.document.id, {strict: true}).update({
         initiative: suitValue + cardValue,
         flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
       });
