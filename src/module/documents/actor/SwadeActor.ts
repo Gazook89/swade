@@ -1,6 +1,7 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
+import { ItemMetadata } from '../../../globals';
 import { ITraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
@@ -947,10 +948,9 @@ export default class SwadeActor extends Actor {
       const pack = game.packs.get(
         game.settings.get('swade', 'coreSkillsCompendium'),
         { strict: true },
-      );
+      ) as CompendiumCollection<ItemMetadata>;
 
-      //@ts-ignore
-      const skillIndex = (await pack.getDocuments()) as SwadeItem[];
+      const skillIndex = await pack.getDocuments();
 
       // extract skill data
       const skills = skillIndex
@@ -1021,7 +1021,6 @@ export default class SwadeActor extends Actor {
   ) {
     super._onUpdate(changed, options, user);
     if (this.data.type === 'npc') {
-      //@ts-ignore
       ui.actors?.render(true);
     }
     if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {
