@@ -81,9 +81,6 @@ export default class SwadeActor extends Actor {
   }
 
   get armorPerLocation(): ArmorPerLocation {
-    const armor = { head: 0, torso: 0, arms: 0, legs: 0 };
-    if (this.data.type === 'vehicle') return armor;
-
     return {
       head: this._getArmorForLocation(ArmorLocation.HEAD),
       torso: this._getArmorForLocation(ArmorLocation.TORSO),
