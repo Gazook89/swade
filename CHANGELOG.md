@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.0]
+
+### Added
+
+- Added a the ability to determine armor per location (head, torso, arms, legs) via the getter `actor.armorPerLocation`
+
 ## [v0.21.4]
 
 ### Fixed
