@@ -49,7 +49,7 @@ export default class SwadeActor extends Actor {
   /**
    * @returns true when the actor is currently in combat and has drawn a joker
    */
-  get hasJoker() {
+  get hasJoker(): boolean {
     //return early if no combat is running
     if (!game?.combats?.active) return false;
 
@@ -68,7 +68,7 @@ export default class SwadeActor extends Actor {
     return combatant?.hasJoker ?? false;
   }
 
-  get bennies() {
+  get bennies(): number {
     if (this.data.type === 'vehicle') return 0;
     return this.data.data.bennies.value;
   }
@@ -78,6 +78,18 @@ export default class SwadeActor extends Actor {
    */
   get status() {
     return this.data.data.status;
+  }
+
+  get armorPerLocation(): ArmorPerLocation {
+    const armor = { head: 0, torso: 0, arms: 0, legs: 0 };
+    if (this.data.type === 'vehicle') return armor;
+
+    return {
+      head: this._getArmorForLocation(ArmorLocation.HEAD),
+      torso: this._getArmorForLocation(ArmorLocation.TORSO),
+      arms: this._getArmorForLocation(ArmorLocation.ARMS),
+      legs: this._getArmorForLocation(ArmorLocation.LEGS),
+    };
   }
 
   /** @override */
@@ -495,48 +507,7 @@ export default class SwadeActor extends Actor {
    * Calculates the correct armor value based on SWADE v5.5 and returns that value
    */
   calcArmor(): number {
-    if (this.data.type === 'vehicle') return 0;
-
-    let totalArmorVal = 0;
-
-    //get armor items and retieve their data
-    const armors = this.itemTypes.armor.map((i) =>
-      i.data.type === 'armor' ? i.data : null,
-    );
-
-    const armorList = armors
-      .filter((i) => {
-        const isEquipped = i?.data.equipped;
-        const coversTorso = i?.data.locations.torso;
-        const isNaturalArmor = i?.data.isNaturalArmor;
-        return isEquipped && !isNaturalArmor && coversTorso;
-      })
-      .sort((a, b) => {
-        const aValue = Number(a!.data.armor);
-        const bValue = Number(b!.data.armor);
-        return bValue - aValue;
-      });
-
-    if (armorList.length === 1) {
-      totalArmorVal = Number(armorList[0]!.data.armor);
-    } else if (armorList.length > 1) {
-      totalArmorVal =
-        Number(armorList[0]!.data.armor) +
-        Math.floor(Number(armorList[1]!.data.armor) / 2);
-    }
-
-    const naturalArmors = armors.filter((i) => {
-      const isEquipped = i!.data.equipped;
-      const coversTorso = i!.data.locations.torso;
-      const isNaturalArmor = i!.data.isNaturalArmor;
-      return isNaturalArmor && isEquipped && coversTorso;
-    });
-
-    for (const armor of naturalArmors) {
-      totalArmorVal += Number(armor!.data.armor);
-    }
-
-    return totalArmorVal;
+    return this._getArmorForLocation(ArmorLocation.TORSO);
   }
 
   /**
@@ -900,14 +871,49 @@ export default class SwadeActor extends Actor {
    * @returns The total amount of armor for that location
    */
   private _getArmorForLocation(location: ArmorLocation): number {
-    //FIXME Add armor layering logic
+    if (this.data.type === 'vehicle') return 0;
 
-    return this.items.reduce((acc: number, cur: SwadeItem) => {
-      if (cur.data.type === 'armor' && cur.data.data.locations[location]) {
-        return acc + Number(cur.data.data.armor);
-      }
-      return acc;
-    }, 0);
+    let totalArmorVal = 0;
+
+    //get armor items and retieve their data
+    const armorList = this.itemTypes.armor.map((i) =>
+      i.data.type === 'armor' ? i.data : null,
+    );
+
+    const nonNaturalArmors = armorList
+      .filter((i) => {
+        const isEquipped = i?.data.equipped;
+        const isLocation = i?.data.locations[location];
+        const isNaturalArmor = i?.data.isNaturalArmor;
+        return isEquipped && !isNaturalArmor && isLocation;
+      })
+      .sort((a, b) => {
+        const aValue = Number(a!.data.armor);
+        const bValue = Number(b!.data.armor);
+        return bValue - aValue;
+      });
+
+    if (nonNaturalArmors.length === 1) {
+      totalArmorVal = Number(nonNaturalArmors[0]!.data.armor);
+    } else if (nonNaturalArmors.length > 1) {
+      totalArmorVal =
+        Number(nonNaturalArmors[0]!.data.armor) +
+        Math.floor(Number(nonNaturalArmors[1]!.data.armor) / 2);
+    }
+
+    //add natural armor
+    armorList
+      .filter((i) => {
+        const isEquipped = i!.data.equipped;
+        const isLocation = i?.data.locations[location];
+        const isNaturalArmor = i!.data.isNaturalArmor;
+        return isNaturalArmor && isEquipped && isLocation;
+      })
+      .forEach((i) => {
+        totalArmorVal += Number(i!.data.armor);
+      });
+
+    return totalArmorVal;
   }
 
   private _filterOverrides() {
