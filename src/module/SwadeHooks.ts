@@ -2,7 +2,7 @@
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
+  DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './ActionCardEditor';
@@ -891,10 +891,12 @@ export default class SwadeHooks {
       const hasJoker = selectedCard.data().isJoker as boolean;
       const cardString = selectedCard.val() as string;
 
-      game.combat?.combatants.get(options.document.id, {strict: true}).update({
-        initiative: suitValue + cardValue,
-        flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
-      });
+      game.combat?.combatants
+        .get(options.document.id, { strict: true })
+        .update({
+          initiative: suitValue + cardValue,
+          flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
+        });
     });
     return false;
   }
@@ -933,6 +935,11 @@ export default class SwadeHooks {
         'diceConfig.flags.dsnCustomWildDieOptions.default',
       ) as DsnCustomWildDieOptions);
 
+    dice3d.addSystem(
+      { id: 'swade', name: 'Savage Worlds Adventure Edition' },
+      'preferred',
+    );
+
     dice3d.addColorset(
       {
         name: 'customWildDie',
@@ -949,17 +956,20 @@ export default class SwadeHooks {
       'no',
     );
 
-    dice3d.addDicePreset(
-      {
-        type: 'db',
-        labels: [
-          game.settings.get('swade', 'bennyImage3DFront'),
-          game.settings.get('swade', 'bennyImage3DBack'),
-        ],
-        system: 'standard',
-        colorset: 'black',
-      },
-      'd2',
-    );
+    const data = {
+      type: 'db',
+      system: 'swade',
+      colorset: 'black',
+      labels: [
+        game.settings.get('swade', 'bennyImage3DFront'),
+        game.settings.get('swade', 'bennyImage3DBack'),
+      ].filter(Boolean),
+      bumpMaps: [
+        game.settings.get('swade', '3dBennyFrontBump'),
+        game.settings.get('swade', '3dBennyBackBump'),
+      ].filter(Boolean),
+    };
+
+    dice3d.addDicePreset(data, 'd2');
   }
 }

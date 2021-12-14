@@ -43,21 +43,35 @@
         <p class="notification info" style="margin: 0 5px 10px 5px;">
           {{localize "SWADE.ChangeBennyWarning"}}
         </p>
+        <h4>Textures</h4>
         <div class="form-group">
           <label>{{localize "SWADE.Benny3DFront"}}</label>
-          <div class="form-fields">
+          <div class="form-fields" title="{{localize 'SWADE.Benny3DFrontDesc'}}">
             {{filePicker target="settingRules.bennyImage3DFront" type="image"}}
             <input type="text" name="settingRules.bennyImage3DFront" value="{{settingRules.bennyImage3DFront}}" data-dtype="String"/>
           </div>
-          <p class="notes">{{localize "SWADE.Benny3DFrontDesc"}}</p>
         </div>
         <div class="form-group">
           <label>{{localize "SWADE.Benny3DBack"}}</label>
-          <div class="form-fields">
+          <div class="form-fields" title="{{localize 'SWADE.Benny3DBackDesc'}}">
             {{filePicker target="settingRules.bennyImage3DBack" type="image"}}
             <input type="text" name="settingRules.bennyImage3DBack" value="{{settingRules.bennyImage3DBack}}" data-dtype="String"/>
           </div>
-          <p class="notes">{{localize "SWADE.Benny3DBackDesc"}}</p>
+        </div>
+        <h4>Bumpmaps</h4>
+        <div class="form-group">
+          <label>{{localize "SWADE.Benny3DFrontBump"}}</label>
+          <div class="form-fields" title="{{localize 'SWADE.Benny3DFrontBumpDesc'}}">
+            {{filePicker target="settingRules.3dBennyFrontBump" type="image"}}
+            <input type="text" name="settingRules.3dBennyFrontBump" value="{{settingRules.3dBennyFrontBump}}" data-dtype="String"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{localize "SWADE.Benny3DBackBump"}}</label>
+          <div class="form-fields" title="title="{{localize 'SWADE.Benny3DBackBumpDesc'}}"">
+            {{filePicker target="settingRules.3dBennyBackBump" type="image"}}
+            <input type="text" name="settingRules.3dBennyBackBump" value="{{settingRules.3dBennyBackBump}}" data-dtype="String"/>
+          </div>
         </div>
       {{/if}}
     </section>
