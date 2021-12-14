@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - Added a the ability to determine armor per location (head, torso, arms, legs) via the getter `actor.armorPerLocation`
+- Added the ability to set a front and back Bump Map for the 3D benny should DSN be installed
+- Added a bump map for the default 3D benny
 
 ## [v0.21.4]
 
