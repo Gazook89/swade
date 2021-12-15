@@ -395,12 +395,15 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
-        return !hasProperty(targetCombatant, 'data.flags.swade.isGroupLeader');
+        const combatant = game.combat!.combatants.get(targetCombatantId)!;
+        return (
+          !hasProperty(combatant, 'data.flags.swade.isGroupLeader') &&
+          combatant!.actor!.isOwner
+        );
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
+        const targetCombatant = game.combat!.combatants.get(targetCombatantId)!;
         await targetCombatant.update({
           flags: {
             swade: {
@@ -418,8 +421,8 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-palette"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
-        return targetCombatant.isGroupLeader ?? false;
+        const combatant = game.combat?.combatants.get(targetCombatantId)!;
+        return combatant.isGroupLeader && combatant!.actor!.isOwner;
       },
       callback: (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
@@ -434,8 +437,8 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-users-slash"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
-        return targetCombatant.isGroupLeader ?? false;
+        const combatant = game.combat?.combatants.get(targetCombatantId)!;
+        return combatant.isGroupLeader && combatant!.actor!.isOwner;
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
@@ -459,10 +462,12 @@ export default class SwadeHooks {
       name: 'SWADE.AddTokenFollowers',
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
-        if (canvas?.ready && canvas?.tokens?.controlled.length! > 0) {
-          return true;
-        }
-        return false;
+        const selectedTokens = canvas?.tokens?.controlled ?? [];
+        return (
+          canvas?.ready &&
+          selectedTokens.length > 0 &&
+          selectedTokens.every((t) => t!.actor!.isOwner)
+        );
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
@@ -540,16 +545,19 @@ export default class SwadeHooks {
         }
       },
     });
+
     // Set all combatants with this one's name as its followers.
     newOptions.push({
       name: 'SWADE.GroupByName',
       icon: '<i class="fas fa-users"></i>',
       condition: (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
-        const targetCombatant = game.combat?.combatants.get(targetCombatantId)!;
-        return !!game.combat?.combatants.find(
-          (c) => c.name === targetCombatant.name && c.id !== targetCombatantId,
-        )!;
+        const combatant = game.combat?.combatants.get(targetCombatantId)!;
+        return (
+          !!game.combat!.combatants.find(
+            (c) => c.name === combatant.name && c.id !== targetCombatantId,
+          ) && game.user!.isGM
+        );
       },
       callback: async (li) => {
         const targetCombatantId = li.attr('data-combatant-id') as string;
@@ -573,92 +581,84 @@ export default class SwadeHooks {
     });
 
     // Get group leaders for follow leader options
-    const groupLeaders = game.combat?.combatants.filter(
-      (c) => c.isGroupLeader ?? false,
-    );
+    const groupLeaders =
+      game.combat?.combatants.filter((c) => c.isGroupLeader) ?? [];
     // Enable follow and unfollow if there are group leaders.
-    if (groupLeaders) {
-      // Loop through leaders
-      for (const gl of groupLeaders) {
-        // Follow a leader
-        newOptions.push({
-          name: game.i18n.format('SWADE.Follow', { name: gl.name }),
-          icon: '<i class="fas fa-user-friends"></i>',
-          condition: (li) => {
-            const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant =
-              game.combat?.combatants.get(targetCombatantId)!;
-            return (
-              targetCombatant.groupId !== gl.id && targetCombatantId !== gl.id
-            );
-          },
-          callback: async (li) => {
-            const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant =
-              game.combat?.combatants.get(targetCombatantId)!;
+    // Loop through leaders
+    for (const gl of groupLeaders) {
+      // Follow a leader
+      newOptions.push({
+        name: game.i18n.format('SWADE.Follow', { name: gl.name }),
+        icon: '<i class="fas fa-user-friends"></i>',
+        condition: (li) => {
+          const targetCombatantId = li.attr('data-combatant-id') as string;
+          const combatant = game.combat?.combatants.get(targetCombatantId)!;
+          return combatant.groupId !== gl.id && targetCombatantId !== gl.id;
+        },
+        callback: async (li) => {
+          const targetCombatantId = li.attr('data-combatant-id') as string;
+          const combatant = game.combat?.combatants.get(targetCombatantId)!;
 
-            const groupId = gl.id ?? undefined;
-            await gl.setIsGroupLeader(true);
-            const fInitiative = getProperty(gl, 'data.initiative');
-            const fCardValue = gl.cardValue;
-            const fSuitValue = gl.suitValue! - 0.01;
-            const fHasJoker = gl.hasJoker;
-            // Set groupId of dragged combatant to the selected target's id
+          const groupId = gl.id ?? undefined;
+          await gl.setIsGroupLeader(true);
+          const fInitiative = getProperty(gl, 'data.initiative');
+          const fCardValue = gl.cardValue;
+          const fSuitValue = gl.suitValue! - 0.01;
+          const fHasJoker = gl.hasJoker;
+          // Set groupId of dragged combatant to the selected target's id
 
-            await targetCombatant.update({
-              initiative: fInitiative,
-              flags: {
-                swade: {
-                  cardValue: fCardValue,
-                  suitValue: fSuitValue,
-                  hasJoker: fHasJoker,
-                  groupId: groupId,
-                },
+          await combatant.update({
+            initiative: fInitiative,
+            flags: {
+              swade: {
+                cardValue: fCardValue,
+                suitValue: fSuitValue,
+                hasJoker: fHasJoker,
+                groupId: groupId,
               },
-            });
-            if (targetCombatant.isGroupLeader) {
-              const followers =
-                game.combat?.combatants.filter(
-                  (f) => f.groupId === targetCombatant.id,
-                ) ?? [];
+            },
+          });
+          if (combatant.isGroupLeader) {
+            const followers =
+              game.combat?.combatants.filter(
+                (f) => f.groupId === combatant.id,
+              ) ?? [];
 
-              for (const follower of followers) {
-                await follower.update({
-                  initiative: fInitiative,
-                  flags: {
-                    swade: {
-                      cardValue: fCardValue,
-                      suitValue: fSuitValue,
-                      hasJoker: fHasJoker,
-                      groupId: groupId,
-                    },
+            for (const follower of followers) {
+              await follower.update({
+                initiative: fInitiative,
+                flags: {
+                  swade: {
+                    cardValue: fCardValue,
+                    suitValue: fSuitValue,
+                    hasJoker: fHasJoker,
+                    groupId: groupId,
                   },
-                });
-              }
-              await targetCombatant.unsetIsGroupLeader();
+                },
+              });
             }
-          },
-        });
+            await combatant.unsetIsGroupLeader();
+          }
+        },
+      });
 
-        // Unfollow a leader
-        newOptions.push({
-          name: game.i18n.format('SWADE.Unfollow', { name: gl.name }),
-          icon: '<i class="fas fa-user-friends"></i>',
-          condition: (li) => {
-            const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant =
-              game.combat?.combatants.get(targetCombatantId)!;
-            return targetCombatant.groupId === getProperty(gl, 'id');
-          },
-          callback: async (li) => {
-            const targetCombatantId = li.attr('data-combatant-id') as string;
-            const targetCombatant =
-              game.combat?.combatants.get(targetCombatantId)!;
-            // If the current Combatant is the holding combatant, just remove Hold status.
-            await targetCombatant.unsetGroupId();
-          },
-        });
-      }
+      // Unfollow a leader
+      newOptions.push({
+        name: game.i18n.format('SWADE.Unfollow', { name: gl.name }),
+        icon: '<i class="fas fa-user-friends"></i>',
+        condition: (li) => {
+          const targetCombatantId = li.attr('data-combatant-id') as string;
+          const combatant = game.combat?.combatants.get(targetCombatantId)!;
+          return combatant.groupId === gl.id;
+        },
+        callback: async (li) => {
+          const targetCombatantId = li.attr('data-combatant-id') as string;
+          const targetCombatant =
+            game.combat?.combatants.get(targetCombatantId)!;
+          // If the current Combatant is the holding combatant, just remove Hold status.
+          await targetCombatant.unsetGroupId();
+        },
+      });
     }
     options.splice(0, 0, ...newOptions);
   }
