@@ -798,7 +798,7 @@ export default class SwadeHooks {
       }
       if (creationData.length > 0) {
         await actor.createEmbeddedDocuments('Item', creationData, {
-          //@ts-ignore
+          //@ts-expect-error Normally the flag is a boolean
           renderSheet: null,
         });
       }
