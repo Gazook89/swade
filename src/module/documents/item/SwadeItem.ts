@@ -1,7 +1,6 @@
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
-import { ItemAction } from '../../../interfaces/additional';
+import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
-import SwadeDice from '../../dice';
 
 declare global {
   interface DocumentClassConfig {
@@ -65,17 +64,19 @@ export default class SwadeItem extends Item {
     }
 
     const terms = Roll.parse(rollParts.join(''), actor.getRollData());
-    const newParts = new Array<String>();
+    const baseRoll = new Array<String>();
     for (const term of terms) {
       if (term instanceof Die) {
         if (!term.modifiers.includes('x')) term.modifiers.push('x');
-        newParts.push(term.formula);
+        baseRoll.push(term.formula);
       } else if (term instanceof StringTerm) {
-        newParts.push(this._makeExplodable(term.term));
+        baseRoll.push(this._makeExplodable(term.term));
       } else {
-        newParts.push(term.expression);
+        baseRoll.push(term.expression);
       }
     }
+
+    const rollMods = new Array<TraitRollModifier>();
 
     //Conviction Modifier
     if (
@@ -83,32 +84,43 @@ export default class SwadeItem extends Item {
       game.settings.get('swade', 'enableConviction') &&
       actor.data.data.details.conviction.active
     ) {
-      newParts.push(`+1d6x[${game.i18n.localize('SWADE.Conv')}]`);
+      rollMods.push({
+        label: game.i18n.localize('SWADE.Conv'),
+        value: '+1d6x',
+      });
     }
-
-    //Joker Modifier
-    let joker = '';
-    if (actor.hasJoker) {
-      newParts.push(`+2[${game.i18n.localize('SWADE.Joker')}]`);
-      joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
-    }
-
-    const newRoll = new Roll(newParts.join(''));
 
     let flavour = '';
     if (options.flavour) {
       flavour = ` - ${options.flavour}`;
     }
 
-    flavour = flavour.concat(joker);
+    //Joker Modifier
+    if (actor.hasJoker) {
+      rollMods.push({
+        label: game.i18n.localize('SWADE.Joker'),
+        value: '+2',
+      });
+    }
+
+    const newRoll = new Roll(baseRoll.join(''));
 
     if (options.suppressChat) {
-      return new Roll(newParts.join(''));
+      return Roll.fromTerms([
+        ...newRoll.terms,
+        ...Roll.parse(
+          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+            return (acc += `${cur.value}[${cur.label}]`);
+          }, ''),
+          this.getRollData(),
+        ),
+      ]);
     }
 
     // Roll and return
-    return SwadeDice.Roll({
+    return game.swade.RollDialog.asPromise({
       roll: newRoll,
+      mods: rollMods,
       speaker: ChatMessage.getSpeaker({ actor: this.actor! }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,

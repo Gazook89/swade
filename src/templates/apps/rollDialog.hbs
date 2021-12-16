@@ -1,0 +1,58 @@
+<form autocomplete='off'>
+  <div class='form-group'>
+    <label>{{localize 'SWADE.Formula'}}</label>
+    <input type='text' name='formula' value='{{formula}}' disabled />
+  </div>
+  {{!-- <div class='form-group'>
+    <label>{{localize 'SWADE.SitMod'}}</label>
+    <input
+      type='text'
+      id='bonus'
+      name='bonus'
+      value=''
+      placeholder='{{localize "SWADE.RollExample"}}'
+    />
+  </div> --}}
+  <ul>
+    {{#each modifiers}}
+      <li class='form-group'>
+        <input
+          type='text'
+          name='modifiers.{{@index}}.label'
+          value='{{label}}'
+        />
+        <input
+          type='text'
+          name='modifiers.{{@index}}.value'
+          value='{{value}}'
+        />
+      </li>
+    {{/each}}
+  </ul>
+  <div class='form-group'>
+    <label>{{localize 'SWADE.RollMode'}}</label>
+    <select id='rollMode' name='rollMode'>
+      {{#select rollMode}}
+        {{#each rollModes as |label mode|}}
+          <option value='{{mode}}'>{{localize label}}</option>
+        {{/each}}
+      {{/select}}
+    </select>
+  </div>
+  <div class='flexrow'>
+    <button type='submit'>
+      <i class='fas fa-dice'></i>
+      {{localize 'SWADE.Roll'}}
+    </button>
+    {{#if displayExtraButton}}
+      <button type='submit' data-type='extra'>
+        <i class='far fa-plus-square'></i>
+        {{extraButtonLabel}}
+      </button>
+    {{/if}}
+    <button type='button' id='close'>
+      <i class='fas fa-times'></i>
+      {{localize 'Close'}}
+    </button>
+  </div>
+</form>

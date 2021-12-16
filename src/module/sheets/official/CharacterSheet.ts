@@ -1,6 +1,9 @@
-import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
+import {
+  AdditionalStat,
+  ItemAction,
+  TraitRollModifier,
+} from '../../../interfaces/additional';
 import { SWADE } from '../../config';
-import SwadeDice from '../../dice';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
@@ -145,23 +148,46 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     //Running Die
-    html.find('.running-die').on('click', async () => {
+    html.find('.running-die').on('click', async (ev) => {
       if (this.actor.data.type === 'vehicle') return;
-      const runningDie = this.actor.data.data.stats.speed.runningDie;
+
+      const runningDieSides = this.actor.data.data.stats.speed.runningDie;
       const runningMod = this.actor.data.data.stats.speed.runningMod;
       const pace = this.actor.data.data.stats.speed.adjusted;
-      let rollFormula = `1d${runningDie}`;
-      rollFormula = rollFormula + `+${pace}`;
+      const runningDie = `1d${runningDieSides}[${game.i18n.localize(
+        'SWADE.RunningDie',
+      )}]`;
 
-      if (runningMod && runningMod !== 0) {
-        rollFormula = rollFormula + runningMod;
+      const mods: TraitRollModifier[] = [
+        { label: game.i18n.localize('SWADE.Pace'), value: pace.signedString() },
+      ];
+
+      if (runningMod) {
+        mods.push({
+          label: 'Modifier',
+          value: runningMod.signedString(),
+        });
+      }
+      if (ev.shiftKey) {
+        const rollFormula =
+          runningDie + runningMod.signedString() + pace.signedString();
+        const runningRoll = new Roll(rollFormula);
+        await runningRoll.evaluate();
+        await runningRoll.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+          flavor: game.i18n.localize('SWADE.Running'),
+        });
+        return;
       }
 
-      const roll = await new Roll(rollFormula);
-      await roll.evaluate();
-      await roll.toMessage({
+      game.swade.RollDialog.asPromise({
+        roll: new Roll(runningDie),
+        mods: mods,
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: game.i18n.localize('SWADE.Running'),
+        title: game.i18n.localize('SWADE.Running'),
+        actor: this.actor,
+        allowGroup: false,
       });
     });
 
@@ -472,11 +498,11 @@ export default class CharacterSheet extends ActorSheet {
       const modString = mod !== 0 ? mod.signedString() : '';
       const dieLabel = game.i18n.localize('SWADE.WealthDie');
       const wildDieLabel = game.i18n.localize('SWADE.WildDie');
-      const formula = `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh${modString}`;
-      const roll = new Roll(formula);
+      const formula = `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh`;
 
-      SwadeDice.Roll({
-        roll: roll,
+      game.swade.RollDialog.asPromise({
+        roll: new Roll(formula),
+        mods: [{ label: 'Modifier', value: modString }],
         speaker: ChatMessage.getSpeaker(),
         actor: this.actor,
         flavor: game.i18n.localize('SWADE.WealthDie'),

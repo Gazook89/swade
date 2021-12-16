@@ -2,10 +2,9 @@ import { DocumentModificationOptions } from '@league-of-foundry-developers/found
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import { ItemMetadata } from '../../../globals';
-import { ITraitRollModifier } from '../../../interfaces/additional';
+import { TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
-import SwadeDice from '../../dice';
 import { ArmorLocation } from '../../enums/ArmorLocationsEnum';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
@@ -33,9 +32,7 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  /**
-   * @returns true when the actor has an arcane background or a special ability that grants powers.
-   */
+  /** @returns true when the actor has an arcane background or a special ability that grants powers. */
   get hasArcaneBackground(): boolean {
     const abEdge = this.itemTypes.edge.find(
       (i) => i.data.type === 'edge' && i.data.data.isArcaneBackground,
@@ -46,9 +43,7 @@ export default class SwadeActor extends Actor {
     return !!abEdge || !!abAbility;
   }
 
-  /**
-   * @returns true when the actor is currently in combat and has drawn a joker
-   */
+  /** @returns true when the actor is currently in combat and has drawn a joker */
   get hasJoker(): boolean {
     //return early if no combat is running
     if (!game?.combats?.active) return false;
@@ -73,9 +68,7 @@ export default class SwadeActor extends Actor {
     return this.data.data.bennies.value;
   }
 
-  /**
-   * @returns an object that contains booleans which denote the current status of the actor
-   */
+  /** @returns an object that contains booleans which denote the current status of the actor */
   get status() {
     return this.data.data.status;
   }
@@ -189,50 +182,31 @@ export default class SwadeActor extends Actor {
       rolls.push(wildRoll);
     }
 
-    const pool = PoolTerm.fromRolls(rolls);
-    pool.modifiers.push('kh');
-
-    const finalTerms = new Array<RollTerm>();
-    finalTerms.push(pool);
-
-    //Conviction Modifier
-    const useConviction =
-      this.isWildcard &&
-      this.data.data.details.conviction.active &&
-      game.settings.get('swade', 'enableConviction');
-
-    if (useConviction) {
-      const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalTerms.push(new OperatorTerm({ operator: '+' }));
-      finalTerms.push(convDie);
-    }
+    const basePool = PoolTerm.fromRolls(rolls);
+    basePool.modifiers.push('kh');
 
     const rollMods = this._buildTraitRollModifiers(abl, options);
-    rollMods.forEach((m) =>
-      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
-    );
-
-    const finalRoll = Roll.fromTerms(finalTerms);
 
     if (options.suppressChat) {
-      return finalRoll;
-    }
-
-    //Build Flavour
-    let flavour = '';
-    if (rollMods.length !== 0) {
-      rollMods.forEach((v) => {
-        flavour = flavour.concat(`<br>${v.label}: ${v.value}`);
-      });
+      return Roll.fromTerms([
+        basePool,
+        ...Roll.parse(
+          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+            return (acc += `${cur.value}[${cur.label}]`);
+          }, ''),
+          this.getRollData(),
+        ),
+      ]);
     }
 
     // Roll and return
-    return SwadeDice.Roll({
-      roll: finalRoll,
+    return game.swade.RollDialog.asPromise({
+      roll: Roll.fromTerms([basePool]),
+      mods: rollMods,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
-      )}${flavour}`,
+      )}`,
       title: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
       )}`,
@@ -258,7 +232,7 @@ export default class SwadeActor extends Actor {
     }
 
     const skillRoll = this._handleComplexSkill(skill, options);
-    const roll = skillRoll[0];
+    const basePool = skillRoll[0];
     const rollMods = skillRoll[1];
 
     //Build Flavour
@@ -266,19 +240,23 @@ export default class SwadeActor extends Actor {
     if (options.flavour) {
       flavour = ` - ${options.flavour}`;
     }
-    if (rollMods.length !== 0) {
-      rollMods.forEach((v) => {
-        flavour = flavour.concat(`<br>${v.label}: ${v.value}`);
-      });
-    }
 
     if (options.suppressChat) {
-      return roll;
+      return Roll.fromTerms([
+        basePool,
+        ...Roll.parse(
+          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+            return (acc += `${cur.value}[${cur.label}]`);
+          }, ''),
+          this.getRollData(),
+        ),
+      ]);
     }
 
     // Roll and return
-    return SwadeDice.Roll({
-      roll: roll,
+    return game.swade.RollDialog.asPromise({
+      roll: Roll.fromTerms([basePool]),
+      mods: rollMods,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',
@@ -457,7 +435,7 @@ export default class SwadeActor extends Actor {
 
   /**
    * Function for shorcut roll in item (@str + 1d6)
-   * return something like : {agi: "1d8x8+1", sma: "1d6x6", spi: "1d6x6", str: "1d6x6-1", vig: "1d6x6"}
+   * return something like : {agi: "1d8x+1", sma: "1d6x", spi: "1d6x", str: "1d6x-1", vig: "1d6x"}
    */
   getRollShortcuts(): Record<string, number | string> {
     const out: Record<string, any> = {};
@@ -667,7 +645,7 @@ export default class SwadeActor extends Actor {
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
-  ): [Roll, ITraitRollModifier[]] {
+  ): [PoolTerm, TraitRollModifier[]] {
     if (!options.rof) options.rof = 1;
     if (skill.data.type !== 'skill') {
       throw new Error('Detected-non skill in skill roll construction');
@@ -692,18 +670,11 @@ export default class SwadeActor extends Actor {
     }
 
     const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
-    const pool = PoolTerm.fromRolls(rolls);
-    pool.modifiers.push(kh);
-
-    //Conviction Modifier
-    const useConviction =
-      this.data.type !== 'vehicle' &&
-      this.isWildcard &&
-      this.data.data.details.conviction.active &&
-      game.settings.get('swade', 'enableConviction');
+    const basePool = PoolTerm.fromRolls(rolls);
+    basePool.modifiers.push(kh);
 
     const finalTerms = new Array<RollTerm>();
-    finalTerms.push(pool);
+    finalTerms.push(basePool);
 
     const rollMods = this._buildTraitRollModifiers(skillData, options);
     rollMods.forEach((m) =>
@@ -712,13 +683,7 @@ export default class SwadeActor extends Actor {
       ),
     );
 
-    if (useConviction) {
-      const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalTerms.push(new OperatorTerm({ operator: '+' }));
-      finalTerms.push(convDie);
-    }
-
-    return [Roll.fromTerms(finalTerms), rollMods];
+    return [basePool, rollMods];
   }
 
   /**
@@ -786,8 +751,8 @@ export default class SwadeActor extends Actor {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
-  ): ITraitRollModifier[] {
-    const mods = new Array<ITraitRollModifier>();
+  ): TraitRollModifier[] {
+    const mods = new Array<TraitRollModifier>();
 
     //Trait modifier
     const itemMod = parseInt(data.die.modifier);
@@ -800,19 +765,21 @@ export default class SwadeActor extends Actor {
 
     // Wounds
     const woundPenalties = this.calcWoundPenalties();
-    if (woundPenalties !== 0)
+    if (woundPenalties !== 0) {
       mods.push({
         label: game.i18n.localize('SWADE.Wounds'),
         value: woundPenalties.signedString(),
       });
+    }
 
     //Fatigue
     const fatiguePenalties = this.calcFatiguePenalties();
-    if (fatiguePenalties !== 0)
+    if (fatiguePenalties !== 0) {
       mods.push({
         label: game.i18n.localize('SWADE.Fatigue'),
         value: fatiguePenalties.signedString(),
       });
+    }
 
     //Additional Mods
     if (options.additionalMods) {
@@ -835,8 +802,9 @@ export default class SwadeActor extends Actor {
       });
     }
 
-    //Status penalites
     if (this.data.type !== 'vehicle') {
+      //Status penalites
+
       if (this.data.data.status.isEntangled) {
         mods.push({
           label: game.i18n.localize('SWADE.Entangled'),
@@ -848,9 +816,22 @@ export default class SwadeActor extends Actor {
           value: '-2',
         });
       }
+      //Conviction Die
+      const useConviction =
+        this.isWildcard &&
+        this.data.data.details.conviction.active &&
+        game.settings.get('swade', 'enableConviction');
+      if (useConviction) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Conv'),
+          value: '+1d6x',
+        });
+      }
     }
 
-    return [...mods.filter((m) => m.value)];
+    return mods
+      .filter((m) => m.value) //filter out the nullish values
+      .sort((a, b) => a.label.localeCompare(b.label)); //sort the mods alphabetically by label
   }
 
   private _calcImperialCapacity(strength: TraitDie): number {

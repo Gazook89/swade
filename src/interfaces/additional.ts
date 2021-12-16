@@ -19,7 +19,7 @@ export interface ItemAction {
   dmgOverride?: string;
 }
 
-export interface ITraitRollModifier {
+export interface TraitRollModifier {
   label: string;
   value: string;
 }
