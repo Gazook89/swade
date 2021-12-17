@@ -64,7 +64,8 @@ export default class RollDialog extends FormApplication<
     html.find('input[type="checkbox"]').on('change', (ev) => {
       const target = ev.currentTarget as HTMLInputElement;
       const index = Number(target.dataset.index);
-      this.ctx.mods[index].disabled = target.checked;
+      this.ctx.mods[index].ignore = target.checked;
+      this.render();
     });
     html.find('button.add-modifier').on('click', () => {
       const label = html.find('.new-modifier-label').val() as string;
@@ -106,7 +107,7 @@ export default class RollDialog extends FormApplication<
     const expanded = foundry.utils.expandObject(formData) as RollDialogFormData;
     console.log(expanded);
     Object.values(expanded.modifiers ?? []).forEach(
-      (v, i) => (this.ctx.mods[i].disabled = v.disabled),
+      (v, i) => (this.ctx.mods[i].ignore = v.ignore),
     );
     const roll = await this._evaluateRoll();
     this._resolve(roll);
@@ -193,8 +194,8 @@ export default class RollDialog extends FormApplication<
       ...this.ctx.roll.terms,
       ...Roll.parse(
         this.ctx.mods
-          .filter((v) => !v.disabled) //remove the disabled modifiers
-          .reduce((a: string, c: RollDialogModifier) => {
+          .filter((v) => !v.ignore) //remove the disabled modifiers
+          .reduce((a: string, c: TraitRollModifier) => {
             return (a += `${c.value}[${c.label}]`);
           }, ''),
         this._getRollData(),
@@ -236,8 +237,8 @@ export default class RollDialog extends FormApplication<
 
   private _buildModifierFlavor() {
     return this.ctx.mods
-      .filter((v) => !v.disabled) //remove the disabled modifiers
-      .reduce((acc: string, cur: RollDialogModifier) => {
+      .filter((v) => !v.ignore) //remove the disabled modifiers
+      .reduce((acc: string, cur: TraitRollModifier) => {
         return (acc += `<br>${cur.label}: ${cur.value}`);
       }, '');
   }
@@ -258,7 +259,7 @@ export default class RollDialog extends FormApplication<
 
 interface RollDialogContext {
   roll: Roll;
-  mods: RollDialogModifier[];
+  mods: TraitRollModifier[];
   speaker: foundry.data.ChatMessageData['speaker']['_source'];
   flavor: string;
   title: string;
@@ -268,9 +269,7 @@ interface RollDialogContext {
   flags?: object;
 }
 
-type RollDialogModifier = TraitRollModifier & { disabled?: boolean };
-
 interface RollDialogFormData {
-  modifiers?: RollDialogModifier[];
+  modifiers?: TraitRollModifier[];
   rollMode: foundry.CONST.DiceRollMode;
 }

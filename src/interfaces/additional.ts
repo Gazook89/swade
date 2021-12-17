@@ -22,4 +22,5 @@ export interface ItemAction {
 export interface TraitRollModifier {
   label: string;
   value: string;
+  ignore?: boolean;
 }
