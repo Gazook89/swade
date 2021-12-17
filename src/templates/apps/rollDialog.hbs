@@ -6,7 +6,7 @@
   <fieldset>
     <legend>{{localize 'SWADE.Modifiers'}}</legend>
     <header class='modifier-entry header'>
-      <div>{{localize 'SWADE.Mod'}}</div>
+      <div>{{localize 'SWADE.Name'}}</div>
       <div>Value</div>
       <div>Ignore?</div>
     </header>
@@ -18,13 +18,13 @@
           <input
             type='checkbox'
             data-index={{@index}}
-            name='modifiers.{{@index}}.disabled'
-            {{checked disabled}}
+            name='modifiers.{{@index}}.ignore'
+            {{checked ignore}}
           />
         </li>
       {{/each}}
     </ul>
-    <footer class='modifier-entry'>
+    <footer class='modifier-entry footer'>
       <input
         type='text'
         class='new-modifier-label'
