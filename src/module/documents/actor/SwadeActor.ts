@@ -419,7 +419,8 @@ export default class SwadeActor extends Actor {
     let retVal = 0;
     const isDistracted = getProperty(this.data, 'data.status.isDistracted');
     const isEntangled = getProperty(this.data, 'data.status.isEntangled');
-    if (isDistracted || isEntangled) {
+    const isBound = getProperty(this.data, 'data.status.isBound')
+    if (isDistracted || isEntangled || isBound) {
       retVal -= 2;
     }
     return retVal;
