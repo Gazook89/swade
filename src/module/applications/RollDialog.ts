@@ -105,7 +105,6 @@ export default class RollDialog extends FormApplication<
 
   protected async _updateObject(ev: Event, formData: FormData) {
     const expanded = foundry.utils.expandObject(formData) as RollDialogFormData;
-    console.log(expanded);
     Object.values(expanded.modifiers ?? []).forEach(
       (v, i) => (this.ctx.mods[i].ignore = v.ignore),
     );

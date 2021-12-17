@@ -402,7 +402,7 @@ export default class CharacterSheet extends ActorSheet {
       const action = button.dataset.action!;
       const itemId = $(button).parents('.chat-card.item-card').data().itemId;
       const item = this.actor.items.get(itemId, { strict: true });
-      const additionalMods = new Array<string>();
+      const additionalMods = new Array<TraitRollModifier>();
       const ppToAdjust = $(button)
         .parents('.chat-card.item-card')
         .find('input.pp-adjust')
@@ -428,7 +428,10 @@ export default class CharacterSheet extends ActorSheet {
           action === 'formula' ||
           (!!actionObj && actionObj.type === 'skill')
         ) {
-          additionalMods.push(modifier.signedString());
+          additionalMods.push({
+            label: game.i18n.localize('ITEM.TypePower'),
+            value: modifier.signedString(),
+          });
         }
       }
 

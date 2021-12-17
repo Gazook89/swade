@@ -799,8 +799,14 @@ export default class SwadeActor extends Actor {
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
         if (typeof v === 'string') {
+          console.warn(
+            'The use of strings will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
           mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
         } else if (typeof v === 'number') {
+          console.warn(
+            'The use of numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
           mods.push({
             label: game.i18n.localize('SWADE.Addi'),
             value: v.signedString(),

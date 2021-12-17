@@ -37,6 +37,7 @@ export default class SwadeItem extends Item {
   }
 
   rollDamage(options: IRollOptions = {}) {
+    const mods = new Array<TraitRollModifier>();
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;
@@ -60,7 +61,24 @@ export default class SwadeItem extends Item {
     }
     //Additional Mods
     if (options.additionalMods) {
-      rollParts = rollParts.concat(options.additionalMods);
+      options.additionalMods.forEach((v) => {
+        if (typeof v === 'string') {
+          console.warn(
+            'The use of strings will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
+          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
+        } else if (typeof v === 'number') {
+          console.warn(
+            'The use of numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
+          mods.push({
+            label: game.i18n.localize('SWADE.Addi'),
+            value: v.signedString(),
+          });
+        } else {
+          mods.push(v);
+        }
+      });
     }
 
     const terms = Roll.parse(rollParts.join(''), actor.getRollData());
@@ -76,15 +94,13 @@ export default class SwadeItem extends Item {
       }
     }
 
-    const rollMods = new Array<TraitRollModifier>();
-
     //Conviction Modifier
     if (
       actor.data.type !== 'vehicle' &&
       game.settings.get('swade', 'enableConviction') &&
       actor.data.data.details.conviction.active
     ) {
-      rollMods.push({
+      mods.push({
         label: game.i18n.localize('SWADE.Conv'),
         value: '+1d6x',
       });
@@ -97,7 +113,7 @@ export default class SwadeItem extends Item {
 
     //Joker Modifier
     if (actor.hasJoker) {
-      rollMods.push({
+      mods.push({
         label: game.i18n.localize('SWADE.Joker'),
         value: '+2',
       });
@@ -109,7 +125,7 @@ export default class SwadeItem extends Item {
       return Roll.fromTerms([
         ...newRoll.terms,
         ...Roll.parse(
-          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+          mods.reduce((acc: string, cur: TraitRollModifier) => {
             return (acc += `${cur.value}[${cur.label}]`);
           }, ''),
           this.getRollData(),
@@ -120,7 +136,7 @@ export default class SwadeItem extends Item {
     // Roll and return
     return game.swade.RollDialog.asPromise({
       roll: newRoll,
-      mods: rollMods,
+      mods: mods,
       speaker: ChatMessage.getSpeaker({ actor: this.actor! }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,
