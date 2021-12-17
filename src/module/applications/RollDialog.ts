@@ -1,4 +1,4 @@
-import { TraitRollModifier as TraitRollModifier } from '../../interfaces/additional';
+import { TraitRollModifier } from '../../interfaces/additional';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 
@@ -18,9 +18,12 @@ export default class RollDialog extends FormApplication<
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       template: 'systems/swade/templates/apps/rollDialog.hbs',
+      classes: ['swade', 'roll-dialog'],
+      width: 400,
+      height: 'auto' as const,
       closeOnSubmit: true,
       submitOnClose: false,
-      width: 400,
+      submitOnChange: false,
     });
   }
 
@@ -53,11 +56,25 @@ export default class RollDialog extends FormApplication<
   activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
     $(document).on('keydown.chooseDefault', this._onKeyDown.bind(this));
+    html.find('button#close').on('click', this.close.bind(this));
     html.find('button[type="submit"]').on('click', (ev) => {
       this.extraButtonUsed = ev.currentTarget.dataset.type === 'extra';
       this.submit();
     });
-    html.find('button#close').on('click', this.close.bind(this));
+    html.find('input[type="checkbox"]').on('change', (ev) => {
+      const target = ev.currentTarget as HTMLInputElement;
+      const index = Number(target.dataset.index);
+      this.ctx.mods[index].disabled = target.checked;
+    });
+    html.find('button.add-modifier').on('click', () => {
+      const label = html.find('.new-modifier-label').val() as string;
+      const value = html.find('.new-modifier-value').val() as string;
+      if (!!label && !!value) {
+        const sanitized = this._sanitizeModifierInput(value);
+        this.ctx.mods.push({ label, value: sanitized });
+        this.render();
+      }
+    });
   }
 
   getData(): object | Promise<object> {
@@ -86,7 +103,11 @@ export default class RollDialog extends FormApplication<
   }
 
   protected async _updateObject(ev: Event, formData: FormData) {
-    console.log(foundry.utils.expandObject(formData));
+    const expanded = foundry.utils.expandObject(formData) as RollDialogFormData;
+    console.log(expanded);
+    Object.values(expanded.modifiers ?? []).forEach(
+      (v, i) => (this.ctx.mods[i].disabled = v.disabled),
+    );
     const roll = await this._evaluateRoll();
     this._resolve(roll);
   }
@@ -114,26 +135,8 @@ export default class RollDialog extends FormApplication<
   }
 
   async _evaluateRoll(): Promise<Roll> {
-    // Optionally include a situational bonus
-    const situationalMod =
-      this.form?.querySelector<HTMLInputElement>('#bonus')?.value ?? '';
-    if (situationalMod) {
-      const sanitized = this._sanitizeModifierInput(situationalMod);
-      const sitMod = Roll.parse(sanitized, this._getRollData()).reduce(
-        (acc: string, cur: RollTerm) => {
-          return (acc += cur.formula);
-        },
-        '',
-      );
-
-      this.ctx.mods.push({
-        label: game.i18n.localize('SWADE.SitMod'),
-        value: sitMod,
-      });
-    }
-
     //Raise Damage
-    if (this.extraButtonUsed && this.ctx.item) {
+    if (this.extraButtonUsed && this.ctx.item && !this.ctx.actor) {
       this.ctx.mods.push({
         label: game.i18n.localize('SWADE.BonusDamage'),
         value: '+1d6x',
@@ -189,9 +192,11 @@ export default class RollDialog extends FormApplication<
     return Roll.fromTerms([
       ...this.ctx.roll.terms,
       ...Roll.parse(
-        this.ctx.mods.reduce((a: string, c: TraitRollModifier) => {
-          return (a += `${c.value}[${c.label}]`);
-        }, ''),
+        this.ctx.mods
+          .filter((v) => !v.disabled) //remove the disabled modifiers
+          .reduce((a: string, c: RollDialogModifier) => {
+            return (a += `${c.value}[${c.label}]`);
+          }, ''),
         this._getRollData(),
       ),
     ]);
@@ -230,9 +235,11 @@ export default class RollDialog extends FormApplication<
   }
 
   private _buildModifierFlavor() {
-    return this.ctx.mods.reduce((acc: string, cur: TraitRollModifier) => {
-      return (acc += `<br>${cur.label}: ${cur.value}`);
-    }, '');
+    return this.ctx.mods
+      .filter((v) => !v.disabled) //remove the disabled modifiers
+      .reduce((acc: string, cur: RollDialogModifier) => {
+        return (acc += `<br>${cur.label}: ${cur.value}`);
+      }, '');
   }
 
   private _getRollData() {
@@ -251,7 +258,7 @@ export default class RollDialog extends FormApplication<
 
 interface RollDialogContext {
   roll: Roll;
-  mods: TraitRollModifier[];
+  mods: RollDialogModifier[];
   speaker: foundry.data.ChatMessageData['speaker']['_source'];
   flavor: string;
   title: string;
@@ -259,4 +266,11 @@ interface RollDialogContext {
   actor?: SwadeActor;
   allowGroup?: boolean;
   flags?: object;
+}
+
+type RollDialogModifier = TraitRollModifier & { disabled?: boolean };
+
+interface RollDialogFormData {
+  modifiers?: RollDialogModifier[];
+  rollMode: foundry.CONST.DiceRollMode;
 }

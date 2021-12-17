@@ -3,32 +3,43 @@
     <label>{{localize 'SWADE.Formula'}}</label>
     <input type='text' name='formula' value='{{formula}}' disabled />
   </div>
-  {{!-- <div class='form-group'>
-    <label>{{localize 'SWADE.SitMod'}}</label>
-    <input
-      type='text'
-      id='bonus'
-      name='bonus'
-      value=''
-      placeholder='{{localize "SWADE.RollExample"}}'
-    />
-  </div> --}}
-  <ul>
-    {{#each modifiers}}
-      <li class='form-group'>
-        <input
-          type='text'
-          name='modifiers.{{@index}}.label'
-          value='{{label}}'
-        />
-        <input
-          type='text'
-          name='modifiers.{{@index}}.value'
-          value='{{value}}'
-        />
-      </li>
-    {{/each}}
-  </ul>
+  <fieldset>
+    <legend>{{localize 'SWADE.Modifiers'}}</legend>
+    <header class='modifier-entry header'>
+      <div>{{localize 'SWADE.Mod'}}</div>
+      <div>Value</div>
+      <div>Ignore?</div>
+    </header>
+    <ul class='modifiers'>
+      {{#each modifiers}}
+        <li class='modifier-entry'>
+          <div>{{label}}</div>
+          <div>{{value}}</div>
+          <input
+            type='checkbox'
+            data-index={{@index}}
+            name='modifiers.{{@index}}.disabled'
+            {{checked disabled}}
+          />
+        </li>
+      {{/each}}
+    </ul>
+    <footer class='modifier-entry'>
+      <input
+        type='text'
+        class='new-modifier-label'
+        placeholder='{{localize "SWADE.Mod"}}'
+      />
+      <input
+        type='text'
+        class='new-modifier-value'
+        placeholder='{{localize "SWADE.RollExample"}}'
+      />
+      <button type='button' class='add-modifier'>
+        <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
+      </button>
+    </footer>
+  </fieldset>
   <div class='form-group'>
     <label>{{localize 'SWADE.RollMode'}}</label>
     <select id='rollMode' name='rollMode'>

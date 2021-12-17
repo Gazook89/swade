@@ -1,0 +1,28 @@
+.roll-dialog {
+  font-family: var(--default-font);
+  .window-content {
+    background-image: url(./assets/main_bg.webp);
+  }
+  .modifiers {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .modifier-entry {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin: 0.5em;
+    padding: 0;
+    text-align: center;
+    font-weight: bold;
+    input[type='checkbox'],
+    label {
+      margin: auto;
+    }
+  }
+  .header {
+    text-align: center;
+    border-bottom: 2px groove var(--color-border-light-highlight);
+    margin-bottom: 0.5em;
+  }
+}

@@ -804,7 +804,6 @@ export default class SwadeActor extends Actor {
 
     if (this.data.type !== 'vehicle') {
       //Status penalites
-
       if (this.data.data.status.isEntangled) {
         mods.push({
           label: game.i18n.localize('SWADE.Entangled'),
