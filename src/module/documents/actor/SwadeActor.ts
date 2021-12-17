@@ -185,7 +185,11 @@ export default class SwadeActor extends Actor {
     const basePool = PoolTerm.fromRolls(rolls);
     basePool.modifiers.push('kh');
 
-    const rollMods = this._buildTraitRollModifiers(abl, options);
+    const rollMods = this._buildTraitRollModifiers(
+      abl,
+      options,
+      game.i18n.localize(label),
+    );
 
     if (options.suppressChat) {
       return Roll.fromTerms([
@@ -624,7 +628,12 @@ export default class SwadeActor extends Actor {
     //Find the operating skill
     const skill = driver.itemTypes.skill.find((i) => i.name === skillName);
     driver.rollSkill(skill?.id, {
-      additionalMods: [totalHandling.signedString()],
+      additionalMods: [
+        {
+          label: game.i18n.localize('SWADE.Handling'),
+          value: totalHandling.signedString(),
+        },
+      ],
     });
   }
 
@@ -676,7 +685,11 @@ export default class SwadeActor extends Actor {
     const finalTerms = new Array<RollTerm>();
     finalTerms.push(basePool);
 
-    const rollMods = this._buildTraitRollModifiers(skillData, options);
+    const rollMods = this._buildTraitRollModifiers(
+      skillData,
+      options,
+      skill.name,
+    );
     rollMods.forEach((m) =>
       finalTerms.push(
         ...Roll.parse(`${m.value}[${m.label}]`, this.getRollData()),
@@ -751,6 +764,7 @@ export default class SwadeActor extends Actor {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
+    name?: string | null,
   ): TraitRollModifier[] {
     const mods = new Array<TraitRollModifier>();
 
@@ -758,7 +772,7 @@ export default class SwadeActor extends Actor {
     const itemMod = parseInt(data.die.modifier);
     if (!isNaN(itemMod) && itemMod !== 0) {
       mods.push({
-        label: game.i18n.localize('SWADE.TraitMod'),
+        label: name ?? game.i18n.localize('SWADE.TraitMod'),
         value: itemMod.signedString(),
       });
     }
@@ -784,13 +798,16 @@ export default class SwadeActor extends Actor {
     //Additional Mods
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
-        let value;
         if (typeof v === 'string') {
-          value = v;
+          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
+        } else if (typeof v === 'number') {
+          mods.push({
+            label: game.i18n.localize('SWADE.Addi'),
+            value: v.signedString(),
+          });
         } else {
-          value = v.signedString();
+          mods.push(v);
         }
-        mods.push({ label: game.i18n.localize('SWADE.Addi'), value });
       });
     }
 
