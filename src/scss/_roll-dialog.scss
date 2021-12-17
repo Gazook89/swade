@@ -20,6 +20,9 @@
       margin: auto;
     }
   }
+  .add-modifier {
+    line-height: inherit;
+  }
   .header {
     text-align: center;
     border-bottom: 2px groove var(--color-border-light-highlight);
