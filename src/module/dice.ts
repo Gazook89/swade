@@ -26,6 +26,7 @@ interface RollHandlerData {
 
 /**
  * A helper class for dice interactions
+ * @deprecated
  */
 export default class SwadeDice {
   static async Roll({
@@ -38,6 +39,7 @@ export default class SwadeDice {
     allowGroup,
     flags,
   }: RollHelperData): Promise<Roll | null> {
+    console.warn('This class is being depreceated. Please no longer use it!');
     return new Promise(async (resolve) => {
       const template = 'systems/swade/templates/chat/roll-dialog.hbs';
       const dialogData = {

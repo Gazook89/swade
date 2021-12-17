@@ -1,8 +1,7 @@
-import { AdditionalStat } from '../../interfaces/additional';
+import { AdditionalStat, TraitRollModifier } from '../../interfaces/additional';
 import * as chat from '../chat';
 import { SWADE } from '../config';
 import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
-import SwadeDice from '../dice';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 /**
@@ -123,44 +122,44 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     //Running Die
     html.find('.running-die').on('click', async (ev) => {
-      const runningDie = getProperty(
-        this.actor.data,
-        'data.stats.speed.runningDie',
-      );
-      const runningMod = getProperty(
-        this.actor.data,
-        'data.stats.speed.runningMod',
-      );
-      const pace = getProperty(this.actor.data, 'data.stats.speed.value');
-      let rollFormula = `1d${runningDie}`;
+      if (this.actor.data.type === 'vehicle') return;
 
-      rollFormula = rollFormula.concat(`+${pace}`);
+      const runningDieSides = this.actor.data.data.stats.speed.runningDie;
+      const runningMod = this.actor.data.data.stats.speed.runningMod;
+      const pace = this.actor.data.data.stats.speed.adjusted;
+      const runningDie = `1d${runningDieSides}[${game.i18n.localize(
+        'SWADE.RunningDie',
+      )}]`;
+      const mods: TraitRollModifier[] = [
+        { label: game.i18n.localize('SWADE.Pace'), value: pace.signedString() },
+      ];
 
-      if (runningMod && runningMod !== 0) {
-        rollFormula =
-          runningMod > 0
-            ? rollFormula.concat(`+${runningMod}`)
-            : rollFormula.concat(runningMod);
+      if (runningMod) {
+        mods.push({
+          label: 'Modifier',
+          value: runningMod.signedString(),
+        });
       }
-
-      const runningRoll = new Roll(rollFormula);
-
       if (ev.shiftKey) {
+        const rollFormula =
+          runningDie + runningMod.signedString() + pace.signedString();
+        const runningRoll = new Roll(rollFormula);
         await runningRoll.evaluate();
         await runningRoll.toMessage({
           speaker: ChatMessage.getSpeaker({ actor: this.actor }),
           flavor: game.i18n.localize('SWADE.Running'),
         });
-      } else {
-        SwadeDice.Roll({
-          roll: runningRoll,
-          speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-          flavor: game.i18n.localize('SWADE.Running'),
-          title: game.i18n.localize('SWADE.Running'),
-          actor: this.actor,
-          allowGroup: false,
-        });
+        return;
       }
+      game.swade.RollDialog.asPromise({
+        roll: new Roll(runningDie),
+        mods: mods,
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: game.i18n.localize('SWADE.Running'),
+        title: game.i18n.localize('SWADE.Running'),
+        actor: this.actor,
+        allowGroup: false,
+      });
     });
 
     html.find('.effect-action').on('click', (ev) => {
@@ -230,7 +229,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     data.config = SWADE;
 
     data.itemsByType = {};
-    for (const type of game.system.entityTypes.Item) {
+    //@ts-ignore
+    for (const type of game.system.documentTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
     }
     data.itemsByType['skill'].sort((a: SwadeItem, b: SwadeItem) =>

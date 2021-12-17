@@ -6,6 +6,7 @@
  */
 
 import SwadeGame from './interfaces/SwadeGame';
+import RollDialog from './module/applications/RollDialog';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
 import SwadeEntityTweaks from './module/dialog/SwadeEntityTweaks';
@@ -43,6 +44,7 @@ const swadeGame: SwadeGame = {
   itemChatCardHelper: ItemChatCardHelper,
   migrations: migrations,
   CharacterSummarizer,
+  RollDialog,
 };
 Hooks.once('init', () => {
   console.log(
