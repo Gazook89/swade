@@ -1,8 +1,7 @@
 import { AdditionalStat, TraitRollModifier } from '../../interfaces/additional';
+import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
 import * as chat from '../chat';
 import { SWADE } from '../config';
-import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
-import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 /**
  * @noInheritDoc
@@ -108,7 +107,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         await this.actor.update({
           'data.details.conviction.active': false,
         });
-        await chat.createConvictionEndMessage(this.actor as SwadeActor);
+        await chat.createConvictionEndMessage(this.actor);
       }
     });
 

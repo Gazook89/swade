@@ -1,5 +1,5 @@
 import { AdditionalStat } from '../interfaces/additional';
-import SettingConfigurator from './SettingConfigurator';
+import SettingConfigurator from './apps/SettingConfigurator';
 
 declare global {
   namespace ClientSettings {

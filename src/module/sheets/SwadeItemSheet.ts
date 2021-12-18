@@ -1,7 +1,7 @@
 import { ItemMetadata } from '../../globals';
 import { AdditionalStat } from '../../interfaces/additional';
+import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
 import { SWADE } from '../config';
-import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**

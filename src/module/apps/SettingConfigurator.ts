@@ -1,4 +1,4 @@
-import { SWADE } from './config';
+import { SWADE } from '../config';
 
 export default class SettingConfigurator extends FormApplication {
   config: typeof SWADE.settingConfig;

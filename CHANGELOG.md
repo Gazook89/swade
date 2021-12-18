@@ -31,6 +31,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added a bump map for the default 3D benny
 - Added a new roll Dialog that allows players and GMs to more easily add and remove bonuses to the roll.
 
+### Changed
+
+- Moved the following application classes to the new `apps` folder. This has no bearing on features, but might be relevant for anybody who imports these files in their own code
+  - ActionCardEditor
+  - RollDialog
+  - SettingConfigurator
+  - SwadeCombatGroupColor
+  - SwadeEntityTweaks
+
 ### Deprecated
 
 - Deprecated the old roll dialog. It will be removed with version `<insert version>`

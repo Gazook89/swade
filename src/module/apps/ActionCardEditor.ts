@@ -1,5 +1,5 @@
-import { JournalMetadata } from '../globals';
-import { SWADE } from './config';
+import { JournalMetadata } from '../../globals';
+import { SWADE } from '../config';
 
 interface CardData {
   name: string;

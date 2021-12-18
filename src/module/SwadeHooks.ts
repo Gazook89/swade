@@ -5,7 +5,8 @@ import {
   DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
-import ActionCardEditor from './ActionCardEditor';
+import ActionCardEditor from './apps/ActionCardEditor';
+import SwadeCombatGroupColor from './apps/SwadeCombatGroupColor';
 import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
 import * as chat from './chat';
@@ -17,7 +18,6 @@ import SwadeCombatant from './documents/SwadeCombatant';
 import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
-import SwadeCombatGroupColor from './sidebar/SwadeCombatGroupColor';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 import { createActionCardTable } from './util';
 
