@@ -419,7 +419,7 @@ export default class SwadeActor extends Actor {
     let retVal = 0;
     const isDistracted = getProperty(this.data, 'data.status.isDistracted');
     const isEntangled = getProperty(this.data, 'data.status.isEntangled');
-    const isBound = getProperty(this.data, 'data.status.isBound')
+    const isBound = getProperty(this.data, 'data.status.isBound');
     if (isDistracted || isEntangled || isBound) {
       retVal -= 2;
     }
@@ -632,7 +632,7 @@ export default class SwadeActor extends Actor {
       additionalMods: [
         {
           label: game.i18n.localize('SWADE.Handling'),
-          value: totalHandling.signedString(),
+          value: totalHandling,
         },
       ],
     });
@@ -774,7 +774,7 @@ export default class SwadeActor extends Actor {
     if (!isNaN(itemMod) && itemMod !== 0) {
       mods.push({
         label: name ?? game.i18n.localize('SWADE.TraitMod'),
-        value: itemMod.signedString(),
+        value: itemMod,
       });
     }
 
@@ -783,7 +783,7 @@ export default class SwadeActor extends Actor {
     if (woundPenalties !== 0) {
       mods.push({
         label: game.i18n.localize('SWADE.Wounds'),
-        value: woundPenalties.signedString(),
+        value: woundPenalties,
       });
     }
 
@@ -792,26 +792,18 @@ export default class SwadeActor extends Actor {
     if (fatiguePenalties !== 0) {
       mods.push({
         label: game.i18n.localize('SWADE.Fatigue'),
-        value: fatiguePenalties.signedString(),
+        value: fatiguePenalties,
       });
     }
 
     //Additional Mods
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
-        if (typeof v === 'string') {
+        if (typeof v === 'string' || typeof v === 'number') {
           console.warn(
-            'The use of strings will be soon depreceated, please switch over to the TraitRollModifer interface',
+            'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
           );
           mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
-        } else if (typeof v === 'number') {
-          console.warn(
-            'The use of numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
-          );
-          mods.push({
-            label: game.i18n.localize('SWADE.Addi'),
-            value: v.signedString(),
-          });
         } else {
           mods.push(v);
         }
@@ -822,7 +814,7 @@ export default class SwadeActor extends Actor {
     if (this.hasJoker) {
       mods.push({
         label: game.i18n.localize('SWADE.Joker'),
-        value: '+2',
+        value: 2,
       });
     }
 
@@ -831,14 +823,20 @@ export default class SwadeActor extends Actor {
       if (this.data.data.status.isEntangled) {
         mods.push({
           label: game.i18n.localize('SWADE.Entangled'),
-          value: '-2',
+          value: -2,
+        });
+      } else if (this.data.data.status.isBound) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Bound'),
+          value: -2,
         });
       } else if (this.data.data.status.isDistracted) {
         mods.push({
           label: game.i18n.localize('SWADE.Distr'),
-          value: '-2',
+          value: -2,
         });
       }
+
       //Conviction Die
       const useConviction =
         this.isWildcard &&

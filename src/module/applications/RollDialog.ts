@@ -85,7 +85,7 @@ export default class RollDialog extends FormApplication<
       rollModes: CONFIG.Dice.rollModes,
       displayExtraButton: true,
       extraButtonLabel: '',
-      modifiers: this.ctx.mods,
+      modifiers: this.ctx.mods.map(this._normalizeModValueToString),
     };
 
     if (this.ctx.item) {
@@ -194,6 +194,7 @@ export default class RollDialog extends FormApplication<
       ...Roll.parse(
         this.ctx.mods
           .filter((v) => !v.ignore) //remove the disabled modifiers
+          .map(this._normalizeModValueToString)
           .reduce((a: string, c: TraitRollModifier) => {
             return (a += `${c.value}[${c.label}]`);
           }, ''),
@@ -245,6 +246,18 @@ export default class RollDialog extends FormApplication<
   private _getRollData() {
     if (this.ctx.actor) return this.ctx.actor.getRollData();
     return this.ctx.item?.actor?.getRollData() ?? {};
+  }
+
+  private _normalizeModValueToString(
+    mod: TraitRollModifier,
+  ): TraitRollModifier {
+    const value =
+      typeof mod.value === 'string' ? mod.value : mod.value.signedString();
+    return {
+      value,
+      label: mod.label,
+      ignore: mod.ignore,
+    };
   }
 
   /** @override */

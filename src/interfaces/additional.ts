@@ -21,6 +21,6 @@ export interface ItemAction {
 
 export interface TraitRollModifier {
   label: string;
-  value: string;
+  value: string | number;
   ignore?: boolean;
 }
