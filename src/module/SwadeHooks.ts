@@ -6,12 +6,12 @@ import {
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
+import DiceSettings from './apps/DiceSettings';
 import SwadeCombatGroupColor from './apps/SwadeCombatGroupColor';
 import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
 import * as chat from './chat';
 import { SWADE } from './config';
-import DiceSettings from './DiceSettings';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
