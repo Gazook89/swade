@@ -1,7 +1,6 @@
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
-import { ItemAction } from '../../../interfaces/additional';
+import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
-import SwadeDice from '../../dice';
 
 declare global {
   interface DocumentClassConfig {
@@ -38,6 +37,7 @@ export default class SwadeItem extends Item {
   }
 
   rollDamage(options: IRollOptions = {}) {
+    const mods = new Array<TraitRollModifier>();
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;
@@ -61,19 +61,36 @@ export default class SwadeItem extends Item {
     }
     //Additional Mods
     if (options.additionalMods) {
-      rollParts = rollParts.concat(options.additionalMods);
+      options.additionalMods.forEach((v) => {
+        if (typeof v === 'string') {
+          console.warn(
+            'The use of strings will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
+          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
+        } else if (typeof v === 'number') {
+          console.warn(
+            'The use of numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
+          mods.push({
+            label: game.i18n.localize('SWADE.Addi'),
+            value: v.signedString(),
+          });
+        } else {
+          mods.push(v);
+        }
+      });
     }
 
     const terms = Roll.parse(rollParts.join(''), actor.getRollData());
-    const newParts = new Array<String>();
+    const baseRoll = new Array<String>();
     for (const term of terms) {
       if (term instanceof Die) {
         if (!term.modifiers.includes('x')) term.modifiers.push('x');
-        newParts.push(term.formula);
+        baseRoll.push(term.formula);
       } else if (term instanceof StringTerm) {
-        newParts.push(this._makeExplodable(term.term));
+        baseRoll.push(this._makeExplodable(term.term));
       } else {
-        newParts.push(term.expression);
+        baseRoll.push(term.expression);
       }
     }
 
@@ -83,32 +100,43 @@ export default class SwadeItem extends Item {
       game.settings.get('swade', 'enableConviction') &&
       actor.data.data.details.conviction.active
     ) {
-      newParts.push(`+1d6x[${game.i18n.localize('SWADE.Conv')}]`);
+      mods.push({
+        label: game.i18n.localize('SWADE.Conv'),
+        value: '+1d6x',
+      });
     }
-
-    //Joker Modifier
-    let joker = '';
-    if (actor.hasJoker) {
-      newParts.push(`+2[${game.i18n.localize('SWADE.Joker')}]`);
-      joker = `<br>${game.i18n.localize('SWADE.Joker')}: +2`;
-    }
-
-    const newRoll = new Roll(newParts.join(''));
 
     let flavour = '';
     if (options.flavour) {
       flavour = ` - ${options.flavour}`;
     }
 
-    flavour = flavour.concat(joker);
+    //Joker Modifier
+    if (actor.hasJoker) {
+      mods.push({
+        label: game.i18n.localize('SWADE.Joker'),
+        value: '+2',
+      });
+    }
+
+    const newRoll = new Roll(baseRoll.join(''));
 
     if (options.suppressChat) {
-      return new Roll(newParts.join(''));
+      return Roll.fromTerms([
+        ...newRoll.terms,
+        ...Roll.parse(
+          mods.reduce((acc: string, cur: TraitRollModifier) => {
+            return (acc += `${cur.value}[${cur.label}]`);
+          }, ''),
+          this.getRollData(),
+        ),
+      ]);
     }
 
     // Roll and return
-    return SwadeDice.Roll({
+    return game.swade.RollDialog.asPromise({
       roll: newRoll,
+      mods: mods,
       speaker: ChatMessage.getSpeaker({ actor: this.actor! }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,

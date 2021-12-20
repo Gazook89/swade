@@ -82,10 +82,12 @@ export const SWADE = {
       'wealthType',
       'currencyName',
       'weightUnit',
+      'hardChoices',
       'bennyImageSheet',
       'bennyImage3DFront',
       'bennyImage3DBack',
-      'hardChoices',
+      '3dBennyFrontBump',
+      '3dBennyBackBump',
     ],
   },
 

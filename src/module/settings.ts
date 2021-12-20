@@ -1,5 +1,5 @@
 import { AdditionalStat } from '../interfaces/additional';
-import SettingConfigurator from './SettingConfigurator';
+import SettingConfigurator from './apps/SettingConfigurator';
 
 declare global {
   namespace ClientSettings {
@@ -34,6 +34,8 @@ declare global {
       'swade.bennyImageSheet': string;
       'swade.bennyImage3DBack': string;
       'swade.bennyImage3DFront': string;
+      'swade.3dBennyFrontBump': string;
+      'swade.3dBennyBackBump': string;
       'swade.hardChoices': boolean;
       'swade.settingFields': {
         actor: Record<string, AdditionalStat>;
@@ -328,6 +330,36 @@ export function registerSettingRules() {
     hint: game.i18n.localize('SWADE.Benny3DBackDesc'),
     type: String,
     default: 'systems/swade/assets/benny/benny-chip-front.png',
+    scope: 'world',
+    config: false,
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', 'bennyImage3DFront', {
+    name: game.i18n.localize('SWADE.Benny3DFront'),
+    hint: game.i18n.localize('SWADE.Benny3DFrontDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny-chip-front.png',
+    scope: 'world',
+    config: false,
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', '3dBennyFrontBump', {
+    name: game.i18n.localize('SWADE.Benny3DBackBump'),
+    hint: game.i18n.localize('SWADE.Benny3DBackBumpDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny_bump.png',
+    scope: 'world',
+    config: false,
+    filePicker: 'image',
+  });
+
+  game.settings.register('swade', '3dBennyBackBump', {
+    name: game.i18n.localize('SWADE.Benny3DFrontBump'),
+    hint: game.i18n.localize('SWADE.Benny3DFrontBumpDesc'),
+    type: String,
+    default: 'systems/swade/assets/benny/benny_bump.png',
     scope: 'world',
     config: false,
     filePicker: 'image',

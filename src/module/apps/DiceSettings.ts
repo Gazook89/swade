@@ -1,4 +1,4 @@
-import { SWADE } from './config';
+import { SWADE } from '../config';
 
 /**
  * This class defines a submenu for the system settings which will handle the DSN Settings

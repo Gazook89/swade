@@ -1,4 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
+import { JournalMetadata } from '../../globals';
 import { SWADE } from '../config';
 import SwadeCombatant from './SwadeCombatant';
 
@@ -25,7 +26,6 @@ export default class SwadeCombat extends Combat {
    * @param messageOptions  Additional options with which to customize created Chat Messages
    * @returns A promise which resolves to the updated Combat entity once updates are complete.
    */
-
   async rollInitiative(
     ids: string | string[],
     options?: InitiativeOptions,
@@ -292,18 +292,22 @@ export default class SwadeCombat extends Combat {
    */
   async drawCard(count = 1): Promise<JournalEntry[]> {
     const packName = game.settings.get('swade', 'cardDeck');
-    let actionCardPack = game.packs!.get(packName, { strict: true });
-    //@ts-ignore
-    if (!actionCardPack || actionCardPack.index.length === 0) {
+    let actionCardPack = game.packs.get(
+      packName,
+    ) as CompendiumCollection<JournalMetadata>;
+
+    if (!actionCardPack) {
       console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
       await game.settings.set(
         'swade',
         'cardDeck',
         SWADE.init.defaultCardCompendium,
       );
-      actionCardPack = game.packs!.get(SWADE.init.defaultCardCompendium)!;
+      actionCardPack = game.packs.get(SWADE.init.defaultCardCompendium, {
+        strict: true,
+      }) as CompendiumCollection<JournalMetadata>;
     }
-    const cards: JournalEntry[] = [];
+    const cards = new Array<JournalEntry>();
     const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
       strict: true,
     });
@@ -312,8 +316,8 @@ export default class SwadeCombat extends Combat {
     for (const result of draw.results) {
       //@ts-ignore
       const resultID = result.data.resultId;
-      const card = (await actionCardPack.getDocument(resultID)) as JournalEntry;
-      cards.push(card);
+      const card = await actionCardPack.getDocument(resultID);
+      cards.push(card!);
     }
     return cards;
   }
@@ -418,12 +422,14 @@ export default class SwadeCombat extends Combat {
     cardSuit: number,
   ): Promise<JournalEntry | undefined> {
     const packName = game.settings.get('swade', 'cardDeck') as string;
-    const actionCardPack = game.packs?.get(packName);
+    const actionCardPack = game.packs?.get(packName, {
+      strict: true,
+    }) as CompendiumCollection<JournalMetadata>;
 
-    const content = (await actionCardPack?.getDocuments()) as JournalEntry[];
+    const content = await actionCardPack.getDocuments();
     return content.find(
       (c) =>
-        c.getFlag('swade', 'cardValue') === cardValue ??
+        c.getFlag('swade', 'cardValue') === cardValue &&
         c.getFlag('swade', 'suitValue') === cardSuit,
     );
   }
@@ -450,6 +456,7 @@ export default class SwadeCombat extends Combat {
   //@ts-ignore
   async nextTurn() {
     const turn = this.turn;
+    //@ts-ignore
     const skip = this.settings.skipDefeated;
     // Determine the next turn number
     let next: number | null = null;
@@ -557,8 +564,8 @@ export default class SwadeCombat extends Combat {
 
     //reset the deck when combat is ended
     if (jokerDrawn) {
-      await game
-        .tables!.getName(SWADE.init.cardTable, { strict: true })
+      await game.tables
+        ?.getName(SWADE.init.cardTable, { strict: true })
         .reset();
       ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
     }

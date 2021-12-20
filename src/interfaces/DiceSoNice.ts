@@ -1,6 +1,11 @@
 import { ChatSpeakerData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatSpeakerData';
 
 export declare class Dice3D {
+  //TODO type box
+  box: any;
+  //TODO type array
+  queue: Array<unknown>;
+
   /**
    * Show the 3D Dice animation for the Roll made by the User.
    *
@@ -41,10 +46,17 @@ export declare class Dice3D {
     whisper?: Array<{ id: string } | string> | null,
     blind?: boolean,
   ): Promise<boolean>;
-  //type box
-  box: any;
-  //TODO type array
-  queue: Array<unknown>;
+
+  /**
+   * Register a new system
+   * The id is to be used with the addDicePreset method
+   * The name can be a localized string
+   * @param {Object} system {id, name}
+   * @param mode "preferred", "default". "preferred" will enable this system by default until a user changes it to anything else.
+   * Default will add the system as a choice left to each user.
+   */
+
+  addSystem(data: { id: string; name: string }, mode: 'preferred' | 'default');
 
   /**
    * Add a colorset (theme)
@@ -94,7 +106,7 @@ interface DicePresetData {
   //  is the scale of the font size (default: 1). This setting overwrite the colorset fontScale setting
   fontScale?: number;
   //is an array of bumpMap textures that should follow the exact same order as labels
-  bumpmaps?: Array<string>;
+  bumpMaps?: Array<string>;
   // is an object with the min and max value on the die
   values?: { min: number; max: number };
 }

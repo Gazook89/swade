@@ -1,10 +1,10 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
-import { ITraitRollModifier } from '../../../interfaces/additional';
+import { ItemMetadata } from '../../../globals';
+import { TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
-import SwadeDice from '../../dice';
 import { ArmorLocation } from '../../enums/ArmorLocationsEnum';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
@@ -32,9 +32,7 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  /**
-   * @returns true when the actor has an arcane background or a special ability that grants powers.
-   */
+  /** @returns true when the actor has an arcane background or a special ability that grants powers. */
   get hasArcaneBackground(): boolean {
     const abEdge = this.itemTypes.edge.find(
       (i) => i.data.type === 'edge' && i.data.data.isArcaneBackground,
@@ -45,10 +43,8 @@ export default class SwadeActor extends Actor {
     return !!abEdge || !!abAbility;
   }
 
-  /**
-   * @returns true when the actor is currently in combat and has drawn a joker
-   */
-  get hasJoker() {
+  /** @returns true when the actor is currently in combat and has drawn a joker */
+  get hasJoker(): boolean {
     //return early if no combat is running
     if (!game?.combats?.active) return false;
 
@@ -67,16 +63,23 @@ export default class SwadeActor extends Actor {
     return combatant?.hasJoker ?? false;
   }
 
-  get bennies() {
+  get bennies(): number {
     if (this.data.type === 'vehicle') return 0;
     return this.data.data.bennies.value;
   }
 
-  /**
-   * @returns an object that contains booleans which denote the current status of the actor
-   */
+  /** @returns an object that contains booleans which denote the current status of the actor */
   get status() {
     return this.data.data.status;
+  }
+
+  get armorPerLocation(): ArmorPerLocation {
+    return {
+      head: this._getArmorForLocation(ArmorLocation.HEAD),
+      torso: this._getArmorForLocation(ArmorLocation.TORSO),
+      arms: this._getArmorForLocation(ArmorLocation.ARMS),
+      legs: this._getArmorForLocation(ArmorLocation.LEGS),
+    };
   }
 
   /** @override */
@@ -179,50 +182,35 @@ export default class SwadeActor extends Actor {
       rolls.push(wildRoll);
     }
 
-    const pool = PoolTerm.fromRolls(rolls);
-    pool.modifiers.push('kh');
+    const basePool = PoolTerm.fromRolls(rolls);
+    basePool.modifiers.push('kh');
 
-    const finalTerms = new Array<RollTerm>();
-    finalTerms.push(pool);
-
-    //Conviction Modifier
-    const useConviction =
-      this.isWildcard &&
-      this.data.data.details.conviction.active &&
-      game.settings.get('swade', 'enableConviction');
-
-    if (useConviction) {
-      const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalTerms.push(new OperatorTerm({ operator: '+' }));
-      finalTerms.push(convDie);
-    }
-
-    const rollMods = this._buildTraitRollModifiers(abl, options);
-    rollMods.forEach((m) =>
-      finalTerms.push(...Roll.parse(`${m.value}[${m.label}]`, {})),
+    const rollMods = this._buildTraitRollModifiers(
+      abl,
+      options,
+      game.i18n.localize(label),
     );
 
-    const finalRoll = Roll.fromTerms(finalTerms);
-
     if (options.suppressChat) {
-      return finalRoll;
-    }
-
-    //Build Flavour
-    let flavour = '';
-    if (rollMods.length !== 0) {
-      rollMods.forEach((v) => {
-        flavour = flavour.concat(`<br>${v.label}: ${v.value}`);
-      });
+      return Roll.fromTerms([
+        basePool,
+        ...Roll.parse(
+          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+            return (acc += `${cur.value}[${cur.label}]`);
+          }, ''),
+          this.getRollData(),
+        ),
+      ]);
     }
 
     // Roll and return
-    return SwadeDice.Roll({
-      roll: finalRoll,
+    return game.swade.RollDialog.asPromise({
+      roll: Roll.fromTerms([basePool]),
+      mods: rollMods,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
-      )}${flavour}`,
+      )}`,
       title: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
       )}`,
@@ -248,7 +236,7 @@ export default class SwadeActor extends Actor {
     }
 
     const skillRoll = this._handleComplexSkill(skill, options);
-    const roll = skillRoll[0];
+    const basePool = skillRoll[0];
     const rollMods = skillRoll[1];
 
     //Build Flavour
@@ -256,19 +244,23 @@ export default class SwadeActor extends Actor {
     if (options.flavour) {
       flavour = ` - ${options.flavour}`;
     }
-    if (rollMods.length !== 0) {
-      rollMods.forEach((v) => {
-        flavour = flavour.concat(`<br>${v.label}: ${v.value}`);
-      });
-    }
 
     if (options.suppressChat) {
-      return roll;
+      return Roll.fromTerms([
+        basePool,
+        ...Roll.parse(
+          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+            return (acc += `${cur.value}[${cur.label}]`);
+          }, ''),
+          this.getRollData(),
+        ),
+      ]);
     }
 
     // Roll and return
-    return SwadeDice.Roll({
-      roll: roll,
+    return game.swade.RollDialog.asPromise({
+      roll: Roll.fromTerms([basePool]),
+      mods: rollMods,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',
@@ -427,7 +419,8 @@ export default class SwadeActor extends Actor {
     let retVal = 0;
     const isDistracted = getProperty(this.data, 'data.status.isDistracted');
     const isEntangled = getProperty(this.data, 'data.status.isEntangled');
-    if (isDistracted || isEntangled) {
+    const isBound = getProperty(this.data, 'data.status.isBound');
+    if (isDistracted || isEntangled || isBound) {
       retVal -= 2;
     }
     return retVal;
@@ -447,7 +440,7 @@ export default class SwadeActor extends Actor {
 
   /**
    * Function for shorcut roll in item (@str + 1d6)
-   * return something like : {agi: "1d8x8+1", sma: "1d6x6", spi: "1d6x6", str: "1d6x6-1", vig: "1d6x6"}
+   * return something like : {agi: "1d8x+1", sma: "1d6x", spi: "1d6x", str: "1d6x-1", vig: "1d6x"}
    */
   getRollShortcuts(): Record<string, number | string> {
     const out: Record<string, any> = {};
@@ -494,48 +487,7 @@ export default class SwadeActor extends Actor {
    * Calculates the correct armor value based on SWADE v5.5 and returns that value
    */
   calcArmor(): number {
-    if (this.data.type === 'vehicle') return 0;
-
-    let totalArmorVal = 0;
-
-    //get armor items and retieve their data
-    const armors = this.itemTypes.armor.map((i) =>
-      i.data.type === 'armor' ? i.data : null,
-    );
-
-    const armorList = armors
-      .filter((i) => {
-        const isEquipped = i?.data.equipped;
-        const coversTorso = i?.data.locations.torso;
-        const isNaturalArmor = i?.data.isNaturalArmor;
-        return isEquipped && !isNaturalArmor && coversTorso;
-      })
-      .sort((a, b) => {
-        const aValue = Number(a!.data.armor);
-        const bValue = Number(b!.data.armor);
-        return bValue - aValue;
-      });
-
-    if (armorList.length === 1) {
-      totalArmorVal = Number(armorList[0]!.data.armor);
-    } else if (armorList.length > 1) {
-      totalArmorVal =
-        Number(armorList[0]!.data.armor) +
-        Math.floor(Number(armorList[1]!.data.armor) / 2);
-    }
-
-    const naturalArmors = armors.filter((i) => {
-      const isEquipped = i!.data.equipped;
-      const coversTorso = i!.data.locations.torso;
-      const isNaturalArmor = i!.data.isNaturalArmor;
-      return isNaturalArmor && isEquipped && coversTorso;
-    });
-
-    for (const armor of naturalArmors) {
-      totalArmorVal += Number(armor!.data.armor);
-    }
-
-    return totalArmorVal;
+    return this._getArmorForLocation(ArmorLocation.TORSO);
   }
 
   /**
@@ -677,7 +629,12 @@ export default class SwadeActor extends Actor {
     //Find the operating skill
     const skill = driver.itemTypes.skill.find((i) => i.name === skillName);
     driver.rollSkill(skill?.id, {
-      additionalMods: [totalHandling.signedString()],
+      additionalMods: [
+        {
+          label: game.i18n.localize('SWADE.Handling'),
+          value: totalHandling,
+        },
+      ],
     });
   }
 
@@ -698,7 +655,7 @@ export default class SwadeActor extends Actor {
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
-  ): [Roll, ITraitRollModifier[]] {
+  ): [PoolTerm, TraitRollModifier[]] {
     if (!options.rof) options.rof = 1;
     if (skill.data.type !== 'skill') {
       throw new Error('Detected-non skill in skill roll construction');
@@ -723,33 +680,24 @@ export default class SwadeActor extends Actor {
     }
 
     const kh = options.rof > 1 ? `kh${options.rof}` : 'kh';
-    const pool = PoolTerm.fromRolls(rolls);
-    pool.modifiers.push(kh);
-
-    //Conviction Modifier
-    const useConviction =
-      this.data.type !== 'vehicle' &&
-      this.isWildcard &&
-      this.data.data.details.conviction.active &&
-      game.settings.get('swade', 'enableConviction');
+    const basePool = PoolTerm.fromRolls(rolls);
+    basePool.modifiers.push(kh);
 
     const finalTerms = new Array<RollTerm>();
-    finalTerms.push(pool);
+    finalTerms.push(basePool);
 
-    const rollMods = this._buildTraitRollModifiers(skillData, options);
+    const rollMods = this._buildTraitRollModifiers(
+      skillData,
+      options,
+      skill.name,
+    );
     rollMods.forEach((m) =>
       finalTerms.push(
         ...Roll.parse(`${m.value}[${m.label}]`, this.getRollData()),
       ),
     );
 
-    if (useConviction) {
-      const convDie = this._buildTraitDie(6, game.i18n.localize('SWADE.Conv'));
-      finalTerms.push(new OperatorTerm({ operator: '+' }));
-      finalTerms.push(convDie);
-    }
-
-    return [Roll.fromTerms(finalTerms), rollMods];
+    return [basePool, rollMods];
   }
 
   /**
@@ -817,44 +765,48 @@ export default class SwadeActor extends Actor {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
-  ): ITraitRollModifier[] {
-    const mods = new Array<ITraitRollModifier>();
+    name?: string | null,
+  ): TraitRollModifier[] {
+    const mods = new Array<TraitRollModifier>();
 
     //Trait modifier
     const itemMod = parseInt(data.die.modifier);
     if (!isNaN(itemMod) && itemMod !== 0) {
       mods.push({
-        label: game.i18n.localize('SWADE.TraitMod'),
-        value: itemMod.signedString(),
+        label: name ?? game.i18n.localize('SWADE.TraitMod'),
+        value: itemMod,
       });
     }
 
     // Wounds
     const woundPenalties = this.calcWoundPenalties();
-    if (woundPenalties !== 0)
+    if (woundPenalties !== 0) {
       mods.push({
         label: game.i18n.localize('SWADE.Wounds'),
-        value: woundPenalties.signedString(),
+        value: woundPenalties,
       });
+    }
 
     //Fatigue
     const fatiguePenalties = this.calcFatiguePenalties();
-    if (fatiguePenalties !== 0)
+    if (fatiguePenalties !== 0) {
       mods.push({
         label: game.i18n.localize('SWADE.Fatigue'),
-        value: fatiguePenalties.signedString(),
+        value: fatiguePenalties,
       });
+    }
 
     //Additional Mods
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
-        let value;
-        if (typeof v === 'string') {
-          value = v;
+        if (typeof v === 'string' || typeof v === 'number') {
+          console.warn(
+            'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
+          );
+          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
         } else {
-          value = v.signedString();
+          mods.push(v);
         }
-        mods.push({ label: game.i18n.localize('SWADE.Addi'), value });
       });
     }
 
@@ -862,26 +814,45 @@ export default class SwadeActor extends Actor {
     if (this.hasJoker) {
       mods.push({
         label: game.i18n.localize('SWADE.Joker'),
-        value: '+2',
+        value: 2,
       });
     }
 
-    //Status penalites
     if (this.data.type !== 'vehicle') {
+      //Status penalites
       if (this.data.data.status.isEntangled) {
         mods.push({
           label: game.i18n.localize('SWADE.Entangled'),
-          value: '-2',
+          value: -2,
+        });
+      } else if (this.data.data.status.isBound) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Bound'),
+          value: -2,
         });
       } else if (this.data.data.status.isDistracted) {
         mods.push({
           label: game.i18n.localize('SWADE.Distr'),
-          value: '-2',
+          value: -2,
+        });
+      }
+
+      //Conviction Die
+      const useConviction =
+        this.isWildcard &&
+        this.data.data.details.conviction.active &&
+        game.settings.get('swade', 'enableConviction');
+      if (useConviction) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Conv'),
+          value: '+1d6x',
         });
       }
     }
 
-    return [...mods.filter((m) => m.value)];
+    return mods
+      .filter((m) => m.value) //filter out the nullish values
+      .sort((a, b) => a.label.localeCompare(b.label)); //sort the mods alphabetically by label
   }
 
   private _calcImperialCapacity(strength: TraitDie): number {
@@ -899,14 +870,49 @@ export default class SwadeActor extends Actor {
    * @returns The total amount of armor for that location
    */
   private _getArmorForLocation(location: ArmorLocation): number {
-    //FIXME Add armor layering logic
+    if (this.data.type === 'vehicle') return 0;
 
-    return this.items.reduce((acc: number, cur: SwadeItem) => {
-      if (cur.data.type === 'armor' && cur.data.data.locations[location]) {
-        return acc + Number(cur.data.data.armor);
-      }
-      return acc;
-    }, 0);
+    let totalArmorVal = 0;
+
+    //get armor items and retieve their data
+    const armorList = this.itemTypes.armor.map((i) =>
+      i.data.type === 'armor' ? i.data : null,
+    );
+
+    const nonNaturalArmors = armorList
+      .filter((i) => {
+        const isEquipped = i?.data.equipped;
+        const isLocation = i?.data.locations[location];
+        const isNaturalArmor = i?.data.isNaturalArmor;
+        return isEquipped && !isNaturalArmor && isLocation;
+      })
+      .sort((a, b) => {
+        const aValue = Number(a!.data.armor);
+        const bValue = Number(b!.data.armor);
+        return bValue - aValue;
+      });
+
+    if (nonNaturalArmors.length === 1) {
+      totalArmorVal = Number(nonNaturalArmors[0]!.data.armor);
+    } else if (nonNaturalArmors.length > 1) {
+      totalArmorVal =
+        Number(nonNaturalArmors[0]!.data.armor) +
+        Math.floor(Number(nonNaturalArmors[1]!.data.armor) / 2);
+    }
+
+    //add natural armor
+    armorList
+      .filter((i) => {
+        const isEquipped = i!.data.equipped;
+        const isLocation = i?.data.locations[location];
+        const isNaturalArmor = i!.data.isNaturalArmor;
+        return isNaturalArmor && isEquipped && isLocation;
+      })
+      .forEach((i) => {
+        totalArmorVal += Number(i!.data.armor);
+      });
+
+    return totalArmorVal;
   }
 
   private _filterOverrides() {
@@ -947,10 +953,9 @@ export default class SwadeActor extends Actor {
       const pack = game.packs.get(
         game.settings.get('swade', 'coreSkillsCompendium'),
         { strict: true },
-      );
+      ) as CompendiumCollection<ItemMetadata>;
 
-      //@ts-ignore
-      const skillIndex = (await pack.getDocuments()) as SwadeItem[];
+      const skillIndex = await pack.getDocuments();
 
       // extract skill data
       const skills = skillIndex
@@ -1021,7 +1026,6 @@ export default class SwadeActor extends Actor {
   ) {
     super._onUpdate(changed, options, user);
     if (this.data.type === 'npc') {
-      //@ts-ignore
       ui.actors?.render(true);
     }
     if (hasProperty(changed, 'data.bennies') && this.hasPlayerOwner) {

@@ -5,10 +5,10 @@
  * Software License: Apache License, Version 2.0
  */
 
-import SwadeGame from './interfaces/SwadeGame';
+import RollDialog from './module/apps/RollDialog';
+import SwadeEntityTweaks from './module/apps/SwadeEntityTweaks';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
-import SwadeEntityTweaks from './module/dialog/SwadeEntityTweaks';
 import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
@@ -35,15 +35,6 @@ import { createSwadeMacro, rollItemMacro } from './module/util';
 /* ------------------------------------ */
 /* Initialize system					          */
 /* ------------------------------------ */
-
-const swadeGame: SwadeGame = {
-  SwadeEntityTweaks,
-  rollItemMacro,
-  sockets: null,
-  itemChatCardHelper: ItemChatCardHelper,
-  migrations: migrations,
-  CharacterSummarizer,
-};
 Hooks.once('init', () => {
   console.log(
     `SWADE | Initializing Savage Worlds Adventure Edition\n${SWADE.ASCII}`,
@@ -53,8 +44,15 @@ Hooks.once('init', () => {
   //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
-  game.swade = swadeGame;
-  game.swade.sockets = new SwadeSocketHandler();
+  game.swade = {
+    SwadeEntityTweaks,
+    rollItemMacro,
+    sockets: new SwadeSocketHandler(),
+    itemChatCardHelper: ItemChatCardHelper,
+    migrations: migrations,
+    CharacterSummarizer,
+    RollDialog,
+  };
 
   //register custom Handlebars helpers
   registerCustomHelpers();

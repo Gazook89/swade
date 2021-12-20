@@ -53,7 +53,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get hasJoker() {
-    return this.getFlag('swade', 'hasJoker');
+    return this.getFlag('swade', 'hasJoker') ?? false;
   }
 
   async setJoker(joker: boolean) {
@@ -73,7 +73,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get isGroupLeader() {
-    return this.getFlag('swade', 'isGroupLeader');
+    return this.getFlag('swade', 'isGroupLeader') ?? false;
   }
 
   async setIsGroupLeader(groupLeader: boolean) {
@@ -93,7 +93,7 @@ export default class SwadeCombatant extends Combatant {
   }
 
   get turnLost() {
-    return this.getFlag('swade', 'turnLost');
+    return this.getFlag('swade', 'turnLost') ?? false;
   }
 
   async setTurnLost(turnLost: boolean) {

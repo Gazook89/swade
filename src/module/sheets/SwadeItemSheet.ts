@@ -1,6 +1,7 @@
+import { ItemMetadata } from '../../globals';
 import { AdditionalStat } from '../../interfaces/additional';
+import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
 import { SWADE } from '../config';
-import SwadeEntityTweaks from '../dialog/SwadeEntityTweaks';
 import SwadeItem from '../documents/item/SwadeItem';
 
 /**
@@ -270,7 +271,7 @@ export default class SwadeItemSheet extends ItemSheet {
     event.preventDefault();
     event.stopPropagation();
     let data;
-    let item: SwadeItem;
+    let item: StoredDocument<SwadeItem> | SwadeItem;
 
     //get the data and accept it
     try {
@@ -278,12 +279,14 @@ export default class SwadeItemSheet extends ItemSheet {
       data = JSON.parse(event.dataTransfer!.getData('text/plain'));
 
       if ('pack' in data) {
-        const pack = game.packs?.get(data.pack);
-        item = (await pack?.getDocument(data.id)) as SwadeItem;
+        const pack = game.packs.get(data.pack, {
+          strict: true,
+        }) as CompendiumCollection<ItemMetadata>;
+        item = (await pack.getDocument(data.id)) as StoredDocument<SwadeItem>;
       } else if ('actorId' in data) {
         item = new SwadeItem(data.data);
       } else {
-        item = game.items?.get(data.id)!;
+        item = game.items!.get(data.id, { strict: true });
       }
 
       if (

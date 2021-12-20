@@ -1,4 +1,5 @@
-import { SWADE } from './config';
+import { JournalMetadata } from '../../globals';
+import { SWADE } from '../config';
 
 interface CardData {
   name: string;
@@ -14,18 +15,18 @@ interface ScrollRenderOptions extends Application.RenderOptions {
 
 export default class ActionCardEditor extends FormApplication {
   static async fromPack(
-    compendium: Compendium<CompendiumCollection.Metadata>,
+    compendium: CompendiumCollection<JournalMetadata>,
   ): Promise<ActionCardEditor> {
-    //@ts-ignore
     const cards = await compendium.getDocuments();
     return new this(cards, compendium);
   }
 
   cards: Map<string, JournalEntry>;
-  pack: Compendium<CompendiumCollection.Metadata>;
+  pack: CompendiumCollection<JournalMetadata>;
+
   constructor(
     cards: JournalEntry[],
-    pack: Compendium<CompendiumCollection.Metadata>,
+    pack: CompendiumCollection<JournalMetadata>,
     options: Partial<FormApplication.Options> = {},
   ) {
     super({}, options);
@@ -105,7 +106,6 @@ export default class ActionCardEditor extends FormApplication {
         img: 'systems/swade/assets/ui/ace-white.svg',
         'flags.swade': { cardValue: 0, suitValue: 0, isJoker: false },
       },
-      //@ts-ignore
       { pack: this.pack.collection },
     );
     if (newCard) {

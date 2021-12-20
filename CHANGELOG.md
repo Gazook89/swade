@@ -22,6 +22,49 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.0]
+
+### Added
+
+- Added a the ability to determine armor per location (head, torso, arms, legs) via the getter `actor.armorPerLocation`
+- Added the ability to set a front and back Bump Map for the 3D benny should DSN be installed
+- Added a bump map for the default 3D benny
+- Added a new roll Dialog that allows players and GMs to more easily add and remove bonuses to the roll.
+- Added additional translation strings
+- Added compatability for Foundry v9. Large thanks goes to the SWADE dev community for their help in testing and fixing various small issues.
+
+### Changed
+
+- Bound characters now have the status penalty applies correctly. (credit goes to javierriveracastro)
+- Moved the following application classes to the new `apps` folder. This has no bearing on features, but might be relevant for anybody who imports these files in their own code
+  - ActionCardEditor
+  - RollDialog
+  - SettingConfigurator
+  - SwadeCombatGroupColor
+  - SwadeEntityTweaks
+  - DiceSettings
+
+### Deprecated
+
+- Deprecated the old roll dialog. It will be removed with version `1.0.0`
+- Deprecated the use of bare numbers and strings as modifiers in rolls. Instead please pass an array with objects containing a `label` and a `value` property. See the example below
+  ```JS
+   [
+    {
+      label: "Foo",
+      value: -2
+    },
+    {
+      label: "Bar",
+      value: "+1d6x"
+    }
+   ]
+  ```
+
+### Fixed
+
+- Fixed a bug that would display the wrong card as the old one when drawing a new card for initiative
+
 ## [v0.21.4]
 
 ### Fixed
