@@ -208,13 +208,13 @@ export default class RollDialog extends FormApplication<
    * @param terms Array of roll terms
    */
   private _markWilDie(terms: RollTerm[]): void {
+    if (!game.dice3d) return;
     for (const term of terms) {
       if (term instanceof PoolTerm) {
         for (const roll of term.rolls) {
           for (const term of roll.terms) {
             if (
               term instanceof Die &&
-              game.dice3d &&
               term.flavor === game.i18n.localize('SWADE.WildDie')
             ) {
               const colorPreset =

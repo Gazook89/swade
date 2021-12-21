@@ -22,6 +22,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.1]
+
+### Changed
+
+- Hardened the Roll dialog a bit more against empty modifier values
+- The global item trait and damage modifiers are now only added when they're filled instead of automatically showing up as `+0`
+
+### Fixed
+
+- Under certain circumstances the ItemChatCard helper wouldn't let you use a weapon or power because it was mistankenly thinking the item was missing ammo. This has been fixed
+
 ## [v0.22.0]
 
 ### Added
