@@ -20,8 +20,6 @@ const sourcemaps = require('gulp-sourcemaps');
 
 const argv = require('yargs').argv;
 
-sass.compiler = require('sass');
-
 function getConfig() {
   const configPath = path.resolve(process.cwd(), 'foundryconfig.json');
   let config;
