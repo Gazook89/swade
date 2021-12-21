@@ -492,20 +492,17 @@ export default class CharacterSheet extends ActorSheet {
 
     //Wealth Die Roll
     html.find('.currency .roll').on('click', () => {
-      const die: number =
-        getProperty(this.actor.data, 'data.details.wealth.die') || 6;
-      const mod: number =
-        getProperty(this.actor.data, 'data.details.wealth.modifier') || 0;
-      const wildDie: number =
-        getProperty(this.actor.data, 'data.details.wealth.wild-die') || 6;
-      const modString = mod !== 0 ? mod.signedString() : '';
+      if (this.actor.data.type === 'vehicle') return;
+      const die = this.actor.data.data.details.wealth.die ?? 6;
+      const mod = this.actor.data.data.details.wealth.modifier ?? 0;
+      const wildDie = this.actor.data.data.details.wealth['wild-die'] ?? 6;
       const dieLabel = game.i18n.localize('SWADE.WealthDie');
       const wildDieLabel = game.i18n.localize('SWADE.WildDie');
       const formula = `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh`;
 
       game.swade.RollDialog.asPromise({
         roll: new Roll(formula),
-        mods: [{ label: 'Modifier', value: modString }],
+        mods: [{ label: 'Modifier', value: mod }],
         speaker: ChatMessage.getSpeaker(),
         actor: this.actor,
         flavor: game.i18n.localize('SWADE.WealthDie'),

@@ -155,10 +155,7 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  rollAttribute(
-    abilityId: keyof typeof SWADE.attributes,
-    options: IRollOptions = {},
-  ) {
+  rollAttribute(abilityId: Attribute, options: IRollOptions = {}) {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
       ui.notifications?.warn(
@@ -1040,3 +1037,5 @@ export interface ArmorPerLocation {
   torso: number;
   legs: number;
 }
+
+export type Attribute = keyof typeof SWADE.attributes;
