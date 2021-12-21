@@ -85,7 +85,7 @@ export default class RollDialog extends FormApplication<
       rollModes: CONFIG.Dice.rollModes,
       displayExtraButton: true,
       extraButtonLabel: '',
-      modifiers: this.ctx.mods.map(this._normalizeModValueToString),
+      modifiers: this.ctx.mods.map(this._normalizeModValue),
     };
 
     if (this.ctx.item) {
@@ -194,7 +194,7 @@ export default class RollDialog extends FormApplication<
       ...Roll.parse(
         this.ctx.mods
           .filter((v) => !v.ignore) //remove the disabled modifiers
-          .map(this._normalizeModValueToString)
+          .map(this._normalizeModValue)
           .reduce((a: string, c: TraitRollModifier) => {
             return (a += `${c.value}[${c.label}]`);
           }, ''),
@@ -208,13 +208,13 @@ export default class RollDialog extends FormApplication<
    * @param terms Array of roll terms
    */
   private _markWilDie(terms: RollTerm[]): void {
+    if (!game.dice3d) return;
     for (const term of terms) {
       if (term instanceof PoolTerm) {
         for (const roll of term.rolls) {
           for (const term of roll.terms) {
             if (
               term instanceof Die &&
-              game.dice3d &&
               term.flavor === game.i18n.localize('SWADE.WildDie')
             ) {
               const colorPreset =
@@ -248,13 +248,18 @@ export default class RollDialog extends FormApplication<
     return this.ctx.item?.actor?.getRollData() ?? {};
   }
 
-  private _normalizeModValueToString(
-    mod: TraitRollModifier,
-  ): TraitRollModifier {
-    const value =
-      typeof mod.value === 'string' ? mod.value : mod.value.signedString();
+  /** Normalize a given modifier value to a string for display and evaluation */
+  private _normalizeModValue(mod: TraitRollModifier): TraitRollModifier {
+    let normalizedValue: string;
+    if (typeof mod.value === 'string') {
+      normalizedValue = mod.value === '' ? '+0' : mod.value;
+    } else if (typeof mod.value === 'number') {
+      normalizedValue = mod.value.signedString();
+    } else {
+      throw new Error('Invalid modifier value ' + mod.value);
+    }
     return {
-      value,
+      value: normalizedValue,
       label: mod.label,
       ignore: mod.ignore,
     };
