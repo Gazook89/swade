@@ -22,6 +22,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [Unreleased]
+
+## Added
+
+- Added a `range` getter on the `SwadeItem` that will return the range brackets from the item, if it is a weapon or power
+
+## Changed
+
+- When no name is given for a modifier, the Roll Dialog will default to `Situational Mod`
+
 ## [v0.22.1]
 
 ### Changed

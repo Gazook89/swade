@@ -24,11 +24,36 @@ declare global {
 export default class SwadeItem extends Item {
   overrides: DeepPartial<Record<string, string | number | boolean>> = {};
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  static RANGE_REGEX = /[0-9]+\/*/g;
+
   get isMeleeWeapon(): boolean {
     if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
     return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
+  }
+
+  get range() {
+    //return early if the type doesn't match
+    if (this.data.type !== 'weapon' && this.data.type !== 'power') return;
+    //match the range string via Regex
+    const match = this.data.data.range.match(SwadeItem.RANGE_REGEX);
+    //return early if nothing is found
+    if (!match) return;
+    //split the string and convert the values to numbers
+    const ranges = match.join('').split('/');
+    //make sure the array is 3 values long
+    const increments = Array.from(
+      { ...ranges, length: 4 },
+      (v) => Number(v) || 0,
+    );
+    return {
+      short: increments[0],
+      medium: increments[1],
+      long: increments[2],
+      extreme: increments[3] || increments[2] * 4,
+    };
   }
 
   prepareBaseData() {
