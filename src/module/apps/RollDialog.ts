@@ -70,9 +70,12 @@ export default class RollDialog extends FormApplication<
     html.find('button.add-modifier').on('click', () => {
       const label = html.find('.new-modifier-label').val() as string;
       const value = html.find('.new-modifier-value').val() as string;
-      if (!!label && !!value) {
+      if (value) {
         const sanitized = this._sanitizeModifierInput(value);
-        this.ctx.mods.push({ label, value: sanitized });
+        this.ctx.mods.push({
+          label: label ?? game.i18n.localize('SWADE.SitMod'),
+          value: sanitized,
+        });
         this.render();
       }
     });
