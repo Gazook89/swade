@@ -279,3 +279,15 @@ Item:
       - itemDescription
     subtype: special
     grantsPowers: false
+Card:
+  types:
+    - 'poker'
+    - 'adventure'
+    - 'base'
+  templates:
+  adventure:
+    templates: []
+  poker:
+    templates: []
+  base:
+    templates: []

@@ -19,6 +19,10 @@ ITEM.TypeHindrance: Hindrance
 ITEM.TypeSkill: Skill
 ITEM.TypePower: Power
 ITEM.TypeAbility: Ability
+CARD.TypeAdventure: Adventure Card
+CARD.TypePoker: Poker Card
+SWADE.ActionDeckPresetLight: Action Deck (Light)
+SWADE.ActionDeckPresetDark: Action Deck (Dark)
 SWADE.Name: Name
 SWADE.Tough: Toughness
 SWADE.Race: Race

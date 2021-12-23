@@ -65,6 +65,21 @@ Hooks.once('init', () => {
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
   CONFIG.User.documentClass = SwadeUser;
 
+  //register card presets
+  //@ts-ignore
+  CONFIG.Cards.presets = {
+    actionDeckLight: {
+      label: 'SWADE.ActionDeckPresetLight',
+      src: 'systems/swade/cards/action-deck-light.json',
+      type: 'deck',
+    },
+    actionDeckDark: {
+      label: 'SWADE.ActionDeckPresetDark',
+      src: 'systems/swade/cards/action-deck-dark.json',
+      type: 'deck',
+    },
+  };
+
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
 

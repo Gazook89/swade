@@ -16,6 +16,10 @@ ITEM.TypeEdge: Talent
 ITEM.TypeHindrance: Handicap
 ITEM.TypeSkill: Fertigkeit
 ITEM.TypePower: Macht
+CARD.TypeAdventure: Abenteuerkarte
+CARD.TypePoker: Pokerkarte
+SWADE.ActionDeckPresetLight: Aktionskarten (Hell)
+SWADE.ActionDeckPresetDark: Aktionskarten (Dunkel)
 SWADE.Name: Name
 SWADE.Tough: Robustheit
 SWADE.Race: Volk
