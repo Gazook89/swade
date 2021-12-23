@@ -1,33 +1,26 @@
 import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateConfig';
 import { TemplatePreset } from '../enums/TemplatePresetEnum';
-import { getCanvas } from '../util';
 
-// declare global {
-//   interface PlaceableObjectClassConfig {
-//     MeasuredTemplate: typeof SwadeMeasuredTemplate;
-//   }
-// }
+declare global {
+  interface PlaceableObjectClassConfig {
+    MeasuredTemplate: typeof SwadeMeasuredTemplate;
+  }
+}
 
 export default class SwadeMeasuredTemplate extends MeasuredTemplate {
-  private moveTime = 0;
-  //The initially active CanvasLayer to re-activate after the workflow is complete
-  private initialLayer: CanvasLayer;
-  private handlers: MouseInterActionHandlers = {
-    mm: () => {},
-    rc: () => {},
-    lc: () => {},
-    mw: () => {},
-  };
+  handlers: Record<string, (...args) => void> = {};
+
   /**
    * A factory method to create a SwadeMeasuredTemplate instance using provided preset
    * @param preset the preset to use.
    * @returns SwadeTemplate | null
    */
   static fromPreset(preset: TemplatePreset | string) {
-    if (CONFIG.SWADE.activeMeasuredTemplatePreview) {
-      CONFIG.SWADE.activeMeasuredTemplatePreview.destroy();
-      CONFIG.SWADE.activeMeasuredTemplatePreview = null;
+    const existingPreview = CONFIG.SWADE.activeMeasuredTemplatePreview;
+    if (existingPreview && !existingPreview._destroyed) {
+      existingPreview.destroy({ children: true });
     }
+
     CONFIG.SWADE.activeMeasuredTemplatePreview = this._constructPreset(preset);
     if (CONFIG.SWADE.activeMeasuredTemplatePreview)
       CONFIG.SWADE.activeMeasuredTemplatePreview.drawPreview();
@@ -36,7 +29,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
   private static _constructPreset(preset: TemplatePreset | string) {
     // Prepare template data
     const templateBaseData: MeasuredTemplateConstructorDataData = {
-      user: game.user!.id,
+      user: game.user?.id,
       distance: 0,
       direction: 0,
       x: 0,
@@ -53,96 +46,94 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     const template = new CONFIG.MeasuredTemplate.documentClass(
       foundry.utils.mergeObject(templateBaseData, presetProtype.data),
       {
-        parent: getCanvas().scene as Scene,
+        parent: canvas.scene ?? undefined,
       },
     );
 
     //Return the template constructed from the item data
     return new this(template);
   }
-  /* -------------------------------------------- */
-  /**
-   * Creates a preview of the template
-   * @param {Event} event   The initiating click event
-   */
+
+  /** Creates a preview of the template */
   drawPreview() {
-    this.layer?.preview?.removeChildren();
-    this.initialLayer = getCanvas().activeLayer!;
-    this.layer?.preview?.addChild(this);
-    this.activatePreviewListeners();
+    const initialLayer = canvas.activeLayer!;
+    // Draw the template and switch to the template layer
     this.draw();
     this.layer.activate();
+    this.layer.preview?.addChild(this);
+    // Activate interactivity
+    this.activatePreviewListeners(initialLayer);
   }
-  /* -------------------------------------------- */
-  /**
-   * Activate listeners for the template preview
-   */
-  activatePreviewListeners() {
+
+  /** Activate listeners for the template preview */
+  activatePreviewListeners(initialLayer: CanvasLayer) {
+    let moveTime = 0;
+
     // Update placement (mouse-move)
     this.handlers.mm = (event) => {
       event.stopPropagation();
       const now = Date.now(); // Apply a 20ms throttle
-      if (now - this.moveTime <= 20) return;
+      if (now - moveTime <= 20) return;
       const center = event.data.getLocalPosition(this.layer);
-      const snapped = getCanvas().grid?.getSnappedPosition(
-        center.x,
-        center.y,
-        2,
-      );
+      const snapped = canvas.grid?.getSnappedPosition(center.x, center.y, 2);
       this.data.update({ x: snapped?.x, y: snapped?.y });
       this.refresh();
-      this.moveTime = now;
+      moveTime = now;
     };
+
     // Cancel the workflow (right-click)
-    this.handlers.rc = () => {
-      this.layer?.preview?.removeChildren();
-      getCanvas()!.stage!.off('mousemove', this.handlers.mm);
-      getCanvas()!.stage!.off('mousedown', this.handlers.lc);
-      getCanvas()!.app!.view.oncontextmenu = null;
-      getCanvas()!.app!.view.onwheel = null;
-      this.initialLayer.activate();
+    this.handlers.rc = (event) => {
+      //@ts-expect-error DND5e does this and Atropos probably knows what he's doing
+      this.layer._onDragLeftCancel(event);
+      this._removeListenersFromCanvas();
+      initialLayer.activate();
     };
+
     // Confirm the workflow (left-click)
     this.handlers.lc = (event) => {
-      event.stopPropagation();
       this.handlers.rc(event);
-      // Confirm final snapped position
-      const destination = getCanvas().grid?.getSnappedPosition(
-        this.data.x,
-        this.data.y,
-        2,
-      );
-      this.data.update(destination);
-      // Create the template
-      getCanvas()
-        .scene?.createEmbeddedDocuments('MeasuredTemplate', [
-          this.data.toObject(),
-        ])
-        .then(() => this.destroy());
+      const dest = canvas.grid?.getSnappedPosition(this.data.x, this.data.y, 2);
+      this.data.update(dest);
+      canvas.scene?.createEmbeddedDocuments('MeasuredTemplate', [
+        this.data.toObject(),
+      ]);
     };
+
     // Rotate the template by 3 degree increments (mouse-wheel)
     this.handlers.mw = (event) => {
       if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
       event.stopPropagation();
-      const delta = getCanvas().grid!.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+      const delta = canvas.grid!.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
       const snap = event.shiftKey ? delta : 5;
       this.data.update({
         direction: this.data.direction + snap * Math.sign(event.deltaY),
       });
       this.refresh();
     };
+
     // Activate listeners
-    getCanvas()!.stage!.on('mousemove', this.handlers.mm);
-    getCanvas()!.stage!.on('mousedown', this.handlers.lc);
-    getCanvas()!.app!.view.oncontextmenu = this.handlers.rc;
-    getCanvas()!.app!.view.onwheel = this.handlers.mw;
+    canvas.stage!.on('mousemove', this.handlers.mm);
+    canvas.stage!.on('mousedown', this.handlers.lc);
+    canvas.app!.view.oncontextmenu = this.handlers.rc;
+    canvas.app!.view.onwheel = this.handlers.mw;
   }
 
+  /** @override */
   destroy(...args) {
-    super.destroy(...args);
-    this.handlers.rc();
+    CONFIG.SWADE.activeMeasuredTemplatePreview = null;
+    this._removeListenersFromCanvas();
+    return super.destroy(...args);
   }
 
+  /** remove the mouse Listeners from the canvas */
+  _removeListenersFromCanvas() {
+    canvas.stage!.off('mousemove', this.handlers.mm);
+    canvas.stage!.off('mousedown', this.handlers.lc);
+    canvas.app!.view.oncontextmenu = null;
+    canvas.app!.view.onwheel = null;
+  }
+
+  /** @override */
   protected _getConeShape(
     direction: number,
     angle: number,
@@ -196,11 +187,4 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     }
     return new PIXI.Polygon(points);
   }
-}
-
-interface MouseInterActionHandlers {
-  mm: (...args) => void;
-  rc: (...args) => void;
-  lc: (...args) => void;
-  mw: (...args) => void;
 }
