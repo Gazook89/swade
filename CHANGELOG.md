@@ -22,6 +22,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.2]
+
+### Changed
+
+- Made all roll evaluation calls explicitly asynchronous to supress the console warning.
+
+### Fixed
+
+- Fixed leaky CSS in the Setting Configurator
+
 ## [v0.22.1]
 
 ### Changed
