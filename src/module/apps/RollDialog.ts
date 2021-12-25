@@ -174,7 +174,7 @@ export default class RollDialog extends FormApplication<
     const finalizedRoll = Roll.fromTerms(terms, roll.options);
 
     //evaluate
-    await finalizedRoll.evaluate();
+    await finalizedRoll.evaluate({ async: true });
 
     // Convert the roll to a chat message and return it
     await finalizedRoll.toMessage(
