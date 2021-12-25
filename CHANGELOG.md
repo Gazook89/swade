@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed leaky CSS in the Setting Configurator
+- Fixed The Measured Template presets failing to display properly when switching between presets
 
 ## [v0.22.1]
 
