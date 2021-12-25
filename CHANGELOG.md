@@ -32,6 +32,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - When no name is given for a modifier, the Roll Dialog will default to `Situational Mod`
 
+## [v0.22.2]
+
+### Changed
+
+- Made all roll evaluation calls explicitly asynchronous to supress the console warning.
+
+### Fixed
+
+- Fixed leaky CSS in the Setting Configurator
+- Fixed The Measured Template presets failing to display properly when switching between presets
+
 ## [v0.22.1]
 
 ### Changed

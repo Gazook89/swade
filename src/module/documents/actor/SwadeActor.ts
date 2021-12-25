@@ -324,7 +324,7 @@ export default class SwadeActor extends Actor {
     }
     if (!!game.dice3d && (await util.shouldShowBennyAnimation())) {
       game.dice3d.showForRoll(
-        await new Roll('1dB').evaluate(),
+        await new Roll('1dB').evaluate({ async: true }),
         game.user!,
         true,
         null,
