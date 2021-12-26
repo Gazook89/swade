@@ -64,7 +64,16 @@ interface Actions {
   };
 }
 
-interface WeaponData extends PhysicalItem, ItemDescription, Vehicular {
+interface BonusDamage {
+  bonusDamageDie: number;
+}
+
+interface WeaponData
+  extends PhysicalItem,
+    ItemDescription,
+    Vehicular,
+    Actions,
+    BonusDamage {
   damage: string;
   range: string;
   rof: number;
@@ -92,7 +101,11 @@ interface ArmorData extends ItemDescription, PhysicalItem {
   };
 }
 
-interface ShieldData extends ItemDescription, PhysicalItem {
+interface ShieldData
+  extends ItemDescription,
+    PhysicalItem,
+    Actions,
+    BonusDamage {
   minStr: string;
   parry: number;
   cover: number;
@@ -109,7 +122,7 @@ interface HindranceData extends ItemDescription {
   major: boolean;
 }
 
-interface PowerData extends ItemDescription, Equipable, Actions {
+interface PowerData extends ItemDescription, Equipable, Actions, BonusDamage {
   rank: string;
   pp: number;
   damage: string;
