@@ -8,11 +8,13 @@
 </div>
 <div class="form-group">
   <label>{{localize "SWADE.BonusDamage"}}</label>
-  <select name="data.bonusDamageDie" data-dtype="Number">
-    {{#select data.data.bonusDamageDie}}
-      {{> "systems/swade/templates/die-sides-options.hbs"}}
-    {{/select}}
-  </select>
+  <span class="form-fields">
+      <select name="data.bonusDamageDie" data-dtype="Number">
+      {{#select data.data.bonusDamageDie}}
+        {{> "systems/swade/templates/die-sides-options.hbs"}}
+      {{/select}}
+    </select>
+  </span>
 </div>
 <div class="form-group">
   <label>{{localize "SWADE.SkillModUni"}}</label>
