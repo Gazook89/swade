@@ -62,7 +62,7 @@ export default class SwadeItem extends Item {
   }
 
   rollDamage(options: IRollOptions = {}) {
-    const mods = new Array<TraitRollModifier>();
+    const modifiers = new Array<TraitRollModifier>();
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;
@@ -91,9 +91,9 @@ export default class SwadeItem extends Item {
           console.warn(
             'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
           );
-          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
+          modifiers.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
         } else {
-          mods.push(v);
+          modifiers.push(v);
         }
       });
     }
@@ -117,7 +117,7 @@ export default class SwadeItem extends Item {
       game.settings.get('swade', 'enableConviction') &&
       actor.data.data.details.conviction.active
     ) {
-      mods.push({
+      modifiers.push({
         label: game.i18n.localize('SWADE.Conv'),
         value: '+1d6x',
       });
@@ -130,19 +130,28 @@ export default class SwadeItem extends Item {
 
     //Joker Modifier
     if (actor.hasJoker) {
-      mods.push({
+      modifiers.push({
         label: game.i18n.localize('SWADE.Joker'),
         value: '+2',
       });
     }
 
-    const newRoll = new Roll(baseRoll.join(''));
+    const roll = new Roll(baseRoll.join(''));
+
+    Hooks.call(
+      'swadeRollDamage',
+      this.actor,
+      this,
+      roll,
+      modifiers,
+      game.userId,
+    );
 
     if (options.suppressChat) {
       return Roll.fromTerms([
-        ...newRoll.terms,
+        ...roll.terms,
         ...Roll.parse(
-          mods.reduce((acc: string, cur: TraitRollModifier) => {
+          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
             return (acc += `${cur.value}[${cur.label}]`);
           }, ''),
           this.getRollData(),
@@ -152,8 +161,8 @@ export default class SwadeItem extends Item {
 
     // Roll and return
     return game.swade.RollDialog.asPromise({
-      roll: newRoll,
-      mods: mods,
+      roll: roll,
+      mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this.actor! }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,

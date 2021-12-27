@@ -155,16 +155,16 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  rollAttribute(abilityId: Attribute, options: IRollOptions = {}) {
+  rollAttribute(ability: Attribute, options: IRollOptions = {}) {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
       ui.notifications?.warn(
         'Attribute Rolls with RoF greater than 1 are not currently supported',
       );
     }
-    const label: string = SWADE.attributes[abilityId].long;
+    const label: string = SWADE.attributes[ability].long;
     const actorData = this.data;
-    const abl = actorData.data.attributes[abilityId];
+    const abl = actorData.data.attributes[ability];
     const rolls = new Array<Roll>();
 
     const attrRoll = new Roll('');
@@ -182,17 +182,28 @@ export default class SwadeActor extends Actor {
     const basePool = PoolTerm.fromRolls(rolls);
     basePool.modifiers.push('kh');
 
-    const rollMods = this._buildTraitRollModifiers(
+    const modifiers = this._buildTraitRollModifiers(
       abl,
       options,
       game.i18n.localize(label),
     );
 
+    const roll = Roll.fromTerms([basePool]);
+
+    Hooks.call(
+      'swadeRollAttribute',
+      this,
+      ability,
+      roll,
+      modifiers,
+      game.userId,
+    );
+
     if (options.suppressChat) {
       return Roll.fromTerms([
-        basePool,
+        ...roll.terms,
         ...Roll.parse(
-          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
             return (acc += `${cur.value}[${cur.label}]`);
           }, ''),
           this.getRollData(),
@@ -202,8 +213,8 @@ export default class SwadeActor extends Actor {
 
     // Roll and return
     return game.swade.RollDialog.asPromise({
-      roll: Roll.fromTerms([basePool]),
-      mods: rollMods,
+      roll: roll,
+      mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
@@ -233,8 +244,8 @@ export default class SwadeActor extends Actor {
     }
 
     const skillRoll = this._handleComplexSkill(skill, options);
-    const basePool = skillRoll[0];
-    const rollMods = skillRoll[1];
+    const roll = skillRoll[0];
+    const modifiers = skillRoll[1];
 
     //Build Flavour
     let flavour = '';
@@ -242,11 +253,13 @@ export default class SwadeActor extends Actor {
       flavour = ` - ${options.flavour}`;
     }
 
+    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, game.userId);
+
     if (options.suppressChat) {
       return Roll.fromTerms([
-        basePool,
+        ...roll.terms,
         ...Roll.parse(
-          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
+          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
             return (acc += `${cur.value}[${cur.label}]`);
           }, ''),
           this.getRollData(),
@@ -256,8 +269,8 @@ export default class SwadeActor extends Actor {
 
     // Roll and return
     return game.swade.RollDialog.asPromise({
-      roll: Roll.fromTerms([basePool]),
-      mods: rollMods,
+      roll: roll,
+      mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',
@@ -310,9 +323,7 @@ export default class SwadeActor extends Actor {
         target: this,
         speaker: game.user,
       });
-      const chatData = {
-        content: message,
-      };
+      const chatData = { content: message };
       ChatMessage.create(chatData);
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
@@ -652,7 +663,7 @@ export default class SwadeActor extends Actor {
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
-  ): [PoolTerm, TraitRollModifier[]] {
+  ): [Roll, TraitRollModifier[]] {
     if (!options.rof) options.rof = 1;
     if (skill.data.type !== 'skill') {
       throw new Error('Detected-non skill in skill roll construction');
@@ -680,21 +691,13 @@ export default class SwadeActor extends Actor {
     const basePool = PoolTerm.fromRolls(rolls);
     basePool.modifiers.push(kh);
 
-    const finalTerms = new Array<RollTerm>();
-    finalTerms.push(basePool);
-
     const rollMods = this._buildTraitRollModifiers(
       skillData,
       options,
       skill.name,
     );
-    rollMods.forEach((m) =>
-      finalTerms.push(
-        ...Roll.parse(`${m.value}[${m.label}]`, this.getRollData()),
-      ),
-    );
 
-    return [basePool, rollMods];
+    return [Roll.fromTerms([basePool]), rollMods];
   }
 
   /**
