@@ -155,7 +155,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
     const itemId = $(element)
       .parents('[data-item-id]')
       .attr('data-item-id') as string;
-    const actor = game.actors!.get(actorId)!;
+    const actor = game.actors!.get(actorId, { strict: true });
     const action = element.getAttribute('data-action');
     const messageId = $(element)
       .parents('[data-message-id]')
@@ -171,7 +171,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
         .find('input.pp-adjust')
         .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
-      const power = actor.items.get(itemId)!;
+      const power = actor.items.get(itemId, { strict: true });
       let key = 'data.powerPoints.value';
       const arcane = getProperty(power.data, 'data.arcane');
       if (arcane) key = `data.powerPoints.${arcane}.value`;
@@ -191,7 +191,7 @@ export function chatListeners(html: JQuery<HTMLElement>) {
         .find('input.arcane-device-pp-adjust')
         .val() as string;
       const adjustment = element.getAttribute('data-adjust') as string;
-      const item = actor.items.get(itemId)!;
+      const item = actor.items.get(itemId, { strict: true });
       const key = 'data.powerPoints.value';
       const oldPP = getProperty(item.data, key) as number;
       if (adjustment === 'plus') {
@@ -281,7 +281,7 @@ export async function rerollFromChat(
   const roll = message.roll!;
   const actor = ChatMessage.getSpeakerActor(speaker)! as unknown as SwadeActor;
   const currentBennies = getProperty(actor.data, 'data.bennies.value');
-  const doSpendBenny = spendBenny && !!actor && actor.isWildcard;
+  const doSpendBenny = spendBenny && actor?.isWildcard;
 
   if (doSpendBenny && currentBennies <= 0) {
     ui.notifications?.warn(game.i18n.localize('SWADE.NoBennies'));
@@ -292,7 +292,7 @@ export async function rerollFromChat(
     ? game.i18n.localize('SWADE.RerollWithBenny')
     : game.i18n.localize('SWADE.FreeReroll');
 
-  const prefixes = flavor.getElementsByClassName('prefix') as HTMLCollection;
+  const prefixes = flavor.getElementsByClassName('prefix');
   if (prefixes.length > 0) {
     Array.from(prefixes).forEach((el: HTMLElement) => {
       el.innerText = prefix;
