@@ -40,9 +40,8 @@ export default class SwadeCombat extends Combat {
     const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
       strict: true,
     });
-    //FIXME Check on TableResultData
     if (
-      ids.length > actionCardDeck.results.filter((r) => !r.data['drawn']).length
+      ids.length > actionCardDeck.results.filter((r) => !r.data.drawn).length
     ) {
       ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return this;
@@ -313,8 +312,7 @@ export default class SwadeCombat extends Combat {
     const draw = await actionCardDeck.drawMany(count, { displayChat: false });
 
     for (const result of draw.results) {
-      //@ts-ignore
-      const resultID = result.data.resultId;
+      const resultID = result.data.resultId!;
       const card = await actionCardPack.getDocument(resultID);
       cards.push(card!);
     }
