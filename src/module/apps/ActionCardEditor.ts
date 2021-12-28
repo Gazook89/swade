@@ -93,7 +93,6 @@ export default class ActionCardEditor extends FormApplication {
 
   private _showCard(event: JQuery.ClickEvent<HTMLElement>) {
     const id = event.currentTarget.dataset.id!;
-    //@ts-ignore
     new ImagePopout(this.cards.get(id)?.data.img!, {
       shareable: true,
     }).render(true);

@@ -88,8 +88,8 @@ export default class SwadeItemSheet extends ItemSheet {
     });
 
     html.find('.profile-img').on('contextmenu', () => {
-      //@ts-ignore
-      new ImagePopout(this.item.img!, {
+      if (!this.item.img) return;
+      new ImagePopout(this.item.img, {
         title: this.item.name!,
         shareable:
           (this.item.isOwned && this.item.actor?.isOwner) ??
