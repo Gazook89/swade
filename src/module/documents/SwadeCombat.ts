@@ -42,8 +42,7 @@ export default class SwadeCombat extends Combat {
     });
     //FIXME Check on TableResultData
     if (
-      //@ts-expect-error Property doesn't seem to be defined in TabelResultData
-      ids.length > actionCardDeck.results.filter((r) => !r.data.drawn).length
+      ids.length > actionCardDeck.results.filter((r) => !r.data['drawn']).length
     ) {
       ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return this;
@@ -52,23 +51,23 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-      const c = this.combatants.get(id); //FIXME add strict option later so the combatant doesn't need to be asserted all the time
-      const roundHeld = c!.roundHeld;
-      const inGroup = c!.groupId;
-      if (c!.initiative !== null && !roundHeld) {
+      const c = this.combatants.get(id, { strict: true });
+      const roundHeld = c.roundHeld;
+      const inGroup = c.groupId;
+      if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c!.data.defeated || roundHeld || inGroup) continue;
+      if (c.data.defeated || roundHeld || inGroup) continue;
 
       // Set up edges
       let cardsToDraw = 1;
-      if (c!.actor!.data.data.initiative.hasLevelHeaded) cardsToDraw = 2;
-      if (c!.actor!.data.data.initiative.hasImpLevelHeaded) cardsToDraw = 3;
-      const hasHesitant = c!.actor!.data.data.initiative.hasHesitant;
-      const hasQuick = c!.actor!.data.data.initiative.hasQuick;
+      if (c.actor!.data.data.initiative.hasLevelHeaded) cardsToDraw = 2;
+      if (c.actor!.data.data.initiative.hasImpLevelHeaded) cardsToDraw = 3;
+      const hasHesitant = c.actor!.data.data.initiative.hasHesitant;
+      const hasQuick = c.actor!.data.data.initiative.hasQuick;
 
       // Draw initiative
       let card: JournalEntry | undefined;
@@ -79,7 +78,7 @@ export default class SwadeCombat extends Combat {
           cards.push(oldCard);
           card = await this.pickACard({
             cards: cards,
-            combatantName: c!.name,
+            combatantName: c.name,
             oldCardId: oldCard?.id!,
           });
           if (card === oldCard) {
@@ -94,7 +93,7 @@ export default class SwadeCombat extends Combat {
         if (cards.some((c) => c.getFlag('swade', 'isJoker'))) {
           card = await this.pickACard({
             cards: cards,
-            combatantName: c!.name,
+            combatantName: c.name,
           });
         } else {
           //sort cards to pick the lower one
@@ -115,7 +114,7 @@ export default class SwadeCombat extends Combat {
         const cards = await this.drawCard(cardsToDraw);
         card = await this.pickACard({
           cards: cards,
-          combatantName: c!.name,
+          combatantName: c.name,
           enableRedraw: hasQuick,
           isQuickDraw: hasQuick,
         });
@@ -127,7 +126,7 @@ export default class SwadeCombat extends Combat {
         if (cardValue <= 5) {
           card = await this.pickACard({
             cards: [card],
-            combatantName: c!.name,
+            combatantName: c.name,
             enableRedraw: true,
             isQuickDraw: true,
           });
@@ -150,14 +149,14 @@ export default class SwadeCombat extends Combat {
         (card!.getFlag('swade', 'cardValue') as number);
 
       combatantUpdates.push({
-        _id: c!.id,
+        _id: c.id,
         initiative: initiative,
         'flags.swade': newflags,
       });
-      if (c!.isGroupLeader) {
-        await c!.setSuitValue(c!.suitValue ?? 0 + 0.9);
+      if (c.isGroupLeader) {
+        await c.setSuitValue(c.suitValue ?? 0 + 0.9);
         const followers =
-          game.combats?.viewed?.combatants.filter((f) => f.groupId === c!.id) ??
+          game.combats?.viewed?.combatants.filter((f) => f.groupId === c.id) ??
           [];
         let s = newflags.suitValue;
         for await (const f of followers) {
@@ -193,12 +192,12 @@ export default class SwadeCombat extends Combat {
         {
           speaker: {
             scene: game.scenes?.active?.id,
-            actor: c!.actor ? c!.actor.id : null,
-            token: c!.token!.id,
-            alias: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
+            actor: c.actor ? c.actor.id : null,
+            token: c.token!.id,
+            alias: `${c.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           },
           whisper:
-            c!.token!.data.hidden || c!.hidden
+            c.token!.data.hidden || c.hidden
               ? game!.users!.filter((u: User) => u.isGM)
               : [],
           content: template,

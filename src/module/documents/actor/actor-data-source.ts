@@ -93,6 +93,7 @@ export interface CharacterDataSourceData {
     species: {
       name: string;
     };
+    archetype: string;
     conviction: {
       value: number;
       active: boolean;

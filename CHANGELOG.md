@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.3]
+
+### Added
+
+- Added Archetype field to character sheet.
+
 ## [v0.22.2]
 
 ### Changed
