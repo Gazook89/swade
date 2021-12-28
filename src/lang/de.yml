@@ -19,6 +19,7 @@ ITEM.TypePower: Macht
 SWADE.Name: Name
 SWADE.Tough: Robustheit
 SWADE.Race: Volk
+SWADE.Archetype: Archetyp
 SWADE.Pace: Bew.
 SWADE.Running: Sprinten
 SWADE.RunningDie: Sprintwürfel
@@ -335,6 +336,7 @@ SWADE.Subtype: Unterkategorie
 SWADE.SpecialAbility: Spezialfähigkeit
 SWADE.SpecialAbilities: Spezialfähigkeiten
 SWADE.RacialAbilities: Volkseigenschaften
+SWADE.ArchetypeAbilities: Archetypeigenschaften
 SWADE.About: Beschreibung
 SWADE.EdgesHindrances: Talente & Handicaps
 SWADE.GrantsPowers: Gewährt Mächte

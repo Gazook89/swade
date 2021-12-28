@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - Added Archetype field to character sheet.
+- Added Archetype subtype to the Race item. Archetypes work identically to races with the only difference being that the race fills out the race field on the actor it is added to and the archetype filling the archetype field.
 
 ## [v0.22.2]
 

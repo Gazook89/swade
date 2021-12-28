@@ -22,6 +22,7 @@ ITEM.TypeAbility: Ability
 SWADE.Name: Name
 SWADE.Tough: Toughness
 SWADE.Race: Race
+SWADE.Archetype: Archetype
 SWADE.Pace: Pace
 SWADE.Running: Running
 SWADE.RunningDie: Running Die
@@ -338,6 +339,7 @@ SWADE.Subtype: Subtype
 SWADE.SpecialAbility: Special Ability
 SWADE.SpecialAbilities: Special Abilities
 SWADE.RacialAbilities: Racial Abilities
+SWADE.ArchetypeAbilities: Archetype Abilities
 SWADE.About: About
 SWADE.EdgesHindrances: Edges & Hindrances
 SWADE.GrantsPowers: Grants Powers

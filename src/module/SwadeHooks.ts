@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
@@ -12,6 +13,7 @@ import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
 import * as chat from './chat';
 import { SWADE } from './config';
+import { TraitDie } from './documents/actor/actor-data-source';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
@@ -739,17 +741,15 @@ export default class SwadeHooks {
     sheet: ActorSheet,
     data: any,
   ) {
-    if (data.type === 'Actor' && actor.data.type === 'vehicle') {
-      const vehicleSheet = sheet as SwadeVehicleSheet;
-      const activeTab = getProperty(vehicleSheet, '_tabs')[0].active;
+    if (data.type === 'Actor' && sheet instanceof SwadeVehicleSheet) {
+      const activeTab = getProperty(sheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
         let idToSet = `Actor.${data.id}`;
         if ('pack' in data) {
           idToSet = `Compendium.${data.pack}.${data.id}`;
         }
-        sheet.actor.update({ 'data.driver.id': idToSet });
+        await sheet.actor.update({ 'data.driver.id': idToSet });
       }
-      return false;
     }
     //handle race item creation
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
@@ -765,16 +765,21 @@ export default class SwadeHooks {
         item = game.items!.get(data.id, { strict: true });
       }
       const isRightItemTypeAndSubtype =
-        item.data.type === 'ability' && item.data.data.subtype === 'race';
-      if (!isRightItemTypeAndSubtype) return false;
-
+        item.data.type === 'ability' && item.data.data.subtype !== 'special';
+      if (item.data.type !== 'ability') return;
+      const subType = item.data.data.subtype;
+      if (subType === 'special') return;
       //set name
-      await actor.update({ 'data.details.species.name': item.name });
+      if (subType === 'race') {
+        await actor.update({ 'data.details.species.name': item.name });
+      } else if (subType === 'archetype') {
+        await actor.update({ 'data.details.archetype': item.name });
+      }
       //process embedded documents
-      const map = new Map<string, Record<string, unknown>>(
+      const map = new Map<string, ItemData['_source']>(
         item.getFlag('swade', 'embeddedAbilities') ?? [],
       );
-      const creationData = new Array<Record<string, unknown>>();
+      const creationData = new Array<any>();
       for (const entry of map.values()) {
         //if the item isn't a skill, then push it to the new items
         if (entry.type !== 'skill') {
@@ -782,11 +787,11 @@ export default class SwadeHooks {
         } else {
           //else, check if there's already a skill like that that exists
           const skill = actor.items.find(
-            (i) => i.type === 'skill' && i.name === entry.name,
+            (i) => i.data.type === 'skill' && i.name === entry?.name,
           );
           if (skill) {
             //if the skill exists, set it to the value of the skill from the item
-            const skillDie = getProperty(entry, 'data.die') as any;
+            const skillDie = getProperty(entry, 'data.die') as TraitDie;
             await actor.items
               .get(skill.id!)
               ?.update({ data: { die: skillDie } });
@@ -802,7 +807,6 @@ export default class SwadeHooks {
           renderSheet: null,
         });
       }
-
       //copy active effects
       const effects = item.effects.map((ae) => ae.data.toObject());
       if (effects.length > 0) {
