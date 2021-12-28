@@ -208,7 +208,6 @@ export default class SwadeCombat extends Combat {
     if (!combatantUpdates.length) return this;
 
     // Update multiple combatants
-
     await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
@@ -353,7 +352,7 @@ export default class SwadeCombat extends Combat {
       },
     });
 
-    const buttons = {
+    const buttons: Record<string, Dialog.Button> = {
       ok: {
         icon: '<i class="fas fa-check"></i>',
         label: game.i18n.localize('SWADE.Ok'),
@@ -373,7 +372,6 @@ export default class SwadeCombat extends Combat {
     };
 
     if (!oldCardId && !enableRedraw) {
-      //@ts-ignore
       delete buttons.redraw;
     }
 
@@ -450,11 +448,11 @@ export default class SwadeCombat extends Combat {
     return this;
   }
 
-  //@ts-ignore
+  //FIXME return once types are maybe a bit more lenient
+  //@ts-expect-error The types are a bit too strict here
   async nextTurn() {
     const turn = this.turn;
-    //@ts-ignore
-    const skip = this.settings.skipDefeated;
+    const skip = this.settings['skipDefeated'] as boolean;
     // Determine the next turn number
     let next: number | null = null;
     if (skip) {
@@ -483,7 +481,8 @@ export default class SwadeCombat extends Combat {
     );
   }
 
-  //@ts-ignore
+  //FIXME return once types are maybe a bit more lenient
+  //@ts-expect-error The types are a bit too strict here
   async nextRound() {
     if (!game.user!.isGM) {
       game.socket?.emit('system.swade', {

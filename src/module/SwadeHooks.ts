@@ -86,18 +86,18 @@ export default class SwadeHooks {
     if (!game.user!.isGM) return;
     const currentVersion = game.settings.get('swade', 'systemMigrationVersion');
     //TODO Adjust this version every time a migration needs to be triggered
-    const NEEDS_MIGRATION_VERSION = '0.21.3';
+    const needsMigrationVersion = '0.21.3';
     //Minimal compatible version needed for the migration
-    const COMPATIBLE_MIGRATION_VERSION = '0.20.0';
+    const compatibleMigrationVersion = '0.20.0';
     //If the needed migration version is newer than the old migration version then migrate the world
     const needsMigration =
-      currentVersion && isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
+      currentVersion && isNewerVersion(needsMigrationVersion, currentVersion);
     if (!needsMigration) return;
 
     // Perform the migration
     if (
       currentVersion !== '0.0.0' &&
-      foundry.utils.isNewerVersion(currentVersion, COMPATIBLE_MIGRATION_VERSION)
+      foundry.utils.isNewerVersion(currentVersion, compatibleMigrationVersion)
     ) {
       ui.notifications?.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
         permanent: true,
