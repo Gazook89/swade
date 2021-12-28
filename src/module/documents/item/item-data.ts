@@ -112,7 +112,7 @@ interface HindranceData extends ItemDescription {
 
 interface PowerData extends ItemDescription, Equipable, Actions {
   rank: string;
-  pp: number;
+  pp: string;
   damage: string;
   range: string;
   duration: string;
