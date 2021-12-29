@@ -32,6 +32,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - When no name is given for a modifier, the Roll Dialog will default to `Situational Mod`
 
+## [v0.22.4]
+
+### Fixed
+
+- Fixed a bug that would case a prototype token update to fail when changing the wildcard status on npc actors.
+
 ## [v0.22.3]
 
 ### Added
