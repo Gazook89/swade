@@ -28,7 +28,7 @@ export default class SwadeEntityTweaks extends FormApplication {
    * @override
    */
   get template() {
-    return 'systems/swade/templates/actors/dialogs/tweaks-dialog.hbs';
+    return 'systems/swade/templates/actors/apps/tweaks-dialog.hbs';
   }
 
   /* -------------------------------------------- */
@@ -91,7 +91,6 @@ export default class SwadeEntityTweaks extends FormApplication {
 
     // Update the actor
     await this.object.update(expandedFormData);
-    //TODO check if even necessary
     this.object.sheet!.render(true);
   }
 
@@ -110,37 +109,34 @@ export default class SwadeEntityTweaks extends FormApplication {
     const formFields =
       getProperty(expandedFormData, 'data.additionalStats') || {};
     const prototypeFields = this._getAppropriateSettingFields();
-    const newFields = deepClone(
-      getProperty(this.object.data, 'data.additionalStats'),
+    const newFields = foundry.utils.deepClone(
+      this.object.data.data.additionalStats,
     );
     //handle setting specific fields
     const entries = Object.entries(formFields) as [string, AdditionalStat][];
     for (const [key, value] of entries) {
-      const fieldExistsOnEntity = getProperty(
-        this.object.data,
-        `data.additionalStats.${key}`,
-      );
-      if (value['useField'] && !!fieldExistsOnEntity) {
+      const fieldExistsOnEntity = !!this.object.data.data.additionalStats[key];
+      if (value?.useField && fieldExistsOnEntity) {
         //update exisiting field;
-        newFields[key]['hasMaxValue'] = prototypeFields[key]['hasMaxValue'];
-        newFields[key]['dtype'] = prototypeFields[key]['dtype'];
-        if (newFields[key]['dtype'] === 'Boolean') {
+        newFields![key].hasMaxValue = prototypeFields[key].hasMaxValue;
+        newFields![key].dtype = prototypeFields[key]?.dtype;
+        if (newFields[key]?.dtype === 'Boolean') {
           newFields[key]['-=max'] = null;
         }
-      } else if (value['useField'] && !fieldExistsOnEntity) {
+      } else if (value.useField && !fieldExistsOnEntity) {
         //add new field
         newFields[key] = prototypeFields[key];
       } else {
         //delete field
+        //@ts-expect-error This is only done to delete the key
         newFields[`-=${key}`] = null;
       }
     }
 
     //handle "stray" fields that exist on the actor but have no prototype
-    for (const key of Object.keys(
-      getProperty(this.object.data, 'data.additionalStats'),
-    )) {
+    for (const key of Object.keys(this.object.data.data.additionalStats)) {
       if (!prototypeFields[key]) {
+        //@ts-expect-error This is only done to delete the key
         newFields[`-=${key}`] = null;
       }
     }
