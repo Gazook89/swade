@@ -13,7 +13,6 @@ import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
 import * as chat from './chat';
 import { SWADE } from './config';
-import { TraitDie } from './documents/actor/actor-data-source';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
@@ -764,12 +763,10 @@ export default class SwadeHooks {
       } else {
         item = game.items!.get(data.id, { strict: true });
       }
-      const isRightItemTypeAndSubtype =
-        item.data.type === 'ability' && item.data.data.subtype !== 'special';
       if (item.data.type !== 'ability') return;
       const subType = item.data.data.subtype;
       if (subType === 'special') return;
-      //set name
+      //set name from archetype/race
       if (subType === 'race') {
         await actor.update({ 'data.details.species.name': item.name });
       } else if (subType === 'archetype') {
@@ -780,32 +777,50 @@ export default class SwadeHooks {
         item.getFlag('swade', 'embeddedAbilities') ?? [],
       );
       const creationData = new Array<any>();
+      const duplicates = new Array<{ type: string; name: string }>();
       for (const entry of map.values()) {
-        //if the item isn't a skill, then push it to the new items
-        if (entry.type !== 'skill') {
-          creationData.push(entry);
-        } else {
-          //else, check if there's already a skill like that that exists
-          const skill = actor.items.find(
-            (i) => i.data.type === 'skill' && i.name === entry?.name,
-          );
-          if (skill) {
-            //if the skill exists, set it to the value of the skill from the item
-            const skillDie = getProperty(entry, 'data.die') as TraitDie;
-            await actor.items
-              .get(skill.id!)
-              ?.update({ data: { die: skillDie } });
-          } else {
-            //else, add it to the new items
-            creationData.push(entry);
-          }
+        const existingItems = actor.items.filter(
+          (i) => i.data.type === entry.type && i.name === entry.name,
+        );
+        if (existingItems.length > 0) {
+          duplicates.push({
+            type: game.i18n.localize(`ITEM.Type${entry.type.capitalize()}`),
+            name: entry.name,
+          });
+          entry.name += ` (${item.name})`;
         }
+        creationData.push(entry);
       }
       if (creationData.length > 0) {
         await actor.createEmbeddedDocuments('Item', creationData, {
           //@ts-expect-error Normally the flag is a boolean
           renderSheet: null,
         });
+      }
+      if (duplicates.length > 0) {
+        new Dialog({
+          title: game.i18n.localize('SWADE.Duplicates'),
+          content: await renderTemplate(
+            '/systems/swade/templates/apps/duplicate-items-dialog.hbs',
+            {
+              duplicates: duplicates.sort((a, b) =>
+                a.type.localeCompare(b.type),
+              ),
+              bodyText: game.i18n.format('SWADE.DuplicateItemsBodyText', {
+                type: game.i18n.localize(SWADE.abilitySheet[subType].dropdown),
+                name: item.name,
+                target: actor.name,
+              }),
+            },
+          ),
+          default: 'ok',
+          buttons: {
+            ok: {
+              label: game.i18n.localize('SWADE.Ok'),
+              icon: '<i class="fas fa-check"></i>',
+            },
+          },
+        }).render(true);
       }
       //copy active effects
       const effects = item.effects.map((ae) => ae.data.toObject());

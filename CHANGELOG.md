@@ -29,6 +29,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added Archetype field to character sheet.
 - Added Archetype subtype to the Race item. Archetypes work identically to races with the only difference being that the race fills out the race field on the actor it is added to and the archetype filling the archetype field.
 
+### Changed
+
+- Changed the way races and archetypes are added to an Actor. When duplicates (by name and type) are found, they are added, but with a changed name to reflect their source and a dialog detailing which (potential) duplicates have been found/added is shown to the user. If no duplicates are found then no dialog is shown. I have done this as I don't want to make assumptions about which item of a specific name/type is the right one (especially when it comes to skills) and this they are both added and duplicates marked.
+
+### Fixed
+
+- Fixed a few
+
 ## [v0.22.2]
 
 ### Changed
