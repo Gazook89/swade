@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
+  DsnCustomWildDieOptions
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -24,6 +24,7 @@ import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
   public static async onReady() {
+    //TODO move this over to Cards API
     const packChoices = {};
     game
       .packs!.filter((p) => p.documentClass.documentName === 'JournalEntry')
@@ -33,7 +34,7 @@ export default class SwadeHooks {
       });
 
     game.settings.register('swade', 'cardDeck', {
-      name: game.i18n.localize('SWADE.InitCardDeck'), //Card Deck to use for Initiative',
+      name: game.i18n.localize('SWADE.InitCardDeck'),
       scope: 'world',
       type: String,
       config: true,
@@ -187,6 +188,7 @@ export default class SwadeHooks {
     html: JQuery,
     options: ContextMenu.Item[],
   ) {
+    //TODO Update ACE to the foundry Card API or depreceate it
     const obj: ContextMenu.Item = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
@@ -847,12 +849,12 @@ export default class SwadeHooks {
     }) as CompendiumCollection<JournalMetadata>;
 
     const cards = (await cardPack.getDocuments()).sort((a, b) => {
-      const cardA = a.getFlag('swade', 'cardValue') as number;
-      const cardB = b.getFlag('swade', 'cardValue') as number;
+      const cardA = a.getFlag('swade', 'cardValue');
+      const cardB = b.getFlag('swade', 'cardValue');
       const card = cardA - cardB;
       if (card !== 0) return card;
-      const suitA = a.getFlag('swade', 'suitValue') as number;
-      const suitB = b.getFlag('swade', 'suitValue') as number;
+      const suitA = a.getFlag('swade', 'suitValue');
+      const suitB = b.getFlag('swade', 'suitValue');
       const suit = suitA - suitB;
       return suit;
     });

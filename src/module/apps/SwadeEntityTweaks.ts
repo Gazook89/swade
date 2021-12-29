@@ -91,7 +91,6 @@ export default class SwadeEntityTweaks extends FormApplication {
 
     // Update the actor
     await this.object.update(expandedFormData);
-    this.object.sheet!.render(true);
   }
 
   private _getAppropriateSettingFields() {

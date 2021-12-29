@@ -1,16 +1,20 @@
+import { JournalMetadata } from '../globals';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 
+//TODO Move this over to cards API
 export async function createActionCardTable(
   rebuild?: boolean,
   cardpack?: string,
 ): Promise<void> {
-  let packName = game.settings.get('swade', 'cardDeck') as string;
+  let packName = game.settings.get('swade', 'cardDeck');
   if (cardpack) {
     packName = cardpack;
   }
-  const cardPack = game.packs?.get(packName, { strict: true });
+  const cardPack = game.packs?.get(packName, {
+    strict: true,
+  }) as CompendiumCollection<JournalMetadata>;
   let cardTable = game.tables?.getName(SWADE.init.cardTable);
 
   //If the table doesn't exist, create it
@@ -35,8 +39,7 @@ export async function createActionCardTable(
     await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
   }
 
-  //FIXME Revisit this later as this could probably be done more efficiently by using the index
-  const cards = (await cardPack.getDocuments()) as JournalEntry[];
+  const cards = await cardPack.getDocuments();
   const createData = cards.map((c, i) => {
     return {
       type: CONST.TABLE_RESULT_TYPES.COMPENDIUM,

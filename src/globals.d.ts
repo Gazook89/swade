@@ -16,6 +16,17 @@ declare global {
   interface CONFIG {
     SWADE: SwadeConfig;
   }
+
+  interface FlagConfig {
+    JournalEntry: {
+      swade: {
+        suitValue: number;
+        cardValue: number;
+        isJoker: boolean;
+        [key: string]: unknown;
+      };
+    };
+  }
 }
 
 export type AbilitySubType = 'special' | 'race' | 'archetype';
