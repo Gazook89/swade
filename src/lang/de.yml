@@ -23,6 +23,7 @@ SWADE.ActionDeckPresetDark: Aktionskarten (Dunkel)
 SWADE.Name: Name
 SWADE.Tough: Robustheit
 SWADE.Race: Volk
+SWADE.Archetype: Archetyp
 SWADE.Pace: Bew.
 SWADE.Running: Sprinten
 SWADE.RunningDie: Sprintwürfel
@@ -339,6 +340,7 @@ SWADE.Subtype: Unterkategorie
 SWADE.SpecialAbility: Spezialfähigkeit
 SWADE.SpecialAbilities: Spezialfähigkeiten
 SWADE.RacialAbilities: Volkseigenschaften
+SWADE.ArchetypeAbilities: Archetypeigenschaften
 SWADE.About: Beschreibung
 SWADE.EdgesHindrances: Talente & Handicaps
 SWADE.GrantsPowers: Gewährt Mächte
@@ -419,3 +421,4 @@ SWADE.Benny3DBackDesc: Hintere Textur des Bennys
 SWADE.Benny3DFrontBumpDesc: Bump Map der Vorderseite
 SWADE.Benny3DBackBumpDesc: Bump Map der Rückseite
 SWADE.Modifiers: Modifikatoren
+SWADE.Duplicates: Duplikate Gefunden

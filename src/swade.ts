@@ -92,6 +92,9 @@ Hooks.once('init', () => {
   //@ts-expect-error Not yet implemented in Types
   CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
 
+  //Preload Handlebars templates
+  preloadHandlebarsTemplates();
+
   // Register custom system settings
   registerSettings();
   registerSettingRules();
@@ -124,13 +127,6 @@ Hooks.once('init', () => {
 
   // Drop a journal image to a tile (for cards)
   listenJournalDrop();
-
-  // TODO revisit if necessary
-  //Preload Handlebars templates
-  SWADE.templates.preloadPromise = preloadHandlebarsTemplates();
-  SWADE.templates.preloadPromise.then(() => {
-    SWADE.templates.templatesPreloaded = true;
-  });
 });
 
 Hooks.once('ready', async () => SwadeHooks.onReady());
@@ -140,12 +136,9 @@ Hooks.on(
   'preCreateItem',
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (item: SwadeItem, options: object, userId: string) => {
-    if (
-      item.parent &&
-      item.data.type === 'ability' &&
-      item.data.data.subtype === 'race'
-    ) {
-      return false; //return early if we're doing race stuff
+    if (item.parent && item.data.type === 'ability') {
+      const subType = item.data.data.subtype;
+      if (subType === 'race' || subType === 'archetype') return false; //return early if we're doing race stuff
     }
   },
 );

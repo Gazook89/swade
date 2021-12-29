@@ -1,8 +1,10 @@
+import { AbilitySubType } from '../globals';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 
-export const SWADE = {
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const SWADE: SwadeConfig = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
   ██╔════╝██║    ██║██╔══██╗██╔══██╗██╔════╝
@@ -99,11 +101,6 @@ export const SWADE = {
 
   actionCardEditor: {
     id: 'actionCardEditor',
-  },
-
-  templates: {
-    preloadPromise: null as Promise<Handlebars.TemplateDelegate<any>[]> | null,
-    templatesPreloaded: false,
   },
 
   statusEffects: [
@@ -329,7 +326,20 @@ export const SWADE = {
 
   dsnTextureList: {},
 
-  raceLocalizationKey: 'SWADE.Race',
+  abilitySheet: {
+    special: {
+      dropdown: 'SWADE.SpecialAbility',
+      abilities: 'SWADE.SpecialAbilities',
+    },
+    race: {
+      dropdown: 'SWADE.Race',
+      abilities: 'SWADE.RacialAbilities',
+    },
+    archetype: {
+      dropdown: 'SWADE.Archetype',
+      abilities: 'SWADE.ArchetypeAbilities',
+    },
+  },
 
   allowedActorFlags: [],
 };
@@ -416,7 +426,8 @@ export interface SwadeConfig {
   dsnColorSets: any;
   dsnTextureList: any;
 
-  raceLocalizationKey: string;
+  abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
+
   allowedActorFlags: Array<string>;
 }
 

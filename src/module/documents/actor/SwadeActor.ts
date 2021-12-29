@@ -1004,18 +1004,20 @@ export default class SwadeActor extends Actor {
   }
 
   async _preUpdate(
-    changed: DeepPartial<ActorDataConstructorData> & Record<string, unknown>,
+    changed: DeepPartial<ActorDataConstructorData>,
     options: DocumentModificationOptions,
     user: BaseUser,
   ) {
     await super._preUpdate(changed, options, user);
     //wildcards will be linked, extras unlinked
     if (
+      this.data.type !== 'vehicle' &&
       game.settings.get('swade', 'autoLinkWildcards') &&
       hasProperty(changed, 'data.wildcard')
     ) {
-      //@ts-ignore
-      this.data.token.update({ actorlink: changed.data.wildcard });
+      this.data.token.update({
+        actorLink: changed['data.wildcard'] as boolean,
+      });
     }
   }
 

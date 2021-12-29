@@ -39,7 +39,7 @@ export default class ActionCardEditor extends FormApplication {
       ...super.defaultOptions,
       id: SWADE.actionCardEditor.id,
       title: game.i18n.localize('SWADE.ActionCardEditor'),
-      template: 'systems/swade/templates/action-card-editor.hbs',
+      template: 'systems/swade/templates/apps/action-card-editor.hbs',
       classes: ['swade', 'action-card-editor'],
       scrollY: ['.card-list'],
       width: 600,
@@ -93,7 +93,6 @@ export default class ActionCardEditor extends FormApplication {
 
   private _showCard(event: JQuery.ClickEvent<HTMLElement>) {
     const id = event.currentTarget.dataset.id!;
-    //@ts-ignore
     new ImagePopout(this.cards.get(id)?.data.img!, {
       shareable: true,
     }).render(true);

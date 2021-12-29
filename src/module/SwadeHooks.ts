@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
@@ -84,18 +85,18 @@ export default class SwadeHooks {
     if (!game.user!.isGM) return;
     const currentVersion = game.settings.get('swade', 'systemMigrationVersion');
     //TODO Adjust this version every time a migration needs to be triggered
-    const NEEDS_MIGRATION_VERSION = '0.21.3';
+    const needsMigrationVersion = '0.21.3';
     //Minimal compatible version needed for the migration
-    const COMPATIBLE_MIGRATION_VERSION = '0.20.0';
+    const compatibleMigrationVersion = '0.20.0';
     //If the needed migration version is newer than the old migration version then migrate the world
     const needsMigration =
-      currentVersion && isNewerVersion(NEEDS_MIGRATION_VERSION, currentVersion);
+      currentVersion && isNewerVersion(needsMigrationVersion, currentVersion);
     if (!needsMigration) return;
 
     // Perform the migration
     if (
       currentVersion !== '0.0.0' &&
-      foundry.utils.isNewerVersion(currentVersion, COMPATIBLE_MIGRATION_VERSION)
+      foundry.utils.isNewerVersion(currentVersion, compatibleMigrationVersion)
     ) {
       ui.notifications?.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
         permanent: true,
@@ -739,17 +740,15 @@ export default class SwadeHooks {
     sheet: ActorSheet,
     data: any,
   ) {
-    if (data.type === 'Actor' && actor.data.type === 'vehicle') {
-      const vehicleSheet = sheet as SwadeVehicleSheet;
-      const activeTab = getProperty(vehicleSheet, '_tabs')[0].active;
+    if (data.type === 'Actor' && sheet instanceof SwadeVehicleSheet) {
+      const activeTab = getProperty(sheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
         let idToSet = `Actor.${data.id}`;
         if ('pack' in data) {
           idToSet = `Compendium.${data.pack}.${data.id}`;
         }
-        sheet.actor.update({ 'data.driver.id': idToSet });
+        await sheet.actor.update({ 'data.driver.id': idToSet });
       }
-      return false;
     }
     //handle race item creation
     if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
@@ -764,37 +763,33 @@ export default class SwadeHooks {
       } else {
         item = game.items!.get(data.id, { strict: true });
       }
-      const isRightItemTypeAndSubtype =
-        item.data.type === 'ability' && item.data.data.subtype === 'race';
-      if (!isRightItemTypeAndSubtype) return false;
-
-      //set name
-      await actor.update({ 'data.details.species.name': item.name });
+      if (item.data.type !== 'ability') return;
+      const subType = item.data.data.subtype;
+      if (subType === 'special') return;
+      //set name from archetype/race
+      if (subType === 'race') {
+        await actor.update({ 'data.details.species.name': item.name });
+      } else if (subType === 'archetype') {
+        await actor.update({ 'data.details.archetype': item.name });
+      }
       //process embedded documents
-      const map = new Map<string, Record<string, unknown>>(
+      const map = new Map<string, ItemData['_source']>(
         item.getFlag('swade', 'embeddedAbilities') ?? [],
       );
-      const creationData = new Array<Record<string, unknown>>();
+      const creationData = new Array<any>();
+      const duplicates = new Array<{ type: string; name: string }>();
       for (const entry of map.values()) {
-        //if the item isn't a skill, then push it to the new items
-        if (entry.type !== 'skill') {
-          creationData.push(entry);
-        } else {
-          //else, check if there's already a skill like that that exists
-          const skill = actor.items.find(
-            (i) => i.type === 'skill' && i.name === entry.name,
-          );
-          if (skill) {
-            //if the skill exists, set it to the value of the skill from the item
-            const skillDie = getProperty(entry, 'data.die') as any;
-            await actor.items
-              .get(skill.id!)
-              ?.update({ data: { die: skillDie } });
-          } else {
-            //else, add it to the new items
-            creationData.push(entry);
-          }
+        const existingItems = actor.items.filter(
+          (i) => i.data.type === entry.type && i.name === entry.name,
+        );
+        if (existingItems.length > 0) {
+          duplicates.push({
+            type: game.i18n.localize(`ITEM.Type${entry.type.capitalize()}`),
+            name: entry.name,
+          });
+          entry.name += ` (${item.name})`;
         }
+        creationData.push(entry);
       }
       if (creationData.length > 0) {
         await actor.createEmbeddedDocuments('Item', creationData, {
@@ -802,7 +797,31 @@ export default class SwadeHooks {
           renderSheet: null,
         });
       }
-
+      if (duplicates.length > 0) {
+        new Dialog({
+          title: game.i18n.localize('SWADE.Duplicates'),
+          content: await renderTemplate(
+            '/systems/swade/templates/apps/duplicate-items-dialog.hbs',
+            {
+              duplicates: duplicates.sort((a, b) =>
+                a.type.localeCompare(b.type),
+              ),
+              bodyText: game.i18n.format('SWADE.DuplicateItemsBodyText', {
+                type: game.i18n.localize(SWADE.abilitySheet[subType].dropdown),
+                name: item.name,
+                target: actor.name,
+              }),
+            },
+          ),
+          default: 'ok',
+          buttons: {
+            ok: {
+              label: game.i18n.localize('SWADE.Ok'),
+              icon: '<i class="fas fa-check"></i>',
+            },
+          },
+        }).render(true);
+      }
       //copy active effects
       const effects = item.effects.map((ae) => ae.data.toObject());
       if (effects.length > 0) {

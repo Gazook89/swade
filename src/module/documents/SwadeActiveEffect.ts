@@ -28,7 +28,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
     return false;
   }
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   static ITEM_REGEXP = /@([a-zA-Z0-9]+){([^.]+)}\[([a-zA-Z0-9.]+)\]/;
 
   /** @override */

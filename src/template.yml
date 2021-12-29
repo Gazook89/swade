@@ -57,6 +57,7 @@ Actor:
           value: ''
         species:
           name: ''
+        archetype: ''
         currency: 500
         wealth:
           die: 6

@@ -45,10 +45,10 @@ export default class RollDialog extends FormApplication<
     return this.ctx.title ?? 'SWADE Rolldialog';
   }
 
-  get rollMode(): foundry.CONST.DiceRollMode {
+  get rollMode(): foundry.CONST.DICE_ROLL_MODES {
     const select = this.form?.querySelector<HTMLSelectElement>('#rollMode');
     return (
-      (select?.value as foundry.CONST.DiceRollMode) ??
+      (select?.value as foundry.CONST.DICE_ROLL_MODES) ??
       game.settings.get('core', 'rollMode')
     );
   }
@@ -290,5 +290,5 @@ interface RollDialogContext {
 
 interface RollDialogFormData {
   modifiers?: TraitRollModifier[];
-  rollMode: foundry.CONST.DiceRollMode;
+  rollMode: foundry.CONST.DICE_ROLL_MODES;
 }
