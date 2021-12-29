@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- Fixed a few
+- Changed references to objects and a variables that have been marked depreceated
 
 ## [v0.22.2]
 
