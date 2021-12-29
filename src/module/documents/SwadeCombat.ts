@@ -40,9 +40,7 @@ export default class SwadeCombat extends Combat {
     const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
       strict: true,
     });
-    //FIXME Check on TableResultData
     if (
-      //@ts-expect-error Property doesn't seem to be defined in TabelResultData
       ids.length > actionCardDeck.results.filter((r) => !r.data.drawn).length
     ) {
       ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
@@ -52,23 +50,23 @@ export default class SwadeCombat extends Combat {
     // Iterate over Combatants, performing an initiative draw for each
     for (const id of ids) {
       // Get Combatant data
-      const c = this.combatants.get(id); //FIXME add strict option later so the combatant doesn't need to be asserted all the time
-      const roundHeld = c!.roundHeld;
-      const inGroup = c!.groupId;
-      if (c!.initiative !== null && !roundHeld) {
+      const c = this.combatants.get(id, { strict: true });
+      const roundHeld = c.roundHeld;
+      const inGroup = c.groupId;
+      if (c.initiative !== null && !roundHeld) {
         console.log('This must be a reroll');
         isRedraw = true;
       }
 
       //Do not draw cards for defeated or holding combatants
-      if (c!.data.defeated || roundHeld || inGroup) continue;
+      if (c.data.defeated || roundHeld || inGroup) continue;
 
       // Set up edges
       let cardsToDraw = 1;
-      if (c!.actor!.data.data.initiative.hasLevelHeaded) cardsToDraw = 2;
-      if (c!.actor!.data.data.initiative.hasImpLevelHeaded) cardsToDraw = 3;
-      const hasHesitant = c!.actor!.data.data.initiative.hasHesitant;
-      const hasQuick = c!.actor!.data.data.initiative.hasQuick;
+      if (c.actor!.data.data.initiative.hasLevelHeaded) cardsToDraw = 2;
+      if (c.actor!.data.data.initiative.hasImpLevelHeaded) cardsToDraw = 3;
+      const hasHesitant = c.actor!.data.data.initiative.hasHesitant;
+      const hasQuick = c.actor!.data.data.initiative.hasQuick;
 
       // Draw initiative
       let card: JournalEntry | undefined;
@@ -79,7 +77,7 @@ export default class SwadeCombat extends Combat {
           cards.push(oldCard);
           card = await this.pickACard({
             cards: cards,
-            combatantName: c!.name,
+            combatantName: c.name,
             oldCardId: oldCard?.id!,
           });
           if (card === oldCard) {
@@ -94,7 +92,7 @@ export default class SwadeCombat extends Combat {
         if (cards.some((c) => c.getFlag('swade', 'isJoker'))) {
           card = await this.pickACard({
             cards: cards,
-            combatantName: c!.name,
+            combatantName: c.name,
           });
         } else {
           //sort cards to pick the lower one
@@ -115,7 +113,7 @@ export default class SwadeCombat extends Combat {
         const cards = await this.drawCard(cardsToDraw);
         card = await this.pickACard({
           cards: cards,
-          combatantName: c!.name,
+          combatantName: c.name,
           enableRedraw: hasQuick,
           isQuickDraw: hasQuick,
         });
@@ -127,7 +125,7 @@ export default class SwadeCombat extends Combat {
         if (cardValue <= 5) {
           card = await this.pickACard({
             cards: [card],
-            combatantName: c!.name,
+            combatantName: c.name,
             enableRedraw: true,
             isQuickDraw: true,
           });
@@ -150,14 +148,14 @@ export default class SwadeCombat extends Combat {
         (card!.getFlag('swade', 'cardValue') as number);
 
       combatantUpdates.push({
-        _id: c!.id,
+        _id: c.id,
         initiative: initiative,
         'flags.swade': newflags,
       });
-      if (c!.isGroupLeader) {
-        await c!.setSuitValue(c!.suitValue ?? 0 + 0.9);
+      if (c.isGroupLeader) {
+        await c.setSuitValue(c.suitValue ?? 0 + 0.9);
         const followers =
-          game.combats?.viewed?.combatants.filter((f) => f.groupId === c!.id) ??
+          game.combats?.viewed?.combatants.filter((f) => f.groupId === c.id) ??
           [];
         let s = newflags.suitValue;
         for await (const f of followers) {
@@ -193,12 +191,12 @@ export default class SwadeCombat extends Combat {
         {
           speaker: {
             scene: game.scenes?.active?.id,
-            actor: c!.actor ? c!.actor.id : null,
-            token: c!.token!.id,
-            alias: `${c!.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
+            actor: c.actor ? c.actor.id : null,
+            token: c.token!.id,
+            alias: `${c.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           },
           whisper:
-            c!.token!.data.hidden || c!.hidden
+            c.token!.data.hidden || c.hidden
               ? game!.users!.filter((u: User) => u.isGM)
               : [],
           content: template,
@@ -210,7 +208,6 @@ export default class SwadeCombat extends Combat {
     if (!combatantUpdates.length) return this;
 
     // Update multiple combatants
-
     await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
@@ -314,8 +311,7 @@ export default class SwadeCombat extends Combat {
     const draw = await actionCardDeck.drawMany(count, { displayChat: false });
 
     for (const result of draw.results) {
-      //@ts-ignore
-      const resultID = result.data.resultId;
+      const resultID = result.data.resultId!;
       const card = await actionCardPack.getDocument(resultID);
       cards.push(card!);
     }
@@ -356,7 +352,7 @@ export default class SwadeCombat extends Combat {
       },
     });
 
-    const buttons = {
+    const buttons: Record<string, Dialog.Button> = {
       ok: {
         icon: '<i class="fas fa-check"></i>',
         label: game.i18n.localize('SWADE.Ok'),
@@ -376,7 +372,6 @@ export default class SwadeCombat extends Combat {
     };
 
     if (!oldCardId && !enableRedraw) {
-      //@ts-ignore
       delete buttons.redraw;
     }
 
@@ -453,11 +448,11 @@ export default class SwadeCombat extends Combat {
     return this;
   }
 
-  //@ts-ignore
+  //FIXME return once types are maybe a bit more lenient
+  //@ts-expect-error The types are a bit too strict here
   async nextTurn() {
     const turn = this.turn;
-    //@ts-ignore
-    const skip = this.settings.skipDefeated;
+    const skip = this.settings['skipDefeated'] as boolean;
     // Determine the next turn number
     let next: number | null = null;
     if (skip) {
@@ -486,7 +481,8 @@ export default class SwadeCombat extends Combat {
     );
   }
 
-  //@ts-ignore
+  //FIXME return once types are maybe a bit more lenient
+  //@ts-expect-error The types are a bit too strict here
   async nextRound() {
     if (!game.user!.isGM) {
       game.socket?.emit('system.swade', {

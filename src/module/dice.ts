@@ -26,7 +26,7 @@ interface RollHandlerData {
 
 /**
  * A helper class for dice interactions
- * @deprecated
+ * @deprecated since v0.22.0
  */
 export default class SwadeDice {
   static async Roll({

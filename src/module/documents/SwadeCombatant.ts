@@ -107,10 +107,12 @@ export default class SwadeCombatant extends Combatant {
   ) {
     await super._preCreate(data, options, user);
     const combatants = game?.combat?.combatants.size!;
+    const tokenID =
+      data.tokenId instanceof TokenDocument ? data.tokenId.id : data.tokenId;
     const tokenIndex =
       getCanvas()
         .tokens?.controlled.map((t) => t.id)
-        .indexOf(data.tokenId!) ?? 0;
+        .indexOf(tokenID as string) ?? 0;
     const sortValue = tokenIndex + combatants;
     this.data.update({
       flags: {

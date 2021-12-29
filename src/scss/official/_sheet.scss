@@ -112,17 +112,22 @@
 
   .race {
     grid-row: 2;
-    grid-column: 1 / span 4;
+    grid-column: 1 / span 3;
+  }
+
+  .archetype {
+    grid-row: 2;
+    grid-column: 4 / span 3;
   }
 
   .rank {
     grid-row: 2;
-    grid-column: 5 / span 4;
+    grid-column: 7 / span 3;
   }
 
   .advances {
     grid-row: 2;
-    grid-column: 9 / span 4;
+    grid-column: 10 / span 3;
 
     input {
       text-align: center;

@@ -1,4 +1,5 @@
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
+import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 
@@ -9,8 +10,8 @@ declare global {
   interface FlagConfig {
     Item: {
       swade: {
-        embeddedAbilities: [string, any][];
-        embeddedPowers: [string, any][];
+        embeddedAbilities: [string, ItemData['_source']][];
+        embeddedPowers: [string, ItemData['_source']][];
         [key: string]: unknown;
       };
     };
@@ -312,7 +313,6 @@ export default class SwadeItem extends Item {
       },
       flags: { 'core.canPopout': true },
     };
-    ChatMessage.getSpeaker();
 
     if (
       game.settings.get('swade', 'hideNpcItemChatCards') &&

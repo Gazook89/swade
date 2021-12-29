@@ -18,6 +18,8 @@ declare global {
   }
 }
 
+export type AbilitySubType = 'special' | 'race' | 'archetype';
+
 export type ActorMetadata = CompendiumCollection.Metadata & { entity: 'Actor' };
 export type ItemMetadata = CompendiumCollection.Metadata & { entity: 'Item' };
 export type CardMetadata = CompendiumCollection.Metadata & { entity: 'Card' };

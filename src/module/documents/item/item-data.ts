@@ -1,3 +1,4 @@
+import { AbilitySubType } from '../../../globals';
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { TraitDie, WildDie } from '../actor/actor-data-source';
 
@@ -111,7 +112,7 @@ interface HindranceData extends ItemDescription {
 
 interface PowerData extends ItemDescription, Equipable, Actions {
   rank: string;
-  pp: number;
+  pp: string;
   damage: string;
   range: string;
   duration: string;
@@ -129,7 +130,7 @@ interface SkillData extends ItemDescription {
 }
 
 interface AbilityData extends ItemDescription {
-  subtype: string;
+  subtype: AbilitySubType;
   grantsPowers: boolean;
 }
 

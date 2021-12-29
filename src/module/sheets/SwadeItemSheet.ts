@@ -88,8 +88,8 @@ export default class SwadeItemSheet extends ItemSheet {
     });
 
     html.find('.profile-img').on('contextmenu', () => {
-      //@ts-ignore
-      new ImagePopout(this.item.img!, {
+      if (!this.item.img) return;
+      new ImagePopout(this.item.img, {
         title: this.item.name!,
         shareable:
           (this.item.isOwned && this.item.actor?.isOwner) ??
@@ -190,6 +190,12 @@ export default class SwadeItemSheet extends ItemSheet {
   getData() {
     const data: any = super.getData();
     data.config = SWADE;
+    if (this.item.data.type === 'ability') {
+      const subtype = this.item.data.data.subtype;
+      data.localization = SWADE.abilitySheet;
+      data.abilityHeader = SWADE.abilitySheet[subtype].abilities;
+      data.isRaceOrArchetype = subtype === 'race' || subtype === 'archetype';
+    }
     const actor = this.item.actor;
     const ownerIsWildcard = actor && actor.isWildcard;
     if (ownerIsWildcard || !this.item.isOwned) {
@@ -302,17 +308,12 @@ export default class SwadeItemSheet extends ItemSheet {
     }
 
     //prep item data
-
-    const itemData = deepClone(item.data.toObject());
-    //@ts-ignore
-    delete itemData['_id'];
-    //@ts-ignore
-    delete itemData['permission'];
+    const itemData = item.data.toObject();
 
     let propertyName = '';
     if (
       this.item.data.type === 'ability' &&
-      this.item.data.data.subtype === 'race'
+      this.item.data.data.subtype !== 'special'
     ) {
       propertyName = 'embeddedAbilities';
     }

@@ -13,7 +13,7 @@ export default class SettingConfigurator extends FormApplication {
       ...super.defaultOptions,
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,
-      template: 'systems/swade/templates/setting-config.hbs',
+      template: 'systems/swade/templates/apps/setting-config.hbs',
       classes: ['swade', 'setting-config'],
       scrollY: ['.sheet-body'],
       width: 600,
