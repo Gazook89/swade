@@ -37,12 +37,11 @@ export default class SwadeCombat extends Combat {
     const initMessages: Record<string, unknown>[] = [];
     let isRedraw = false;
     let skipMessage = false;
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
-    });
-    if (
-      ids.length > actionCardDeck.results.filter((r) => !r.data.drawn).length
-    ) {
+    const actionCardDeck = game.cards!.get(
+      game.settings.get('swade', 'cardDeck'),
+      { strict: true },
+    );
+    if (ids.length > actionCardDeck.availableCards.length) {
       ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return this;
     }
@@ -69,7 +68,7 @@ export default class SwadeCombat extends Combat {
       const hasQuick = c.actor!.data.data.initiative.hasQuick;
 
       // Draw initiative
-      let card: JournalEntry | undefined;
+      let card: Card | undefined;
       if (isRedraw) {
         const oldCard = await this.findCard(c?.cardValue!, c?.suitValue!);
         const cards = await this.drawCard();
@@ -96,7 +95,7 @@ export default class SwadeCombat extends Combat {
           });
         } else {
           //sort cards to pick the lower one
-          cards.sort((a: JournalEntry, b: JournalEntry) => {
+          cards.sort((a, b) => {
             const cardA = a.getFlag('swade', 'cardValue') as number;
             const cardB = b.getFlag('swade', 'cardValue') as number;
             const card = cardA - cardB;
@@ -287,35 +286,16 @@ export default class SwadeCombat extends Combat {
    * @param count number of cards to draw
    * @returns an array with the drawn cards
    */
-  async drawCard(count = 1): Promise<JournalEntry[]> {
-    const packName = game.settings.get('swade', 'cardDeck');
-    let actionCardPack = game.packs.get(
-      packName,
-    ) as CompendiumCollection<JournalMetadata>;
+  async drawCard(count = 1): Promise<Card[]> {
+    const deckId = game.settings.get('swade', 'cardDeck');
+    const actionCardDeck = game.cards!.get(deckId, { strict: true });
+    const discardPile = game.cards!.get('', { strict: true });
 
-    if (!actionCardPack) {
-      console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
-      await game.settings.set(
-        'swade',
-        'cardDeck',
-        SWADE.init.defaultCardCompendium,
-      );
-      actionCardPack = game.packs.get(SWADE.init.defaultCardCompendium, {
-        strict: true,
-      }) as CompendiumCollection<JournalMetadata>;
-    }
-    const cards = new Array<JournalEntry>();
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
+    const draw = actionCardDeck.dealForInitative(discardPile, count, {
+      chatNotification: false,
+      how: foundry.CONST.CARD_DRAW_MODES.TOP,
     });
-    const draw = await actionCardDeck.drawMany(count, { displayChat: false });
-
-    for (const result of draw.results) {
-      const resultID = result.data.resultId!;
-      const card = await actionCardPack.getDocument(resultID);
-      cards.push(card!);
-    }
-    return cards;
+    return draw;
   }
 
   /**

@@ -36,11 +36,6 @@ export const SWADE: SwadeConfig = {
     },
   },
 
-  init: {
-    defaultCardCompendium: 'swade.action-cards',
-    cardTable: 'Action Cards',
-  },
-
   packChoices: {},
 
   imagedrop: {
@@ -367,11 +362,6 @@ export interface SwadeConfig {
       long: string;
       short: string;
     };
-  };
-
-  init: {
-    defaultCardCompendium: string;
-    cardTable: string;
   };
 
   packChoices: Record<string, string>;

@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
+  DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -20,32 +20,26 @@ import * as migrations from './migration';
 import { SwadeSetup } from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
-import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
   public static async onReady() {
-    //TODO move this over to Cards API
-    const packChoices = {};
-    game
-      .packs!.filter((p) => p.documentClass.documentName === 'JournalEntry')
-      .forEach((p) => {
-        const choice = `${p.metadata.label} (${p.metadata.package})`;
-        packChoices[p.collection] = choice;
-      });
-
+    const deckChoices: Record<string, string> = {};
+    const pokerDecks = game
+      .cards!.filter((stack) => {
+        const cards = Array.from(stack.cards.values());
+        return stack.type === 'deck' && cards.every((c) => c.type === 'poker');
+      })
+      .forEach((d) => (deckChoices[d.id] = d.name!));
     game.settings.register('swade', 'cardDeck', {
       name: game.i18n.localize('SWADE.InitCardDeck'),
       scope: 'world',
       type: String,
       config: true,
-      default: SWADE.init.defaultCardCompendium,
-      choices: packChoices,
+      choices: deckChoices,
       onChange: async (choice: string) => {
         console.log(
           `Repopulating action cards Table with cards from deck ${choice}`,
         );
-        await createActionCardTable(true, choice);
-        ui.notifications?.info('Table re-population complete');
       },
     });
     await SwadeSetup.setup();

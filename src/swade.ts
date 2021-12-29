@@ -13,6 +13,7 @@ import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
 import SwadeActiveEffect from './module/documents/SwadeActiveEffect';
+import SwadeCards from './module/documents/SwadeCards';
 import SwadeCombat from './module/documents/SwadeCombat';
 import SwadeCombatant from './module/documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
@@ -64,6 +65,7 @@ Hooks.once('init', () => {
   CONFIG.Combatant.documentClass = SwadeCombatant;
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
   CONFIG.User.documentClass = SwadeUser;
+  CONFIG.Cards.documentClass = SwadeCards;
 
   //register card presets
   //@ts-ignore
