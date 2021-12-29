@@ -228,7 +228,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     data.config = SWADE;
 
     data.itemsByType = {};
-    //@ts-ignore
     for (const type of game.system.documentTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
     }
