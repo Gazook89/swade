@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.4]
+
+### Fixed
+
+- Fixed a bug that would case a prototype token update to fail when changing the wildcard status on npc actors.
+
 ## [v0.22.3]
 
 ### Added

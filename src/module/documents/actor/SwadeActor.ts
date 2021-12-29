@@ -1012,8 +1012,8 @@ export default class SwadeActor extends Actor {
       game.settings.get('swade', 'autoLinkWildcards') &&
       hasProperty(changed, 'data.wildcard')
     ) {
-      this.data.token.update({
-        actorLink: changed['data.wildcard'] as boolean,
+      await this.data.token.update({
+        actorLink: getProperty(changed, 'data.wildcard') as boolean,
       });
     }
   }
