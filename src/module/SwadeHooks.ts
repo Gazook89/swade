@@ -24,23 +24,31 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 export default class SwadeHooks {
   public static async onReady() {
     const deckChoices: Record<string, string> = {};
-    const pokerDecks = game
+    const discardPiles: Record<string, string> = {};
+    game
       .cards!.filter((stack) => {
         const cards = Array.from(stack.cards.values());
         return stack.type === 'deck' && cards.every((c) => c.type === 'poker');
       })
       .forEach((d) => (deckChoices[d.id] = d.name!));
+
+    game.cards
+      ?.filter((stack) => stack.type === 'pile')
+      .forEach((p) => (discardPiles[p.id] = p.name!));
+
     game.settings.register('swade', 'cardDeck', {
       name: game.i18n.localize('SWADE.InitCardDeck'),
       scope: 'world',
       type: String,
       config: true,
       choices: deckChoices,
-      onChange: async (choice: string) => {
-        console.log(
-          `Repopulating action cards Table with cards from deck ${choice}`,
-        );
-      },
+    });
+    game.settings.register('swade', 'discardPile', {
+      name: game.i18n.localize('SWADE.InitDiscardPile'),
+      scope: 'world',
+      type: String,
+      config: true,
+      choices: discardPiles,
     });
     await SwadeSetup.setup();
 
@@ -838,55 +846,49 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const cardPack = game.packs!.get(game.settings.get('swade', 'cardDeck'), {
+    const deck = game.cards!.get(game.settings.get('swade', 'cardDeck'), {
       strict: true,
-    }) as CompendiumCollection<JournalMetadata>;
+    });
 
-    const cards = (await cardPack.getDocuments()).sort((a, b) => {
-      const cardA = a.getFlag('swade', 'cardValue');
-      const cardB = b.getFlag('swade', 'cardValue');
+    const cards = Array.from(deck.cards.values()).sort((a, b) => {
+      const cardA = a.data.value!;
+      const cardB = b.data.value!;
       const card = cardA - cardB;
       if (card !== 0) return card;
-      const suitA = a.getFlag('swade', 'suitValue');
-      const suitB = b.getFlag('swade', 'suitValue');
+      const suitA = a.data.data['suit'];
+      const suitB = b.data.data['suit'];
       const suit = suitA - suitB;
       return suit;
     });
 
     //prep list of cards for selection
-    const cardTable = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
-    });
 
-    const cardList: any[] = [];
+    const cardList = new Array<any>();
     for (const card of cards) {
-      const cardValue = card.getFlag('swade', 'cardValue') as number;
-      const suitValue = card.getFlag('swade', 'suitValue') as number;
+      const cardValue = card.data.value!;
+      const suitValue = card.data.data['suit'];
       const color =
         suitValue === 2 || suitValue === 3 ? 'color: red;' : 'color: black;';
       const isDealt =
-        options.document.getFlag('swade', 'cardValue') === cardValue &&
-        options.document.getFlag('swade', 'suitValue') === suitValue;
+        options.document.cardValue === cardValue &&
+        options.document.suitValue === suitValue;
 
-      const foundCard = cardTable.results.find(
-        (r) => r.data['text'] === card.name,
-      );
-      const isDrawn = foundCard?.data['drawn'];
-      const isAvailable = isDrawn ? 'text-decoration: line-through;' : '';
+      const isAvailable = card?.data.drawn
+        ? 'text-decoration: line-through;'
+        : '';
 
       cardList.push({
-        cardValue,
-        suitValue,
+        id: card.id,
         isDealt,
         color,
         isAvailable,
         name: card.name,
-        cardString: card.data.content,
-        isJoker: card.getFlag('swade', 'isJoker'),
+        cardString: card.data.description,
+        isJoker: card.data.data['isJoker'],
       });
     }
-    const numberOfJokers = cards.filter((c) =>
-      c.getFlag('swade', 'isJoker'),
+    const numberOfJokers = cards.filter(
+      (card) => card.data.data['isJoker'],
     ).length;
 
     //render and inject new HTML
@@ -896,24 +898,27 @@ export default class SwadeHooks {
     );
 
     //Attach click event to button which will call the combatant update as we can't easily modify the submit function of the FormApplication
-    html.find('footer button').on('click', (ev) => {
+    html.find('footer button').on('click', async (ev) => {
       const selectedCard = html.find('input[name=ActionCard]:checked');
       if (selectedCard.length === 0) {
         return;
       }
-      const cardValue = selectedCard.data().cardValue as number;
-      const suitValue = selectedCard.data().suitValue as number;
-      const hasJoker = selectedCard.data().isJoker as boolean;
-      const cardString = selectedCard.val() as string;
 
-      game.combat?.combatants
+      const cardId = selectedCard.data().cardId as string;
+      const card = deck.cards.get(cardId, { strict: true });
+      const cardValue = card.data.value!;
+      const suitValue = card.data.data['suit'];
+      const hasJoker = card.data.data['isJoker'];
+      const cardString = card.data.description;
+
+      //TODO figure out if the card should be passed to the Discard Pile after being chosen this way
+      await game.combat?.combatants
         .get(options.document.id, { strict: true })
         .update({
           initiative: suitValue + cardValue,
-          flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
+          'flags.swade': { cardValue, suitValue, hasJoker, cardString },
         });
     });
-    return false;
   }
 
   public static onDiceSoNiceInit(dice3d: Dice3D) {

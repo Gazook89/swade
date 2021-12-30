@@ -1,61 +1,6 @@
-import { JournalMetadata } from '../globals';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
-
-//TODO Move this over to cards API
-export async function createActionCardTable(
-  rebuild?: boolean,
-  cardpack?: string,
-): Promise<void> {
-  let packName = game.settings.get('swade', 'cardDeck');
-  if (cardpack) {
-    packName = cardpack;
-  }
-  const cardPack = game.packs?.get(packName, {
-    strict: true,
-  }) as CompendiumCollection<JournalMetadata>;
-  let cardTable = game.tables?.getName(SWADE.init.cardTable);
-
-  //If the table doesn't exist, create it
-  if (!cardTable) {
-    await RollTable.create(
-      {
-        img: 'systems/swade/assets/ui/wildcard.svg',
-        name: SWADE.init.cardTable,
-        replacement: false,
-        displayRoll: false,
-      },
-      {
-        renderSheet: false,
-      },
-    );
-    cardTable = game.tables?.getName(SWADE.init.cardTable)!;
-  }
-
-  //If it's a rebuild call, delete all entries and then repopulate them
-  if (rebuild) {
-    const deletions = cardTable.results.map((i: TableResult) => i.id!);
-    await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
-  }
-
-  const cards = await cardPack.getDocuments();
-  const createData = cards.map((c, i) => {
-    return {
-      type: CONST.TABLE_RESULT_TYPES.COMPENDIUM,
-      text: c.name,
-      img: c.data.img,
-      collection: packName, // Name of the compendium
-      resultId: c.id, //Id of the entry inside the compendium
-      weight: 1,
-      range: [i + 1, i + 1],
-    };
-  });
-
-  await cardTable.createEmbeddedDocuments('TableResult', createData);
-  await cardTable.normalize();
-  ui.tables?.render(true);
-}
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */
@@ -171,4 +116,10 @@ export function getTrait(
     trait = actor.items.find((i) => i.type === 'skill' && i.name === traitName);
   }
   return trait;
+}
+
+export async function resetActionDeck() {
+  const deck = game.cards?.get(game.settings.get('swade', 'cardDeck'));
+  await deck?.reset({ chatNotification: false });
+  await deck?.shuffle({ chatNotification: false });
 }

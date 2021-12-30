@@ -9,6 +9,7 @@ declare global {
       'swade.autoInit': boolean;
       'swade.initMessage': boolean;
       'swade.cardDeck': string;
+      'swade.discardPile': string;
       'swade.hideNPCWildcards': boolean;
       'swade.autoLinkWildcards': boolean;
       'swade.notifyBennies': boolean;

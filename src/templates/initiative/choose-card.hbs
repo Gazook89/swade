@@ -10,7 +10,7 @@
           data-card-id="{{card.id}}"
         />
         <figure>
-          <img src="{{card.data.img}}" />
+          <img src="{{card.face.img}}" />
           <figcaption>
             {{card.name}} {{#if (eq card.id ../data.oldCard)}}<br />({{localize
             "SWADE.OldCard"}}){{/if}}

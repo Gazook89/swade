@@ -292,5 +292,7 @@ Card:
   templates:
   poker:
     templates: []
+    suit: 0
+    isJoker: false
   base:
     templates: []

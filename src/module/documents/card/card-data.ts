@@ -9,7 +9,10 @@ declare global {
 
 export type SwadeCardDataSource = BaseCardDataSource | PokerCardDataSource;
 
-interface PokerCard {}
+interface PokerCard {
+  suit: number;
+  isJoker: boolean;
+}
 
 interface BaseCard {}
 
