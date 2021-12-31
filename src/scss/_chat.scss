@@ -128,9 +128,23 @@
       flex-basis: auto;
       height: 100px;
       width: auto;
+      transform: rotate(3deg);
       border: none;
       box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
       order: 1;
+
     }
+  }
+  &:nth-child(4n+1) .initiative-draw img.result-image {
+    transform: rotate(3deg);
+  }
+  &:nth-child(4n+2) .initiative-draw img.result-image {
+    transform: rotate(-5deg);
+  }
+  &:nth-child(4n+3) .initiative-draw img.result-image {
+    transform: rotate(5deg);
+  }
+  &:nth-child(4n+4) .initiative-draw img.result-image {
+    transform: rotate(-3deg);
   }
 }
