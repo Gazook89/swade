@@ -62,6 +62,13 @@
     text-align: center;
     figure {
       margin: 0;
+      &.high-card {
+        position: relative;
+        .indicator {
+          position: absolute;
+          right: $medium-spacing;
+        }
+      }
     }
     img {
       height: 100px;

@@ -343,12 +343,28 @@ export default class SwadeCombat extends Combat {
       );
     }
 
+    const sortedCards = new Array<JournalEntry>();
+    for (const card of cards) {
+      sortedCards.push(card)
+    }
+    sortedCards.sort((a, b) => {
+      const cardA = a.getFlag('swade', 'cardValue') as number ?? 0;
+      const cardB = b.getFlag('swade', 'cardValue') as number ?? 0;
+      const card = cardB - cardA;
+      if (card !== 0) return card;
+      const suitA = a.getFlag('swade', 'suitValue') as number ?? 0;
+      const suitB = b.getFlag('swade', 'suitValue') as number ?? 0;
+      return suitB - suitA;
+    });
+    const highestCardID = sortedCards[0].id;
+
     let card: JournalEntry | undefined;
     const template = 'systems/swade/templates/initiative/choose-card.hbs';
     const html = await renderTemplate(template, {
       data: {
         cards: cards,
         oldCard: oldCardId,
+        highestCardID: highestCardID
       },
     });
 
