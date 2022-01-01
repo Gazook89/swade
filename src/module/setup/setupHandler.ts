@@ -8,6 +8,7 @@ async function setupActionDeck() {
   const actionDeckId = game.settings.get('swade', 'actionDeck');
   const actionDeck = game.cards?.get(actionDeckId);
   if (!actionDeckId || !actionDeck) {
+    ui.notifications?.info('SWADE.NoActionDeckFound', { localize: true });
     const preset = CONFIG.Cards.presets['actionDeckLight'];
     const data = await fetch(preset.src).then((r) => r.json());
     const newActionDeck = await CONFIG.Cards.documentClass.create(data);
@@ -20,6 +21,9 @@ async function setupDiscardPile() {
   const discardPileId = game.settings.get('swade', 'actionDeckDiscardPile');
   const discardPile = game.cards?.get(discardPileId);
   if (!discardPileId || !discardPile) {
+    ui.notifications?.info('SWADE.NoActionDeckDiscardPileFound', {
+      localize: true,
+    });
     const newDiscardPile = await CONFIG.Cards.documentClass.create({
       name: 'Discard Pile',
       type: 'pile',

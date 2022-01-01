@@ -432,3 +432,5 @@ SWADE.DuplicateItemsBodyText: >-
   While adding the {type} <strong>{name}</strong> to the Actor {target} the
   following duplicates (by name and type) have been found. The new items  have
   been renamed to reflect their source.
+SWADE.NoActionDeckFound: No Action Deck found, creating one
+SWADE.NoActionDeckDiscardPileFound: No Action Deck Discard Pile found, creating one
