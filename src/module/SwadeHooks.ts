@@ -17,12 +17,15 @@ import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
 import * as migrations from './migration';
-import { SwadeSetup } from './setup/setupHandler';
+import * as setup from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 
 export default class SwadeHooks {
   public static async onReady() {
+    //set up the world if needed
+    await setup.setupWorld();
+
     const deckChoices: Record<string, string> = {};
     const discardPiles: Record<string, string> = {};
     game
@@ -50,7 +53,6 @@ export default class SwadeHooks {
       config: true,
       choices: discardPiles,
     });
-    await SwadeSetup.setup();
 
     SWADE.diceConfig.flags = {
       dsnShowBennyAnimation: {
