@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
+  DsnCustomWildDieOptions
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -114,7 +114,7 @@ export default class SwadeHooks {
     options: any,
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
-    const found = html.find('.entity-name');
+    const found = html.find('.document-name');
     const actors: Array<SwadeActor> = app.documents;
     let wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
 
