@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added a `range` getter on the `SwadeItem` that will return the range brackets from the item, if it is a weapon or power
 - Added presets for a Light and Dark Action Deck using `poker` type cards. You can create an Action deck by going to the _Card Stacks_ tab and creating a new stack using the presets.
+- Added additional translation strings
 
 ## Changed
 
