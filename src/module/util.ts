@@ -119,7 +119,7 @@ export function getTrait(
 }
 
 export async function resetActionDeck() {
-  const deck = game.cards?.get(game.settings.get('swade', 'cardDeck'));
+  const deck = game.cards?.get(game.settings.get('swade', 'actionDeck'));
   await deck?.reset({ chatNotification: false });
   await deck?.shuffle({ chatNotification: false });
 }

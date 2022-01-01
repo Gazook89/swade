@@ -8,8 +8,8 @@ declare global {
       'swade.initiativeSound': boolean;
       'swade.autoInit': boolean;
       'swade.initMessage': boolean;
-      'swade.cardDeck': string;
-      'swade.discardPile': string;
+      'swade.actionDeck': string;
+      'swade.actionDeckDiscardPile': string;
       'swade.hideNPCWildcards': boolean;
       'swade.autoLinkWildcards': boolean;
       'swade.notifyBennies': boolean;

@@ -37,7 +37,7 @@ export default class SwadeCombat extends Combat {
     let isRedraw = false;
     let skipMessage = false;
     const actionCardDeck = game.cards!.get(
-      game.settings.get('swade', 'cardDeck'),
+      game.settings.get('swade', 'actionDeck'),
       { strict: true },
     );
     if (ids.length > actionCardDeck.availableCards.length) {
@@ -279,9 +279,9 @@ export default class SwadeCombat extends Combat {
    * @returns an array with the drawn cards
    */
   async drawCard(count = 1): Promise<Card[]> {
-    const deckId = game.settings.get('swade', 'cardDeck');
+    const deckId = game.settings.get('swade', 'actionDeck');
     const actionCardDeck = game.cards!.get(deckId, { strict: true });
-    const discardPileId = game.settings.get('swade', 'discardPile');
+    const discardPileId = game.settings.get('swade', 'actionDeckDiscardPile');
     const discardPile = game.cards!.get(discardPileId, {
       strict: true,
     });
@@ -381,7 +381,7 @@ export default class SwadeCombat extends Combat {
    * @param cardSuit
    */
   findCard(cardValue: number, cardSuit: number): Card | undefined {
-    const packName = game.settings.get('swade', 'cardDeck');
+    const packName = game.settings.get('swade', 'actionDeck');
     const actionCardDeck = game.cards!.get(packName, { strict: true });
     return actionCardDeck.cards.find(
       (c) =>

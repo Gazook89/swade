@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
+  DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -36,14 +36,14 @@ export default class SwadeHooks {
       ?.filter((stack) => stack.type === 'pile')
       .forEach((p) => (discardPiles[p.id] = p.name!));
 
-    game.settings.register('swade', 'cardDeck', {
+    game.settings.register('swade', 'actionDeck', {
       name: game.i18n.localize('SWADE.InitCardDeck'),
       scope: 'world',
       type: String,
       config: true,
       choices: deckChoices,
     });
-    game.settings.register('swade', 'discardPile', {
+    game.settings.register('swade', 'actionDeckDiscardPile', {
       name: game.i18n.localize('SWADE.InitDiscardPile'),
       scope: 'world',
       type: String,
@@ -846,7 +846,7 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const deck = game.cards!.get(game.settings.get('swade', 'cardDeck'), {
+    const deck = game.cards!.get(game.settings.get('swade', 'actionDeck'), {
       strict: true,
     });
 
