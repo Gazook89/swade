@@ -434,3 +434,4 @@ SWADE.DuplicateItemsBodyText: >-
   been renamed to reflect their source.
 SWADE.NoActionDeckFound: No Action Deck found, creating one
 SWADE.NoActionDeckDiscardPileFound: No Action Deck Discard Pile found, creating one
+SWADE.InitDiscardPile: Initiative Discard Pile

@@ -23,9 +23,6 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 
 export default class SwadeHooks {
   public static async onReady() {
-    //set up the world if needed
-    await setup.setupWorld();
-
     const deckChoices: Record<string, string> = {};
     const discardPiles: Record<string, string> = {};
     game
@@ -43,16 +40,20 @@ export default class SwadeHooks {
       name: game.i18n.localize('SWADE.InitCardDeck'),
       scope: 'world',
       type: String,
-      config: true,
+      config: false,
       choices: deckChoices,
     });
+
     game.settings.register('swade', 'actionDeckDiscardPile', {
       name: game.i18n.localize('SWADE.InitDiscardPile'),
       scope: 'world',
       type: String,
-      config: true,
+      config: false,
       choices: discardPiles,
     });
+
+    //set up the world if needed
+    await setup.setupWorld();
 
     SWADE.diceConfig.flags = {
       dsnShowBennyAnimation: {
