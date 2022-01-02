@@ -203,7 +203,7 @@ SWADE.AutoLink: NSC Wildcards mit Token verbinden
 SWADE.AutoLinkDesc: >-
   NSC Wildcards beim Umschalten zwischen Statist und Wildcard mit Token
   verbinden
-SWADE.GmBennies: SL Bennys
+SWADE.GmBennies: Spielleiter Bennys
 SWADE.GmBenniesDesc: Anzahl Bennys die du als SL beim auffrischen selbiger erhälst
 SWADE.EnableBennyNotify: Nachrichten zu Bennys
 SWADE.EnableBennyNotifyDesc: Zeige Chatnachricht beim Nehmen, Einsetzen oder Auffrischen von Bennys
@@ -422,3 +422,8 @@ SWADE.Benny3DFrontBumpDesc: Bump Map der Vorderseite
 SWADE.Benny3DBackBumpDesc: Bump Map der Rückseite
 SWADE.Modifiers: Modifikatoren
 SWADE.Duplicates: Duplikate Gefunden
+SWADE.InitDiscardPile: Initiative-Ablagestapel
+SWADE.Wealth: Vermögen
+SWADE.BennyImageSheet: Benny
+SWADE.Characters: Charaktere
+SWADE.CoreSkillsList: Liste der Grundfertigkeiten

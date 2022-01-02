@@ -137,7 +137,7 @@ export interface CharacterDataSourceData {
     value: number;
     max: number;
   } & Record<string, { value: number; max: number }>;
-  additionalStats: Partial<Record<string, AdditionalStat>>;
+  additionalStats: Record<string, AdditionalStat>;
   wildcard: boolean;
 }
 
@@ -151,7 +151,7 @@ export interface VehicleDataSourceData {
   description: string;
   maxCargo: number;
   maxMods: number;
-  additionalStats: Partial<Record<string, AdditionalStat>>;
+  additionalStats: Record<string, AdditionalStat>;
   toughness: {
     total: number;
     armor: number;

@@ -1,10 +1,9 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
-import { JournalMetadata } from '../../globals';
-import { SWADE } from '../config';
+import * as utils from '../util';
 import SwadeCombatant from './SwadeCombatant';
 
 interface IPickACard {
-  cards: JournalEntry[];
+  cards: Card[];
   combatantName: string;
   oldCardId?: string;
   enableRedraw?: boolean;
@@ -37,12 +36,11 @@ export default class SwadeCombat extends Combat {
     const initMessages: Record<string, unknown>[] = [];
     let isRedraw = false;
     let skipMessage = false;
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
-    });
-    if (
-      ids.length > actionCardDeck.results.filter((r) => !r.data.drawn).length
-    ) {
+    const actionCardDeck = game.cards!.get(
+      game.settings.get('swade', 'actionDeck'),
+      { strict: true },
+    );
+    if (ids.length > actionCardDeck.availableCards.length) {
       ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
       return this;
     }
@@ -54,7 +52,6 @@ export default class SwadeCombat extends Combat {
       const roundHeld = c.roundHeld;
       const inGroup = c.groupId;
       if (c.initiative !== null && !roundHeld) {
-        console.log('This must be a reroll');
         isRedraw = true;
       }
 
@@ -69,7 +66,7 @@ export default class SwadeCombat extends Combat {
       const hasQuick = c.actor!.data.data.initiative.hasQuick;
 
       // Draw initiative
-      let card: JournalEntry | undefined;
+      let card: Card | undefined;
       if (isRedraw) {
         const oldCard = await this.findCard(c?.cardValue!, c?.suitValue!);
         const cards = await this.drawCard();
@@ -89,20 +86,20 @@ export default class SwadeCombat extends Combat {
       } else if (hasHesitant) {
         // Hesitant
         const cards = await this.drawCard(2);
-        if (cards.some((c) => c.getFlag('swade', 'isJoker'))) {
+        if (cards.some((c) => c.data.data['isJoker'])) {
           card = await this.pickACard({
             cards: cards,
             combatantName: c.name,
           });
         } else {
           //sort cards to pick the lower one
-          cards.sort((a: JournalEntry, b: JournalEntry) => {
-            const cardA = a.getFlag('swade', 'cardValue') as number;
-            const cardB = b.getFlag('swade', 'cardValue') as number;
+          cards.sort((a, b) => {
+            const cardA = a.data.value!;
+            const cardB = b.data.value!;
             const card = cardA - cardB;
             if (card !== 0) return card;
-            const suitA = a.getFlag('swade', 'suitValue') as number;
-            const suitB = b.getFlag('swade', 'suitValue') as number;
+            const suitA = a.data.data['suit'];
+            const suitB = b.data.data['suit'];
             const suit = suitA - suitB;
             return suit;
           });
@@ -120,7 +117,7 @@ export default class SwadeCombat extends Combat {
       } else if (hasQuick) {
         const cards = await this.drawCard();
         card = cards[0];
-        const cardValue = card.getFlag('swade', 'cardValue') as number;
+        const cardValue = card?.data.value!;
         //if the card value is less than 5 then pick a card otherwise use the card
         if (cardValue <= 5) {
           card = await this.pickACard({
@@ -137,15 +134,13 @@ export default class SwadeCombat extends Combat {
       }
 
       const newflags = {
-        cardValue: card!.getFlag('swade', 'cardValue') as number,
-        suitValue: card!.getFlag('swade', 'suitValue') as number,
-        hasJoker: card!.getFlag('swade', 'isJoker') as boolean,
-        cardString: card!.data.content,
+        cardValue: card?.data.value!,
+        suitValue: card?.data.data['suit'],
+        hasJoker: card?.data.data['isJoker'],
+        cardString: card?.data.description,
       };
 
-      const initiative =
-        (card!.getFlag('swade', 'suitValue') as number) +
-        (card!.getFlag('swade', 'cardValue') as number);
+      const initiative = card?.data.data['suit'] + card?.data.value!;
 
       combatantUpdates.push({
         _id: c.id,
@@ -178,12 +173,8 @@ export default class SwadeCombat extends Combat {
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
-                <h4 class="result-text result-text-card">@Compendium[${
-                  card!.pack
-                }.${card!.id}]{${card!.name}}</h4>
-                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${
-        card!.data.img
-      }">
+                <h4 class="result-text result-text-card">${card?.name}</h4>
+                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${card?.face?.img}">
             </section>
           `;
 
@@ -287,35 +278,14 @@ export default class SwadeCombat extends Combat {
    * @param count number of cards to draw
    * @returns an array with the drawn cards
    */
-  async drawCard(count = 1): Promise<JournalEntry[]> {
-    const packName = game.settings.get('swade', 'cardDeck');
-    let actionCardPack = game.packs.get(
-      packName,
-    ) as CompendiumCollection<JournalMetadata>;
-
-    if (!actionCardPack) {
-      console.warn(game.i18n.localize('SWADE.SomethingWrongWithCardComp'));
-      await game.settings.set(
-        'swade',
-        'cardDeck',
-        SWADE.init.defaultCardCompendium,
-      );
-      actionCardPack = game.packs.get(SWADE.init.defaultCardCompendium, {
-        strict: true,
-      }) as CompendiumCollection<JournalMetadata>;
-    }
-    const cards = new Array<JournalEntry>();
-    const actionCardDeck = game.tables!.getName(SWADE.init.cardTable, {
+  async drawCard(count = 1): Promise<Card[]> {
+    const deckId = game.settings.get('swade', 'actionDeck');
+    const actionCardDeck = game.cards!.get(deckId, { strict: true });
+    const discardPileId = game.settings.get('swade', 'actionDeckDiscardPile');
+    const discardPile = game.cards!.get(discardPileId, {
       strict: true,
     });
-    const draw = await actionCardDeck.drawMany(count, { displayChat: false });
-
-    for (const result of draw.results) {
-      const resultID = result.data.resultId!;
-      const card = await actionCardPack.getDocument(resultID);
-      cards.push(card!);
-    }
-    return cards;
+    return actionCardDeck.dealForInitative(discardPile, count);
   }
 
   /**
@@ -333,17 +303,15 @@ export default class SwadeCombat extends Combat {
     oldCardId,
     enableRedraw,
     isQuickDraw,
-  }: IPickACard): Promise<JournalEntry | undefined> {
+  }: IPickACard): Promise<Card | undefined> {
     // any card
 
     let immedeateRedraw = false;
     if (isQuickDraw) {
-      enableRedraw = !cards.some(
-        (card) => (card.getFlag('swade', 'cardValue') as number) > 5,
-      );
+      enableRedraw = !cards.some((card) => card.data.value! > 5);
     }
 
-    let card: JournalEntry | undefined;
+    let card: Card | undefined;
     const template = 'systems/swade/templates/initiative/choose-card.hbs';
     const html = await renderTemplate(template, {
       data: {
@@ -412,20 +380,14 @@ export default class SwadeCombat extends Combat {
    * @param cardValue
    * @param cardSuit
    */
-  async findCard(
-    cardValue: number,
-    cardSuit: number,
-  ): Promise<JournalEntry | undefined> {
-    const packName = game.settings.get('swade', 'cardDeck') as string;
-    const actionCardPack = game.packs?.get(packName, {
-      strict: true,
-    }) as CompendiumCollection<JournalMetadata>;
-
-    const content = await actionCardPack.getDocuments();
-    return content.find(
+  findCard(cardValue: number, cardSuit: number): Card | undefined {
+    const packName = game.settings.get('swade', 'actionDeck');
+    const actionCardDeck = game.cards!.get(packName, { strict: true });
+    return actionCardDeck.cards.find(
       (c) =>
-        c.getFlag('swade', 'cardValue') === cardValue &&
-        c.getFlag('swade', 'suitValue') === cardSuit,
+        c.data.type === 'poker' &&
+        c.data.value === cardValue &&
+        c.data.data['suit'] === cardSuit,
     );
   }
 
@@ -495,9 +457,7 @@ export default class SwadeCombat extends Combat {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
-        await game
-          .tables!.getName(SWADE.init.cardTable, { strict: true })
-          .reset();
+        await await utils.resetActionDeck();
         ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
       const updates = this._getInitResetUpdates();
@@ -560,9 +520,7 @@ export default class SwadeCombat extends Combat {
 
     //reset the deck when combat is ended
     if (jokerDrawn) {
-      await game.tables
-        ?.getName(SWADE.init.cardTable, { strict: true })
-        .reset();
+      await utils.resetActionDeck();
       ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
     }
   }
@@ -583,5 +541,5 @@ interface InitiativeOptions {
    * Additional options with which to customize created Chat Messages
    * @defaultValue `{}`
    */
-  messageOptions?: object; //TODO Type properly once ChatMessage is typed
+  messageOptions?: object;
 }

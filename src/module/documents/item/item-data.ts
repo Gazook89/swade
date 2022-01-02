@@ -48,7 +48,7 @@ interface Equipable {
 interface ItemDescription {
   description: string;
   notes: string;
-  additionalStats: Partial<Record<string, AdditionalStat>>;
+  additionalStats: Record<string, AdditionalStat>;
 }
 
 interface Vehicular {
