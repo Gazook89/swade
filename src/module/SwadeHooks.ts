@@ -23,35 +23,6 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 
 export default class SwadeHooks {
   public static async onReady() {
-    const deckChoices: Record<string, string> = {};
-    const discardPiles: Record<string, string> = {};
-    game
-      .cards!.filter((stack) => {
-        const cards = Array.from(stack.cards.values());
-        return stack.type === 'deck' && cards.every((c) => c.type === 'poker');
-      })
-      .forEach((d) => (deckChoices[d.id] = d.name!));
-
-    game.cards
-      ?.filter((stack) => stack.type === 'pile')
-      .forEach((p) => (discardPiles[p.id] = p.name!));
-
-    game.settings.register('swade', 'actionDeck', {
-      name: game.i18n.localize('SWADE.InitCardDeck'),
-      scope: 'world',
-      type: String,
-      config: false,
-      choices: deckChoices,
-    });
-
-    game.settings.register('swade', 'actionDeckDiscardPile', {
-      name: game.i18n.localize('SWADE.InitDiscardPile'),
-      scope: 'world',
-      type: String,
-      config: false,
-      choices: discardPiles,
-    });
-
     //set up the world if needed
     await setup.setupWorld();
 
@@ -172,8 +143,8 @@ export default class SwadeHooks {
     //Mark Wildcards in the compendium
     if (app.documentName === 'Actor') {
       const content = (await app.getDocuments()) as Array<SwadeActor>;
-      const wildcards = content.filter((entity) => entity.isWildcard);
-      const ids: string[] = wildcards.map((e) => e.id!);
+      const wildcards = content.filter((actor) => actor.isWildcard);
+      const ids: string[] = wildcards.map((actor) => actor.id!);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {

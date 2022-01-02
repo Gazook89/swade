@@ -1,16 +1,10 @@
-.swade.setting-config {
-  .window-content {
-    height: calc(100% - 30px);
-    form {
-      height: 100%;
-    }
-  }
-
+.setting-config {
   .sheet-body {
     max-height: 600px;
     overflow-x: auto;
-    padding-right: 3px;
+    padding: 3px;
   }
+
   /* Attributes */
   .stats-container {
     margin: 0px 5px;
@@ -20,7 +14,7 @@
 
   .attribute {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 20px;
+    grid-template-columns: repeat(4, 1fr) 20px;
     place-items: center;
     column-gap: 10px;
     height: 28px;
@@ -48,11 +42,8 @@
     .attribute-maxValue {
       grid-column: 4;
     }
-    .attribute-autoEnable {
-      grid-column: 5;
-    }
     .attribute-control {
-      grid-column: 6;
+      grid-column: 5;
     }
   }
 

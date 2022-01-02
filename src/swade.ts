@@ -23,7 +23,11 @@ import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
 import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
-import { registerSettingRules, registerSettings } from './module/settings';
+import {
+  register3DBennySettings,
+  registerSettingRules,
+  registerSettings,
+} from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
@@ -91,8 +95,8 @@ Hooks.once('init', () => {
   //register custom status effects
   CONFIG.statusEffects = SWADE.statusEffects;
 
-  //@ts-expect-error Not yet implemented in Types
-  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
+  //@ts-expect-error Types don't properly recognized dotnotation
+  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('flags.swade');
 
   //Preload Handlebars templates
   preloadHandlebarsTemplates();
@@ -100,6 +104,7 @@ Hooks.once('init', () => {
   // Register custom system settings
   registerSettings();
   registerSettingRules();
+  register3DBennySettings();
 
   // Register sheets
   Actors.unregisterSheet('core', ActorSheet);
