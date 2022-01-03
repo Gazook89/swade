@@ -136,15 +136,15 @@
     }
   }
   &:nth-child(4n+1) .initiative-draw img.result-image {
-    transform: rotate(3deg);
+    transform: rotate(2deg);
   }
   &:nth-child(4n+2) .initiative-draw img.result-image {
-    transform: rotate(-5deg);
+    transform: rotate(-4deg);
   }
   &:nth-child(4n+3) .initiative-draw img.result-image {
-    transform: rotate(5deg);
+    transform: rotate(4deg);
   }
   &:nth-child(4n+4) .initiative-draw img.result-image {
-    transform: rotate(-3deg);
+    transform: rotate(-2deg);
   }
 }
