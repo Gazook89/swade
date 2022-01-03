@@ -4,7 +4,7 @@ export default interface IRollOptions {
   rof?: number;
   flavour?: string;
   dmgOverride?: string;
-  //TODO: Consider making this an array of DiceTerms
+  //TODO remove string/number type with 1.0.0
   additionalMods?: (string | number | TraitRollModifier)[];
   suppressChat?: boolean;
 }

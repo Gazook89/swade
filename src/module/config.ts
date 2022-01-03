@@ -36,11 +36,6 @@ export const SWADE: SwadeConfig = {
     },
   },
 
-  init: {
-    defaultCardCompendium: 'swade.action-cards',
-    cardTable: 'Action Cards',
-  },
-
   packChoices: {},
 
   imagedrop: {
@@ -71,7 +66,6 @@ export const SWADE: SwadeConfig = {
       'coreSkillsCompendium',
       'enableConviction',
       'jokersWild',
-      'parryBaseSkill',
       'vehicleMods',
       'vehicleEdges',
       'gmBennies',
@@ -83,8 +77,9 @@ export const SWADE: SwadeConfig = {
       'noPowerPoints',
       'wealthType',
       'currencyName',
-      'weightUnit',
       'hardChoices',
+      'actionDeck',
+      'actionDeckDiscardPile',
       'bennyImageSheet',
       'bennyImage3DFront',
       'bennyImage3DBack',
@@ -367,11 +362,6 @@ export interface SwadeConfig {
       long: string;
       short: string;
     };
-  };
-
-  init: {
-    defaultCardCompendium: string;
-    cardTable: string;
   };
 
   packChoices: Record<string, string>;

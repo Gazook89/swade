@@ -27,10 +27,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Added
 
 - Added a `range` getter on the `SwadeItem` that will return the range brackets from the item, if it is a weapon or power
+- Added presets for a Light and Dark Action Deck using `poker` type cards. You can create an Action deck by going to the _Card Stacks_ tab and creating a new stack using the presets.
+- Added additional translation strings
 
 ## Changed
 
 - When no name is given for a modifier, the Roll Dialog will default to `Situational Mod`
+- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the System Settings) into a discrad pile of your choosing (also in the set in the System Settings)
+- Changed the way the `Setting Configurator` is organized. It now has tabs to reduce the overall size and improve the organization. Some settings have been moved into the general system settings.
+
+##
+
+- Fixed Wildcards not being marked as such in the Actors sidebar tab
+
+## [v0.22.4]
+
+### Fixed
+
+- Fixed a bug that would case a prototype token update to fail when changing the wildcard status on npc actors.
 
 ## [v0.22.3]
 

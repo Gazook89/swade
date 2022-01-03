@@ -228,7 +228,6 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     data.config = SWADE;
 
     data.itemsByType = {};
-    //@ts-ignore
     for (const type of game.system.documentTypes.Item) {
       data.itemsByType[type] = data.items.filter((i) => i.type === type) || [];
     }
@@ -321,8 +320,9 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     new SwadeEntityTweaks(this.actor).render(true);
   }
 
-  //TODO Define better return type
-  protected async _chooseItemType(choices?: any): Promise<any> {
+  protected async _chooseItemType(
+    choices?: any,
+  ): Promise<{ type: string; name: string }> {
     if (!choices) {
       choices = {
         weapon: game.i18n.localize('ITEM.TypeWeapon'),
@@ -355,8 +355,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
             icon: '<i class="fas fa-check"></i>',
             callback: (html: JQuery<HTMLElement>) => {
               resolve({
-                type: html.find('select[name="type"]').val(),
-                name: html.find('input[name="name"]').val(),
+                type: html.find('select[name="type"]').val() as string,
+                name: html.find('input[name="name"]').val() as string,
               });
             },
           },
@@ -482,19 +482,4 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       }
     });
   }
-
-  //TODO revisit if necessary
-  // render(force?: boolean, options?: Application.RenderOptions) {
-  //   if (!SWADE.templates.templatesPreloaded) {
-  //     console.log('Templates not loaded yet, waiting');
-  //     SWADE.templates.preloadPromise.then(() => {
-  //       console.log('Templates loaded, rendering');
-  //       SWADE.templates.templatesPreloaded = true;
-  //       super.render(force, options);
-  //     });
-  //   } else {
-  //     console.log('Templates loaded, rendering');
-  //     return super.render(force, options);
-  //   }
-  // }
 }

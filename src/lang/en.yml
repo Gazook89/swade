@@ -246,7 +246,7 @@ SWADE.AutoLink: Automatically Link Wild Cards
 SWADE.AutoLinkDesc: >-
   When enabled, NPC Wild Cards will have their tokens linked when you toggle
   them between Extra and Wild Card
-SWADE.GmBennies: GM Bennies
+SWADE.GmBennies: Gamemaster Bennies
 SWADE.GmBenniesDesc: Sets how many Bennies the GM recieves on a refresh
 SWADE.EnableBennyNotify: Benny notifications
 SWADE.EnableBennyNotifyDesc: Displays chat messages when bennies are taken, given or refreshed.
@@ -336,7 +336,7 @@ SWADE.HideNpcItemChatCardsDesc: >-
   When enabled, NPC Item Chat Cards are automatically sent as a whisper to all
   Gamemasters instead of being posted for all to see
 SWADE.JokersWildDesc: Gives a Benny to every player character when one of them is dealt a Joker
-SWADE.ParryBase: Parry Base Skill
+SWADE.ParryBase: Localized Fighting Skill Name
 SWADE.ParryBaseDesc: The name of the skill which will be used to calculate a characters Parry
 SWADE.AutoCalcParry: Automatically calculates Parry, including Shields
 SWADE.Subtype: Subtype
@@ -356,7 +356,7 @@ SWADE.Ace: Acing
 SWADE.NoPowerPoints: No Power Points
 SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions
 SWADE.WealthType: Wealth Type
-SWADE.WealthDie: Wealth
+SWADE.WealthDie: Wealth Die
 SWADE.WealthTypeDesc: Choose how to track character wealth and currency
 SWADE.CurrencyName: Currency Name
 SWADE.CurrencyNameDesc: Name your currency
@@ -432,3 +432,11 @@ SWADE.DuplicateItemsBodyText: >-
   While adding the {type} <strong>{name}</strong> to the Actor {target} the
   following duplicates (by name and type) have been found. The new items  have
   been renamed to reflect their source.
+SWADE.NoActionDeckFound: No Action Deck found, creating one
+SWADE.NoActionDeckDiscardPileFound: No Action Deck Discard Pile found, creating one
+SWADE.InitDiscardPile: Initiative Discard Pile
+SWADE.Wealth: Wealth
+SWADE.Characters: Characters
+SWADE.SettingRules: Setting Rules
+SWADE.WorldBasics: World Basics
+SWADE.CoreSkillsList: List of Core Skills

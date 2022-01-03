@@ -1,5 +1,5 @@
-import { SWADE } from '../config';
 import SwadeCombatant from '../documents/SwadeCombatant';
+import * as utils from '../util';
 
 /**
  * This class defines a a new Combat Tracker specifically designed for SWADE
@@ -36,10 +36,7 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Reset the Action Deck
   async _onResetActionDeck(event) {
     event.stopImmediatePropagation();
-    const cardTable = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
-    });
-    cardTable.reset();
+    await utils.resetActionDeck();
     ui.notifications?.info(
       game.i18n.localize('SWADE.ActionDeckResetNotification'),
     );

@@ -288,12 +288,11 @@ Item:
 Card:
   types:
     - 'poker'
-    - 'adventure'
     - 'base'
   templates:
-  adventure:
-    templates: []
   poker:
     templates: []
+    suit: 0
+    isJoker: false
   base:
     templates: []

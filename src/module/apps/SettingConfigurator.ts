@@ -8,13 +8,19 @@ export default class SettingConfigurator extends FormApplication {
     this.config = SWADE.settingConfig;
   }
 
-  static get defaultOptions() {
-    return {
-      ...super.defaultOptions,
+  static get defaultOptions(): FormApplication.Options {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,
       template: 'systems/swade/templates/apps/setting-config.hbs',
-      classes: ['swade', 'setting-config'],
+      classes: ['setting-config', 'sheet'],
+      tabs: [
+        {
+          navSelector: '.tabs',
+          contentSelector: '.sheet-body',
+          initial: 'basics',
+        },
+      ],
       scrollY: ['.sheet-body'],
       width: 600,
       height: 'auto' as const,
@@ -24,7 +30,7 @@ export default class SettingConfigurator extends FormApplication {
       closeOnSubmit: false,
       submitOnClose: true,
       submitOnChange: true,
-    };
+    });
   }
 
   getData(): any {
@@ -33,7 +39,7 @@ export default class SettingConfigurator extends FormApplication {
       settingRules: {},
       actorSettingStats: settingFields.actor,
       itemSettingStats: settingFields.item,
-      '3dBennies': !!game.dice3d,
+      dice3d: !!game.dice3d,
       dtypes: {
         String: 'SWADE.String',
         Number: 'SWADE.Number',
@@ -41,6 +47,8 @@ export default class SettingConfigurator extends FormApplication {
         Die: 'SWADE.Die',
       },
       coreSkillPackChoices: this._buildCoreSkillPackChoices(),
+      actioDeckChoices: this._buildActionDeckChoices(),
+      discardPileChoices: this._buildActioDeckDiscardPileChoices(),
     };
     for (const setting of this.config.settings) {
       data.settingRules[setting] = game.settings.get('swade', setting);
@@ -55,16 +63,14 @@ export default class SettingConfigurator extends FormApplication {
     html.find('#submit').click(() => this.close());
     html
       .find('.attributes')
-      .on(
-        'click',
-        '.attribute-control',
-        this._onClickAttributeControl.bind(this),
+      .on('click', '.attribute-control', (e) =>
+        this._onClickAttributeControl(e),
       );
   }
 
   async _updateObject(event, formData) {
     //Gather Data
-    const expandedFormdata = expandObject(formData) as any;
+    const expandedFormdata = expandObject(formData);
     const formActorAttrs = expandedFormdata.actorSettingStats || {};
     const formItemAttrs = expandedFormdata.itemSettingStats || {};
 
@@ -80,8 +86,7 @@ export default class SettingConfigurator extends FormApplication {
     }
 
     // Handle the free-form attributes list
-    const settingFields = game.settings.get('swade', 'settingFields') as any;
-
+    const settingFields = game.settings.get('swade', 'settingFields');
     const actorAttributes = this._handleKeyValidityCheck(formActorAttrs);
     const itemAttributes = this._handleKeyValidityCheck(formItemAttrs);
     const saveValue = {
@@ -173,13 +178,39 @@ export default class SettingConfigurator extends FormApplication {
   }
 
   private _buildCoreSkillPackChoices() {
-    const retVal = {};
-
+    const retVal: Record<string, string> = {};
     game.packs
-      ?.filter((p) => p.documentClass.documentName === 'Item')
+      ?.filter((p) => {
+        const index = Array.from(p.index.values()).filter(
+          //remove the CF entities
+          (e) => e.name !== '#[CF_tempEntity]',
+        );
+        const isItem =
+          p.metadata['type'] === 'Item' || p.metadata.entity === 'Item';
+        return isItem && index.every((v) => v['type'] === 'skill');
+      })
       .forEach((p) => {
         retVal[p.collection] = `${p.metadata.label} (${p.metadata.package})`;
       });
     return retVal;
+  }
+
+  private _buildActionDeckChoices() {
+    const deckChoices: Record<string, string> = {};
+    game.cards
+      ?.filter((stack) => {
+        const cards = Array.from(stack.cards.values());
+        return stack.type === 'deck' && cards.every((c) => c.type === 'poker');
+      })
+      .forEach((d) => (deckChoices[d.id] = d.name!));
+    return deckChoices;
+  }
+
+  private _buildActioDeckDiscardPileChoices() {
+    const discardPiles: Record<string, string> = {};
+    game.cards
+      ?.filter((stack) => stack.data.type === 'pile')
+      .forEach((p) => (discardPiles[p.id] = p.name!));
+    return discardPiles;
   }
 }
