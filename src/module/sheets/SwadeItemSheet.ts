@@ -143,9 +143,9 @@ export default class SwadeItemSheet extends ItemSheet {
       const transfer = $(ev.currentTarget).data('transfer');
       const newEffect = await ActiveEffect.create(
         {
-          label: game.i18n
-            .localize('ENTITY.New')
-            .replace('{entity}', game.i18n.localize('Active Effect')),
+          label: game.i18n.format('DOCUMENT.New', {
+            type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+          }),
           icon: '/icons/svg/mystery-man.svg',
           transfer: transfer,
         },

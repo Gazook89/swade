@@ -189,9 +189,9 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       const transfer = $(ev.currentTarget).data('transfer');
       const effect = await CONFIG.ActiveEffect.documentClass.create(
         {
-          label: game.i18n
-            .localize('ENTITY.New')
-            .replace('{entity}', game.i18n.localize('Active Effect')),
+          label: game.i18n.format('DOCUMENT.New', {
+            type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+          }),
           icon: '/icons/svg/mystery-man-black.svg',
           transfer: transfer,
         },
@@ -334,20 +334,20 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     const templateData = {
         types: choices,
         hasTypes: true,
-        name: game.i18n
-          .localize('ENTITY.New')
-          .replace('{entity}', game.i18n.localize('ENTITY.Item')),
+        name: game.i18n.format('DOCUMENT.New', {
+          type: game.i18n.localize('DOCUMENT.Item'),
+        }),
       },
       dlg = await renderTemplate(
-        'templates/sidebar/entity-create.html',
+        'templates/sidebar/document-create.html',
         templateData,
       );
     //Create Dialog window
     return new Promise((resolve) => {
       new Dialog({
-        title: game.i18n
-          .localize('ENTITY.Create')
-          .replace('{entity}', game.i18n.localize('ENTITY.Item')),
+        title: game.i18n.format('DOCUMENT.Create', {
+          type: game.i18n.localize('DOCUMENT.Item'),
+        }),
         content: dlg,
         buttons: {
           ok: {
