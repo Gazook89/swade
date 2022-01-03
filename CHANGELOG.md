@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed Wildcards not being marked as such in the Actors sidebar tab
+- Fixed item creation dialogs and translations that still refered to entities instead of documents
 
 ## [v0.22.4]
 
