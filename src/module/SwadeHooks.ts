@@ -75,7 +75,7 @@ export default class SwadeHooks {
       currentVersion !== '0.0.0' &&
       foundry.utils.isNewerVersion(currentVersion, compatibleMigrationVersion)
     ) {
-      ui.notifications?.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
+      ui.notifications.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
         permanent: true,
       });
     }
@@ -179,7 +179,7 @@ export default class SwadeHooks {
           strict: true,
         }) as CompendiumCollection<JournalMetadata>;
         if (pack.locked) {
-          return ui.notifications?.warn('SWADE.WarningPackLocked', {
+          return ui.notifications.warn('SWADE.WarningPackLocked', {
             localize: true,
           });
         }

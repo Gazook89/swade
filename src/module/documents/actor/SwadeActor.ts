@@ -158,7 +158,7 @@ export default class SwadeActor extends Actor {
   rollAttribute(ability: Attribute, options: IRollOptions = {}) {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
-      ui.notifications?.warn(
+      ui.notifications.warn(
         'Attribute Rolls with RoF greater than 1 are not currently supported',
       );
     }
@@ -654,7 +654,7 @@ export default class SwadeActor extends Actor {
       try {
         driver = (await fromUuid(driverId)) as SwadeActor;
       } catch (error) {
-        ui.notifications?.error('The Driver could not be found!');
+        ui.notifications.error('The Driver could not be found!');
       }
     }
     return driver;

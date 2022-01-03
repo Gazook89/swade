@@ -279,7 +279,11 @@ export default class SwadeCombat extends Combat {
     const discardPile = game.cards!.get(discardPileId, {
       strict: true,
     });
-    return actionCardDeck.dealForInitative(discardPile, count);
+    return actionCardDeck.dealForInitative(
+      discardPile,
+      count,
+      foundry.CONST.CARD_DRAW_MODES.TOP,
+    );
   }
 
   /**
@@ -464,8 +468,8 @@ export default class SwadeCombat extends Combat {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
-        await utils.resetActionDeck();
-        ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
+        await await utils.resetActionDeck();
+        ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
       const updates = this._getInitResetUpdates();
       await this.updateEmbeddedDocuments('Combatant', updates);
@@ -528,7 +532,7 @@ export default class SwadeCombat extends Combat {
     //reset the deck when combat is ended
     if (jokerDrawn) {
       await utils.resetActionDeck();
-      ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
+      ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
     }
   }
 }

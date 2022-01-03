@@ -36,7 +36,7 @@ export default class ItemChatCardHelper {
     // Get the Item
     const item = actor.items.get(card.dataset.itemId);
     if (!item) {
-      ui.notifications?.error(
+      ui.notifications.error(
         `The requested item ${card.dataset.itemId} does not exist on Actor ${actor.name}`,
       );
       return null;
@@ -132,7 +132,7 @@ export default class ItemChatCardHelper {
       case 'formula':
         //check if we have anough ammo available
         if (item.data.type !== 'power' && cannotShoot) {
-          ui.notifications?.warn('SWADE.NotEnoughAmmo', { localize: true });
+          ui.notifications.warn('SWADE.NotEnoughAmmo', { localize: true });
           return null;
         }
         if (getProperty(item.data, 'data.actions.skillMod')) {
@@ -160,7 +160,7 @@ export default class ItemChatCardHelper {
         ) {
           //check to see we're not posting the message twice
           if (!notificationExists('SWADE.ReloadUnneeded', true)) {
-            ui.notifications?.info('SWADE.ReloadUnneeded', { localize: true });
+            ui.notifications.info('SWADE.ReloadUnneeded', { localize: true });
           }
           break;
         }
@@ -232,7 +232,7 @@ export default class ItemChatCardHelper {
         ((hasAutoReload && !canAutoReload) ||
           (!!actionToUse.shotsUsed && currentShots < actionToUse.shotsUsed))
       ) {
-        ui.notifications?.warn('SWADE.NotEnoughAmmo', { localize: true });
+        ui.notifications.warn('SWADE.NotEnoughAmmo', { localize: true });
         return null;
       }
       if (getProperty(item.data, 'data.actions.skillMod') !== '') {
@@ -323,7 +323,7 @@ export default class ItemChatCardHelper {
     //return if there's no ammo set
     if (!ammoName) {
       if (!notificationExists('SWADE.NoAmmoSet', true)) {
-        ui.notifications?.info('SWADE.NoAmmoSet', { localize: true });
+        ui.notifications.info('SWADE.NoAmmoSet', { localize: true });
       }
       return;
     }
@@ -337,7 +337,7 @@ export default class ItemChatCardHelper {
     if (isReloadPossible) {
       if (!ammo) {
         if (!notificationExists('SWADE.NotEnoughAmmoToReload', true)) {
-          ui.notifications?.warn('SWADE.NotEnoughAmmoToReload', {
+          ui.notifications.warn('SWADE.NotEnoughAmmoToReload', {
             localize: true,
           });
         }
@@ -350,7 +350,7 @@ export default class ItemChatCardHelper {
         ammoInMagazine = weapon.data.data.currentShots + ammoInInventory;
         leftoverAmmoInInventory = 0;
         if (!notificationExists('SWADE.NotEnoughAmmoToReload', true)) {
-          ui.notifications?.warn('SWADE.NotEnoughAmmoToReload', {
+          ui.notifications.warn('SWADE.NotEnoughAmmoToReload', {
             localize: true,
           });
         }
@@ -367,7 +367,7 @@ export default class ItemChatCardHelper {
 
     //check to see we're not posting the message twice
     if (!notificationExists('SWADE.ReloadSuccess', true)) {
-      ui.notifications?.info('SWADE.ReloadSuccess', { localize: true });
+      ui.notifications.info('SWADE.ReloadSuccess', { localize: true });
     }
   }
 

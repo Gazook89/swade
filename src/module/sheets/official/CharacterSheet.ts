@@ -700,24 +700,24 @@ export default class CharacterSheet extends ActorSheet {
     const templateData = {
         types: choices,
         hasTypes: true,
-        name: game.i18n
-          .localize('ENTITY.New')
-          .replace('{entity}', game.i18n.localize('ENTITY.Item')),
+        name: game.i18n.format('DOCUMENT.New', {
+          type: game.i18n.localize('DOCUMENT.Item'),
+        }),
       },
       dlg = await renderTemplate(
-        'templates/sidebar/entity-create.html',
+        'templates/sidebar/document-create.html',
         templateData,
       );
     //Create Dialog window
     return new Promise((resolve) => {
       new Dialog({
-        title: game.i18n
-          .localize('ENTITY.Create')
-          .replace('{entity}', game.i18n.localize('ENTITY.Item')),
+        title: game.i18n.format('DOCUMENT.Create', {
+          type: game.i18n.localize('DOCUMENT.Item'),
+        }),
         content: dlg,
         buttons: {
           ok: {
-            label: game.i18n.localize('ENTITY.CreateNew'),
+            label: 'OK',
             icon: '<i class="fas fa-check"></i>',
             callback: (html: JQuery) => {
               resolve({
@@ -737,9 +737,9 @@ export default class CharacterSheet extends ActorSheet {
   }
 
   protected async _createActiveEffect(name?: string) {
-    let possibleName = game.i18n
-      .localize('ENTITY.New')
-      .replace('{entity}', game.i18n.localize('Active Effect'));
+    let possibleName = game.i18n.format('DOCUMENT.New', {
+      type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+    });
     if (name) possibleName = name;
     await CONFIG.ActiveEffect.documentClass.create(
       {

@@ -16,7 +16,7 @@ import SwadeItem from './documents/item/SwadeItem';
 export async function createSwadeMacro(data: any, slot: number) {
   if (data.type !== 'Item') return;
   if (!('data' in data))
-    return ui.notifications?.warn(
+    return ui.notifications.warn(
       'You can only create macro buttons for owned Items',
     );
   const item = data.data;
@@ -46,7 +46,7 @@ export function rollItemMacro(itemName: string) {
   }
   const item = actor.items.getName(itemName);
   if (!item) {
-    ui.notifications?.warn(
+    ui.notifications.warn(
       `Your controlled Actor does not have an item named ${itemName}`,
     );
     return null;
@@ -68,7 +68,7 @@ export function rollItemMacro(itemName: string) {
 export function notificationExists(string: string, localize = false): boolean {
   let stringToFind = string;
   if (localize) stringToFind = game.i18n.localize(string);
-  const active = ui.notifications?.active || [];
+  const active = ui.notifications.active || [];
   return active.some((n) => n.text() === stringToFind);
 }
 
