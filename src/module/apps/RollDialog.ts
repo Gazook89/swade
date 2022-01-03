@@ -4,7 +4,7 @@ import SwadeItem from '../documents/item/SwadeItem';
 
 export default class RollDialog extends FormApplication<
   FormApplication.Options,
-  any,
+  object,
   RollDialogContext
 > {
   resolve: (roll: Roll | null) => void;
@@ -80,7 +80,7 @@ export default class RollDialog extends FormApplication<
     });
   }
 
-  getData(): object | Promise<object> {
+  async getData(): Promise<object> {
     const data = {
       formula: this._buildRollForEvaluation().formula,
       rollMode: game.settings.get('core', 'rollMode'),
@@ -88,6 +88,8 @@ export default class RollDialog extends FormApplication<
       displayExtraButton: true,
       extraButtonLabel: '',
       modifiers: this.ctx.mods.map(this._normalizeModValue),
+      isTraitRoll: this._isTraitRoll(),
+      showRange: this._showRange(),
     };
 
     if (this.ctx.item) {
@@ -110,6 +112,12 @@ export default class RollDialog extends FormApplication<
     Object.values(expanded.modifiers ?? []).forEach(
       (v, i) => (this.ctx.mods[i].ignore = v.ignore),
     );
+    if (expanded.map && expanded.map !== 0) {
+      this.ctx.mods.push({
+        label: game.i18n.localize('SWADE.MAPenalty'),
+        value: expanded.map,
+      });
+    }
     const roll = await this._evaluateRoll();
     this._resolve(roll);
   }
@@ -267,6 +275,15 @@ export default class RollDialog extends FormApplication<
     };
   }
 
+  private _isTraitRoll(): boolean {
+    return !!this.ctx.actor;
+  }
+
+  private _showRange(): boolean {
+    const isTrait = this._isTraitRoll();
+    return isTrait && !!this.ctx.item?.range;
+  }
+
   /** @override */
   close(options?: Application.CloseOptions): Promise<void> {
     //fallback if the roll has not yet been resolved
@@ -290,5 +307,6 @@ interface RollDialogContext {
 
 interface RollDialogFormData {
   modifiers?: TraitRollModifier[];
+  map?: number;
   rollMode: foundry.CONST.DICE_ROLL_MODES;
 }

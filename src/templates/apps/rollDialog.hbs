@@ -3,6 +3,42 @@
     <label>{{localize 'SWADE.Formula'}}</label>
     <input type='text' name='formula' value='{{formula}}' disabled />
   </div>
+  {{#if isTraitRoll}}
+    <fieldset>
+      <legend>{{localize 'SWADE.MAPenalty'}}</legend>
+      <div class='flexrow'>
+        <input
+          type='radio'
+          id='map-none'
+          name='map'
+          value='0'
+          data-dtype='Number'
+        />
+        <label for='map-none'>None</label>
+        <input
+          type='radio'
+          id='map-2'
+          name='map'
+          value='-2'
+          data-dtype='Number'
+        />
+        <label for='map-2'>-2</label>
+        <input
+          type='radio'
+          id='map-4'
+          name='map'
+          value='-4'
+          data-dtype='Number'
+        />
+        <label for='map-4'>-4</label>
+      </div>
+    </fieldset>
+  {{/if}}
+  {{#if showRange}}
+    <fieldset>
+      <legend>Show ranges!</legend>
+    </fieldset>
+  {{/if}}
   <fieldset>
     <legend>{{localize 'SWADE.Modifiers'}}</legend>
     <header class='modifier-entry header'>
@@ -28,7 +64,7 @@
       <input
         type='text'
         class='new-modifier-label'
-        placeholder='{{localize "SWADE.Mod"}}'
+        placeholder='{{localize "SWADE.Name"}}'
       />
       <input
         type='text'
