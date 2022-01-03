@@ -10,7 +10,7 @@ export default class SwadeCards extends Cards {
   async dealForInitative(
     to: Cards,
     number = 1,
-    how: foundry.CONST.CARD_DRAW_MODES = 0,
+    how: foundry.CONST.CARD_DRAW_MODES = foundry.CONST.CARD_DRAW_MODES.TOP,
   ): Promise<Card[]> {
     //validate
     if (this.data.type !== 'deck') {
@@ -18,7 +18,7 @@ export default class SwadeCards extends Cards {
     }
 
     // Draw from the sorted stack
-    const drawn = this._drawCards(number, how);
+    const drawn = this._drawCards(number, how) as StoredDocument<Card>[];
 
     // Process the card data
     const toCreate = new Array<Partial<CardDataSource>>();
@@ -29,7 +29,7 @@ export default class SwadeCards extends Cards {
       if (!createData.origin) createData.origin = this.id;
       toCreate.push(createData);
       if (card.isHome) toUpdate.push({ _id: card.id, drawn: true });
-      else toDelete.push(card.id!);
+      else toDelete.push(card.id);
     }
 
     // yeet the data
@@ -40,6 +40,6 @@ export default class SwadeCards extends Cards {
       this.deleteEmbeddedDocuments('Card', toDelete),
     ]);
     const updated = await this.updateEmbeddedDocuments('Card', toUpdate);
-    return updated as Card[];
+    return updated as StoredDocument<Card>[];
   }
 }

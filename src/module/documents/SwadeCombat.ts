@@ -285,7 +285,11 @@ export default class SwadeCombat extends Combat {
     const discardPile = game.cards!.get(discardPileId, {
       strict: true,
     });
-    return actionCardDeck.dealForInitative(discardPile, count);
+    return actionCardDeck.dealForInitative(
+      discardPile,
+      count,
+      foundry.CONST.CARD_DRAW_MODES.TOP,
+    );
   }
 
   /**
