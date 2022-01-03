@@ -305,17 +305,14 @@ export default class SwadeCombat extends Combat {
       enableRedraw = !cards.some((card) => card.data.value! > 5);
     }
 
-    const sortedCards = new Array<Card>();
-    for (const card of cards) {
-      sortedCards.push(card)
-    }
-    sortedCards.sort((a, b) => {
-      const cardA = a.getFlag('swade', 'cardValue') as number ?? 0;
-      const cardB = b.getFlag('swade', 'cardValue') as number ?? 0;
+    const sortedCards = deepClone(cards);
+    sortedCards.sort((a: Card, b: Card) => {
+      const cardA = a.data.value ?? 0;
+      const cardB = b.data.value ?? 0;
       const card = cardB - cardA;
       if (card !== 0) return card;
-      const suitA = a.getFlag('swade', 'suitValue') as number ?? 0;
-      const suitB = b.getFlag('swade', 'suitValue') as number ?? 0;
+      const suitA = a.data.data['suit'] ?? 0;
+      const suitB = b.data.data['suit'] ?? 0;
       return suitB - suitA;
     });
     const highestCardID = sortedCards[0].id;
@@ -467,7 +464,7 @@ export default class SwadeCombat extends Combat {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
-        await await utils.resetActionDeck();
+        await utils.resetActionDeck();
         ui.notifications?.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
       const updates = this._getInitResetUpdates();
