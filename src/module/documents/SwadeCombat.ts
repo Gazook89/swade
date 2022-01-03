@@ -164,17 +164,11 @@ export default class SwadeCombat extends Combat {
         }
       }
 
-      // Generate random degree of rotation to give card slide tilt
-      const min = 1;
-      const max = 4;
-      const rotation =
-        Math.floor(Math.random() * (max - min) + min + 1) *
-        (Math.round(Math.random()) ? 1 : -1);
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
                 <h4 class="result-text result-text-card">${card?.name}</h4>
-                <img class="result-image" style="transform: rotate(${rotation}deg)" src="${card?.face?.img}">
+                <img class="result-image" src="${card?.face?.img}">
             </section>
           `;
 
@@ -315,12 +309,25 @@ export default class SwadeCombat extends Combat {
       enableRedraw = !cards.some((card) => card.data.value! > 5);
     }
 
+    const sortedCards = deepClone(cards);
+    sortedCards.sort((a: Card, b: Card) => {
+      const cardA = a.data.value ?? 0;
+      const cardB = b.data.value ?? 0;
+      const card = cardB - cardA;
+      if (card !== 0) return card;
+      const suitA = a.data.data['suit'] ?? 0;
+      const suitB = b.data.data['suit'] ?? 0;
+      return suitB - suitA;
+    });
+    const highestCardID = sortedCards[0].id;
     let card: Card | undefined;
+
     const template = 'systems/swade/templates/initiative/choose-card.hbs';
     const html = await renderTemplate(template, {
       data: {
         cards: cards,
         oldCard: oldCardId,
+        highestCardID: highestCardID
       },
     });
 

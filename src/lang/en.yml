@@ -206,7 +206,7 @@ SWADE.FatigueMax: Max Fatigue
 SWADE.Incap: Incapacitated
 SWADE.Init: Initiative
 SWADE.DrawInit: Draw Initiative
-SWADE.ActionDeckReset: Reset Action Deck Table
+SWADE.ActionDeckReset: Reset Action Deck
 SWADE.ActionDeckResetNotification: Action Deck reset
 SWADE.InitDraw: drew the...
 SWADE.JokersWild: Joker's Wild
