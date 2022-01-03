@@ -153,7 +153,7 @@ export default class SettingConfigurator extends FormApplication {
     return Object.values(attributes).reduce((obj: any, v: any) => {
       const k = v['key'].trim();
       if (/[\s.]/.test(k)) {
-        return ui.notifications?.error(
+        return ui.notifications.error(
           'Attribute keys may not contain spaces or periods',
         );
       }

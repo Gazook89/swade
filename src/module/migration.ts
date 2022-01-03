@@ -5,7 +5,7 @@ import {
 } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 
 export async function migrateWorld() {
-  ui.notifications?.info(
+  ui.notifications.info(
     `Applying SWADE System Migration for version ${game.system.data.version}. Please be patient and do not close your game or shut down your server.`,
   );
 
@@ -50,7 +50,7 @@ export async function migrateWorld() {
     'systemMigrationVersion',
     game.system.data.version,
   );
-  ui.notifications?.info(
+  ui.notifications.info(
     `SWADE System Migration to version ${game.system.data.version} completed!`,
     { permanent: true },
   );
