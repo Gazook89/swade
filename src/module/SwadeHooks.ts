@@ -75,8 +75,9 @@ export default class SwadeHooks {
       currentVersion !== '0.0.0' &&
       foundry.utils.isNewerVersion(currentVersion, compatibleMigrationVersion)
     ) {
-      ui.notifications.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
+      ui.notifications.error('SWADE.SysMigrationWarning', {
         permanent: true,
+        localize: true,
       });
     }
     migrations.migrateWorld();
@@ -90,20 +91,20 @@ export default class SwadeHooks {
     // Mark all Wildcards in the Actors sidebars with an icon
     const found = html.find('.document-name');
     const actors: Array<SwadeActor> = app.documents;
-    let wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
+    const wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
 
     //if the player is not a GM, then don't mark the NPC wildcards
     if (!game.settings.get('swade', 'hideNPCWildcards') || game.user!.isGM) {
       const npcWildcards = actors.filter(
         (a) => a.isWildcard && !a.hasPlayerOwner,
       );
-      wildcards = wildcards.concat(npcWildcards);
+      wildcards.push(...npcWildcards);
     }
 
     for (let i = 0; i < found.length; i++) {
       const element = found[i];
-      const enitityId = element.parentElement!.dataset.documentId;
-      const wildcard = wildcards.find((a) => a.id === enitityId);
+      const actorID = element.parentElement!.dataset.documentId;
+      const wildcard = wildcards.find((a) => a.id === actorID);
 
       if (wildcard) {
         element.innerHTML = `

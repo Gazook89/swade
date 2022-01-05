@@ -327,7 +327,7 @@ export default class SwadeCombat extends Combat {
       data: {
         cards: cards,
         oldCard: oldCardId,
-        highestCardID: highestCardID
+        highestCardID: highestCardID,
       },
     });
 
@@ -468,7 +468,7 @@ export default class SwadeCombat extends Combat {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
-        await await utils.resetActionDeck();
+        await utils.resetActionDeck();
         ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
       const updates = this._getInitResetUpdates();
