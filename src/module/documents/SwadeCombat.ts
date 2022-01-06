@@ -563,7 +563,7 @@ export default class SwadeCombat extends Combat {
               activeEffect.data.duration.startRound === this.round - 1
             ) {
               // ...disable the effect
-              activeEffect.data.disabled = true;
+              await activeEffect.update({disabled: true});
             }
           }
         }
