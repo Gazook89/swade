@@ -80,6 +80,89 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
+      html.find('.status input[type="checkbox"]').on('change', async (event) => {
+        // Get the key from the target name
+        //@ts-ignore because it's too dumb to know that html elements have a name property
+        const key = event.target.name;
+        // Get the specific status property
+        const statusDataPath = key.split('.')[2];
+        // Get the current status value
+        let statusValue = this.object.data.data.status[statusDataPath];
+        console.log(statusValue)
+
+        // If the status is checked and the status value is false...
+        //@ts-ignore because it's too dumb to know that html input elements have a checked property
+        if (event.target.checked && statusValue === false) {
+          // Check to see if the effect already exists...
+          let effectExists = this.object.data.effects.some((effect) => effect.changes.some((change) => change.key === key));
+          // If it does exist...
+          if (effectExists) {
+            // ...find it...
+            for (const effect of this.object.data.effects) {
+              for (const change of effect.changes) {
+                if (change.key === key) {
+                  // ...and set disabled to false (thus enabling it)
+                  await effect.update({ disabled: false });
+                }
+              }
+            }
+            // Otherwise create it
+          } else {
+            let turns = 1; // default turns value of 1
+
+            // Get the label from the inner text of the parent label element
+            //@ts-ignore because it's too dumb to know that html elements have a parentNode property
+            const statusLabel = event.target.parentNode?.innerText;
+            // Lookup the status effect in CONFIG.
+            const configStatusEffect = CONFIG.statusEffects.find((s) => s.id === statusLabel.toLowerCase())
+            // Set duration and combat ID
+            const duration = {
+              turns: turns,
+              combat: game.combat?.id
+            };
+            // Set up data for AE
+            const data: any = {
+              label: statusLabel,
+              icon: configStatusEffect?.icon,
+              duration: duration,
+              changes: [
+                {
+                  key: key,
+                  mode: 5,
+                  value: true,
+                },
+              ],
+              flags: {
+                swade: {
+                  effectType: 'status',
+                },
+              },
+            };
+            // Set render AE sheet to false
+            const renderSheet = false;
+            // Create the AE
+            this._createActiveEffect(statusLabel, data, renderSheet);
+          }
+          // If the target is not checked or if the status is not set to false...
+        } else {
+          for (const effect of this.object.data.effects) {
+            for (const change of effect.changes) {
+              if (change.key === key) {
+                // Disable it
+                await effect.update({ disabled: true });
+                // Update the actor
+                await this.actor.update({
+                  data: {
+                    status: {
+                      [statusDataPath]: false,
+                    },
+                  },
+                });
+              }
+            }
+          }
+        }
+      });
     }
 
     //Display Advances on About tab
@@ -266,7 +349,7 @@ export default class CharacterSheet extends ActorSheet {
           this._chooseItemType().then(async (dialogInput: any) => {
             if (dialogInput.type !== 'effect') {
               const itemData = createItem(dialogInput.type, dialogInput.name);
-              await Item.create(itemData, {
+              const ae = await Item.create(itemData, {
                 renderSheet: true,
                 parent: this.actor,
               });
@@ -736,17 +819,30 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
-  protected async _createActiveEffect(name?: string) {
+  protected async _createActiveEffect(name?: string, data = { label: '', icon: '', duration: {} }, renderSheet = true) {
     let possibleName = game.i18n.format('DOCUMENT.New', {
       type: game.i18n.localize('DOCUMENT.ActiveEffect'),
     });
+
+    //Modify the data based on parameters passed in
     if (name) possibleName = name;
-    await CONFIG.ActiveEffect.documentClass.create(
-      {
-        label: possibleName,
-        icon: '/icons/svg/mystery-man-black.svg',
-      },
-      { renderSheet: true, parent: this.actor },
-    );
+    data.label = possibleName;
+
+    // Set default icon if none provided.
+    if (!data.icon) {
+      data.icon = '/icons/svg/mystery-man-black.svg';
+    }
+
+    // Set combat ID if none provided.
+    if (!data.duration) {
+      data.duration = {
+        combat: game.combat?.id,
+      };
+    }
+
+    await CONFIG.ActiveEffect.documentClass.create(data, {
+      renderSheet: renderSheet,
+      parent: this.actor
+    });
   }
 }

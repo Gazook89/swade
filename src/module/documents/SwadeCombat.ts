@@ -468,7 +468,7 @@ export default class SwadeCombat extends Combat {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
-        await await utils.resetActionDeck();
+        await utils.resetActionDeck();
         ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
       }
       const updates = this._getInitResetUpdates();
@@ -534,6 +534,42 @@ export default class SwadeCombat extends Combat {
       await utils.resetActionDeck();
       ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
     }
+  }
+
+  protected async _onUpdate(changed: DeepPartial<this['data']['_source']>, options: DocumentModificationOptions, userId: string): Promise<void> {
+    // For "end of next turn" statuses
+    // End of turn is triggered when its the turn after the target, so we need to look through the previous turn's actor's AEs.
+    // Get the previous turn number.
+    const previousTurnNumber = this.turn - 1;
+    // Get the data from the previous turn.
+    const previousTurn = this.turns[previousTurnNumber]
+    // Get the actor from the previous turn.
+    const previousTurnActor = previousTurn.actor;
+    // If there's such an actor...
+    if (previousTurnActor) {
+      //...loop through their AEs
+      for (const activeEffect of previousTurnActor.data.effects) {
+        // If the AE has a duration startRound, startTurn and it's measured in 1 turn (Vulnerable, Distracted, etc...)
+        if (activeEffect.getFlag('swade', 'effectType') === 'status') {
+          if (
+            activeEffect.data.duration.startRound &&
+            activeEffect.data.duration.startTurn &&
+            activeEffect.data.duration.turns === 1
+          ) {
+            //...if it's the same round but started on a previous turn, or from the previous round...
+            if (
+              (activeEffect.data.duration.startRound === this.round &&
+                activeEffect.data.duration.startTurn < this.turn) ||
+              activeEffect.data.duration.startRound === this.round - 1
+            ) {
+              // ...disable the effect
+              activeEffect.data.disabled = true;
+            }
+          }
+        }
+      }
+    }
+
   }
 }
 
