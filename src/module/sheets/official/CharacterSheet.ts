@@ -116,12 +116,16 @@ export default class CharacterSheet extends ActorSheet {
             // Lookup the status effect in CONFIG.
             const configStatusEffect = CONFIG.statusEffects.find((s) => s.id === statusLabel.toLowerCase())
             // Set duration and combat ID
+            const endOfNextTurnStatuses = ['Distracted', 'Vulnerable']
             const duration = {
-              turns: turns,
               combat: game.combat?.id
+            } as any;
+
+            if (endOfNextTurnStatuses.includes(statusLabel)) {
+              duration.turns = 1;
             };
             // Set up data for AE
-            const data: any = {
+            const data = {
               label: statusLabel,
               icon: configStatusEffect?.icon,
               duration: duration,
@@ -137,7 +141,7 @@ export default class CharacterSheet extends ActorSheet {
                   effectType: 'status',
                 },
               },
-            };
+            } as any;
             // Set render AE sheet to false
             const renderSheet = false;
             // Create the AE
