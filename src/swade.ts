@@ -93,6 +93,7 @@ Hooks.once('init', () => {
   CONFIG.ui.combat = SwadeCombatTracker;
 
   //register custom status effects
+  //@ts-ignore
   CONFIG.statusEffects = SWADE.statusEffects;
 
   //@ts-expect-error Types don't properly recognized dotnotation

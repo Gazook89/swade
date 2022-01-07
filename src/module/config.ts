@@ -1,3 +1,4 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { AbilitySubType } from '../globals';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
@@ -126,8 +127,8 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.stats.parry.modifier',
-          value: 4,
-          mode: 2,
+          value: '4',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -160,6 +161,13 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_distracted.svg',
       id: 'distracted',
       label: 'SWADE.Distr',
+      changes: [
+        {
+          key: 'data.status.isDistracted',
+          value: 'true',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        },
+      ],
     },
     {
       icon: 'systems/swade/assets/icons/status/status_encumbered.svg',
@@ -243,13 +251,13 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.stats.toughness.value',
-          value: 0,
-          mode: 2,
+          value: '0',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
           key: 'data.stats.toughness.armor',
-          value: 0,
-          mode: 2,
+          value: '0',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -402,7 +410,7 @@ export interface SwadeConfig {
     id: string;
   };
 
-  statusEffects: Array<StatusEffect>;
+  statusEffects: Partial<ActiveEffectDataConstructorData & { id: string }>[];
 
   wildCardIcons: {
     regular: string;
@@ -419,17 +427,4 @@ export interface SwadeConfig {
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
   allowedActorFlags: Array<string>;
-}
-
-interface StatusEffect {
-  icon: string;
-  id: string;
-  label: string;
-  changes?: Array<StatusEffectChanges>;
-}
-
-interface StatusEffectChanges {
-  key: string;
-  value: string | number;
-  mode: number;
 }

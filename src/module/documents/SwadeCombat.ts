@@ -469,7 +469,7 @@ export default class SwadeCombat extends Combat {
 
       if (jokerDrawn) {
         await utils.resetActionDeck();
-        ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
+        ui.notifications.info('SWADE.DeckShuffled', { localize: true });
       }
       const updates = this._getInitResetUpdates();
       await this.updateEmbeddedDocuments('Combatant', updates);
