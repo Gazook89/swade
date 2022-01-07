@@ -34,11 +34,6 @@
       </div>
     </fieldset>
   {{/if}}
-  {{#if showRange}}
-    <fieldset>
-      <legend>Show ranges!</legend>
-    </fieldset>
-  {{/if}}
   <fieldset>
     <legend>{{localize 'SWADE.Modifiers'}}</legend>
     <header class='modifier-entry header'>
@@ -65,11 +60,13 @@
         type='text'
         class='new-modifier-label'
         placeholder='{{localize "SWADE.Name"}}'
+        list='modifier-names'
       />
       <input
         type='text'
         class='new-modifier-value'
         placeholder='{{localize "SWADE.RollExample"}}'
+        list='modifier-values'
       />
       <button type='button' class='add-modifier'>
         <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
@@ -103,3 +100,12 @@
     </button>
   </div>
 </form>
+<datalist id='modifier-names'>
+  <option value='{{localize "SWADE.Rng"}}'>
+  <option value='{{localize "SWADE.Cover"}}'>
+  <option value='{{localize "SWADE.Aid"}}'>
+  <option value='{{localize "SWADE.Addi"}}'>
+</datalist>
+<datalist id='modifier-values'>
+<option value="+1d6x"></option>
+</datalist>
