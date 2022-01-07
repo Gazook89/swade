@@ -284,7 +284,7 @@ export async function rerollFromChat(
   const doSpendBenny = spendBenny && actor?.isWildcard;
 
   if (doSpendBenny && currentBennies <= 0) {
-    ui.notifications.warn(game.i18n.localize('SWADE.NoBennies'));
+    ui.notifications.warn('SWADE.NoBennies', { localize: true });
     return;
   }
 

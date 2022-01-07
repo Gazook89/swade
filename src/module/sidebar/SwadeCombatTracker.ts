@@ -37,9 +37,9 @@ export default class SwadeCombatTracker extends CombatTracker {
   async _onResetActionDeck(event) {
     event.stopImmediatePropagation();
     await utils.resetActionDeck();
-    ui.notifications.info(
-      game.i18n.localize('SWADE.ActionDeckResetNotification'),
-    );
+    ui.notifications.info('SWADE.ActionDeckResetNotification', {
+      localize: true,
+    });
   }
   async _onCombatantControl(event) {
     super._onCombatantControl(event);

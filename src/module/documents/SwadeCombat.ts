@@ -41,7 +41,7 @@ export default class SwadeCombat extends Combat {
       { strict: true },
     );
     if (ids.length > actionCardDeck.availableCards.length) {
-      ui.notifications!.warn(game.i18n.localize('SWADE.NoCardsLeft'));
+      ui.notifications!.warn('SWADE.NoCardsLeft', { localize: true });
       return this;
     }
 
@@ -532,7 +532,7 @@ export default class SwadeCombat extends Combat {
     //reset the deck when combat is ended
     if (jokerDrawn) {
       await utils.resetActionDeck();
-      ui.notifications.info(game.i18n.localize('SWADE.DeckShuffled'));
+      ui.notifications.info('SWADE.DeckShuffled', { localize: true });
     }
   }
 }
