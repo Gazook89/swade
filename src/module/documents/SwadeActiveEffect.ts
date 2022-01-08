@@ -1,6 +1,7 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
+import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
 
@@ -119,6 +120,15 @@ export default class SwadeActiveEffect extends ActiveEffect {
     //remove the effects from the item
     if (this.affectsItems && parent instanceof CONFIG.Actor.documentClass) {
       this._removeEffectsFromItems(parent);
+    }
+  }
+
+  protected async  _preCreate(data: ActiveEffectDataConstructorData, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
+    super._preCreate(data, options, user);
+    const label = game.i18n.localize(this.data.label);
+    this.data.update({ label: label });
+    if (data.duration) {
+      this.data.update({'duration.combat': game.combat?.id});
     }
   }
 }
