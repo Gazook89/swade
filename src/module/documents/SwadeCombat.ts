@@ -556,14 +556,14 @@ export default class SwadeCombat extends Combat {
             activeEffect.data.duration.startTurn &&
             activeEffect.data.duration.turns === 1
           ) {
-            //...if it's the same round but started on a previous turn, or from the previous round...
+            //...if it's the same round but started on a previous turn, or from a previous round...
             if (
               (activeEffect.data.duration.startRound === this.round &&
                 activeEffect.data.duration.startTurn < this.turn) ||
-              activeEffect.data.duration.startRound === this.round - 1
+              activeEffect.data.duration.startRound < this.round
             ) {
-              // ...disable the effect
-              await activeEffect.update({disabled: true});
+              // ...delete the effect
+              await activeEffect.delete();
             }
           }
         }
