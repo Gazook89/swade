@@ -108,13 +108,8 @@ export default class CharacterSheet extends ActorSheet {
           } else {
             // Find
             for (const effect of this.object.data.effects) {
-              console.log(effect.data.label);
-              console.log(event.target.parentElement?.innerText);
-              console.log(effect.getFlag('swade', 'effectType'));
               if (effect.data.label.toLowerCase() === event.target.parentElement?.innerText.toLowerCase() && effect.getFlag('swade','effectType') === 'status') {
                 for (const change of effect.changes) {
-                  console.log(change.key)
-                  console.log(key)
                   if (change.key.includes(key)) {
                     // Delete it
                     await effect.delete();
