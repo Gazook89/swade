@@ -1,3 +1,5 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import { data } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/module.mjs';
 import { AbilitySubType } from '../globals';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
@@ -126,8 +128,8 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.stats.parry.modifier',
-          value: 4,
-          mode: 2,
+          value: '4',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -145,11 +147,25 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_bound.svg',
       id: 'bound',
       label: 'SWADE.Bound',
+      changes: [
+        {
+          key: `data.status.isBound`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
     },
     {
       icon: 'systems/swade/assets/icons/status/status_entangled.svg',
       id: 'entangled',
       label: 'SWADE.Entangled',
+      changes: [
+        {
+          key: `data.status.isEntangled`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
     },
     {
       icon: 'systems/swade/assets/icons/status/status_frightened.svg',
@@ -160,6 +176,21 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_distracted.svg',
       id: 'distracted',
       label: 'SWADE.Distr',
+      duration: {
+        turns: 1,
+      },
+      changes: [
+        {
+          key: `data.status.isDistracted`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_encumbered.svg',
@@ -180,6 +211,21 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_vulnerable.svg',
       id: 'vulnerable',
       label: 'SWADE.Vuln',
+      duration: {
+        turns: 1,
+      },
+      changes: [
+        {
+          key: `data.status.isVulnerable`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_bleeding_out.svg',
@@ -243,13 +289,13 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.stats.toughness.value',
-          value: 0,
-          mode: 2,
+          value: '0',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
           key: 'data.stats.toughness.armor',
-          value: 0,
-          mode: 2,
+          value: '0',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -402,7 +448,7 @@ export interface SwadeConfig {
     id: string;
   };
 
-  statusEffects: Array<StatusEffect>;
+  statusEffects: Partial<ActiveEffectDataConstructorData & { id: string }>[];
 
   wildCardIcons: {
     regular: string;
