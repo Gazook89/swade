@@ -154,8 +154,8 @@
   .effect-controls {
     line-height: 24px;
     flex: 0 0 60px;
-    text-align: center;
-
+    display: flex;
+    justify-content: flex-end;
     a,
     button {
       cursor: pointer;
