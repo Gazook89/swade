@@ -176,27 +176,31 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
       // Get the key from the target name
       const id = event.target.dataset.id as string;
       const key = event.target.dataset.key as string;
-      const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id) as any;
+
+      //FIXME return once types are updated
+      const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id);
       // Get the current status value
       const statusValue = this.object.data.data.status[key];
       // Get the label from the inner text of the parent label element
       const statusLabel = event.target.parentElement?.innerText as string;
       // If the status is checked and the status value is false...
-      if (statusValue === false) {
+      if (statusConfigData !== undefined && !statusValue) {
         // Set render AE sheet to false
         const renderSheet = false;
 
-        console.log(this)
         // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
-        //@ts-ignore
-        const token = game.canvas.tokens?.children[0].children.find((t: any) => t.document.id === this.token.id);
+        const tokens = game.canvas.tokens?.getDocuments();
+        const token = tokens?.find((t) => t.actor?.id === this.object.id);
         // So, if there is...
         if (token) {
           // Toggle the AE from the token which toggles it on the actor sheet, too
-          await token.document.toggleActiveEffect(statusConfigData, { active: true })
+          //@ts-expect-error TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+          await token.toggleActiveEffect(statusConfigData, { active: true });
           // Otherwise
         } else {
           // Create the AE, passing the label, data, and renderSheet boolean
+          //FIXME return once types are updated
+          //@ts-ignore
           await this._createActiveEffect(statusLabel, statusConfigData, renderSheet);
         }
 
@@ -204,7 +208,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
       } else {
         // Find the existing effect based on label and flag and delete it.
         for (const effect of this.object.data.effects) {
-          if (effect.data.label.toLowerCase() === statusLabel.toLowerCase() && await effect.getFlag('swade','effectType') === 'status') {
+          if (effect.data.label.toLowerCase() === statusLabel.toLowerCase() && effect.getFlag('swade', 'effectType') === 'status') {
             for (const change of effect.changes) {
               if (change.key.includes(key)) {
                 // Delete it

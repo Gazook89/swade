@@ -543,7 +543,7 @@ export default class SwadeCombat extends Combat {
       // ...look for any effect that was applied on the previous round's last turn, and delete it.
       for (const combatant of this.combatants as any) {
         for (const effect of combatant.actor.effects) {
-          if (await effect.getFlag('swade', 'removeEffect') === true) {
+          if (effect.getFlag('swade', 'removeEffect')) {
             await effect.delete()
           }
         }
@@ -554,18 +554,21 @@ export default class SwadeCombat extends Combat {
       // Only if previous turn isn't less than 0...
       if (previousTurn >= 0) {
         // Search for and delete any effects that are supposed to expire at the end of the previous turn.
-        const effects = this.turns[previousTurn].actor?.effects as any;
+        const effects = this.turns[previousTurn].actor?.effects;
         if (effects && effects.size) {
           for (const effect of effects) {
+            const startRound = effect.data.duration.startRound ?? 0;
+            const startTurn = effect.data.duration.startTurn ?? 0;
+
             if (
               effect.data.duration.turns === 1 &&
               (
-                effect.data.duration.startRound === this.round &&
-                effect.data.duration.startTurn < this.turn - 1
+                startRound === this.round &&
+                startTurn < this.turn - 1
               ) ||
-              effect.data.duration.startRound < this.round
+              startRound < this.round
             ) {
-              await effect.delete()
+              await effect.delete();
             }
           }
         }
@@ -574,12 +577,12 @@ export default class SwadeCombat extends Combat {
     // If this is the last turn of a round, and it had an AE that's supposed to expire at the end of this turn...
     if (this.turn === this.turns.length - 1) {
       if (this.combatant.actor?.effects.size) {
-        const combatantEffects = this.combatant.actor?.data.effects as any;
+        const combatantEffects = this.combatant.actor?.data.effects;
         for (const effect of combatantEffects) {
           if (
             effect.data.duration.turns === 1 &&
             effect.data.duration.startRound === this.round &&
-            effect.data.duration.startTurn < this.turn
+            effect.data.duration.startTurn as number < this.turn
           ) {
             // Mark it to be deleted at the start of the next round.
             await effect.setFlag('swade', 'removeEffect', true);
