@@ -72,7 +72,7 @@ export default class RollDialog extends FormApplication<
       const value = html.find('.new-modifier-value').val() as string;
       if (value) {
         this.ctx.mods.push({
-          label: label ?? game.i18n.localize('SWADE.SitMod'),
+          label: label ?? game.i18n.localize('SWADE.Addi'),
           value: this._sanitizeModifierInput(value),
         });
         this.render();
@@ -89,7 +89,6 @@ export default class RollDialog extends FormApplication<
       extraButtonLabel: '',
       modifiers: this.ctx.mods.map(this._normalizeModValue),
       isTraitRoll: this._isTraitRoll(),
-      showRange: this._showRange(),
     };
 
     if (this.ctx.item) {
@@ -277,11 +276,6 @@ export default class RollDialog extends FormApplication<
 
   private _isTraitRoll(): boolean {
     return !!this.ctx.actor;
-  }
-
-  private _showRange(): boolean {
-    const isTrait = this._isTraitRoll();
-    return isTrait && !!this.ctx.item?.range;
   }
 
   /** @override */

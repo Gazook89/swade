@@ -1,5 +1,4 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
-import { data } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/module.mjs';
 import { AbilitySubType } from '../globals';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
@@ -499,17 +498,4 @@ export interface SwadeConfig {
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
   allowedActorFlags: Array<string>;
-}
-
-interface StatusEffect {
-  icon: string;
-  id: string;
-  label: string;
-  changes?: Array<StatusEffectChanges>;
-}
-
-interface StatusEffectChanges {
-  key: string;
-  value: string | number;
-  mode: number;
 }

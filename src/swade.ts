@@ -46,9 +46,9 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
+  //set up global game object
   game.swade = {
     SwadeEntityTweaks,
     rollItemMacro,
@@ -70,6 +70,10 @@ Hooks.once('init', () => {
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
   CONFIG.User.documentClass = SwadeUser;
   CONFIG.Cards.documentClass = SwadeCards;
+  //register custom object classes
+  CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
+  //register custom sidebar tabs
+  CONFIG.ui.combat = SwadeCombatTracker;
 
   //register card presets
   //@ts-ignore
@@ -85,12 +89,6 @@ Hooks.once('init', () => {
       type: 'deck',
     },
   };
-
-  //register custom object classes
-  CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
-
-  //register custom sidebar tabs
-  CONFIG.ui.combat = SwadeCombatTracker;
 
   //register custom status effects
   //@ts-ignore
