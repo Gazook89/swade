@@ -42,6 +42,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Fixed Wildcards not being marked as such in the Actors sidebar tab
 - Fixed item creation dialogs and translations that still refered to entities instead of documents
 
+## [v0.22.5]
+
+### Fixed
+
+- Fixed a bug that would prevent archetypes from recieving items
+
 ## [v0.22.4]
 
 ### Fixed
