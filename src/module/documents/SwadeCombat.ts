@@ -538,38 +538,55 @@ export default class SwadeCombat extends Combat {
 
   protected async _onUpdate(changed: DeepPartial<this['data']['_source']>, options: DocumentModificationOptions, userId: string): Promise<void> {
     // For "end of next turn" statuses
-    // End of turn is triggered when its the turn after the target, so we need to look through the previous turn's actor's AEs.
-    // Get the previous turn number.
-    const previousTurnNumber = this.turn - 1;
-    // Get the data from the previous turn.
-    const previousTurn = this.turns[previousTurnNumber]
-    // Get the actor from the previous turn.
-    const previousTurnActor = previousTurn.actor;
-    // If there's such an actor...
-    if (previousTurnActor) {
-      //...loop through their AEs
-      for (const activeEffect of previousTurnActor.data.effects) {
-        // If the AE has a duration startRound, startTurn and it's measured in 1 turn (Vulnerable, Distracted, etc...)
-        if (activeEffect.getFlag('swade', 'effectType') === 'status') {
-          if (
-            activeEffect.data.duration.startRound &&
-            activeEffect.data.duration.startTurn &&
-            activeEffect.data.duration.turns === 1
-          ) {
-            //...if it's the same round but started on a previous turn, or from a previous round...
+    // If this is the first turn of the round...
+    if (this.turn === 0) {
+      // ...look for any effect that was applied on the previous round's last turn, and delete it.
+      for (const combatant of this.combatants as any) {
+        for (const effect of combatant.actor.effects) {
+          if (await effect.getFlag('swade', 'removeEffect') === true) {
+            await effect.delete()
+          }
+        }
+      }
+    } else {
+      // Determine the previous turn
+      const previousTurn = this.turn - 1;
+      // Only if previous turn isn't less than 0...
+      if (previousTurn >= 0) {
+        // Search for and delete any effects that are supposed to expire at the end of the previous turn.
+        const effects = this.turns[previousTurn].actor?.effects as any;
+        if (effects && effects.size) {
+          for (const effect of effects) {
             if (
-              (activeEffect.data.duration.startRound === this.round &&
-                activeEffect.data.duration.startTurn < this.turn) ||
-              activeEffect.data.duration.startRound < this.round
+              effect.data.duration.turns === 1 &&
+              (
+                effect.data.duration.startRound === this.round &&
+                effect.data.duration.startTurn < this.turn - 1
+              ) ||
+              effect.data.duration.startRound < this.round
             ) {
-              // ...delete the effect
-              await activeEffect.delete();
+              await effect.delete()
             }
           }
         }
       }
     }
-
+    // If this is the last turn of a round, and it had an AE that's supposed to expire at the end of this turn...
+    if (this.turn === this.turns.length - 1) {
+      if (this.combatant.actor?.effects.size) {
+        const combatantEffects = this.combatant.actor?.data.effects as any;
+        for (const effect of combatantEffects) {
+          if (
+            effect.data.duration.turns === 1 &&
+            effect.data.duration.startRound === this.round &&
+            effect.data.duration.startTurn < this.turn
+          ) {
+            // Mark it to be deleted at the start of the next round.
+            await effect.setFlag('swade', 'removeEffect', true);
+          }
+        }
+      }
+    }
   }
 }
 
