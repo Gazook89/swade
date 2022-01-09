@@ -105,6 +105,18 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
       id: 'shaken',
       label: 'SWADE.Shaken',
+      changes: [
+        {
+          key: `data.status.isShaken`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'icons/svg/skull.svg',
@@ -154,6 +166,11 @@ export const SWADE: SwadeConfig = {
           value: 'true',
         },
       ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_entangled.svg',
@@ -166,6 +183,11 @@ export const SWADE: SwadeConfig = {
           value: 'true',
         },
       ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_frightened.svg',
@@ -206,6 +228,18 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_stunned.svg',
       id: 'stunned',
       label: 'SWADE.Stunned',
+      changes: [
+        {
+          key: `data.status.isStunned`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_vulnerable.svg',
