@@ -80,46 +80,48 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
-      html
-        .find('.status input[type="checkbox"]')
-        .on('change', async (event) => {
-          // Get the key from the target name
-          const id = event.target.dataset.id as string;
-          const key = event.target.dataset.key as string;
-          const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id) as any;
-          // Get the current status value
-          //TODO: get the value from the Actor's status dumbass
+      html.find('.status input[type="checkbox"]').on('change', async (event) => {
+        // Get the key from the target name
+        const id = event.target.dataset.id as string;
+        const key = event.target.dataset.key as string;
+        const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id) as any;
+        // Get the current status value
+        const statusValue = this.object.data.data.status[key];
+        // Get the label from the inner text of the parent label element
+        const statusLabel = event.target.parentElement?.innerText as string;
+        // If the status is checked and the status value is false...
+        if (statusValue === false) {
+          // Set render AE sheet to false
+          const renderSheet = false;
 
-          const statusValue = this.object.data.data.status[key];
-          console.log(statusValue);
-
-          // If the status is checked and the status value is false...
-          if (statusValue === false) {
-            // Get the label from the inner text of the parent label element
-            const statusLabel = event.target.parentElement?.innerText;
-
-            // Set render AE sheet to false
-            const renderSheet = false;
-
-            // Create the AE, passing the label, data, and renderSheet boolean
-            this._createActiveEffect(statusLabel, statusConfigData, renderSheet);
-
-            // Otherwise...
+          // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
+          //@ts-ignore
+          const token = game.canvas.tokens?.children[0].children.find((t: any) => t.data.actorId === this.object.id);
+          // So, if there is...
+          if (token) {
+            // Toggle the AE from the token which toggles it on the actor sheet, too
+            await token.document.toggleActiveEffect(statusConfigData, { active: true })
+            // Otherwise
           } else {
-            // Find
-            for (const effect of this.object.data.effects) {
-              if (effect.data.label.toLowerCase() === event.target.parentElement?.innerText.toLowerCase() && effect.getFlag('swade','effectType') === 'status') {
-                for (const change of effect.changes) {
-                  if (change.key.includes(key)) {
-                    // Delete it
-                    await effect.delete();
-                    // Update the actor
-                  }
+            // Create the AE, passing the label, data, and renderSheet boolean
+            await this._createActiveEffect(statusLabel, statusConfigData, renderSheet);
+          }
+
+          // Otherwise...
+        } else {
+          // Find the existing effect based on label and flag and delete it.
+          for (const effect of this.object.data.effects) {
+            if (effect.data.label.toLowerCase() === statusLabel.toLowerCase() && await effect.getFlag('swade','effectType') === 'status') {
+              for (const change of effect.changes) {
+                if (change.key.includes(key)) {
+                  // Delete it
+                  await effect.delete();
                 }
               }
             }
           }
-        });
+        }
+      });
     }
 
     //Display Advances on About tab
@@ -784,11 +786,7 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
-  protected async _createActiveEffect(
-    name?: string,
-    data = { label: '', icon: '', duration: {} },
-    renderSheet = true,
-  ) {
+  protected async _createActiveEffect( name?: string, data = { label: '', icon: '', duration: {} }, renderSheet = true) {
     let possibleName = game.i18n.format('DOCUMENT.New', {
       type: game.i18n.localize('DOCUMENT.ActiveEffect'),
     });
@@ -808,8 +806,7 @@ export default class CharacterSheet extends ActorSheet {
         combat: game.combat?.id,
       };
     }
-
-    await CONFIG.ActiveEffect.documentClass.create(data, {
+    return await CONFIG.ActiveEffect.documentClass.create(data, {
       renderSheet: renderSheet,
       parent: this.actor,
     });
