@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## [v0.22.5]
+
+- Fixed a bug that would prevent archetypes from recieving items
+
 ## [v0.22.4]
 
 ### Fixed

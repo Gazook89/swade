@@ -67,8 +67,8 @@ export default class SwadeItemSheet extends ItemSheet {
     if (!this.isEditable) return;
     if (
       this._canBeArcaneDevice(this.item.data.type) ||
-      (this.item.type === 'ability' &&
-        this.item.data.data['subtype'] === 'race')
+      (this.item.data.type === 'ability' &&
+        this.item.data.data.subtype !== 'special')
     ) {
       this.form!.ondrop = (ev) => this._onDrop(ev);
     }
@@ -297,9 +297,11 @@ export default class SwadeItemSheet extends ItemSheet {
 
       if (
         data.type !== 'Item' ||
-        (item.data.type === 'ability' && item.data.data.subtype === 'race')
+        (item.data.type === 'ability' && item.data.data.subtype !== 'special')
       ) {
-        console.log('SWADE | You cannot add a race to a race');
+        console.warn(
+          'SWADE | You cannot add a race to a race or an archetype to an archetype',
+        );
         return false;
       }
     } catch (error) {
