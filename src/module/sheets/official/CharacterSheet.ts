@@ -84,7 +84,8 @@ export default class CharacterSheet extends ActorSheet {
         // Get the key from the target name
         const id = event.target.dataset.id as string;
         const key = event.target.dataset.key as string;
-        const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id) as any;
+        //FIXME return once types are updated
+        const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id);
         // Get the current status value
         const statusValue = this.object.data.data.status[key];
         // Get the label from the inner text of the parent label element
