@@ -9,6 +9,14 @@ declare global {
   interface DocumentClassConfig {
     ActiveEffect: typeof SwadeActiveEffect;
   }
+    interface FlagConfig {
+      ActiveEffect: {
+        swade: {
+          removeEffect?: boolean;
+          effectType?: string;
+        };
+      };
+    }
 }
 
 export default class SwadeActiveEffect extends ActiveEffect {
