@@ -152,10 +152,11 @@
     text-overflow: ellipsis;
   }
   .effect-controls {
-    line-height: 24px;
-    flex: 0 0 60px;
     display: flex;
     justify-content: flex-end;
+    gap: .75ch;
+    line-height: 24px;
+    flex: 0 0 60px;
     a,
     button {
       cursor: pointer;
