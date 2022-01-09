@@ -55,7 +55,7 @@
         </li>
       {{/each}}
     </ul>
-    <footer class='modifier-entry footer'>
+    <div class='modifier-entry footer'>
       <input
         type='text'
         class='new-modifier-label'
@@ -71,7 +71,25 @@
       <button type='button' class='add-modifier'>
         <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
       </button>
-    </footer>
+    </div>
+    <div class='modifier-presets'>
+      <select id='preset-selection'>
+        <option selected disabled>Choose one...</option>
+        {{#each modGroups as |group|}}
+          <optgroup label='{{group.name}}'>
+            {{#each group.modifiers}}
+              <option
+                data-group='{{group.name}}'
+                data-index={{@index}}
+              >{{label}}</option>
+            {{/each}}
+          </optgroup>
+        {{/each}}
+      </select>
+      <button type='button' class='add-preset'>
+        <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
+      </button>
+    </div>
   </fieldset>
   <div class='form-group'>
     <label>{{localize 'SWADE.RollMode'}}</label>
@@ -101,11 +119,17 @@
   </div>
 </form>
 <datalist id='modifier-names'>
-  <option value='{{localize "SWADE.Rng"}}'>
-  <option value='{{localize "SWADE.Cover"}}'>
-  <option value='{{localize "SWADE.Aid"}}'>
-  <option value='{{localize "SWADE.Addi"}}'>
+  <option value='{{localize "SWADE.Rng"}}'></option>
+  <option value='{{localize "SWADE.Cover"}}'></option>
+  <option value='{{localize "SWADE.ModSupport"}}'></option>
+  <option value='{{localize "SWADE.Addi"}}'></option>
 </datalist>
 <datalist id='modifier-values'>
-<option value="+1d6x"></option>
+  <option value='+1d6x'></option>
+  <option value='+1'></option>
+  <option value='+2'></option>
+  <option value='+4'></option>
+  <option value='-1'></option>
+  <option value='-2'></option>
+  <option value='-4'></option>
 </datalist>

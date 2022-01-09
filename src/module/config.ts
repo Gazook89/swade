@@ -1,5 +1,6 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { AbilitySubType } from '../globals';
+import { TraitRollModifier } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
@@ -36,8 +37,6 @@ export const SWADE: SwadeConfig = {
       short: 'SWADE.AttrVigShort',
     },
   },
-
-  packChoices: {},
 
   imagedrop: {
     height: 300,
@@ -344,7 +343,37 @@ export const SWADE: SwadeConfig = {
     },
   },
 
-  allowedActorFlags: [],
+  prototypeRollGroups: [
+    {
+      name: 'SWADE.Rng',
+      modifiers: [
+        { label: 'SWADE.Range.Medium', value: -2 },
+        { label: 'SWADE.Range.Long', value: -4 },
+        { label: 'SWADE.Range.Extreme', value: -8 },
+      ],
+    },
+    {
+      name: 'SWADE.Cover',
+      modifiers: [
+        { label: 'SWADE.Cover.Light', value: -2 },
+        { label: 'SWADE.Cover.Medium', value: -4 },
+        { label: 'SWADE.Cover.Heavy', value: -6 },
+        { label: 'SWADE.Cover.Total', value: -8 },
+      ],
+    },
+    {
+      name: 'SWADE.Illumination',
+      modifiers: [
+        { label: 'SWADE.Illumination.Dim', value: -2 },
+        { label: 'SWADE.Illumination.Dark', value: -4 },
+        { label: 'SWADE.Illumination.Pitch', value: -6 },
+      ],
+    },
+    {
+      name: 'SWADE.ModOther',
+      modifiers: [{ label: 'SWADE.Snapfire', value: -2 }],
+    },
+  ],
 };
 
 export interface SwadeConfig {
@@ -371,8 +400,6 @@ export interface SwadeConfig {
       short: string;
     };
   };
-
-  packChoices: Record<string, string>;
 
   imagedrop: {
     height: number;
@@ -410,7 +437,7 @@ export interface SwadeConfig {
     id: string;
   };
 
-  statusEffects: Partial<ActiveEffectDataConstructorData & { id: string }>[];
+  statusEffects: ActiveEffectDataConstructorData & { id: string }[];
 
   wildCardIcons: {
     regular: string;
@@ -426,5 +453,8 @@ export interface SwadeConfig {
 
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
-  allowedActorFlags: Array<string>;
+  prototypeRollGroups: {
+    name: string;
+    modifiers: TraitRollModifier[];
+  }[];
 }

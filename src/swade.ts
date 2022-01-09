@@ -135,7 +135,8 @@ Hooks.once('init', () => {
   listenJournalDrop();
 });
 
-Hooks.once('ready', async () => SwadeHooks.onReady());
+Hooks.once('ready', () => SwadeHooks.onReady());
+Hooks.once('setup', () => SwadeHooks.onSetup());
 
 /** This hook only really exists to stop Races from being added to the actor as an item */
 Hooks.on(

@@ -57,6 +57,8 @@ export default class RollDialog extends FormApplication<
     super.activateListeners(html);
     $(document).on('keydown.chooseDefault', this._onKeyDown.bind(this));
     html.find('button#close').on('click', this.close.bind(this));
+    html.find('button.add-modifier').on('click', this._addModifier.bind(this));
+    html.find('button.add-preset').on('click', this._addPreset.bind(this));
     html.find('button[type="submit"]').on('click', (ev) => {
       this.extraButtonUsed = ev.currentTarget.dataset.type === 'extra';
       this.submit();
@@ -67,27 +69,17 @@ export default class RollDialog extends FormApplication<
       this.ctx.mods[index].ignore = target.checked;
       this.render();
     });
-    html.find('button.add-modifier').on('click', () => {
-      const label = html.find('.new-modifier-label').val() as string;
-      const value = html.find('.new-modifier-value').val() as string;
-      if (value) {
-        this.ctx.mods.push({
-          label: label ?? game.i18n.localize('SWADE.Addi'),
-          value: this._sanitizeModifierInput(value),
-        });
-        this.render();
-      }
-    });
   }
 
   async getData(): Promise<object> {
     const data = {
-      formula: this._buildRollForEvaluation().formula,
-      rollMode: game.settings.get('core', 'rollMode'),
       rollModes: CONFIG.Dice.rollModes,
       displayExtraButton: true,
+      modGroups: CONFIG.SWADE.prototypeRollGroups,
       extraButtonLabel: '',
+      rollMode: game.settings.get('core', 'rollMode'),
       modifiers: this.ctx.mods.map(this._normalizeModValue),
+      formula: this._buildRollForEvaluation().formula,
       isTraitRoll: this._isTraitRoll(),
     };
 
@@ -129,10 +121,16 @@ export default class RollDialog extends FormApplication<
       return this.close();
     }
 
-    // Confirm default choice
+    // Confirm default choice or add a modifier
     if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
+      const modValue = this.form!.querySelector<HTMLInputElement>(
+        '.new-modifier-value',
+      )?.value;
+      if (modValue) {
+        return this._addModifier();
+      }
       return this.submit();
     }
   }
@@ -276,6 +274,41 @@ export default class RollDialog extends FormApplication<
 
   private _isTraitRoll(): boolean {
     return !!this.ctx.actor;
+  }
+
+  private _addModifier() {
+    const form = this.form!;
+    const label = form.querySelector<HTMLInputElement>(
+      '.new-modifier-label',
+    )?.value;
+    const value = form.querySelector<HTMLInputElement>(
+      '.new-modifier-value',
+    )?.value;
+    if (value) {
+      this.ctx.mods.push({
+        label: label || game.i18n.localize('SWADE.Addi'),
+        value: this._sanitizeModifierInput(value),
+      });
+      this.render();
+    }
+  }
+
+  private _addPreset() {
+    const select =
+      this.form!.querySelector<HTMLSelectElement>('#preset-selection')!;
+    const option = select.options[select.selectedIndex];
+    const index = Number(option.dataset.index);
+    const group = CONFIG.SWADE.prototypeRollGroups.find(
+      (v) => v.name === option.dataset.group,
+    );
+    if (!group) return;
+    const modifier = group.modifiers[index];
+    if (!modifier) return;
+    this.ctx.mods.push({
+      label: modifier.label,
+      value: modifier.value,
+    });
+    this.render();
   }
 
   /** @override */

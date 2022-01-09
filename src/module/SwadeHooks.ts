@@ -22,6 +22,15 @@ import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 
 export default class SwadeHooks {
+  static onSetup() {
+    //localize the protoype modifers
+    for (const group of CONFIG.SWADE.prototypeRollGroups) {
+      group.name = game.i18n.localize(group.name);
+      for (const modifier of group.modifiers) {
+        modifier.label = game.i18n.localize(modifier.label);
+      }
+    }
+  }
   public static async onReady() {
     //set up the world if needed
     await setup.setupWorld();

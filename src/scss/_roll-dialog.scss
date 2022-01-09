@@ -10,24 +10,36 @@
   }
   .modifier-entry {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    margin: 0.5em 0.5em 0.25em 0.5em;
-    padding: 0 0 0.5em 0;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 0.5em 0.5em 0.25em 0.5em;
     text-align: center;
     font-weight: bold;
-    border-bottom: 1px solid var(--color-text-light-3);
+    &:not(:first-of-type) {
+      border-top: 1px solid var(--color-text-light-3);
+    }
     input[type='checkbox'],
     label {
       margin: auto;
     }
   }
-  .add-modifier {
+  .modifier-presets {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    padding: 0.5em 0.5em 0.25em 0.5em;
+    select {
+      grid-column: 1 / span 2;
+    }
+    button {
+      grid-column: 3 / span 1;
+    }
+  }
+  .add-modifier,
+  .add-preset {
     line-height: inherit;
   }
   .header {
     text-align: center;
     border-bottom: 2px groove var(--color-border-light-highlight);
-    margin-bottom: 0.5em;
   }
   .footer {
     padding-bottom: 0;
