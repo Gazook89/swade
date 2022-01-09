@@ -105,6 +105,8 @@ export default class CharacterSheet extends ActorSheet {
             // Otherwise
           } else {
             // Create the AE, passing the label, data, and renderSheet boolean
+            //FIXME return once types are updated
+            //@ts-ignore
             await this._createActiveEffect(statusLabel, statusConfigData, renderSheet);
           }
 
