@@ -14,6 +14,8 @@ declare global {
         swade: {
           removeEffect?: boolean;
           effectType?: string;
+          autoexpire?: true;
+          endOfNextTurn?: true;
         };
       };
     }

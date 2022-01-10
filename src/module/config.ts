@@ -197,9 +197,6 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_distracted.svg',
       id: 'distracted',
       label: 'SWADE.Distr',
-      duration: {
-        turns: 1,
-      },
       changes: [
         {
           key: `data.status.isDistracted`,
@@ -210,6 +207,8 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           effectType: 'status',
+          autoexpire: true,
+          endOfNextTurn: true,
         },
       },
     },
@@ -244,9 +243,6 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_vulnerable.svg',
       id: 'vulnerable',
       label: 'SWADE.Vuln',
-      duration: {
-        turns: 1,
-      },
       changes: [
         {
           key: `data.status.isVulnerable`,
@@ -257,6 +253,8 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           effectType: 'status',
+          autoexpire: true,
+          endOfNextTurn: true,
         },
       },
     },
