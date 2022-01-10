@@ -573,13 +573,13 @@ export default class SwadeCombat extends Combat {
       if (this.combatant.actor?.effects.size) {
         const combatantEffects = this.combatant.actor?.data.effects;
         for (const effect of combatantEffects) {
-          if (
-            effect.data.duration.turns === 1 &&
-            effect.data.duration.startRound === this.round &&
-            effect.data.duration.startTurn as number < this.turn
-          ) {
-            // Mark it to be deleted at the start of the next round.
-            await effect.setFlag('swade', 'removeEffect', true);
+          const startRound = effect.data.duration.startRound ?? 0;
+          const startTurn = effect.data.duration.startTurn ?? 0;
+          if (effect.getFlag('swade', 'autoexpire') && effect.getFlag('swade', 'endOfNextTurn')) {
+            if (startRound === this.round && startTurn < this.turn) {
+              // Mark it to be deleted at the start of the next round.
+              await effect.setFlag('swade', 'removeEffect', true);
+            }
           }
         }
       }
