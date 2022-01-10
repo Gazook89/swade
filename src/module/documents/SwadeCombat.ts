@@ -559,16 +559,10 @@ export default class SwadeCombat extends Combat {
           for (const effect of effects) {
             const startRound = effect.data.duration.startRound ?? 0;
             const startTurn = effect.data.duration.startTurn ?? 0;
-
-            if (
-              effect.data.duration.turns === 1 &&
-              (
-                startRound === this.round &&
-                startTurn < this.turn - 1
-              ) ||
-              startRound < this.round
-            ) {
-              await effect.delete();
+            if (effect.getFlag('swade','autoexpire') && effect.getFlag('swade','endOfNextTurn')) {
+              if ((startRound === this.round && startTurn < this.turn - 1) || startRound < this.round) {
+                  await effect.delete();
+              }
             }
           }
         }
