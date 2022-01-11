@@ -300,7 +300,7 @@ export default class SwadeItemSheet extends ItemSheet {
         (item.data.type === 'ability' && item.data.data.subtype !== 'special')
       ) {
         console.warn(
-          'SWADE | You cannot add a race to a race or an archetype to an archetype',
+          'SWADE | You cannot add a race/archetype to a race/archetype!',
         );
         return false;
       }
