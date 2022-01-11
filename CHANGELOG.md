@@ -36,6 +36,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - When no name is given for a modifier, the Roll Dialog will default to `Situational Mod`
 - Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the System Settings) into a discrad pile of your choosing (also in the set in the System Settings)
 - Changed the way the `Setting Configurator` is organized. It now has tabs to reduce the overall size and improve the organization. Some settings have been moved into the general system settings.
+- Renamed a few translation Strings, see the list
+  - `SWADE.Rng` -> `SWADE.Range._name`
+  - `SWADE.Cover` -> `SWADE.Cover._name`
+  - `SWADE.CoverShield` -> `SWADE.Cover.Shield`
 
 ### Fixed
 

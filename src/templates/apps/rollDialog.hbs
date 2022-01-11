@@ -74,7 +74,9 @@
     </div>
     <div class='modifier-presets'>
       <select id='preset-selection'>
-        <option selected disabled>Choose one...</option>
+        <option selected disabled>{{localize
+            'SWADE.Mod.Preset.Choose'
+          }}</option>
         {{#each modGroups as |group|}}
           <optgroup label='{{group.name}}'>
             {{#each group.modifiers}}
@@ -86,7 +88,11 @@
           </optgroup>
         {{/each}}
       </select>
-      <button type='button' class='add-preset'>
+      <button
+        type='button'
+        class='add-preset'
+        title='{{localize "SWADE.Mod.Preset.Add"}}'
+      >
         <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
       </button>
     </div>
@@ -119,9 +125,9 @@
   </div>
 </form>
 <datalist id='modifier-names'>
-  <option value='{{localize "SWADE.Rng"}}'></option>
-  <option value='{{localize "SWADE.Cover"}}'></option>
-  <option value='{{localize "SWADE.ModSupport"}}'></option>
+  <option value='{{localize "SWADE.Range._name"}}'></option>
+  <option value='{{localize "SWADE.Cover._name"}}'></option>
+  <option value='{{localize "SWADE.Mod.Support"}}'></option>
   <option value='{{localize "SWADE.Addi"}}'></option>
 </datalist>
 <datalist id='modifier-values'>

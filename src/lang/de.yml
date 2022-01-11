@@ -96,13 +96,11 @@ SWADE.Armor: Rüstung
 SWADE.WeaponsAndArmor: Waffen & Rüstungen
 SWADE.Dmg: Schaden
 SWADE.DmgOver: Schaden überschreiben
-SWADE.Rng: Reichweite
 SWADE.Ap: Pzbr
 SWADE.APLong: Panzerbrechend
 SWADE.RoF: Feuerrate
 SWADE.Mag: Schuss
 SWADE.Parry: Parade
-SWADE.Cover: Deckung
 SWADE.Notes: Notizen
 SWADE.ActionsEffects: Aktionen & Effekte
 SWADE.Actions: Aktionen
@@ -261,7 +259,6 @@ SWADE.AmmoManagementDesc: >-
 SWADE.AutoReload: Braucht keine Aktion zum nachladen
 SWADE.Berserk: Berserkerrausch
 SWADE.BleedingOut: Verblutend
-SWADE.CoverShield: Deckung - Schild
 SWADE.DSNNone: '- Kein -'
 SWADE.Defending: Verteidigend
 SWADE.DiceConf: Würfel Konfiguration
@@ -428,4 +425,22 @@ SWADE.BennyImageSheet: Benny
 SWADE.Characters: Charaktere
 SWADE.CoreSkillsList: Liste der Grundfertigkeiten
 SWADE.MAPenalty: Mehrfachaktionsabzug
-SWADE.ModSupport: Unterstützung
+SWADE.Mod.Support: Unterstützung
+SWADE.Mod.Preset.Choose: Voreinstellung auswählen...
+SWADE.Mod.Preset.Add: Voreinstellung hinzufügen
+SWADE.Illumination._name: Beleuchtung
+SWADE.Illumination.Dim: Düster
+SWADE.Illumination.Dark: Dunkel
+SWADE.Illumination.Pitch: Finsternis
+SWADE.Cover._name: Deckung
+SWADE.Cover.Shield: Deckung - Schild
+SWADE.Cover.Light: Leichte Deckung
+SWADE.Cover.Medium: Mittlere Deckung
+SWADE.Cover.Heavy: Schwere Deckung
+SWADE.Cover.Total: Vollständige Deckung
+SWADE.Range._name: Reichweite
+SWADE.Range.Medium: Reichweite, Mittel
+SWADE.Range.Long: Reichweite, Weit
+SWADE.Range.Extreme: Reichweite, Extrem
+SWADE.ModOther: Andere Modifikatioren
+SWADE.Snapfire: Schnellschuss

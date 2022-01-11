@@ -127,7 +127,7 @@ SWADE.Diseased: Diseased
 SWADE.HeartAttack: Heart Attack
 SWADE.OnFire: On Fire
 SWADE.Poisoned: Poisoned
-SWADE.CoverShield: Cover - Shield
+
 SWADE.Reach: Reach
 SWADE.Torch: Torch
 SWADE.Invisible: Invisible
@@ -136,13 +136,11 @@ SWADE.Armor: Armor
 SWADE.Protection: Protection
 SWADE.Dmg: Damage
 SWADE.DmgOver: Damage Override
-SWADE.Rng: Range
 SWADE.Ap: AP
 SWADE.APLong: Armor Piercing
 SWADE.RoF: RoF
 SWADE.Mag: Shots
 SWADE.Parry: Parry
-SWADE.Cover: Cover
 SWADE.Notes: Notes
 SWADE.ActionsEffects: Actions & Effects
 SWADE.Actions: Actions
@@ -441,4 +439,22 @@ SWADE.SettingRules: Setting Rules
 SWADE.WorldBasics: World Basics
 SWADE.CoreSkillsList: List of Core Skills
 SWADE.MAPenalty: Multi-Action Penalty
-SWADE.ModSupport: Support
+SWADE.Mod.Support: Support
+SWADE.Mod.Preset.Choose: Choose a Preset...
+SWADE.Mod.Preset.Add: Add Preset
+SWADE.Illumination._name: Illumination
+SWADE.Illumination.Dim: Dim Light
+SWADE.Illumination.Dark: Darkness
+SWADE.Illumination.Pitch: Pitch Black
+SWADE.Cover._name: Cover
+SWADE.Cover.Shield: Cover - Shield
+SWADE.Cover.Light: Light Cover
+SWADE.Cover.Medium: Medium Cover
+SWADE.Cover.Heavy: Heavy Cover
+SWADE.Cover.Total: Total Cover
+SWADE.Range._name: Range
+SWADE.Range.Medium: Medium Range
+SWADE.Range.Long: Long Range
+SWADE.Range.Extreme: Exteme Range
+SWADE.ModOther: Other Modifiers
+SWADE.Snapfire: Snapfire

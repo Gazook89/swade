@@ -105,7 +105,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Shaken',
       changes: [
         {
-          key: `data.status.isShaken`,
+          key: 'data.status.isShaken',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -159,7 +159,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Bound',
       changes: [
         {
-          key: `data.status.isBound`,
+          key: 'data.status.isBound',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -176,7 +176,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Entangled',
       changes: [
         {
-          key: `data.status.isEntangled`,
+          key: 'data.status.isEntangled',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -198,7 +198,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Distr',
       changes: [
         {
-          key: `data.status.isDistracted`,
+          key: 'data.status.isDistracted',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -227,7 +227,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Stunned',
       changes: [
         {
-          key: `data.status.isStunned`,
+          key: 'data.status.isStunned',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -244,7 +244,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Vuln',
       changes: [
         {
-          key: `data.status.isVulnerable`,
+          key: 'data.status.isVulnerable',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -414,7 +414,7 @@ export const SWADE: SwadeConfig = {
 
   prototypeRollGroups: [
     {
-      name: 'SWADE.Rng',
+      name: 'SWADE.Range._name',
       modifiers: [
         { label: 'SWADE.Range.Medium', value: -2 },
         { label: 'SWADE.Range.Long', value: -4 },
@@ -422,7 +422,7 @@ export const SWADE: SwadeConfig = {
       ],
     },
     {
-      name: 'SWADE.Cover',
+      name: 'SWADE.Cover._name',
       modifiers: [
         { label: 'SWADE.Cover.Light', value: -2 },
         { label: 'SWADE.Cover.Medium', value: -4 },
@@ -431,7 +431,7 @@ export const SWADE: SwadeConfig = {
       ],
     },
     {
-      name: 'SWADE.Illumination',
+      name: 'SWADE.Illumination._name',
       modifiers: [
         { label: 'SWADE.Illumination.Dim', value: -2 },
         { label: 'SWADE.Illumination.Dark', value: -4 },
@@ -446,7 +446,9 @@ export const SWADE: SwadeConfig = {
 };
 
 export interface SwadeConfig {
+  //a piece of ASCII art for the init log message
   ASCII: string;
+  //An object to store localization strings
   attributes: {
     agility: {
       long: string;
