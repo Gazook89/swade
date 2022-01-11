@@ -28,18 +28,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added a `range` getter on the `SwadeItem` that will return the range brackets from the item, if it is a weapon or power
 - Added presets for a Light and Dark Action Deck using `poker` type cards. You can create an Action deck by going to the _Card Stacks_ tab and creating a new stack using the presets.
+- Added a multi-action penalty selection for trait rolls in the roll dialog
+- Added a Dropdown to the roll Dialog which containes a list of common roll modifiers. To add a modifier, select it from the dropdown and click the add button.
 - Added additional translation strings
-- Added amulti-action penalty selection for trait rolls in the roll dialog
 
 ### Changed
 
-- When no name is given for a modifier, the Roll Dialog will default to `Situational Mod`
-- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the System Settings) into a discrad pile of your choosing (also in the set in the System Settings)
+- When no name is given for a modifier, the Roll Dialog will default to `Additional`
+- In the Roll Dialog when a custom modifier value is entered and the enter key is pressed then the modifier is added to the list instead of directly submitting the roll
+- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the `Setting Configurator`) into a discrad pile of your choosing (also in the set in the `Setting Configurator`). By default the system will create an Action Deck and a Discard Pile if none are present or the ones that were chosen in the settings are not available
 - Changed the way the `Setting Configurator` is organized. It now has tabs to reduce the overall size and improve the organization. Some settings have been moved into the general system settings.
 - Renamed a few translation Strings, see the list
   - `SWADE.Rng` -> `SWADE.Range._name`
   - `SWADE.Cover` -> `SWADE.Cover._name`
   - `SWADE.CoverShield` -> `SWADE.Cover.Shield`
+  - `SWADE.Mod` -> `SWADE.Modifier`
 
 ### Fixed
 

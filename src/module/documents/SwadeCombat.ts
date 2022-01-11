@@ -536,15 +536,20 @@ export default class SwadeCombat extends Combat {
     }
   }
 
-  protected async _onUpdate(changed: DeepPartial<this['data']['_source']>, options: DocumentModificationOptions, userId: string): Promise<void> {
+  protected async _onUpdate(
+    changed: DeepPartial<this['data']['_source']>,
+    options: DocumentModificationOptions,
+    userId: string,
+  ): Promise<void> {
+    super._onUpdate(changed, options, userId);
     // For "end of next turn" statuses
     // If this is the first turn of the round...
     if (this.turn === 0) {
       // ...look for any effect that was applied on the previous round's last turn, and delete it.
-      for (const combatant of this.combatants as any) {
-        for (const effect of combatant.actor.effects) {
+      for (const combatant of this.combatants) {
+        for (const effect of combatant.actor?.effects ?? []) {
           if (effect.getFlag('swade', 'removeEffect')) {
-            await effect.delete()
+            await effect.delete();
           }
         }
       }
@@ -559,9 +564,15 @@ export default class SwadeCombat extends Combat {
           for (const effect of effects) {
             const startRound = effect.data.duration.startRound ?? 0;
             const startTurn = effect.data.duration.startTurn ?? 0;
-            if (effect.getFlag('swade','autoexpire') && effect.getFlag('swade','endOfNextTurn')) {
-              if ((startRound === this.round && startTurn < this.turn - 1) || startRound < this.round) {
-                  await effect.delete();
+            if (
+              effect.getFlag('swade', 'autoexpire') &&
+              effect.getFlag('swade', 'endOfNextTurn')
+            ) {
+              if (
+                (startRound === this.round && startTurn < this.turn - 1) ||
+                startRound < this.round
+              ) {
+                await effect.delete();
               }
             }
           }
@@ -575,7 +586,10 @@ export default class SwadeCombat extends Combat {
         for (const effect of combatantEffects) {
           const startRound = effect.data.duration.startRound ?? 0;
           const startTurn = effect.data.duration.startTurn ?? 0;
-          if (effect.getFlag('swade', 'autoexpire') && effect.getFlag('swade', 'endOfNextTurn')) {
+          if (
+            effect.getFlag('swade', 'autoexpire') &&
+            effect.getFlag('swade', 'endOfNextTurn')
+          ) {
             if (startRound === this.round && startTurn < this.turn) {
               // Mark it to be deleted at the start of the next round.
               await effect.setFlag('swade', 'removeEffect', true);
