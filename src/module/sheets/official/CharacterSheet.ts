@@ -80,6 +80,51 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
+      html.find('.status input[type="checkbox"]').on('change', async (event) => {
+        // Get the key from the target name
+        const id = event.target.dataset.id as string;
+        const key = event.target.dataset.key as string;
+        //FIXME return once types are updated
+        const statusConfigData = CONFIG.statusEffects.find((effect) => effect.id === id);
+        // Get the current status value
+        const statusValue = this.object.data.data.status[key];
+        // Get the label from the inner text of the parent label element
+        const statusLabel = event.target.parentElement?.innerText as string;
+        // If the status is checked and the status value is false...
+        if (!statusValue) {
+          // Set render AE sheet to false
+          const renderSheet = false;
+          // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
+          const tokens = game.canvas.tokens?.getDocuments();
+          const token = tokens?.find((t) => t.actor?.id === this.object.id);
+          // So, if there is...
+          if (token) {
+            // Toggle the AE from the token which toggles it on the actor sheet, too
+            //@ts-expect-error TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+            await token.toggleActiveEffect(statusConfigData, { active: true });
+            // Otherwise
+          } else {
+            // Create the AE, passing the label, data, and renderSheet boolean
+            //FIXME return once types are updated
+            //@ts-ignore
+            await this._createActiveEffect(statusLabel, statusConfigData, renderSheet);
+          }
+
+          // Otherwise...
+        } else {
+          // Find the existing effect based on label and flag and delete it.
+          for (const effect of this.object.data.effects) {
+            if (effect.data.label.toLowerCase() === statusLabel.toLowerCase() && effect.getFlag('swade','effectType') === 'status') {
+              for (const change of effect.changes) {
+                if (change.key.includes(key)) {
+                  // Delete it
+                  await effect.delete();
+                }
+              }
+            }
+          }
+        }
+      });
     }
 
     //Display Advances on About tab
@@ -266,7 +311,7 @@ export default class CharacterSheet extends ActorSheet {
           this._chooseItemType().then(async (dialogInput: any) => {
             if (dialogInput.type !== 'effect') {
               const itemData = createItem(dialogInput.type, dialogInput.name);
-              await Item.create(itemData, {
+              const ae = await Item.create(itemData, {
                 renderSheet: true,
                 parent: this.actor,
               });
@@ -736,17 +781,29 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
-  protected async _createActiveEffect(name?: string) {
+  protected async _createActiveEffect( name?: string, data = { label: '', icon: '', duration: {} }, renderSheet = true) {
     let possibleName = game.i18n.format('DOCUMENT.New', {
       type: game.i18n.localize('DOCUMENT.ActiveEffect'),
     });
+
+    //Modify the data based on parameters passed in
     if (name) possibleName = name;
-    await CONFIG.ActiveEffect.documentClass.create(
-      {
-        label: possibleName,
-        icon: '/icons/svg/mystery-man-black.svg',
-      },
-      { renderSheet: true, parent: this.actor },
-    );
+    data.label = possibleName;
+
+    // Set default icon if none provided.
+    if (!data.icon) {
+      data.icon = '/icons/svg/mystery-man-black.svg';
+    }
+
+    // Set combat ID if none provided.
+    if (!data.duration) {
+      data.duration = {
+        combat: game.combat?.id,
+      };
+    }
+    return await CONFIG.ActiveEffect.documentClass.create(data, {
+      renderSheet: renderSheet,
+      parent: this.actor,
+    });
   }
 }

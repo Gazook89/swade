@@ -27,7 +27,8 @@
     >{{localize "SWADE.Shaken"}}
     <input
       type="checkbox"
-      name="data.status.isShaken"
+      data-id="shaken"
+      data-key="isShaken"
       {{checked
       data.data.status.isShaken}}
     />
@@ -37,7 +38,8 @@
     >{{localize "SWADE.Distr"}}
     <input
       type="checkbox"
-      name="data.status.isDistracted"
+      data-id="distracted"
+      data-key="isDistracted"
       {{checked
       data.data.status.isDistracted}}
     />
@@ -47,7 +49,8 @@
     >{{localize "SWADE.Vuln"}}
     <input
       type="checkbox"
-      name="data.status.isVulnerable"
+      data-id="vulnerable"
+      data-key="isVulnerable"
       {{checked
       data.data.status.isVulnerable}}
     />
@@ -59,7 +62,8 @@
     >{{localize "SWADE.Stunned"}}
     <input
       type="checkbox"
-      name="data.status.isStunned"
+      data-id="stunned"
+      data-key="isStunned"
       {{checked
       data.data.status.isStunned}}
     />
@@ -69,7 +73,8 @@
     >{{localize "SWADE.Entangled"}}
     <input
       type="checkbox"
-      name="data.status.isEntangled"
+      data-id="entangled"
+      data-key="isEntangled"
       {{checked
       data.data.status.isEntangled}}
     />
@@ -79,7 +84,8 @@
     >{{localize "SWADE.Bound"}}
     <input
       type="checkbox"
-      name="data.status.isBound"
+      data-id="bound"
+      data-key="isBound"
       {{checked
       data.data.status.isBound}}
     />
@@ -240,9 +246,11 @@
         <span class="effect-label">{{data.label}}</span>
         {{/if}}
         <span class="effect-controls">
+          {{#unless (eq data.flags.swade.effectType 'status')}}
           <button type="button" class="effect-action" data-action="toggle">
             <i class="fas fa-power-off"></i>
           </button>
+          {{/unless}}
           <button type="button" class="effect-action" data-action="edit">
             <i class="fas fa-edit"></i>
           </button>

@@ -103,6 +103,18 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
       id: 'shaken',
       label: 'SWADE.Shaken',
+      changes: [
+        {
+          key: `data.status.isShaken`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'icons/svg/skull.svg',
@@ -145,11 +157,35 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_bound.svg',
       id: 'bound',
       label: 'SWADE.Bound',
+      changes: [
+        {
+          key: `data.status.isBound`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_entangled.svg',
       id: 'entangled',
       label: 'SWADE.Entangled',
+      changes: [
+        {
+          key: `data.status.isEntangled`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_frightened.svg',
@@ -162,11 +198,18 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.Distr',
       changes: [
         {
-          key: 'data.status.isDistracted',
-          value: 'true',
+          key: `data.status.isDistracted`,
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
         },
       ],
+      flags: {
+        swade: {
+          effectType: 'status',
+          autoexpire: true,
+          endOfNextTurn: true,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_encumbered.svg',
@@ -182,11 +225,37 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_stunned.svg',
       id: 'stunned',
       label: 'SWADE.Stunned',
+      changes: [
+        {
+          key: `data.status.isStunned`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_vulnerable.svg',
       id: 'vulnerable',
       label: 'SWADE.Vuln',
+      changes: [
+        {
+          key: `data.status.isVulnerable`,
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          effectType: 'status',
+          autoexpire: true,
+          endOfNextTurn: true,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_bleeding_out.svg',
