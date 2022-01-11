@@ -48,6 +48,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Fixed Wildcards not being marked as such in the Actors sidebar tab
 - Fixed item creation dialogs and translations that still refered to entities instead of documents
+- Vehicle cargo tabs display quantity and weight for items again
 
 ## [v0.22.5]
 
