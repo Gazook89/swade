@@ -57,8 +57,14 @@ export default class RollDialog extends FormApplication<
     super.activateListeners(html);
     $(document).on('keydown.chooseDefault', this._onKeyDown.bind(this));
     html.find('button#close').on('click', this.close.bind(this));
-    html.find('button.add-modifier').on('click', this._addModifier.bind(this));
-    html.find('button.add-preset').on('click', this._addPreset.bind(this));
+    html.find('button.add-modifier').on('click', () => {
+      this._addModifier();
+      this.render();
+    });
+    html.find('button.add-preset').on('click', () => {
+      this._addPreset();
+      this.render();
+    });
     html.find('button[type="submit"]').on('click', (ev) => {
       this.extraButtonUsed = ev.currentTarget.dataset.type === 'extra';
       this.submit();
@@ -109,6 +115,9 @@ export default class RollDialog extends FormApplication<
         value: expanded.map,
       });
     }
+
+    //add any unsubmitted modifiers
+    this._addModifier();
     const roll = await this._evaluateRoll();
     this._resolve(roll);
   }
@@ -129,7 +138,8 @@ export default class RollDialog extends FormApplication<
         '.new-modifier-value',
       )?.value;
       if (modValue) {
-        return this._addModifier();
+        this._addModifier();
+        return this.render();
       }
       return this.submit();
     }
@@ -276,6 +286,7 @@ export default class RollDialog extends FormApplication<
     return !!this.ctx.actor;
   }
 
+  /** Reads the modifier inputs, sanitizes them and adds the values to the mod array */
   private _addModifier() {
     const form = this.form!;
     const label = form.querySelector<HTMLInputElement>(
@@ -289,7 +300,6 @@ export default class RollDialog extends FormApplication<
         label: label || game.i18n.localize('SWADE.Addi'),
         value: this._sanitizeModifierInput(value),
       });
-      this.render();
     }
   }
 
@@ -308,7 +318,6 @@ export default class RollDialog extends FormApplication<
       label: modifier.label,
       value: modifier.value,
     });
-    this.render();
   }
 
   /** @override */

@@ -456,7 +456,8 @@ SWADE.Cover.Total: Total Cover
 SWADE.Range._name: Range
 SWADE.Range.Medium: Medium Range
 SWADE.Range.Long: Long Range
-SWADE.Range.Extreme: Exteme Range
+SWADE.Range.Extreme: Extreme Range
 SWADE.ModOther: Other Modifiers
 SWADE.Snapfire: Snapfire
+SWADE.UnstablePlatform: Unstable Platform
 SWADE.CannotAddRaceToRace: You cannot add a race/archetype to a race/archetype!
