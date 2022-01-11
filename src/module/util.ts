@@ -40,7 +40,7 @@ export function rollItemMacro(itemName: string) {
   const speaker = ChatMessage.getSpeaker();
   let actor: SwadeActor | undefined = undefined;
   if (speaker.token) actor = game.actors?.tokens[speaker.token];
-  if (!actor) actor = game.actors?.get(speaker.actor!);
+  if (!actor && speaker.actor) actor = game.actors?.get(speaker.actor);
   if (!actor || !actor.isOwner) {
     return null;
   }
@@ -53,7 +53,7 @@ export function rollItemMacro(itemName: string) {
   }
   //Roll the skill
   if (item.type === 'skill') {
-    return actor.rollSkill(item.id!);
+    return actor.rollSkill(item.id);
   } else {
     // Show the item
     return item.show();

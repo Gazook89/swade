@@ -541,7 +541,7 @@ export default class SwadeCombat extends Combat {
     options: DocumentModificationOptions,
     userId: string,
   ): Promise<void> {
-    super._onUpdate(changed, options, userId);
+    await super._onUpdate(changed, options, userId);
     // For "end of next turn" statuses
     // If this is the first turn of the round...
     if (this.turn === 0) {

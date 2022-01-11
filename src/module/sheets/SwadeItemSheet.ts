@@ -299,9 +299,7 @@ export default class SwadeItemSheet extends ItemSheet {
         data.type !== 'Item' ||
         (item.data.type === 'ability' && item.data.data.subtype !== 'special')
       ) {
-        console.warn(
-          'SWADE | You cannot add a race/archetype to a race/archetype!',
-        );
+        ui.notifications.warn('SWADE.CannotAddRaceToRace', { localize: true });
         return false;
       }
     } catch (error) {
