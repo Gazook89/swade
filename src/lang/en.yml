@@ -69,7 +69,7 @@ SWADE.ArcaneSkill: Arcane Skill
 SWADE.ActivateArcaneDevice: Activate Device
 SWADE.Die: Die
 SWADE.WildDie: Wild Die
-SWADE.Mod: Modifier
+SWADE.Modifier: Modifier
 SWADE.BenniesSpend: Spend a Benny
 SWADE.BenniesGive: Give a Benny
 SWADE.BenniesRefresh: Refresh Bennies
@@ -439,6 +439,7 @@ SWADE.SettingRules: Setting Rules
 SWADE.WorldBasics: World Basics
 SWADE.CoreSkillsList: List of Core Skills
 SWADE.MAPenalty: Multi-Action Penalty
+SWADE.Mod.Custom.Add: Add Custom Modifier
 SWADE.Mod.Support: Support
 SWADE.Mod.Preset.Choose: Choose a Preset...
 SWADE.Mod.Preset.Add: Add Preset

@@ -68,7 +68,11 @@
         placeholder='{{localize "SWADE.RollExample"}}'
         list='modifier-values'
       />
-      <button type='button' class='add-modifier'>
+      <button
+        type='button'
+        class='add-modifier'
+        title='{{localize "SWADE.Mod.Custom.Add"}}'
+      >
         <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
       </button>
     </div>
@@ -125,8 +129,6 @@
   </div>
 </form>
 <datalist id='modifier-names'>
-  <option value='{{localize "SWADE.Range._name"}}'></option>
-  <option value='{{localize "SWADE.Cover._name"}}'></option>
   <option value='{{localize "SWADE.Mod.Support"}}'></option>
   <option value='{{localize "SWADE.Addi"}}'></option>
 </datalist>
