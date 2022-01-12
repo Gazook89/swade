@@ -24,3 +24,8 @@ export interface TraitRollModifier {
   value: string | number;
   ignore?: boolean;
 }
+
+export interface TraitRollModifierGroup {
+  name: string;
+  modifiers: TraitRollModifier[];
+}

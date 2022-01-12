@@ -289,14 +289,23 @@ export default class SwadeActor extends Actor {
       data: {
         die: {
           sides: 4,
-          modifier: -2,
+          modifier: 0,
         },
         'wild-die': {
           sides: 6,
         },
       },
     });
-    return this.rollSkill('', options, tempSkill);
+    const modifier: TraitRollModifier = {
+      label: game.i18n.localize('SWADE.Unskilled'),
+      value: -2,
+    };
+    if (options.additionalMods) {
+      options.additionalMods.push(modifier);
+    } else {
+      options.additionalMods = [modifier];
+    }
+    return this.rollSkill(null, options, tempSkill);
   }
 
   async makeArcaneDeviceSkillRoll(options: IRollOptions = {}, arcaneSkillDie) {

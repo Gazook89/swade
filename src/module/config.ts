@@ -1,6 +1,6 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { AbilitySubType } from '../globals';
-import { TraitRollModifier } from '../interfaces/additional';
+import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
@@ -524,8 +524,5 @@ export interface SwadeConfig {
 
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
-  prototypeRollGroups: {
-    name: string;
-    modifiers: TraitRollModifier[];
-  }[];
+  prototypeRollGroups: TraitRollModifierGroup[];
 }
