@@ -131,12 +131,12 @@
       border: none;
       box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
       transform-origin: center left;
-      transition: transform 0.25s ease-in-out;
+      transition: transform 0.2s ease-in-out;
       order: 1;
       &:hover {
         z-index: 1;
         transform-origin: center left;
-        transition: transform 0.5s ease-in-out;
+        transition: transform 0.2s ease-in-out;
       }
     }
   }
@@ -162,6 +162,18 @@
     transform: rotate(-2deg);
     &:hover {
       transform: rotate(0deg) scale(4.75);
+    }
+  }
+  &:first-child .initiative-draw img.result-image {
+    transform-origin: top left;
+    &:hover {
+      transform-origin: top left
+    }
+  }
+  &:last-child .initiative-draw img.result-image {
+    transform-origin: bottom left;
+    &:hover {
+      transform-origin: bottom left
     }
   }
 }
