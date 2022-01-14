@@ -19,7 +19,7 @@ export default class SwadeSocketHandler {
           this._onNewRound(data);
           break;
         default:
-          this._onUnknownSocket();
+          this._onUnknownSocket(data.type);
           break;
       }
     });
@@ -36,7 +36,7 @@ export default class SwadeSocketHandler {
   private _onDeleteConvictionMessage(data: any) {
     const message = game.messages?.get(data.messageId);
     //only delete the message if the user is a GM and the event emitter is one of the recipients
-    if (game.user!.isGM && message?.data['whisper'].includes(data.userId)) {
+    if (game.user!.isGM && message?.data.whisper.includes(data.userId)) {
       message?.delete();
     }
   }
@@ -52,7 +52,7 @@ export default class SwadeSocketHandler {
     game.combats!.get(data.combatId)!.nextRound();
   }
 
-  private _onUnknownSocket() {
-    console.warn('This socket event is not supported');
+  private _onUnknownSocket(type: string) {
+    console.warn(`The socket event ${type} is not supported`);
   }
 }
