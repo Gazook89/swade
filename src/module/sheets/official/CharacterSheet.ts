@@ -1,3 +1,4 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import {
   AdditionalStat,
   ItemAction,
@@ -86,7 +87,6 @@ export default class CharacterSheet extends ActorSheet {
           // Get the key from the target name
           const id = event.target.dataset.id as string;
           const key = event.target.dataset.key as string;
-          //FIXME return once types are updated
           const statusConfigData = CONFIG.statusEffects.find(
             (effect) => effect.id === id,
           );
@@ -104,17 +104,15 @@ export default class CharacterSheet extends ActorSheet {
             // So, if there is...
             if (token) {
               // Toggle the AE from the token which toggles it on the actor sheet, too
-              //@ts-expect-error TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+              //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
               await token.toggleActiveEffect(statusConfigData, {
                 active: true,
               });
               // Otherwise
             } else {
               // Create the AE, passing the label, data, and renderSheet boolean
-              //FIXME return once types are updated
               await this._createActiveEffect(
                 statusLabel,
-                //@ts-ignore
                 statusConfigData,
                 renderSheet,
               );
@@ -796,7 +794,11 @@ export default class CharacterSheet extends ActorSheet {
 
   protected async _createActiveEffect(
     name?: string,
-    data = { label: '', icon: '', duration: {} },
+    data: ActiveEffectDataConstructorData = {
+      label: '',
+      icon: '',
+      duration: {},
+    },
     renderSheet = true,
   ) {
     let possibleName = game.i18n.format('DOCUMENT.New', {
