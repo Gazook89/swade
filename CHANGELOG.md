@@ -43,12 +43,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - `SWADE.Cover` -> `SWADE.Cover._name`
   - `SWADE.CoverShield` -> `SWADE.Cover.Shield`
   - `SWADE.Mod` -> `SWADE.Modifier`
+- Removed all references to entities in migration messages
 
 ### Fixed
 
 - Fixed Wildcards not being marked as such in the Actors sidebar tab
 - Fixed item creation dialogs and translations that still refered to entities instead of documents
 - Vehicle cargo tabs display quantity and weight for items again
+- World migrations now migrate compendiums again. If you're not sure if you were affected please run the following sniüüet as either a script macro or directly in the dev tools: `game.swade.migrations.migrateWorld()`
+
+### Removed
+
+- Finalized depreceation of old roll dialog by removing its class and template.
 
 ## [v0.22.5]
 
