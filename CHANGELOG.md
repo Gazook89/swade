@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added a multi-action penalty selection for trait rolls in the roll dialog
 - Added a Dropdown to the roll Dialog which containes a list of common roll modifiers. To add a modifier, select it from the dropdown and click the add button.
 - Added additional translation strings
+- Added a setting to the Setting Configurator, which controlls whether encumbrance penalties are applied in the appropriate places. Please keep in mind that Vigor tests to resist fatigue are not supported at this time
+- Added `SwadeActor.isEncumbered` getter
 
 ### Changed
 
@@ -45,6 +47,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - `SWADE.Mod` -> `SWADE.Modifier`
 - Removed all references to entities in migration messages
 
+### Removed
+
+- Finalized depreceation of old roll dialog by removing its class and template.
+
 ### Fixed
 
 - Fixed Wildcards not being marked as such in the Actors sidebar tab
@@ -52,9 +58,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Vehicle cargo tabs display quantity and weight for items again
 - World migrations now migrate compendiums again. If you're not sure if you were affected please run the following sniüüet as either a script macro or directly in the dev tools: `game.swade.migrations.migrateWorld()`
 
-### Removed
+### Known Issues
 
-- Finalized depreceation of old roll dialog by removing its class and template.
+- Encumbrance penalties currently _DO NOT_ currently support Vigor tests to rest
 
 ## [v0.22.5]
 

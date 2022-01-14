@@ -79,6 +79,7 @@ export const SWADE: SwadeConfig = {
       'currencyName',
       'hardChoices',
       'actionDeck',
+      'applyEncumbrance',
       'actionDeckDiscardPile',
       'bennyImageSheet',
       'bennyImage3DFront',

@@ -1,6 +1,7 @@
 import { AbilitySubType } from '../../../globals';
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { TraitDie, WildDie } from '../actor/actor-data-source';
+import { Attribute } from '../actor/SwadeActor';
 
 declare global {
   interface SourceConfig {
@@ -136,7 +137,7 @@ interface PowerData extends ItemDescription, Equipable, Actions, BonusDamage {
 }
 
 interface SkillData extends ItemDescription {
-  attribute: string;
+  attribute: Attribute | '';
   isCoreSkill: boolean;
   die: TraitDie;
   'wild-die': WildDie;

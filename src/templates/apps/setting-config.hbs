@@ -153,6 +153,23 @@
         </div>
         <p class='notes'>{{localize 'SWADE.NoPowerPointsDesc'}}</p>
       </div>
+      <!-- Encumbrance -->
+      <div class='form-group'>
+        <label>{{localize 'SWADE.ApplyEncumbrance'}}</label>
+        <div class='form-fields'>
+          <input
+            type='checkbox'
+            name='settingRules.applyEncumbrance'
+            data-dtype='Boolean'
+            {{checked settingRules.applyEncumbrance}}
+          />
+        </div>
+        <p class='notes'>{{localize
+            'SWADE.ApplyEncumbraceHint'
+            vigor=(localize 'SWADE.AttrVig')
+            fatigue=(localize 'SWADE.Fatigue')
+          }}</p>
+      </div>
       <!-- Core Skills -->
       <fieldset id='core-skills'>
         <legend>{{localize 'SWADE.CoreSkills'}}</legend>

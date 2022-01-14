@@ -4,7 +4,7 @@ import {
   ItemAction,
   TraitRollModifier,
 } from '../../../interfaces/additional';
-import { SWADE } from '../../config';
+import { Attribute } from '../../documents/actor/SwadeActor';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
@@ -184,7 +184,7 @@ export default class CharacterSheet extends ActorSheet {
     //Roll Attribute
     html.find('.attribute-label').on('click', (ev) => {
       const attribute = ev.currentTarget.parentElement!.dataset
-        .attribute! as keyof typeof SWADE.attributes;
+        .attribute! as Attribute;
       this.actor.rollAttribute(attribute);
     });
 
@@ -215,18 +215,29 @@ export default class CharacterSheet extends ActorSheet {
       )}]`;
 
       const mods: TraitRollModifier[] = [
-        { label: game.i18n.localize('SWADE.Pace'), value: pace.signedString() },
+        { label: game.i18n.localize('SWADE.Pace'), value: pace },
       ];
 
       if (runningMod) {
         mods.push({
-          label: 'Modifier',
-          value: runningMod.signedString(),
+          label: game.i18n.localize('SWADE.Modifier'),
+          value: runningMod,
         });
       }
+
+      if (this.actor.isEncumbered) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Encumbered'),
+          value: -2,
+        });
+      }
+
       if (ev.shiftKey) {
         const rollFormula =
-          runningDie + runningMod.signedString() + pace.signedString();
+          runningDie +
+          mods.reduce((acc: string, cur: TraitRollModifier) => {
+            return acc + cur.value + `[${cur.label}]`;
+          }, '');
         const runningRoll = new Roll(rollFormula);
         await runningRoll.evaluate({ async: true });
         await runningRoll.toMessage({
@@ -679,16 +690,12 @@ export default class CharacterSheet extends ActorSheet {
       noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
       wealthType: game.settings.get('swade', 'wealthType'),
       currencyName: game.settings.get('swade', 'currencyName'),
+      weightUnit:
+        game.settings.get('swade', 'weightUnit') === 'imperial' ? 'lbs' : 'kg',
     };
 
     // Progress attribute abbreviation toggle
     data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
-
-    //weight unit
-    data.weightUnit = 'lbs';
-    if (game.settings.get('swade', 'weightUnit') === 'metric') {
-      data.weightUnit = 'kg';
-    }
 
     return data;
   }

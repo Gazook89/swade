@@ -38,6 +38,7 @@ declare global {
       'swade.3dBennyFrontBump': string;
       'swade.3dBennyBackBump': string;
       'swade.hardChoices': boolean;
+      'swade.applyEncumbrance': boolean;
       'swade.settingFields': {
         actor: Record<string, AdditionalStat>;
         item: Record<string, AdditionalStat>;
@@ -279,6 +280,18 @@ export function registerSettingRules() {
     name: game.i18n.localize('SWADE.NoPowerPoints'),
     hint: game.i18n.localize('SWADE.NoPowerPointsDesc'),
     default: false,
+    scope: 'world',
+    type: Boolean,
+    config: false,
+  });
+
+  game.settings.register('swade', 'applyEncumbrance', {
+    name: game.i18n.localize('SWADE.ApplyEncumbrance'),
+    hint: game.i18n.format('SWADE.ApplyEncumbraceHint', {
+      vigor: game.i18n.localize('SWADE.AttrVig'),
+      fatigue: game.i18n.localize('SWADE.Fatigue'),
+    }),
+    default: true,
     scope: 'world',
     type: Boolean,
     config: false,

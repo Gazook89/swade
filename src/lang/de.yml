@@ -446,3 +446,7 @@ SWADE.Range.Extreme: Reichweite, Extrem
 SWADE.ModOther: Andere Modifikatioren
 SWADE.Snapfire: Schnellschuss
 SWADE.UnstablePlatform: Unsicheren Grund
+SWADE.ApplyEncumbrance: Belastungsabzüge anwenden
+SWADE.ApplyEncumbraceHint: >-
+  Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand
+  gegen {fatigue} derzeit NICHT unterstüzt sind

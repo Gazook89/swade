@@ -127,7 +127,6 @@ SWADE.Diseased: Diseased
 SWADE.HeartAttack: Heart Attack
 SWADE.OnFire: On Fire
 SWADE.Poisoned: Poisoned
-
 SWADE.Reach: Reach
 SWADE.Torch: Torch
 SWADE.Invisible: Invisible
@@ -461,3 +460,7 @@ SWADE.ModOther: Other Modifiers
 SWADE.Snapfire: Snapfire
 SWADE.UnstablePlatform: Unstable Platform
 SWADE.CannotAddRaceToRace: You cannot add a race/archetype to a race/archetype!
+SWADE.ApplyEncumbrance: Apply Encumbrance Penalties
+SWADE.ApplyEncumbraceHint: >-
+  Apply encumbrance panlties. Please keep in mind that this currently does NOT
+  SUPPORT {vigor} tests to resist {fatigue}!

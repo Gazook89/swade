@@ -82,6 +82,19 @@ export default class SwadeActor extends Actor {
     };
   }
 
+  /**
+   * Returns whether this character is currently encumbered, factoring in whether the rule is even enforced
+   */
+  get isEncumbered(): boolean {
+    const applyEncumbrance = game.settings.get('swade', 'applyEncumbrance');
+    if (!applyEncumbrance) return false;
+    if (this.data.type === 'vehicle') {
+      return false;
+    }
+    const encumbrance = this.data.data.details.encumbrance;
+    return encumbrance.value > encumbrance.max;
+  }
+
   /** @override */
   prepareBaseData() {
     if (this.data.type === 'vehicle') return;
@@ -109,26 +122,32 @@ export default class SwadeActor extends Actor {
       attribute.die = this._boundTraitDie(attribute.die);
     }
 
-    //modify pace with wounds
-    if (game.settings.get('swade', 'enableWoundPace')) {
-      //bound maximum wound penalty to -3
-      const wounds = Math.min(this.data.data.wounds.value, 3);
-      const pace = this.data.data.stats.speed.value;
-      //make sure the pace doesn't go below 1
-      const adjustedPace = Math.max(pace - wounds, 1);
-      this.data.data.stats.speed.adjusted = adjustedPace;
-    } else {
-      this.data.data.stats.speed.adjusted = this.data.data.stats.speed.value;
-    }
-
-    //set scale
-    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
-
     //handle carry capacity
     this.data.data.details.encumbrance = {
       max: this.calcMaxCarryCapacity(),
       value: this.calcInventoryWeight(),
     };
+
+    let pace = this.data.data.stats.speed.value;
+
+    //subtract encumbrance, if necessary
+    if (this.isEncumbered) {
+      pace -= 2;
+    }
+
+    //modify pace with wounds
+    if (game.settings.get('swade', 'enableWoundPace')) {
+      //bound maximum wound penalty to -3
+      const wounds = Math.min(this.data.data.wounds.value, 3);
+      //subract wounds
+      pace -= wounds;
+    }
+
+    //make sure the pace doesn't go below 1
+    this.data.data.stats.speed.adjusted = Math.max(pace, 1);
+
+    //set scale
+    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
 
     // Toughness calculation
     const shouldAutoCalcToughness = this.data.data.details.autoCalcToughness;
@@ -155,16 +174,16 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  rollAttribute(ability: Attribute, options: IRollOptions = {}) {
+  rollAttribute(attribute: Attribute, options: IRollOptions = {}) {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
       ui.notifications.warn(
         'Attribute Rolls with RoF greater than 1 are not currently supported',
       );
     }
-    const label: string = SWADE.attributes[ability].long;
+    const label: string = SWADE.attributes[attribute].long;
     const actorData = this.data;
-    const abl = actorData.data.attributes[ability];
+    const abl = actorData.data.attributes[attribute];
     const rolls = new Array<Roll>();
 
     const attrRoll = new Roll('');
@@ -188,12 +207,20 @@ export default class SwadeActor extends Actor {
       game.i18n.localize(label),
     );
 
+    //add encumbrance penalty if necessary
+    if (attribute === 'agility' && this.isEncumbered) {
+      modifiers.push({
+        label: game.i18n.localize('SWADE.Encumbered'),
+        value: -2,
+      });
+    }
+
     const roll = Roll.fromTerms([basePool]);
 
     Hooks.call(
       'swadeRollAttribute',
       this,
-      ability,
+      attribute,
       roll,
       modifiers,
       game.userId,
@@ -673,10 +700,13 @@ export default class SwadeActor extends Actor {
     skill: SwadeItem,
     options: IRollOptions,
   ): [Roll, TraitRollModifier[]] {
-    if (!options.rof) options.rof = 1;
+    if (this.data.type === 'vehicle') {
+      throw new Error('Only Extras and Wildcards can roll skills!');
+    }
     if (skill.data.type !== 'skill') {
       throw new Error('Detected-non skill in skill roll construction');
     }
+    if (!options.rof) options.rof = 1;
     const skillData = skill.data.data;
 
     const rolls = new Array<Roll>();
@@ -705,6 +735,14 @@ export default class SwadeActor extends Actor {
       options,
       skill.name,
     );
+
+    //add encumbrance penalty if necessary
+    if (skill.data.data.attribute === 'agility' && this.isEncumbered) {
+      rollMods.push({
+        label: game.i18n.localize('SWADE.Encumbered'),
+        value: -2,
+      });
+    }
 
     return [Roll.fromTerms([basePool]), rollMods];
   }
