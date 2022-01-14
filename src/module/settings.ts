@@ -291,7 +291,7 @@ export function registerSettingRules() {
       vigor: game.i18n.localize('SWADE.AttrVig'),
       fatigue: game.i18n.localize('SWADE.Fatigue'),
     }),
-    default: true,
+    default: false,
     scope: 'world',
     type: Boolean,
     config: false,
