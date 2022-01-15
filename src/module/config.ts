@@ -4,6 +4,7 @@ import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
+import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const SWADE: SwadeConfig = {
@@ -114,6 +115,8 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           effectType: 'status',
+          expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
+          loseTurnOnHold: true
         },
       },
     },
@@ -207,8 +210,7 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           effectType: 'status',
-          autoexpire: true,
-          endOfNextTurn: true,
+          expiration: StatusEffectExpiration.END_OF_TURN_AUTO,
         },
       },
     },
@@ -236,6 +238,8 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           effectType: 'status',
+          expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
+          loseTurnOnHold: true
         },
       },
     },
@@ -253,8 +257,7 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           effectType: 'status',
-          autoexpire: true,
-          endOfNextTurn: true,
+          expiration: StatusEffectExpiration.END_OF_TURN_AUTO,
         },
       },
     },
@@ -262,6 +265,12 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_bleeding_out.svg',
       id: 'bleeding-out',
       label: 'SWADE.BleedingOut',
+      flags: {
+        swade: {
+          effectType: 'status',
+          expiration: StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_diseased.svg',

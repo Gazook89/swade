@@ -1,5 +1,6 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import * as utils from '../util';
+import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
 
 interface IPickACard {
@@ -542,59 +543,12 @@ export default class SwadeCombat extends Combat {
     userId: string,
   ): Promise<void> {
     await super._onUpdate(changed, options, userId);
-    // For "end of next turn" statuses
-    // If this is the first turn of the round...
-    if (this.turn === 0) {
-      // ...look for any effect that was applied on the previous round's last turn, and delete it.
-      for (const combatant of this.combatants) {
-        for (const effect of combatant.actor?.effects ?? []) {
-          if (effect.getFlag('swade', 'removeEffect')) {
-            await effect.delete();
-          }
-        }
-      }
-    } else {
-      // Determine the previous turn
-      const previousTurn = this.turn - 1;
-      // Only if previous turn isn't less than 0...
-      if (previousTurn >= 0) {
-        // Search for and delete any effects that are supposed to expire at the end of the previous turn.
-        const effects = this.turns[previousTurn].actor?.effects;
-        if (effects && effects.size) {
-          for (const effect of effects) {
-            const startRound = effect.data.duration.startRound ?? 0;
-            const startTurn = effect.data.duration.startTurn ?? 0;
-            if (
-              effect.getFlag('swade', 'autoexpire') &&
-              effect.getFlag('swade', 'endOfNextTurn')
-            ) {
-              if (
-                (startRound === this.round && startTurn < this.turn - 1) ||
-                startRound < this.round
-              ) {
-                await effect.delete();
-              }
-            }
-          }
-        }
-      }
-    }
-    // If this is the last turn of a round, and it had an AE that's supposed to expire at the end of this turn...
-    if (this.turn === this.turns.length - 1) {
-      if (this.combatant.actor?.effects.size) {
-        const combatantEffects = this.combatant.actor?.data.effects;
-        for (const effect of combatantEffects) {
-          const startRound = effect.data.duration.startRound ?? 0;
-          const startTurn = effect.data.duration.startTurn ?? 0;
-          if (
-            effect.getFlag('swade', 'autoexpire') &&
-            effect.getFlag('swade', 'endOfNextTurn')
-          ) {
-            if (startRound === this.round && startTurn < this.turn) {
-              // Mark it to be deleted at the start of the next round.
-              await effect.setFlag('swade', 'removeEffect', true);
-            }
-          }
+
+    for (const combatant of this.combatants) {
+      const effects = combatant.actor?.effects
+      if (effects) {
+        for (const effect of effects) {
+          effect.checkStatusEffect(this.id as string);
         }
       }
     }
