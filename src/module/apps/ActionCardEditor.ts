@@ -69,14 +69,16 @@ export default class ActionCardEditor extends FormApplication {
           suit: value.suitValue,
         },
       };
+      //grab the current card and diff it against the object we got from the form
       const current = this.cards.cards.get(id, { strict: true });
       const diff = foundry.utils.diffObject(current.data.toObject(), newData);
+      //skip if there's no differences
       if (foundry.utils.isObjectEmpty(diff)) continue;
       //set the ID for the update
       diff['_id'] = id;
       updates.push(foundry.utils.flattenObject(diff));
     }
-    await this.cards.updateEmbeddedDocuments('Card', updates as any[]);
+    await this.cards.updateEmbeddedDocuments('Card', updates);
     this.render(true);
   }
 
