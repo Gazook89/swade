@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
-import { ItemMetadata } from '../globals';
+import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
   DsnCustomWildDieOptions,
@@ -206,6 +206,78 @@ export default class SwadeHooks {
       },
     };
     options.push(actionCardEditor, chaseLayout);
+  }
+
+  public static onGetCompendiumDirectoryEntryContext(
+    html: JQuery<HTMLElement>,
+    options: ContextMenu.Item[],
+  ) {
+    options.push({
+      name: 'SWADE.ConverToDeck',
+      icon: '<i class="fas fa-file-export"></i>',
+      condition: (li) => {
+        const pack = game.packs.get(li.data('pack'), { strict: true });
+        return pack.metadata['type'] === 'JournalEntry';
+      },
+      callback: async (li) => {
+        const pack = game.packs.get(li.data('pack'), {
+          strict: true,
+        }) as CompendiumCollection<JournalMetadata>;
+        const docs = await pack.getDocuments();
+        const allDocsHaveCardFlags = docs.every((c) =>
+          hasProperty(c, 'data.flags.swade'),
+        );
+        if (!allDocsHaveCardFlags) {
+          return ui.notifications.warn('SWADE.NotADeckCompendium', {
+            localize: true,
+          });
+        }
+
+        const suits = ['', 'clubs', 'diamonds', 'hearts', 'spades'];
+        //get the vital information from the journal entry
+        const cards = docs.map((entry) => {
+          return {
+            name: entry.name,
+            text: entry.data.content,
+            img: entry.data.img,
+            suit: entry.getFlag('swade', 'suitValue') as number,
+            value: entry.getFlag('swade', 'cardValue') as number,
+          };
+        });
+        //create the empty deck
+        const deck = await Cards.create({
+          name: pack.metadata.label,
+          type: 'deck',
+        });
+        //map the journal entry data to the raw card data
+        const rawCardData = cards.map((card) => {
+          return {
+            name: card.name,
+            type: 'poker',
+            suit: suits[card.suit],
+            value: card.value,
+            description: card.text,
+            faces: [
+              {
+                img: card.img,
+                name: card.name,
+              },
+            ],
+            face: 0,
+            origin: deck?.id,
+            sort: card.suit * 13 + card.value,
+            data: {
+              suit: card.suit,
+              isJoker: card.value > 90,
+            },
+          };
+        });
+        //create the cards in the deck
+        deck?.createEmbeddedDocuments('Card', rawCardData);
+        //open the sheet once we're done
+        deck?.sheet?.render(true);
+      },
+    });
   }
 
   public static onRenderCombatTracker(

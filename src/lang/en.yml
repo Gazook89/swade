@@ -469,3 +469,5 @@ SWADE.ClearChaseCards: Clear Chase cards from Scene
 SWADE.NoSceneAvailable: There is no scene available or you've disabled the canvas
 SWADE.ChaseCardsCleared: All chase cards have been removed from the scene.
 SWADE.SetUpChase: Set Up Chase
+SWADE.NotADeckCompendium: The compendium you selected doesn't appear to be a legacy deck
+SWADE.ConverToDeck: Convert to Deck

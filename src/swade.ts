@@ -253,6 +253,9 @@ Hooks.on(
   },
 );
 
-Hooks.on('getCompendiumDirectoryEntryContext', (...args) => {
-  console.log(args);
-});
+Hooks.on(
+  'getCompendiumDirectoryEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
+  },
+);

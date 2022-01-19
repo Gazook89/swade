@@ -89,7 +89,6 @@ async function createChaseTiles(html: JQuery<HTMLElement>, deck: Cards) {
   // Set spacing to half a grid square.
   let spacing = grid / 2;
   // Define the number of rows.
-
   const rows = Number(html.find('#card-rows').first().val());
   // Define the number of columns.
   const columns = Number(html.find('#card-columns').first().val());
