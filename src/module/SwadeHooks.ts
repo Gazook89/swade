@@ -11,6 +11,7 @@ import DiceSettings from './apps/DiceSettings';
 import SwadeCombatGroupColor from './apps/SwadeCombatGroupColor';
 import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
+import * as chaseUtils from './chaseUtils';
 import * as chat from './chat';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
@@ -174,12 +175,13 @@ export default class SwadeHooks {
     html: JQuery,
     options: ContextMenu.Item[],
   ) {
-    const obj: ContextMenu.Item = {
+    const actionCardEditor: ContextMenu.Item = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
         const deck = game.cards!.get(li.data('documentId'), { strict: true });
         return (
+          deck.type === 'deck' &&
           deck.cards.contents.every((c) => c.data.type === 'poker') &&
           deck.isOwner
         );
@@ -189,7 +191,19 @@ export default class SwadeHooks {
         new ActionCardEditor(deck).render(true);
       },
     };
-    options.push(obj);
+    const chaseLayout: ContextMenu.Item = {
+      name: 'SWADE.LayOutChaseWithDeck',
+      icon: '<i class="fas fa-shipping-fast"></i>',
+      condition: (li) => {
+        const cards = game.cards!.get(li.data('documentId'), { strict: true });
+        return cards.type === 'deck';
+      },
+      callback: (li) => {
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        chaseUtils.layoutChase(deck);
+      },
+    };
+    options.push(actionCardEditor, chaseLayout);
   }
 
   public static onRenderCombatTracker(
@@ -708,11 +722,23 @@ export default class SwadeHooks {
   }
 
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
+    //get the measured template tools
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
-    const newButtons = CONFIG.SWADE.measuredTemplatePresets.map(
+    //add buttons
+    const newTemplateButtons = CONFIG.SWADE.measuredTemplatePresets.map(
       (t) => t.button,
     );
-    measure.tools.splice(measure.tools.length - 1, 0, ...newButtons);
+    measure.tools.splice(measure.tools.length - 1, 0, ...newTemplateButtons);
+
+    //get the tile tools
+    const tile = sceneControlButtons.find((a) => a.name === 'tiles')!;
+    //added the button to clear chase cards
+    tile.tools.push({
+      name: 'clear-chase-cards',
+      title: 'SWADE.ClearChaseCards',
+      icon: 'fas fa-shipping-fast',
+      onClick: () => chaseUtils.removeChaseTiles(canvas.scene!),
+    });
   }
 
   public static async onDropActorSheetData(
