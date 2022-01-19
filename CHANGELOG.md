@@ -40,15 +40,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - When no name is given for a modifier, the Roll Dialog will default to `Additional`
 - In the Roll Dialog when a custom modifier value is entered and the enter key is pressed then the modifier is added to the list instead of directly submitting the roll
-- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the `Setting Configurator`) into a discrad pile of your choosing (also in the set in the `Setting Configurator`). By default the system will create an Action Deck and a Discard Pile if none are present or the ones that were chosen in the settings are not available
+- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the `Setting Configurator`) into a discard pile of your choosing (also in the set in the `Setting Configurator`). By default the system will create an Action Deck and a Discard Pile if none are present or the ones that were chosen in the settings are not available
 - Changed the way the `Setting Configurator` is organized. It now has tabs to reduce the overall size and improve the organization. Some settings have been moved into the general system settings.
-- Renamed a few translation Strings, see the list
+- Renamed a few translation keys, see the list
   - `SWADE.Rng` -> `SWADE.Range._name`
   - `SWADE.Cover` -> `SWADE.Cover._name`
   - `SWADE.CoverShield` -> `SWADE.Cover.Shield`
   - `SWADE.Mod` -> `SWADE.Modifier`
 - Removed all references to entities in migration messages
-- Updated the Action Card Editor to now work with the Cards API
+- Updated the Action Card Editor to now work with the Cards API instead of the legacy deck system
 
 ### Removed
 
