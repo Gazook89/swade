@@ -1,6 +1,7 @@
 import { TraitRollModifier } from '../../interfaces/additional';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
+import * as util from '../util';
 
 export default class RollDialog extends FormApplication<
   FormApplication.Options,
@@ -212,9 +213,7 @@ export default class RollDialog extends FormApplication<
         this.ctx.mods
           .filter((v) => !v.ignore) //remove the disabled modifiers
           .map(this._normalizeModValue)
-          .reduce((a: string, c: TraitRollModifier) => {
-            return (a += `${c.value}[${c.label}]`);
-          }, ''),
+          .reduce(util.modifierReducer, ''),
         this._getRollData(),
       ),
     ]);

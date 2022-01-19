@@ -441,7 +441,10 @@ export const SWADE: SwadeConfig = {
     },
     {
       name: 'SWADE.ModOther',
-      modifiers: [{ label: 'SWADE.Snapfire', value: -2 }],
+      modifiers: [
+        { label: 'SWADE.Snapfire', value: -2 },
+        { label: 'SWADE.UnstablePlatform', value: -2 },
+      ],
     },
   ],
 };

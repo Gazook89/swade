@@ -217,22 +217,23 @@ export default class SwadeActor extends Actor {
 
     const roll = Roll.fromTerms([basePool]);
 
-    Hooks.call(
-      'swadeRollAttribute',
-      this,
-      attribute,
-      roll,
-      modifiers,
-      game.userId,
-    );
+    /**
+     * A hook even that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function swadeRollAttribute
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that rolls the attribute
+     * @param {String} attribute                The name of the attribute, in lower case
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollAttribute', this, attribute, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
         ...roll.terms,
         ...Roll.parse(
-          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -280,15 +281,23 @@ export default class SwadeActor extends Actor {
       flavour = ` - ${options.flavour}`;
     }
 
-    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, game.userId);
+    /**
+     * A hook even that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function swadeRollSkill
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that rolls the skill
+     * @param {Item} skill                      The Skill item that is being rolled
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
         ...roll.terms,
         ...Roll.parse(
-          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -812,16 +821,18 @@ export default class SwadeActor extends Actor {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
-    name?: string | null,
+    name: string | null | undefined,
   ): TraitRollModifier[] {
     const mods = new Array<TraitRollModifier>();
 
     //Trait modifier
-    const itemMod = parseInt(data.die.modifier);
-    if (!isNaN(itemMod) && itemMod !== 0) {
+    const modifier = parseInt(data.die.modifier);
+    if (!isNaN(modifier) && modifier !== 0) {
       mods.push({
-        label: name ?? game.i18n.localize('SWADE.TraitMod'),
-        value: itemMod,
+        label: name
+          ? `${name} ${game.i18n.localize('SWADE.Modifier')}`
+          : game.i18n.localize('SWADE.TraitMod'),
+        value: modifier,
       });
     }
 

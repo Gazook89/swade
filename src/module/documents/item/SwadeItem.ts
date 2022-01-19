@@ -2,6 +2,7 @@ import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/fo
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
+import * as util from '../../util';
 
 declare global {
   interface DocumentClassConfig {
@@ -139,22 +140,23 @@ export default class SwadeItem extends Item {
 
     const roll = new Roll(baseRoll.join(''));
 
-    Hooks.call(
-      'swadeRollDamage',
-      this.actor,
-      this,
-      roll,
-      modifiers,
-      game.userId,
-    );
+    /**
+     * A hook even that is fired before damage is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function swadeRollDamage
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that owns the item which rolls the damage
+     * @param {Item} item                       The item that is used to create the damage value
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollDamage', this.actor, this, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
         ...roll.terms,
         ...Roll.parse(
-          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
