@@ -30,9 +30,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added presets for a Light and Dark Action Deck using `poker` type cards. You can create an Action deck by going to the _Card Stacks_ tab and creating a new stack using the presets.
 - Added a multi-action penalty selection for trait rolls in the roll dialog
 - Added a Dropdown to the roll Dialog which containes a list of common roll modifiers. To add a modifier, select it from the dropdown and click the add button.
-- Added additional translation strings
 - Added a setting to the Setting Configurator, which controlls whether encumbrance penalties are applied in the appropriate places. This setting defaults to off and needs to be enabled by the GM. Please keep in mind that Vigor tests to resist fatigue are not supported at this time
 - Added `SwadeActor.isEncumbered` getter
+- Added additional translation strings
 
 ### Changed
 
@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - `SWADE.CoverShield` -> `SWADE.Cover.Shield`
   - `SWADE.Mod` -> `SWADE.Modifier`
 - Removed all references to entities in migration messages
+- Updated the Action Card Editor to now work with the Cards API
 
 ### Removed
 
