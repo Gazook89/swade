@@ -247,8 +247,8 @@ Hooks.on(
 );
 
 Hooks.on(
-  'getCompendiumDirectoryEntryContext',
+  'getCardsDirectoryEntryContext',
   (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
-    SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
+    SwadeHooks.onGetCardsDirectoryEntryContext(html, options);
   },
 );

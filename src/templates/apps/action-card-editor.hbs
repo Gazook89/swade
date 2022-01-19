@@ -9,7 +9,7 @@
         <li class='flexrow'>
           <img
             class='card-face'
-            src='{{card.data.img}}'
+            src='{{card.face.img}}'
             alt='{{card.name}}'
             data-id='{{card.id}}'
           />
@@ -30,7 +30,7 @@
                 <input
                   type='text'
                   name='card.{{card.id}}.img'
-                  value='{{card.data.img}}'
+                  value='{{card.face.img}}'
                 />
                 <button
                   type='button'
@@ -47,7 +47,7 @@
               <label>{{localize 'SWADE.CardSuit'}}</label>
               <span class='form-fields'>
                 <select data-dtype='Number' name='card.{{card.id}}.suitValue'>
-                  {{#select card.data.flags.swade.suitValue}}
+                  {{#select card.data.data.suit}}
                     <option value='4'>Spades</option>
                     <option value='3'>Hearts</option>
                     <option value='2'>Diamonds</option>
@@ -61,7 +61,7 @@
               <label>{{localize 'SWADE.CardValue'}}</label>
               <span class='form-fields'>
                 <select data-dtype='Number' name='card.{{card.id}}.cardValue'>
-                  {{#select card.data.flags.swade.cardValue}}
+                  {{#select card.data.value}}
                     <option value='2'>Two</option>
                     <option value='3'>Three</option>
                     <option value='4'>Four</option>

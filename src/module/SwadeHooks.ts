@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
-import { ItemMetadata, JournalMetadata } from '../globals';
+import { ItemMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
   DsnCustomWildDieOptions,
@@ -170,31 +170,23 @@ export default class SwadeHooks {
     }
   }
 
-  public static onGetCompendiumDirectoryEntryContext(
+  public static onGetCardsDirectoryEntryContext(
     html: JQuery,
     options: ContextMenu.Item[],
   ) {
-    //TODO Update ACE to the foundry Card API or depreceate it
     const obj: ContextMenu.Item = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
-        const pack = game.packs.get(li.data('pack'), {
-          strict: true,
-        });
-        return pack.documentName === 'JournalEntry' && game.user!.isGM;
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        return (
+          deck.cards.contents.every((c) => c.data.type === 'poker') &&
+          deck.isOwner
+        );
       },
       callback: async (li) => {
-        const pack = game.packs.get(li.data('pack'), {
-          strict: true,
-        }) as CompendiumCollection<JournalMetadata>;
-        if (pack.locked) {
-          return ui.notifications.warn('SWADE.WarningPackLocked', {
-            localize: true,
-          });
-        }
-        const editor = await ActionCardEditor.fromPack(pack);
-        editor.render(true);
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        new ActionCardEditor(deck).render(true);
       },
     };
     options.push(obj);
