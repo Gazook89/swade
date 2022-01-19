@@ -150,7 +150,14 @@ export default class SwadeItem extends Item {
      * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
      * @param {IRollOptions} options            The options passed into the roll function
      */
-    Hooks.call('swadeRollDamage', this.actor, this, roll, modifiers, options);
+    Hooks.callAll(
+      'swadeRollDamage',
+      this.actor,
+      this,
+      roll,
+      modifiers,
+      options,
+    );
 
     if (options.suppressChat) {
       return Roll.fromTerms([

@@ -227,7 +227,14 @@ export default class SwadeActor extends Actor {
      * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
      * @param {IRollOptions} options            The options passed into the roll function
      */
-    Hooks.call('swadeRollAttribute', this, attribute, roll, modifiers, options);
+    Hooks.callAll(
+      'swadeRollAttribute',
+      this,
+      attribute,
+      roll,
+      modifiers,
+      options,
+    );
 
     if (options.suppressChat) {
       return Roll.fromTerms([
@@ -291,7 +298,7 @@ export default class SwadeActor extends Actor {
      * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
      * @param {IRollOptions} options            The options passed into the roll function
      */
-    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, options);
+    Hooks.callAll('swadeRollSkill', this, skill, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
