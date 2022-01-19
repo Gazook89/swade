@@ -35,8 +35,8 @@ export function layoutChase(deck: Cards) {
                 <br>
             </form>
         `;
-  // Create the Dialog
 
+  // Create the Dialog
   const buttons: Record<string, Dialog.Button> = {
     ok: {
       label: 'Draw',
@@ -95,11 +95,12 @@ async function createChaseTiles(html: JQuery<HTMLElement>, deck: Cards) {
   const columns = Number(html.find('#card-columns').first().val());
   // Calculate the total number of cards to be drawn.
   const cardsToDraw = rows * columns;
-  /*
-      Set the dimensions of the card. This assumes U.S.poker card sizes and
-      is based on the size of the grid squares. This emulates the scale between minis and playing
-      cards on the tabletop.
-    */
+
+  /**
+   * Set the dimensions of the card. This assumes U.S.poker card sizes and
+   * is based on the size of the grid squares. This emulates the scale between minis and playing
+   * cards on the tabletop.
+   */
   let cardHeight = grid * (deck.data.height ?? 3.5);
   let cardWidth = grid * (deck.data.width ?? 2.5);
 
@@ -124,10 +125,10 @@ async function createChaseTiles(html: JQuery<HTMLElement>, deck: Cards) {
   const sceneHeight = dimensions.sceneHeight;
   const sceneRectX = dimensions.paddingX;
   const sceneRectY = dimensions.paddingY;
+
   /**
    * Calculate the default width and height of the full spread based on number of cards, card sizes, and spacing between cards.
    */
-
   // Calculate the total spacing between columns.
   let totalSpacingX = spacing * (columns - 1);
   // Calculate the total spacing between rows.
