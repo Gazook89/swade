@@ -218,7 +218,7 @@ export default class SwadeActor extends Actor {
     const roll = Roll.fromTerms([basePool]);
 
     /**
-     * A hook even that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * A hook event that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
      * @function swadeRollAttribute
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that rolls the attribute
@@ -282,7 +282,7 @@ export default class SwadeActor extends Actor {
     }
 
     /**
-     * A hook even that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * A hook event that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
      * @function swadeRollSkill
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that rolls the skill

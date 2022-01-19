@@ -141,7 +141,7 @@ export default class SwadeItem extends Item {
     const roll = new Roll(baseRoll.join(''));
 
     /**
-     * A hook even that is fired before damage is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * A hook event that is fired before damage is rolled, giving the opportunity to programatically adjust a roll and its modifiers
      * @function swadeRollDamage
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that owns the item which rolls the damage
