@@ -219,7 +219,7 @@ export default class SwadeActor extends Actor {
 
     /**
      * A hook event that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
-     * @function swadeRollAttribute
+     * @function rollAttribute
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that rolls the attribute
      * @param {String} attribute                The name of the attribute, in lower case
@@ -283,7 +283,7 @@ export default class SwadeActor extends Actor {
 
     /**
      * A hook event that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
-     * @function swadeRollSkill
+     * @function rollSkill
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that rolls the skill
      * @param {Item} skill                      The Skill item that is being rolled

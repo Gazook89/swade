@@ -142,7 +142,7 @@ export default class SwadeItem extends Item {
 
     /**
      * A hook event that is fired before damage is rolled, giving the opportunity to programatically adjust a roll and its modifiers
-     * @function swadeRollDamage
+     * @function rollDamage
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that owns the item which rolls the damage
      * @param {Item} item                       The item that is used to create the damage value
