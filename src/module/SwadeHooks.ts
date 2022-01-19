@@ -179,6 +179,8 @@ export default class SwadeHooks {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
+        //return early if there's no canvas or scene to lay out cards
+        if (!canvas || !canvas.ready || !canvas.scene) return false;
         const deck = game.cards!.get(li.data('documentId'), { strict: true });
         return (
           deck.type === 'deck' &&

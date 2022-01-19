@@ -252,3 +252,7 @@ Hooks.on(
     SwadeHooks.onGetCardsDirectoryEntryContext(html, options);
   },
 );
+
+Hooks.on('getCompendiumDirectoryEntryContext', (...args) => {
+  console.log(args);
+});

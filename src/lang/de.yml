@@ -451,3 +451,4 @@ SWADE.ApplyEncumbraceHint: >-
   Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand
   gegen {fatigue} derzeit NICHT unterstüzt sind
 SWADE.NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
+SWADE.SetUpChase: Verfolgungsjagd erstellen

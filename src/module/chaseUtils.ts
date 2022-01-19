@@ -50,7 +50,7 @@ export function layoutChase(deck: Cards) {
         await deck.reset({ chatNotification: false });
         await deck.shuffle({ chatNotification: false });
         ui.notifications.info(`The Deck "${deck.name}" has been reset.`);
-        // Get the Chase cards that are on the scene.
+        removeChaseTiles(canvas.scene!);
       },
     },
     cancel: {
@@ -59,7 +59,7 @@ export function layoutChase(deck: Cards) {
   };
 
   new Dialog({
-    title: 'Set Up Chase',
+    title: game.i18n.localize('SWADE.SetUpChase'),
     content: template,
     buttons: buttons,
     default: 'ok',
