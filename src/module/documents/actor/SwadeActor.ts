@@ -1043,7 +1043,7 @@ export default class SwadeActor extends Actor {
 
       //Add the Untrained skill
       skills.push({
-        name: 'Untrained',
+        name: game.i18n.localize('SWADE.Unskilled'),
         type: 'skill',
         img: 'systems/swade/assets/icons/skill.svg',
         //@ts-expect-error We're just adding some base data for a skill here.

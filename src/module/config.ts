@@ -444,6 +444,7 @@ export const SWADE: SwadeConfig = {
       modifiers: [
         { label: 'SWADE.Snapfire', value: -2 },
         { label: 'SWADE.UnstablePlatform', value: -2 },
+        { label: 'SWADE.Encumbered', value: -2 },
       ],
     },
   ],

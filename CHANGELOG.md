@@ -63,7 +63,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Known Issues
 
-- Encumbrance penalties currently _DO NOT_ currently support Vigor tests to rest
+- Encumbrance penalties currently _DO NOT_ currently support Vigor tests to resist fatigue
 
 ## [v0.22.5]
 
