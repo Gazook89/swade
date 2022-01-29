@@ -241,13 +241,11 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
     const shields = data.itemsByType['shield'];
     data.parry = 0;
-    if (shields) {
-      shields.forEach((shield: any) => {
-        if (shield.data.equipped) {
-          data.parry += shield.data.parry;
-        }
-      });
-    }
+    shields.forEach((shield) => {
+      if (shield.data.equipped) {
+        data.parry += shield.data.parry;
+      }
+    });
     return data;
   }
 

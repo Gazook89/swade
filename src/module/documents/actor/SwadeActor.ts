@@ -156,20 +156,19 @@ export default class SwadeActor extends Actor {
       const adjustedArmor = this.data.data.stats.toughness.armor;
 
       //add some sensible lower limits
-      let completeArmor = this.calcArmor() + adjustedArmor;
-      if (completeArmor < 0) completeArmor = 0;
-      let completeTough =
-        this.calcToughness(false) + adjustedTough + completeArmor;
-      if (completeTough < 1) completeTough = 1;
-      this.data.data.stats.toughness.value = completeTough;
-      this.data.data.stats.toughness.armor = completeArmor;
+      const finalArmor = Math.max(this.calcArmor() + adjustedArmor, 0);
+      const finalTough = Math.max(
+        this.calcToughness(false) + adjustedTough + finalArmor,
+        1,
+      );
+      this.data.data.stats.toughness.value = finalTough;
+      this.data.data.stats.toughness.armor = finalArmor;
     }
 
     const shouldAutoCalcParry = this.data.data.details.autoCalcParry;
     if (shouldAutoCalcParry) {
       const adjustedParry = this.data.data.stats.parry.value;
-      let completeParry = this.calcParry() + adjustedParry;
-      if (completeParry < 0) completeParry = 0;
+      const completeParry = Math.max(this.calcParry() + adjustedParry, 0);
       this.data.data.stats.parry.value = completeParry;
     }
   }
@@ -536,9 +535,7 @@ export default class SwadeActor extends Actor {
     return retVal;
   }
 
-  /**
-   * Calculates the correct armor value based on SWADE v5.5 and returns that value
-   */
+  /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
   calcArmor(): number {
     return this._getArmorForLocation(ArmorLocation.TORSO);
   }
@@ -615,10 +612,10 @@ export default class SwadeActor extends Actor {
   }
 
   calcParry(): number {
-    if (this.data.type === 'vehicle') 0;
+    if (this.data.type === 'vehicle') return 0;
     let parryTotal = 0;
     const parryBase = game.settings.get('swade', 'parryBaseSkill');
-    const parryBaseSkill = this.itemTypes.skill.find(
+    const parryBaseSkill = this.itemTypes['skill'].find(
       (i) => i.name === parryBase,
     );
 
