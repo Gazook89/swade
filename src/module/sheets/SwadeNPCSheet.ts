@@ -1,4 +1,5 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import { SWADE } from '../config';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
 /**
@@ -180,11 +181,11 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         const id = event.target.dataset.id as string;
         const key = event.target.dataset.key as string;
 
-        const statusConfigData = CONFIG.statusEffects.find(
+        const statusConfigData = SWADE.statusEffects.find(
           (effect) => effect.id === id,
         );
         // Get the current status value
-        const statusValue = this.object.data.data.status[key];
+        const statusValue = this.actor.data.data.status[key];
         // Get the label from the inner text of the parent label element
         const statusLabel = event.target.parentElement?.innerText as string;
         // If the status is checked and the status value is false...
@@ -194,7 +195,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
           // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
           const tokens = game.canvas.tokens?.getDocuments();
-          const token = tokens?.find((t) => t.actor?.id === this.object.id);
+          const token = tokens?.find((t) => t.actor?.id === this.actor.id);
           // So, if there is...
           if (token) {
             // Toggle the AE from the token which toggles it on the actor sheet, too
@@ -205,25 +206,22 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
             // Create the AE, passing the label, data, and renderSheet boolean
             await this._createActiveEffect(
               statusLabel,
-              statusConfigData,
+              statusConfigData as any,
               renderSheet,
             );
           }
 
           // Otherwise...
         } else {
+          await this.actor.update({
+            'data.status': {
+              [key]: false,
+            },
+          });
           // Find the existing effect based on label and flag and delete it.
-          for (const effect of this.object.data.effects) {
-            if (
-              effect.data.label.toLowerCase() === statusLabel.toLowerCase() &&
-              effect.getFlag('swade', 'effectType') === 'status'
-            ) {
-              for (const change of effect.changes) {
-                if (change.key.includes(key)) {
-                  // Delete it
-                  await effect.delete();
-                }
-              }
+          for (const effect of this.actor.data.effects) {
+            if (effect.getFlag('core', 'statusId') === id) {
+              await effect.delete();
             }
           }
         }
