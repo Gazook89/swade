@@ -125,18 +125,29 @@
       order: 2;
       margin-bottom: 0;
     }
-    img.result-image {
-      height: 75px;
-      aspect-ratio: 1/1.4;
+    .action-card-filter-container {
       border: none;
-      box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
-      transform-origin: center left;
-      transition: transform 0.2s ease-in-out;
-      order: 1;
+      filter: drop-shadow(2px 3px 2px rgb(0 0 0 / 50%));
+      transition: filter 0.2s ease-in;
+
+      .result-image {
+        height: 75px;
+        aspect-ratio: 1/1.4;
+        border: none;
+        //box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
+        transition: transform 0.2s ease-in;
+        transform-origin: center left;
+      }
+
       &:hover {
         z-index: 1;
-        transform-origin: center left;
-        transition: transform 0.2s ease-in-out;
+        filter: drop-shadow(4px 6px 4px rgb(0 0 0 / 50%));
+        transition: filter 0.2s ease-in;
+
+        .result-image {
+          transform-origin: center left;
+          transition: transform 0.2s ease-in, filter 0.2s ease-in;
+        }
       }
     }
   }
