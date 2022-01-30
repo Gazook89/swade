@@ -14,7 +14,6 @@ declare global {
       ActiveEffect: {
         swade: {
           removeEffect?: boolean;
-          effectType?: string;
           expiration?: number;
           loseTurnOnHold?: boolean;
         };
@@ -110,7 +109,11 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  async checkStatusEffect(combatId: string, selfDelete = false) {
+  /**
+   * Determines whether to remove a statusEffect during a given round based on its duration and expiration
+   * @param combatId The ID string of the current combat
+   */
+  async checkStatusEffect(combatId: string) {
 
     // Get the expiration of the effect
     const expiration = this.getFlag('swade', 'expiration');
@@ -135,7 +138,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
             } else if (
               expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
             ) {
-              // trigger prompt based on effect
+              // TODO: trigger prompt based on effect
             }
           } else {
             // Only if previous turn isn't less than 0...
@@ -159,7 +162,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
                 } else if (
                   expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
                 ) {
-                  // trigger prompt based on effect
+                  // TODO: trigger prompt based on effect
                 }
               }
             }
