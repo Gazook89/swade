@@ -10,15 +10,15 @@ declare global {
   interface DocumentClassConfig {
     ActiveEffect: typeof SwadeActiveEffect;
   }
-    interface FlagConfig {
-      ActiveEffect: {
-        swade: {
-          removeEffect?: boolean;
-          expiration?: number;
-          loseTurnOnHold?: boolean;
-        };
+  interface FlagConfig {
+    ActiveEffect: {
+      swade: {
+        removeEffect?: boolean;
+        expiration?: number;
+        loseTurnOnHold?: boolean;
       };
-    }
+    };
+  }
 }
 
 export default class SwadeActiveEffect extends ActiveEffect {
@@ -114,7 +114,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
    * @param combatId The ID string of the current combat
    */
   async checkStatusEffect(combatId: string) {
-
     // Get the expiration of the effect
     const expiration = this.getFlag('swade', 'expiration');
     // If there's a the effect duration's combat is the combat ID passed in, start processing the effect.
@@ -122,7 +121,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
       // Get the combat object
       const combat = game.combats?.get(combatId);
       // If the combat object exists (it should) and there's an expiration on the effect, process the expiration of the effect.
-
       if (combat && expiration) {
         // If the effect expires at the end of a turn, do this stuff.
         if (
@@ -139,6 +137,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
               expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
             ) {
               // TODO: trigger prompt based on effect
+              this._promptEffectDeletion();
             }
           } else {
             // Only if previous turn isn't less than 0...
@@ -146,15 +145,12 @@ export default class SwadeActiveEffect extends ActiveEffect {
               // Check the effect duration's start turn and start round
               const startRound = this.data.duration.startRound ?? 0;
               const startTurn = this.data.duration.startTurn ?? 0;
-              const previousTurn = combat.turns[combat.turn - 1]
+              const previousTurn = combat.turns[combat.turn - 1];
               // If the duration start was prior to the previous turn...
               if (
                 previousTurn.actor?.id === this.parent?.id &&
-                (
-                  (startRound === combat.round && startTurn < combat.turn - 1) ||
-                  startRound < combat.round
-                )
-
+                ((startRound === combat.round && startTurn < combat.turn - 1) ||
+                  startRound < combat.round)
               ) {
                 // Process the end of the effect
                 if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO) {
@@ -163,6 +159,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
                   expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
                 ) {
                   // TODO: trigger prompt based on effect
+                  this._promptEffectDeletion();
                 }
               }
             }
@@ -175,8 +172,9 @@ export default class SwadeActiveEffect extends ActiveEffect {
         if (combat.combatant.actor?.effects.size) {
           const startRound = this.data.duration.startRound ?? 0;
           const startTurn = this.data.duration.startTurn ?? 0;
-          if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO ||
-              expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
+          if (
+            expiration === StatusEffectExpiration.END_OF_TURN_AUTO ||
+            expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
           ) {
             if (
               combat.combatant.actor.id === this.parent?.id &&
@@ -190,6 +188,17 @@ export default class SwadeActiveEffect extends ActiveEffect {
         }
       }
     }
+  }
+
+  protected _promptEffectDeletion() {
+    Dialog.confirm({
+      defaultYes: false,
+      title: `Delete ${this.name} ?`,
+      content: `<p>Delete ${this.name} ?</p>`,
+      yes: () => {
+        this.delete();
+      },
+    });
   }
 
   protected async _preUpdate(
@@ -231,10 +240,11 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
 
     if (this.getFlag('swade', 'loseTurnOnHold')) {
-      const combatant = game.combat?.combatants.find((c) => c.actor?.id === this.parent?.id)
+      const combatant = game.combat?.combatants.find(
+        (c) => c.actor?.id === this.parent?.id,
+      );
       await combatant?.setFlag('swade', 'turnLost', true);
       await combatant?.unsetFlag('swade', 'roundHeld');
     }
-
   }
 }
