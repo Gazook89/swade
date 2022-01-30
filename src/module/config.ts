@@ -114,7 +114,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
+          expiration: StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT,
           loseTurnOnHold: true,
         },
       },
