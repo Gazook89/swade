@@ -4,6 +4,7 @@ import {
   ItemAction,
   TraitRollModifier,
 } from '../../../interfaces/additional';
+import { SWADE } from '../../config';
 import { Attribute } from '../../documents/actor/SwadeActor';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
@@ -87,11 +88,11 @@ export default class CharacterSheet extends ActorSheet {
           // Get the key from the target name
           const id = event.target.dataset.id as string;
           const key = event.target.dataset.key as string;
-          const statusConfigData = CONFIG.statusEffects.find(
+          const statusConfigData = SWADE.statusEffects.find(
             (effect) => effect.id === id,
           );
           // Get the current status value
-          const statusValue = this.object.data.data.status[key];
+          const statusValue = this.actor.data.data.status[key];
           // Get the label from the inner text of the parent label element
           const statusLabel = event.target.parentElement?.innerText as string;
           // If the status is checked and the status value is false...
@@ -113,25 +114,22 @@ export default class CharacterSheet extends ActorSheet {
               // Create the AE, passing the label, data, and renderSheet boolean
               await this._createActiveEffect(
                 statusLabel,
-                statusConfigData,
+                statusConfigData as any,
                 renderSheet,
               );
             }
 
             // Otherwise...
           } else {
+            await this.actor.update({
+              'data.status': {
+                [key]: false,
+              },
+            });
             // Find the existing effect based on label and flag and delete it.
-            for (const effect of this.object.data.effects) {
-              if (
-                effect.data.label.toLowerCase() === statusLabel.toLowerCase() &&
-                effect.getFlag('swade', 'effectType') === 'status'
-              ) {
-                for (const change of effect.changes) {
-                  if (change.key.includes(key)) {
-                    // Delete it
-                    await effect.delete();
-                  }
-                }
+            for (const effect of this.actor.data.effects) {
+              if (effect.getFlag('core', 'statusId') === id) {
+                await effect.delete();
               }
             }
           }

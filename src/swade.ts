@@ -247,6 +247,13 @@ Hooks.on(
 );
 
 Hooks.on(
+  'getCardsDirectoryEntryContext',
+  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
+    SwadeHooks.onGetCardsDirectoryEntryContext(html, options);
+  },
+);
+
+Hooks.on(
   'getCompendiumDirectoryEntryContext',
   (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
     SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);

@@ -10,37 +10,37 @@ export async function migrateWorld() {
   );
 
   // Migrate World Actors
-  for (const a of game.actors!) {
+  for (const actor of game.actors!) {
     try {
-      const updateData = migrateActorData(a.data as unknown as ActorData);
+      const updateData = migrateActorData(actor.data as unknown as ActorData);
       if (!isObjectEmpty(updateData)) {
-        console.log(`Migrating Actor entity ${a.name}`);
-        await a.update(updateData, { enforceTypes: false });
+        console.log(`Migrating Actor document ${actor.name}`);
+        await actor.update(updateData, { enforceTypes: false });
       }
     } catch (err) {
-      err.message = `Failed swade system migration for Actor ${a.name}: ${err.message}`;
+      err.message = `Failed swade system migration for Actor ${actor.name}: ${err.message}`;
       console.error(err);
     }
   }
 
   // Migrate World Items
-  for (const i of game.items!) {
+  for (const item of game.items!) {
     try {
-      const updateData = migrateItemData(i.data as unknown as ItemData);
+      const updateData = migrateItemData(item.data as unknown as ItemData);
       if (!isObjectEmpty(updateData)) {
-        console.log(`Migrating Item entity ${i.name}`);
-        await i.update(updateData, { enforceTypes: false });
+        console.log(`Migrating Item document ${item.name}`);
+        await item.update(updateData, { enforceTypes: false });
       }
     } catch (err) {
-      err.message = `Failed swade system migration for Item ${i.name}: ${err.message}`;
+      err.message = `Failed swade system migration for Item ${item.name}: ${err.message}`;
       console.error(err);
     }
   }
 
   // Migrate World Compendium Packs
-  for (const p of game.packs!) {
+  for (const p of game.packs) {
     if (p.metadata.package !== 'world') continue;
-    if (!['Actor', 'Item', 'Scene'].includes(p.metadata.entity)) continue;
+    if (!['Actor', 'Item', 'Scene'].includes(p.metadata['type'])) continue;
     await migrateCompendium(p);
   }
 
@@ -60,9 +60,11 @@ export async function migrateWorld() {
  * Apply migration rules to all Entities within a single Compendium pack
  * @param pack The compendium to migrate. Only Actor, Item or Scene compendiums are processed
  */
-export async function migrateCompendium(pack: any) {
-  const entity = pack.metadata.entity;
-  if (!['Actor', 'Item', 'Scene'].includes(entity)) return;
+export async function migrateCompendium(
+  pack: CompendiumCollection<CompendiumCollection.Metadata>,
+) {
+  const type = pack.metadata['type'];
+  if (!['Actor', 'Item', 'Scene'].includes(type)) return;
 
   // Unlock the pack for editing
   const wasLocked = pack.locked;
@@ -70,51 +72,50 @@ export async function migrateCompendium(pack: any) {
 
   // Begin by requesting server-side data model migration and get the migrated content
   await pack.migrate({});
-  const content = await pack.getContent();
+  const documents = await pack.getDocuments();
 
   // Iterate over compendium entries - applying fine-tuned migration functions
-  for (const ent of content) {
-    let updateData = {};
+  for (const document of documents) {
+    let updateData: Record<string, any> = {};
     try {
-      switch (entity) {
+      switch (type) {
         case 'Actor':
-          updateData = migrateActorData(ent.data as ActorData);
+          updateData = migrateActorData(document.data as unknown as ActorData);
           break;
         case 'Item':
-          updateData = migrateItemData(ent.data as ItemData);
+          updateData = migrateItemData(document.data as unknown as ItemData);
           break;
         case 'Scene':
-          updateData = migrateSceneData(ent.data as SceneData);
+          updateData = migrateSceneData(document.data as SceneData);
           break;
       }
       if (isObjectEmpty(updateData)) continue;
 
       // Save the entry, if data was changed
-      updateData['_id'] = ent._id;
-      await pack.updateEntity(updateData);
+      await document.update(updateData);
       console.log(
-        `Migrated ${entity} entity ${ent.name} in Compendium ${pack.collection}`,
+        `Migrated ${type} document ${document.name} in Compendium ${pack.collection}`,
       );
     } catch (err) {
       // Handle migration failures
-      err.message = `Failed swade system migration for entity ${ent.name} in pack ${pack.collection}: ${err.message}`;
+      err.message = `Failed swade system migration for document ${document.name} in pack ${pack.collection}: ${err.message}`;
       console.error(err);
     }
   }
 
   // Apply the original locked status for the pack
-  pack.configure({ locked: wasLocked });
+  await pack.configure({ locked: wasLocked });
   console.log(
-    `Migrated all ${entity} entities from Compendium ${pack.collection}`,
+    `Migrated all ${type} documents from Compendium ${pack.metadata.label}`,
   );
 }
 
 /* -------------------------------------------- */
-/*  Entity Type Migration Helpers               */
+/*  Document Type Migration Helpers             */
 /* -------------------------------------------- */
 
 /**
- * Migrate a single Actor entity to incorporate latest data model changes
+ * Migrate a single Actor document to incorporate latest data model changes
  * Return an Object of updateData to be applied
  * @param {object} data    The actor data object to update
  * @return {Object}         The updateData to apply
@@ -154,7 +155,7 @@ export function migrateItemData(data: ItemData) {
 }
 
 /**
- * Migrate a single Scene entity to incorporate changes to the data model of it's actor data overrides
+ * Migrate a single Scene document to incorporate changes to the data model of it's actor data overrides
  * Return an Object of updateData to be applied
  * @param {Object} data  The Scene data to Update
  * @return {Object}       The updateData to apply
@@ -171,16 +172,15 @@ export function migrateSceneData(data: SceneData) {
       const actorData = foundry.utils.duplicate(t.actorData);
       actorData.type = token.actor?.type;
       const update = migrateActorData(actorData as unknown as ActorData);
-      ['items', 'effects'].forEach((embeddedName) => {
-        if (!update[embeddedName]?.length) return;
-        const updates = new Map(update[embeddedName].map((u) => [u._id, u]));
-        t.actorData[embeddedName].forEach((original) => {
+      ['items', 'effects'].forEach((embed) => {
+        if (!update[embed]?.length) return;
+        const updates = new Map(update[embed].map((u) => [u._id, u]));
+        t.actorData[embed].forEach((original) => {
           const update = updates.get(original._id) as any;
           if (update) foundry.utils.mergeObject(original, update);
         });
-        delete update[embeddedName];
+        delete update[embed];
       });
-
       mergeObject(t.actorData, update);
     }
     return t;
@@ -206,17 +206,18 @@ export function removeDeprecatedObjects(data: ItemData | ActorData) {
 }
 
 function _migrateVehicleOperator(
-  actorData: ActorData,
+  data: ActorData,
   updateData: Record<string, unknown>,
 ) {
-  if (actorData.type !== 'vehicle') return updateData;
-  const driverId = actorData.data.driver.id;
+  if (data.type !== 'vehicle') return updateData;
+  const driverId = data.data.driver.id;
   const hasOldID = !!driverId && driverId.split('.').length === 1;
   if (hasOldID) {
     updateData['data.driver.id'] = `Actor.${driverId}`;
   }
   return updateData;
 }
+
 function _migrateWeaponAPToNumber(
   data: ItemData,
   updateData: Record<string, unknown>,

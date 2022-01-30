@@ -11,6 +11,7 @@ import DiceSettings from './apps/DiceSettings';
 import SwadeCombatGroupColor from './apps/SwadeCombatGroupColor';
 import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
+import * as chaseUtils from './chaseUtils';
 import * as chat from './chat';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
@@ -170,34 +171,113 @@ export default class SwadeHooks {
     }
   }
 
-  public static onGetCompendiumDirectoryEntryContext(
+  public static onGetCardsDirectoryEntryContext(
     html: JQuery,
     options: ContextMenu.Item[],
   ) {
-    //TODO Update ACE to the foundry Card API or depreceate it
-    const obj: ContextMenu.Item = {
+    const actionCardEditor: ContextMenu.Item = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
-        const pack = game.packs.get(li.data('pack'), {
-          strict: true,
-        });
-        return pack.documentName === 'JournalEntry' && game.user!.isGM;
+        //return early if there's no canvas or scene to lay out cards
+        if (!canvas || !canvas.ready || !canvas.scene) return false;
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        return (
+          deck.type === 'deck' &&
+          deck.cards.contents.every((c) => c.data.type === 'poker') &&
+          deck.isOwner
+        );
+      },
+      callback: async (li) => {
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        new ActionCardEditor(deck).render(true);
+      },
+    };
+    const chaseLayout: ContextMenu.Item = {
+      name: 'SWADE.LayOutChaseWithDeck',
+      icon: '<i class="fas fa-shipping-fast"></i>',
+      condition: (li) => {
+        const cards = game.cards!.get(li.data('documentId'), { strict: true });
+        return cards.type === 'deck';
+      },
+      callback: (li) => {
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        chaseUtils.layoutChase(deck);
+      },
+    };
+    options.push(actionCardEditor, chaseLayout);
+  }
+
+  public static onGetCompendiumDirectoryEntryContext(
+    html: JQuery<HTMLElement>,
+    options: ContextMenu.Item[],
+  ) {
+    options.push({
+      name: 'SWADE.ConverToDeck',
+      icon: '<i class="fas fa-file-export"></i>',
+      condition: (li) => {
+        const pack = game.packs.get(li.data('pack'), { strict: true });
+        return pack.metadata['type'] === 'JournalEntry';
       },
       callback: async (li) => {
         const pack = game.packs.get(li.data('pack'), {
           strict: true,
         }) as CompendiumCollection<JournalMetadata>;
-        if (pack.locked) {
-          return ui.notifications.warn('SWADE.WarningPackLocked', {
+        const docs = await pack.getDocuments();
+        const allDocsHaveCardFlags = docs.every((c) =>
+          hasProperty(c, 'data.flags.swade'),
+        );
+        if (!allDocsHaveCardFlags) {
+          return ui.notifications.warn('SWADE.NotADeckCompendium', {
             localize: true,
           });
         }
-        const editor = await ActionCardEditor.fromPack(pack);
-        editor.render(true);
+
+        const suits = ['', 'clubs', 'diamonds', 'hearts', 'spades'];
+        //get the vital information from the journal entry
+        const cards = docs.map((entry) => {
+          return {
+            name: entry.name,
+            text: entry.data.content,
+            img: entry.data.img,
+            suit: entry.getFlag('swade', 'suitValue') as number,
+            value: entry.getFlag('swade', 'cardValue') as number,
+          };
+        });
+        //create the empty deck
+        const deck = await Cards.create({
+          name: pack.metadata.label,
+          type: 'deck',
+        });
+        //map the journal entry data to the raw card data
+        const rawCardData = cards.map((card) => {
+          return {
+            name: card.name,
+            type: 'poker',
+            suit: suits[card.suit],
+            value: card.value,
+            description: card.text,
+            faces: [
+              {
+                img: card.img,
+                name: card.name,
+              },
+            ],
+            face: 0,
+            origin: deck?.id,
+            sort: card.suit * 13 + card.value,
+            data: {
+              suit: card.suit,
+              isJoker: card.value > 90,
+            },
+          };
+        });
+        //create the cards in the deck
+        deck?.createEmbeddedDocuments('Card', rawCardData);
+        //open the sheet once we're done
+        deck?.sheet?.render(true);
       },
-    };
-    options.push(obj);
+    });
   }
 
   public static onRenderCombatTracker(
@@ -716,11 +796,23 @@ export default class SwadeHooks {
   }
 
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
+    //get the measured template tools
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
-    const newButtons = CONFIG.SWADE.measuredTemplatePresets.map(
+    //add buttons
+    const newTemplateButtons = CONFIG.SWADE.measuredTemplatePresets.map(
       (t) => t.button,
     );
-    measure.tools.splice(measure.tools.length - 1, 0, ...newButtons);
+    measure.tools.splice(measure.tools.length - 1, 0, ...newTemplateButtons);
+
+    //get the tile tools
+    const tile = sceneControlButtons.find((a) => a.name === 'tiles')!;
+    //added the button to clear chase cards
+    tile.tools.push({
+      name: 'clear-chase-cards',
+      title: 'SWADE.ClearChaseCards',
+      icon: 'fas fa-shipping-fast',
+      onClick: () => chaseUtils.removeChaseTiles(canvas.scene!),
+    });
   }
 
   public static async onDropActorSheetData(

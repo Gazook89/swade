@@ -156,20 +156,19 @@ export default class SwadeActor extends Actor {
       const adjustedArmor = this.data.data.stats.toughness.armor;
 
       //add some sensible lower limits
-      let completeArmor = this.calcArmor() + adjustedArmor;
-      if (completeArmor < 0) completeArmor = 0;
-      let completeTough =
-        this.calcToughness(false) + adjustedTough + completeArmor;
-      if (completeTough < 1) completeTough = 1;
-      this.data.data.stats.toughness.value = completeTough;
-      this.data.data.stats.toughness.armor = completeArmor;
+      const finalArmor = Math.max(this.calcArmor() + adjustedArmor, 0);
+      const finalTough = Math.max(
+        this.calcToughness(false) + adjustedTough + finalArmor,
+        1,
+      );
+      this.data.data.stats.toughness.value = finalTough;
+      this.data.data.stats.toughness.armor = finalArmor;
     }
 
     const shouldAutoCalcParry = this.data.data.details.autoCalcParry;
     if (shouldAutoCalcParry) {
       const adjustedParry = this.data.data.stats.parry.value;
-      let completeParry = this.calcParry() + adjustedParry;
-      if (completeParry < 0) completeParry = 0;
+      const completeParry = Math.max(this.calcParry() + adjustedParry, 0);
       this.data.data.stats.parry.value = completeParry;
     }
   }
@@ -217,22 +216,23 @@ export default class SwadeActor extends Actor {
 
     const roll = Roll.fromTerms([basePool]);
 
-    Hooks.call(
-      'swadeRollAttribute',
-      this,
-      attribute,
-      roll,
-      modifiers,
-      game.userId,
-    );
+    /**
+     * A hook event that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function rollAttribute
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that rolls the attribute
+     * @param {String} attribute                The name of the attribute, in lower case
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollAttribute', this, attribute, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
         ...roll.terms,
         ...Roll.parse(
-          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -280,15 +280,23 @@ export default class SwadeActor extends Actor {
       flavour = ` - ${options.flavour}`;
     }
 
-    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, game.userId);
+    /**
+     * A hook event that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function rollSkill
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that rolls the skill
+     * @param {Item} skill                      The Skill item that is being rolled
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
         ...roll.terms,
         ...Roll.parse(
-          modifiers.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -527,9 +535,7 @@ export default class SwadeActor extends Actor {
     return retVal;
   }
 
-  /**
-   * Calculates the correct armor value based on SWADE v5.5 and returns that value
-   */
+  /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
   calcArmor(): number {
     return this._getArmorForLocation(ArmorLocation.TORSO);
   }
@@ -606,10 +612,10 @@ export default class SwadeActor extends Actor {
   }
 
   calcParry(): number {
-    if (this.data.type === 'vehicle') 0;
+    if (this.data.type === 'vehicle') return 0;
     let parryTotal = 0;
     const parryBase = game.settings.get('swade', 'parryBaseSkill');
-    const parryBaseSkill = this.itemTypes.skill.find(
+    const parryBaseSkill = this.itemTypes['skill'].find(
       (i) => i.name === parryBase,
     );
 
@@ -812,16 +818,18 @@ export default class SwadeActor extends Actor {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
-    name?: string | null,
+    name: string | null | undefined,
   ): TraitRollModifier[] {
     const mods = new Array<TraitRollModifier>();
 
     //Trait modifier
-    const itemMod = parseInt(data.die.modifier);
-    if (!isNaN(itemMod) && itemMod !== 0) {
+    const modifier = parseInt(data.die.modifier);
+    if (!isNaN(modifier) && modifier !== 0) {
       mods.push({
-        label: name ?? game.i18n.localize('SWADE.TraitMod'),
-        value: itemMod,
+        label: name
+          ? `${name} ${game.i18n.localize('SWADE.Modifier')}`
+          : game.i18n.localize('SWADE.TraitMod'),
+        value: modifier,
       });
     }
 
@@ -1032,7 +1040,7 @@ export default class SwadeActor extends Actor {
 
       //Add the Untrained skill
       skills.push({
-        name: 'Untrained',
+        name: game.i18n.localize('SWADE.Unskilled'),
         type: 'skill',
         img: 'systems/swade/assets/icons/skill.svg',
         //@ts-expect-error We're just adding some base data for a skill here.

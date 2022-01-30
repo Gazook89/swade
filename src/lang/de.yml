@@ -450,3 +450,7 @@ SWADE.ApplyEncumbrance: Belastungsabzüge anwenden
 SWADE.ApplyEncumbraceHint: >-
   Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand
   gegen {fatigue} derzeit NICHT unterstüzt sind
+SWADE.NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
+SWADE.SetUpChase: Verfolgungsjagd erstellen
+SWADE.NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
+SWADE.ConverToDeck: Zu Deck konvertieren

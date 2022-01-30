@@ -168,8 +168,10 @@ export default class SwadeCombat extends Combat {
       // Construct chat message data
       const template = `
             <section class="initiative-draw">
-                <h4 class="result-text result-text-card">${card?.name}</h4>
+              <div class="action-card-filter-container">
                 <img class="result-image" src="${card?.face?.img}">
+              </div>
+              <h4 class="result-text result-text-card">${card?.name}</h4>
             </section>
           `;
 

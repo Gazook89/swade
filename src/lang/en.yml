@@ -39,7 +39,7 @@ SWADE.Pow: Powers
 SWADE.WildCard: Wild Card
 SWADE.Extra: Extra
 SWADE.Bennies: Bennies
-SWADE.TraitMod: Trait Mod
+SWADE.TraitMod: Trait Modifier
 SWADE.SkillTest: Skill Test
 SWADE.AttributeTest: Attribute Test
 SWADE.Attributes: Attributes
@@ -464,3 +464,10 @@ SWADE.ApplyEncumbrance: Apply Encumbrance Penalties
 SWADE.ApplyEncumbraceHint: >-
   Apply encumbrance panlties. Please keep in mind that this currently does NOT
   SUPPORT {vigor} tests to resist {fatigue}!
+SWADE.LayOutChaseWithDeck: Use Deck to lay out Chase
+SWADE.ClearChaseCards: Clear Chase cards from Scene
+SWADE.NoSceneAvailable: There is no scene available or you've disabled the canvas
+SWADE.ChaseCardsCleared: All chase cards have been removed from the scene.
+SWADE.SetUpChase: Set Up Chase
+SWADE.NotADeckCompendium: The compendium you selected doesn't appear to be a legacy deck
+SWADE.ConverToDeck: Convert to Deck

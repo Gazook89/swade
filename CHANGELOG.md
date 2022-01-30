@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
-## [Unreleased]
+## [Unreleased v1.0.0]
 
 ### Added
 
@@ -30,22 +30,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added presets for a Light and Dark Action Deck using `poker` type cards. You can create an Action deck by going to the _Card Stacks_ tab and creating a new stack using the presets.
 - Added a multi-action penalty selection for trait rolls in the roll dialog
 - Added a Dropdown to the roll Dialog which containes a list of common roll modifiers. To add a modifier, select it from the dropdown and click the add button.
-- Added additional translation strings
 - Added a setting to the Setting Configurator, which controlls whether encumbrance penalties are applied in the appropriate places. This setting defaults to off and needs to be enabled by the GM. Please keep in mind that Vigor tests to resist fatigue are not supported at this time
-- Added `SwadeActor.isEncumbered` getter
+- Added `SwadeActor.isEncumbered` getter which returns true or false and considers whether the setting is even enabled
+- Incorporated the chase layout macro into the system. You can right-click on any deck in the system to lay out cards on the currently viewed scene. **This option is only available if the canvas and a scene are available to lay out cards**. There is also a new button in the tile controls to remove all chase cards from the currently viewed scene. Many thanks go out to `Kristian Serrano#5077` and `brunocalado#1650` for creating the macro and allowing it to be added to the system.
+- Added the ability to convert old, legacy type decks to Foundry VTT card decks. To do this right-click on a compendium containing cards and then select "Convert to Deck"
+- Added additional translation strings
 
 ### Changed
 
 - When no name is given for a modifier, the Roll Dialog will default to `Additional`
 - In the Roll Dialog when a custom modifier value is entered and the enter key is pressed then the modifier is added to the list instead of directly submitting the roll
-- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the `Setting Configurator`) into a discrad pile of your choosing (also in the set in the `Setting Configurator`). By default the system will create an Action Deck and a Discard Pile if none are present or the ones that were chosen in the settings are not available
+- Ported the Initiative system over from the JournalEntry based cards to the Foundry VTT Cards API. Card are dealt from a deck of your choosing (set in the `Setting Configurator`) into a discard pile of your choosing (also in the set in the `Setting Configurator`). By default the system will create an Action Deck and a Discard Pile if none are present or the ones that were chosen in the settings are not available
 - Changed the way the `Setting Configurator` is organized. It now has tabs to reduce the overall size and improve the organization. Some settings have been moved into the general system settings.
-- Renamed a few translation Strings, see the list
+- Renamed a few translation keys, see the list
   - `SWADE.Rng` -> `SWADE.Range._name`
   - `SWADE.Cover` -> `SWADE.Cover._name`
   - `SWADE.CoverShield` -> `SWADE.Cover.Shield`
   - `SWADE.Mod` -> `SWADE.Modifier`
 - Removed all references to entities in migration messages
+- Updated the Action Card Editor to now work with the Cards API instead of the legacy deck system
 
 ### Removed
 
@@ -60,7 +63,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Known Issues
 
-- Encumbrance penalties currently _DO NOT_ currently support Vigor tests to rest
+- Encumbrance penalties currently _DO NOT_ currently support Vigor tests to resist fatigue
 
 ## [v0.22.5]
 

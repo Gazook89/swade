@@ -1,3 +1,4 @@
+import { TraitRollModifier } from '../interfaces/additional';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
@@ -122,4 +123,14 @@ export async function resetActionDeck() {
   const deck = game.cards?.get(game.settings.get('swade', 'actionDeck'));
   await deck?.reset({ chatNotification: false });
   await deck?.shuffle({ chatNotification: false });
+}
+
+/**
+ * A generic reducer function that can be used to reduce an array of trait roll modifiers into a string that can be parsed by the Foundry VTT Roll class
+ * @param acc The accumulator string
+ * @param cur The current trait roll modifier
+ * @returns A string which contains all trait roll modifiers, reduced into a parsable string
+ */
+export function modifierReducer(acc: string, cur: TraitRollModifier): string {
+  return (acc += `${cur.value}[${cur.label}]`);
 }

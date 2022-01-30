@@ -1,5 +1,8 @@
-import { JournalMetadata } from '../../globals';
 import { SWADE } from '../config';
+
+interface ScrollRenderOptions extends Application.RenderOptions {
+  scroll?: boolean;
+}
 
 interface CardData {
   name: string;
@@ -9,29 +12,9 @@ interface CardData {
   isJoker: boolean;
 }
 
-interface ScrollRenderOptions extends Application.RenderOptions {
-  scroll?: boolean;
-}
-
 export default class ActionCardEditor extends FormApplication {
-  static async fromPack(
-    compendium: CompendiumCollection<JournalMetadata>,
-  ): Promise<ActionCardEditor> {
-    const cards = await compendium.getDocuments();
-    return new this(cards, compendium);
-  }
-
-  cards: Map<string, JournalEntry>;
-  pack: CompendiumCollection<JournalMetadata>;
-
-  constructor(
-    cards: JournalEntry[],
-    pack: CompendiumCollection<JournalMetadata>,
-    options: Partial<FormApplication.Options> = {},
-  ) {
-    super({}, options);
-    this.pack = pack;
-    this.cards = new Map(cards.map((v) => [v.id!, v]));
+  constructor(cards: Cards, options: Partial<FormApplication.Options> = {}) {
+    super(cards, options);
   }
 
   static get defaultOptions() {
@@ -49,10 +32,14 @@ export default class ActionCardEditor extends FormApplication {
     };
   }
 
+  get cards() {
+    return this.object as Cards;
+  }
+
   async getData() {
     const data = {
-      deckName: this.pack.metadata.label,
-      cards: Array.from(this.cards.values()).sort(this._sortCards),
+      deckName: this.cards.name,
+      cards: Array.from(this.cards.cards.values()).sort(this._sortCards),
     };
     return data as any;
   }
@@ -66,49 +53,72 @@ export default class ActionCardEditor extends FormApplication {
   protected async _updateObject(event: Event, formData = {}) {
     const data = expandObject(formData);
     const cards = Object.entries(data.card) as [string, CardData][];
+    const updates = new Array<Record<string, unknown>>();
     for (const [id, value] of cards) {
-      await this.cards.get(id)?.update({
+      const newData = {
         name: value.name,
-        img: value.img,
-        'flags.swade': {
-          cardValue: value.cardValue,
-          suitValue: value.suitValue,
-          isJoker: value.suitValue === 99,
+        faces: [
+          {
+            name: value.name,
+            img: value.img,
+          },
+        ],
+        value: value.cardValue,
+        data: {
+          isJoker: value.suitValue > 90,
+          suit: value.suitValue,
         },
-      });
+      };
+      //grab the current card and diff it against the object we got from the form
+      const current = this.cards.cards.get(id, { strict: true });
+      const diff = foundry.utils.diffObject(current.data.toObject(), newData);
+      //skip if there's no differences
+      if (foundry.utils.isObjectEmpty(diff)) continue;
+      //set the ID for the update
+      diff['_id'] = id;
+      updates.push(foundry.utils.flattenObject(diff));
     }
+    await this.cards.updateEmbeddedDocuments('Card', updates);
     this.render(true);
   }
 
-  private _sortCards(a: JournalEntry, b: JournalEntry) {
-    const suitA = a.getFlag('swade', 'suitValue') as number;
-    const suitB = b.getFlag('swade', 'suitValue') as number;
+  private _sortCards(a: Card, b: Card) {
+    const suitA = a.data.data['suit'];
+    const suitB = b.data.data['suit'];
     const suit = suitB - suitA;
     if (suit !== 0) return suit;
-    const cardA = a.getFlag('swade', 'cardValue') as number;
-    const cardB = b.getFlag('swade', 'cardValue') as number;
+    const cardA = a.data.value ?? 0;
+    const cardB = b.data.value ?? 0;
     const card = cardB - cardA;
     return card;
   }
 
   private _showCard(event: JQuery.ClickEvent<HTMLElement>) {
     const id = event.currentTarget.dataset.id!;
-    new ImagePopout(this.cards.get(id)?.data.img!, {
+    const card = this.cards.cards.get(id);
+    if (!card) return;
+    new ImagePopout(card.face?.img!, {
       shareable: true,
     }).render(true);
   }
 
   private async _createNewCard() {
-    const newCard = await JournalEntry.create(
+    const newCard = await Card.create(
       {
         name: 'New Card',
-        img: 'systems/swade/assets/ui/ace-white.svg',
-        'flags.swade': { cardValue: 0, suitValue: 0, isJoker: false },
+        type: 'poker',
+        faces: [
+          {
+            img: 'systems/swade/assets/ui/ace-white.svg',
+            name: 'New Card',
+          },
+        ],
+        face: 0,
+        origin: this.cards.id,
       },
-      { pack: this.pack.collection },
+      { parent: this.cards },
     );
     if (newCard) {
-      this.cards.set(newCard.id!, newCard);
       this.render(true, { scroll: true });
     }
   }
