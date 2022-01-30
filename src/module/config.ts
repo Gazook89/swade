@@ -114,7 +114,6 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          effectType: 'status',
           expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
           loseTurnOnHold: true
         },
@@ -168,11 +167,6 @@ export const SWADE: SwadeConfig = {
           value: 'true',
         },
       ],
-      flags: {
-        swade: {
-          effectType: 'status',
-        },
-      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_entangled.svg',
@@ -185,11 +179,6 @@ export const SWADE: SwadeConfig = {
           value: 'true',
         },
       ],
-      flags: {
-        swade: {
-          effectType: 'status',
-        },
-      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_frightened.svg',
@@ -209,7 +198,6 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          effectType: 'status',
           expiration: StatusEffectExpiration.END_OF_TURN_AUTO,
         },
       },
@@ -237,7 +225,6 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          effectType: 'status',
           expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
           loseTurnOnHold: true
         },
@@ -256,7 +243,6 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          effectType: 'status',
           expiration: StatusEffectExpiration.END_OF_TURN_AUTO,
         },
       },
@@ -267,7 +253,6 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.BleedingOut',
       flags: {
         swade: {
-          effectType: 'status',
           expiration: StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT,
         },
       },
