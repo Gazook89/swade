@@ -3,8 +3,8 @@ import { AbilitySubType } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
-import { TemplatePreset } from './enums/TemplatePresetEnum';
 import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
+import { TemplatePreset } from './enums/TemplatePresetEnum';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const SWADE: SwadeConfig = {
@@ -115,7 +115,7 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
-          loseTurnOnHold: true
+          loseTurnOnHold: true,
         },
       },
     },
@@ -226,7 +226,7 @@ export const SWADE: SwadeConfig = {
       flags: {
         swade: {
           expiration: StatusEffectExpiration.END_OF_TURN_PROMPT,
-          loseTurnOnHold: true
+          loseTurnOnHold: true,
         },
       },
     },
@@ -280,12 +280,12 @@ export const SWADE: SwadeConfig = {
     {
       icon: 'systems/swade/assets/icons/status/status_cover_shield.svg',
       id: 'cover-shield',
-      label: 'SWADE.CoverShield',
+      label: 'SWADE.Cover.Shield',
     },
     {
       icon: 'systems/swade/assets/icons/status/status_cover.svg',
       id: 'cover',
-      label: 'SWADE.Cover',
+      label: 'SWADE.Cover._name',
     },
     {
       icon: 'systems/swade/assets/icons/status/status_reach.svg',
