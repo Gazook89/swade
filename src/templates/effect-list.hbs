@@ -13,11 +13,9 @@
     <span class="effect-label">{{label}}</span>
     {{/if}} {{#unless ../data.isOwned}}
     <span class="effect-controls">
-      {{#unless (eq flags.swade.effectType 'status')}}
       <a class="effect-action" data-action="toggle">
         <i class="fas fa-power-off"></i>
       </a>
-      {{/unless}}
       <a class="effect-action" data-action="edit">
         <i class="fas fa-edit"></i>
       </a>

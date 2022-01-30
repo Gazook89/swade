@@ -2,6 +2,7 @@ import { DocumentModificationOptions } from '@league-of-foundry-developers/found
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
+import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
 
@@ -13,9 +14,8 @@ declare global {
       ActiveEffect: {
         swade: {
           removeEffect?: boolean;
-          effectType?: string;
-          autoexpire?: true;
-          endOfNextTurn?: true;
+          expiration?: number;
+          loseTurnOnHold?: boolean;
         };
       };
     }
@@ -109,6 +109,89 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
+  /**
+   * Determines whether to remove a statusEffect during a given round based on its duration and expiration
+   * @param combatId The ID string of the current combat
+   */
+  async checkStatusEffect(combatId: string) {
+
+    // Get the expiration of the effect
+    const expiration = this.getFlag('swade', 'expiration');
+    // If there's a the effect duration's combat is the combat ID passed in, start processing the effect.
+    if (combatId === this.data.duration.combat) {
+      // Get the combat object
+      const combat = game.combats?.get(combatId);
+      // If the combat object exists (it should) and there's an expiration on the effect, process the expiration of the effect.
+
+      if (combat && expiration) {
+        // If the effect expires at the end of a turn, do this stuff.
+        if (
+          expiration === StatusEffectExpiration.END_OF_TURN_AUTO ||
+          expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
+        ) {
+          // Get the previous turn so you know who's turn just ended.
+          const previousTurn = combat.turn - 1;
+          // If it's the first turn in a new round, we have no context of which combatant went last in the previous round, so we check for a marker 'removeEffect'
+          if (combat.turn === 0 && this.getFlag('swade', 'removeEffect')) {
+            if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO) {
+              await this.delete();
+            } else if (
+              expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
+            ) {
+              // TODO: trigger prompt based on effect
+            }
+          } else {
+            // Only if previous turn isn't less than 0...
+            if (previousTurn >= 0) {
+              // Check the effect duration's start turn and start round
+              const startRound = this.data.duration.startRound ?? 0;
+              const startTurn = this.data.duration.startTurn ?? 0;
+              const previousTurn = combat.turns[combat.turn - 1]
+              // If the duration start was prior to the previous turn...
+              if (
+                previousTurn.actor?.id === this.parent?.id &&
+                (
+                  (startRound === combat.round && startTurn < combat.turn - 1) ||
+                  startRound < combat.round
+                )
+
+              ) {
+                // Process the end of the effect
+                if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO) {
+                  await this.delete();
+                } else if (
+                  expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
+                ) {
+                  // TODO: trigger prompt based on effect
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // If this is the last turn of a round, and it had an AE that's supposed to expire at the end of this turn...
+      if (combat && combat.turn === combat.turns.length - 1) {
+        if (combat.combatant.actor?.effects.size) {
+          const startRound = this.data.duration.startRound ?? 0;
+          const startTurn = this.data.duration.startTurn ?? 0;
+          if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO ||
+              expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
+          ) {
+            if (
+              combat.combatant.actor.id === this.parent?.id &&
+              startRound === combat.round &&
+              startTurn < combat.turn
+            ) {
+              // Mark it to be deleted or prompted at the start of the next round.
+              await this.setFlag('swade', 'removeEffect', true);
+            }
+          }
+        }
+      }
+    }
+  }
+
   protected async _preUpdate(
     changed: DeepPartial<ActiveEffectDataConstructorData>,
     options: DocumentModificationOptions,
@@ -133,12 +216,25 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async  _preCreate(data: ActiveEffectDataConstructorData, options: DocumentModificationOptions, user: BaseUser): Promise<void> {
+  protected async _preCreate(
+    data: ActiveEffectDataConstructorData,
+    options: DocumentModificationOptions,
+    user: BaseUser,
+  ): Promise<void> {
     super._preCreate(data, options, user);
     const label = game.i18n.localize(this.data.label);
     this.data.update({ label: label });
-    if (data.duration) {
-      this.data.update({'duration.combat': game.combat?.id});
+
+    // If there's no duration value and there's a combat, at least set the combat ID which then sets a startRound and startTurn, too.
+    if (!data.duration && game.combat) {
+      this.data.update({ 'duration.combat': game.combat.id });
     }
+
+    if (this.getFlag('swade', 'loseTurnOnHold')) {
+      const combatant = game.combat?.combatants.find((c) => c.actor?.id === this.parent?.id)
+      await combatant?.setFlag('swade', 'turnLost', true);
+      await combatant?.unsetFlag('swade', 'roundHeld');
+    }
+
   }
 }
