@@ -17,6 +17,7 @@ import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
+import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 import * as migrations from './migration';
 import * as setup from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
@@ -403,6 +404,7 @@ export default class SwadeHooks {
     });
   }
 
+  /** Add roll data to the message for formatting of dice pools*/
   public static async onRenderChatMessage(
     message: ChatMessage,
     html: JQuery<HTMLElement>,
@@ -732,8 +734,9 @@ export default class SwadeHooks {
     options.splice(0, 0, ...newOptions);
   }
 
+  /** Add benny management to the player list */
   public static async onRenderPlayerList(
-    list: any,
+    list: PlayerList,
     html: JQuery<HTMLElement>,
     options: any,
   ) {
@@ -742,7 +745,11 @@ export default class SwadeHooks {
     });
   }
 
-  public static onRenderChatLog(app, html: JQuery<HTMLElement>, data: any) {
+  public static onRenderChatLog(
+    app: ChatLog,
+    html: JQuery<HTMLElement>,
+    data: any,
+  ) {
     chat.chatListeners(html);
   }
 
@@ -995,6 +1002,76 @@ export default class SwadeHooks {
           'flags.swade': { cardValue, suitValue, hasJoker, cardString },
         });
     });
+  }
+
+  public static onRenderActiveEffectConfig(
+    app: ActiveEffectConfig,
+    html: JQuery<HTMLElement>,
+    data,
+  ) {
+    const expiration = app.document.getFlag('swade', 'expiration') ?? 0;
+    const loseTurnOnHold = app.document.getFlag('swade', 'loseTurnOnHold');
+    const createOption = (exp: StatusEffectExpiration, label: string) => {
+      return `<option value="${exp}" ${
+        exp === expiration ? 'selected' : ''
+      }>${label}</option>`;
+    };
+    const expirationOpt = [
+      createOption(
+        StatusEffectExpiration.BEGINNING_OF_TURN_AUTO,
+        game.i18n.localize('SWADE.Expiration.BeginAuto'),
+      ),
+      createOption(
+        StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT,
+        game.i18n.localize('SWADE.Expiration.BeginPrompt'),
+      ),
+      createOption(
+        StatusEffectExpiration.END_OF_TURN_AUTO,
+        game.i18n.localize('SWADE.Expiration.EndAuto'),
+      ),
+      createOption(
+        StatusEffectExpiration.END_OF_TURN_PROMPT,
+        game.i18n.localize('SWADE.Expiration.EndPrompt'),
+      ),
+    ];
+    const tab = `
+    <a class="item" data-tab="expiration">
+      <i class="fas fa-sign-out-alt"></i> ${game.i18n.localize(
+        'SWADE.Expiration.Expiration',
+      )}
+    </a>`;
+    const section = `
+    <section class="tab" data-tab="expiration">
+    <div class="form-group">
+      <label>${game.i18n.localize('SWADE.Expiration.Behavior')}</label>
+      <div class="form-fields">
+        <select name="flags.swade.expiration" data-dtype="Number">
+          ${expirationOpt.join('\n')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>${game.i18n.localize('SWADE.Expiration.LooseTurnOnHold')}</label>
+      <div class="form-fields">
+        <input type="checkbox" name="flags.swade.loseTurnOnHold"
+        data-dtype="Boolean" ${loseTurnOnHold ? 'checked' : ''}>
+      </div>
+    </div>
+  </section>`;
+    $(tab).insertAfter('nav.sheet-tabs a[data-tab="duration"]');
+    $(section).insertAfter('section[data-tab="duration"]');
+  }
+
+  /** This hook only really exists to stop Races from being added to the actor as an item */
+  public static onPreCreateItem(
+    item: SwadeItem,
+    options: object,
+    userId: string,
+  ) {
+    if (item.parent && item.data.type === 'ability') {
+      const subType = item.data.data.subtype;
+      if (subType === 'race' || subType === 'archetype') return false; //return early if we're doing race stuff
+    }
   }
 
   public static onDiceSoNiceInit(dice3d: Dice3D) {

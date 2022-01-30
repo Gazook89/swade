@@ -1,3 +1,5 @@
+import { DropData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocumentMixin';
+import { ConfiguredDocumentClass } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { TraitRollModifier } from '../interfaces/additional';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
@@ -14,8 +16,12 @@ import SwadeItem from './documents/item/SwadeItem';
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-export async function createSwadeMacro(data: any, slot: number) {
-  if (data.type !== 'Item') return;
+export async function createSwadeMacro(
+  hotbar: Hotbar,
+  data: DropData<InstanceType<ConfiguredDocumentClass<typeof Macro>>>,
+  slot: number,
+) {
+  if (data['type'] !== 'Item') return;
   if (!('data' in data))
     return ui.notifications.warn(
       'You can only create macro buttons for owned Items',
