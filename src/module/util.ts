@@ -140,3 +140,33 @@ export async function resetActionDeck() {
 export function modifierReducer(acc: string, cur: TraitRollModifier): string {
   return (acc += `${cur.value}[${cur.label}]`);
 }
+
+export function firstOwner(doc) {
+  /* null docs could mean an empty lookup, null docs are not owned by anyone */
+  if (!doc) return null;
+
+  const playerOwners = Object.entries(doc.data.permission ?? {})
+    .filter(
+      ([id, level]) =>
+        !game.users?.get(id)?.isGM &&
+        game.users?.get(id)?.active &&
+        level === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER,
+    )
+    .map(([id, level]) => id);
+
+  if (playerOwners.length > 0) {
+    return game.users?.get(playerOwners[0]);
+  }
+
+  /* if no online player owns this actor, fall back to first GM */
+  return firstGM();
+}
+
+/* Players first, then GM */
+export function isFirstOwner(doc) {
+  return game.user?.id === firstOwner(doc)?.id;
+}
+
+export function firstGM() {
+  return game.users?.find((u) => u.isGM && u.active);
+}

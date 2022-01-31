@@ -3,6 +3,7 @@ import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/f
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
+import { isFirstOwner } from '../util';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
 
@@ -222,8 +223,8 @@ export default class SwadeActiveEffect extends ActiveEffect {
           expiration === StatusEffectExpiration.END_OF_TURN_PROMPT;
         if (expiresAtEndOfTurn) {
           if (
-            combat.combatant.actor.id === this.parent?.id &&
-            (startRound === combat.round &&
+            (combat.combatant.actor.id === this.parent?.id &&
+              startRound === combat.round &&
               startTurn < combat.turn - 1) ||
             startRound < combat.round
           ) {
@@ -236,14 +237,16 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   protected _promptEffectDeletion() {
-    Dialog.confirm({
-      defaultYes: false,
-      title: `Remove ${this.data.label} ?`,
-      content: `<p>Remove ${this.data.label} from ${this.parent?.name}?</p>`,
-      yes: () => {
-        this.delete();
-      },
-    });
+    if (isFirstOwner(this.parent)) {
+      Dialog.confirm({
+        defaultYes: false,
+        title: `Remove ${this.data.label} ?`,
+        content: `<p>Remove ${this.data.label} from ${this.parent?.name}?</p>`,
+        yes: () => {
+          this.delete();
+        },
+      });
+    }
   }
 
   protected async _preUpdate(
