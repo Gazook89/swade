@@ -1009,14 +1009,18 @@ export default class SwadeHooks {
     html: JQuery<HTMLElement>,
     data,
   ) {
-    const expiration = app.document.getFlag('swade', 'expiration') ?? 0;
+    const expiration = app.document.getFlag('swade', 'expiration');
     const loseTurnOnHold = app.document.getFlag('swade', 'loseTurnOnHold');
-    const createOption = (exp: StatusEffectExpiration, label: string) => {
+    const createOption = (
+      exp: StatusEffectExpiration | undefined,
+      label: string,
+    ) => {
       return `<option value="${exp}" ${
         exp === expiration ? 'selected' : ''
       }>${label}</option>`;
     };
     const expirationOpt = [
+      createOption(undefined, game.i18n.localize('SWADE.Expiration.None')),
       createOption(
         StatusEffectExpiration.BEGINNING_OF_TURN_AUTO,
         game.i18n.localize('SWADE.Expiration.BeginAuto'),

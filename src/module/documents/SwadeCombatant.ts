@@ -1,6 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
-import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { createGmBennyAddMessage } from '../chat';
 import { SWADE } from '../config';
 import { getCanvas } from '../util';
@@ -188,10 +187,10 @@ export default class SwadeCombatant extends Combatant {
   ) {
     await super._onUpdate(changed, options, userId);
 
-    const turnZero = game.combat?.turn === 0 ? true : false;
-    const initiativeChanged = !!changed.initiative ? true : false;
-    const hasEffects = this.actor?.effects.size ? true : false;
-    const firstCombatant = game.combat?.turns[0].id === this.id ? true : false;
+    const turnZero = game.combat?.turn === 0;
+    const initiativeChanged = !!changed.initiative;
+    const hasEffects = !!this.actor?.effects.size;
+    const firstCombatant = game.combat?.turns[0].id === this.id;
 
     if (turnZero && initiativeChanged && hasEffects && firstCombatant) {
       const effects = this.actor?.effects ?? [];
@@ -199,7 +198,8 @@ export default class SwadeCombatant extends Combatant {
         const startRound = effect.data.duration.startRound ?? 0;
         const startTurn = effect.data.duration.startTurn;
         const currentRound = game.combat?.round ?? 0;
-        const removeEffectIsFalse = effect.getFlag('swade', 'removeEffect') === false ? true : false;
+        const removeEffectIsFalse =
+          effect.getFlag('swade', 'removeEffect') === false;
 
         if (
           currentRound > startRound &&

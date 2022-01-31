@@ -478,3 +478,4 @@ SWADE.Expiration.EndAuto: End of Turn, Automatic
 SWADE.Expiration.EndPrompt: End of Turn, Prompt
 SWADE.Expiration.LooseTurnOnHold: Lose Turn on Hold
 SWADE.Expiration.Expiration: Expiration
+SWADE.Expiration.None: None
