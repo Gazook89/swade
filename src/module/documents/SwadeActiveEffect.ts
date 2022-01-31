@@ -118,7 +118,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
     if (combatId !== this.data.duration.combat) return;
     // Get the expiration of the effect
     const expiration = this.getFlag('swade', 'expiration');
-
     // Get the combat object
     const combat = game.combats?.get(combatId);
     // If the combat object exists (it should) and there's an expiration on the effect, process the expiration of the effect.
