@@ -1,5 +1,6 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
+import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { createGmBennyAddMessage } from '../chat';
 import { SWADE } from '../config';
 import { getCanvas } from '../util';
@@ -129,7 +130,7 @@ export default class SwadeCombatant extends Combatant {
     options: DocumentModificationOptions,
     user: SwadeUser,
   ) {
-   await super._preUpdate(changed, options, user);
+    await super._preUpdate(changed, options, user);
 
     //return early if there's no flag updates
     if (!hasProperty(changed, 'flags.swade')) return;
@@ -175,6 +176,38 @@ export default class SwadeCombatant extends Combatant {
           }) ?? [];
         for (const enemy of enemyWCs) {
           enemy.actor?.getBenny();
+        }
+      }
+    }
+  }
+
+  protected async _onUpdate(
+    changed: DeepPartial<this['data']['_source']>,
+    options: DocumentModificationOptions,
+    userId: string,
+  ) {
+    await super._onUpdate(changed, options, userId);
+
+    const turnZero = game.combat?.turn === 0 ? true : false;
+    const initiativeChanged = !!changed.initiative ? true : false;
+    const hasEffects = this.actor?.effects.size ? true : false;
+    const firstCombatant = game.combat?.turns[0].id === this.id ? true : false;
+
+    if (turnZero && initiativeChanged && hasEffects && firstCombatant) {
+      const effects = this.actor?.effects ?? [];
+      for (const effect of effects) {
+        const startRound = effect.data.duration.startRound ?? 0;
+        const startTurn = effect.data.duration.startTurn;
+        const currentRound = game.combat?.round ?? 0;
+        const removeEffectIsFalse = effect.getFlag('swade', 'removeEffect') === false ? true : false;
+
+        if (
+          currentRound > startRound &&
+          startTurn === 0 &&
+          removeEffectIsFalse
+        ) {
+          await effect.setFlag('swade', 'removeEffect', true);
+          effect.checkStatusEffect(game.combat?.id as string);
         }
       }
     }

@@ -180,14 +180,16 @@
       transform: rotate(0deg) scale(4.75);
     }
   }
-  &:first-child .initiative-draw .action-card-filter-container {
+  &:first-child .initiative-draw .action-card-filter-container,
+  &:nth-of-type(2) .initiative-draw .action-card-filter-container  {
     transform-origin: top left;
 
     &:hover {
       transform-origin: top left
     }
   }
-  &:last-child .initiative-draw .action-card-filter-container {
+  &:last-child .initiative-draw .action-card-filter-container,
+  &:nth-last-of-type(2) .initiative-draw .action-card-filter-container  {
     transform-origin: bottom left;
 
     &:hover {
