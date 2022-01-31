@@ -130,7 +130,12 @@ export default class SwadeActiveEffect extends ActiveEffect {
         ) {
           // Get the previous turn so you know who's turn just ended.
           const previousTurn = combat.turn - 1;
-          // If it's the first turn in a new round, we have no context of which combatant went last in the previous round, so we check for a marker 'removeEffect'
+          /**
+           *If it's the first turn in a new round,
+           * we have no context of which combatant went last in the previous round,
+           * so we check for a marker 'removeEffect'
+           */
+
           if (combat.turn === 0 && this.getFlag('swade', 'removeEffect')) {
             if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO) {
               await this.delete();
@@ -223,8 +228,9 @@ export default class SwadeActiveEffect extends ActiveEffect {
           ) {
             if (
               combat.combatant.actor.id === this.parent?.id &&
-              startRound === combat.round &&
-              startTurn < combat.turn
+              (startRound === combat.round &&
+                startTurn < combat.turn) ||
+              startRound < combat.round
             ) {
               // Mark it to be deleted or prompted at the start of the next round.
               await this.setFlag('swade', 'removeEffect', true);
