@@ -1,6 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import * as utils from '../util';
-import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
 
 interface IPickACard {
