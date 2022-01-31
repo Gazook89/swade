@@ -223,8 +223,9 @@ export default class SwadeActiveEffect extends ActiveEffect {
         if (expiresAtEndOfTurn) {
           if (
             combat.combatant.actor.id === this.parent?.id &&
-            startRound === combat.round &&
-            startTurn < combat.turn
+            (startRound === combat.round &&
+              startTurn < combat.turn - 1) ||
+            startRound < combat.round
           ) {
             // Mark it to be deleted or prompted at the start of the next round.
             await this.setFlag('swade', 'removeEffect', true);
