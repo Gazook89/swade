@@ -283,10 +283,10 @@ export default class SwadeActiveEffect extends ActiveEffect {
     if (!data.duration?.combat && game.combat) {
       await this.data.update({ 'duration.combat': game.combat.id });
     }
+
     // If this is created in the first turn of combat, protect removal triggers when next round hits and before init is dealt.
     if (this.data.duration?.startTurn === 0) {
       await this.data.update({ 'flags.swade.removeEffect': false });
-
     }
 
     if (this.getFlag('swade', 'loseTurnOnHold')) {
