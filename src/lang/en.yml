@@ -472,8 +472,8 @@ SWADE.SetUpChase: Set Up Chase
 SWADE.NotADeckCompendium: The compendium you selected doesn't appear to be a legacy deck
 SWADE.ConverToDeck: Convert to Deck
 SWADE.Expiration.Behavior: Expiration Behavior
-SWADE.Expiration.BeginAuto: Beginning of Turn, Automatic
-SWADE.Expiration.BeginPrompt: Beginning of Turn, Prompt
+SWADE.Expiration.BeginAuto: Start of Turn, Automatic
+SWADE.Expiration.BeginPrompt: Start of Turn, Prompt
 SWADE.Expiration.EndAuto: End of Turn, Automatic
 SWADE.Expiration.EndPrompt: End of Turn, Prompt
 SWADE.Expiration.LooseTurnOnHold: Lose Turn on Hold
