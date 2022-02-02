@@ -124,20 +124,20 @@ export default class SwadeActiveEffect extends ActiveEffect {
     // If the combat object exists (it should) and there's an expiration on the effect, process the expiration of the effect.
     if (combat && expiration) {
       const expiresAtEndOfTurn =
-        expiration === StatusEffectExpiration.END_OF_TURN_AUTO ||
-        expiration === StatusEffectExpiration.END_OF_TURN_PROMPT;
+        expiration === StatusEffectExpiration.EndOfTurnAuto ||
+        expiration === StatusEffectExpiration.EndOfTurnPrompt;
       const expiresAtBeginningOfTurn =
-        expiration === StatusEffectExpiration.BEGINNING_OF_TURN_AUTO ||
-        expiration === StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT;
+        expiration === StatusEffectExpiration.BeginningOfTurnAuto ||
+        expiration === StatusEffectExpiration.BeginningOfTurnPrompt;
       // If the effect expires at the end of a turn, do this stuff.
       if (expiresAtEndOfTurn) {
         // Get the previous turn so you know who's turn just ended.
         const previousTurn = combat.turn - 1;
         // If it's the first turn in a new round, we have no context of which combatant went last in the previous round, so we check for a marker 'removeEffect'
         if (combat.turn === 0 && this.getFlag('swade', 'removeEffect')) {
-          if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO) {
+          if (expiration === StatusEffectExpiration.EndOfTurnAuto) {
             await this.delete();
-          } else if (expiration === StatusEffectExpiration.END_OF_TURN_PROMPT) {
+          } else if (expiration === StatusEffectExpiration.EndOfTurnPrompt) {
             // TODO: trigger prompt based on effect
             this._promptEffectDeletion();
           }
@@ -155,10 +155,10 @@ export default class SwadeActiveEffect extends ActiveEffect {
                 startRound < combat.round)
             ) {
               // Process the end of the effect
-              if (expiration === StatusEffectExpiration.END_OF_TURN_AUTO) {
+              if (expiration === StatusEffectExpiration.EndOfTurnAuto) {
                 await this.delete();
               } else if (
-                expiration === StatusEffectExpiration.END_OF_TURN_PROMPT
+                expiration === StatusEffectExpiration.EndOfTurnPrompt
               ) {
                 // TODO: trigger prompt based on effect
                 this._promptEffectDeletion();
@@ -197,12 +197,10 @@ export default class SwadeActiveEffect extends ActiveEffect {
               startRound < combat.round
             ) {
               // Process the end of the effect
-              if (
-                expiration === StatusEffectExpiration.BEGINNING_OF_TURN_AUTO
-              ) {
+              if (expiration === StatusEffectExpiration.BeginningOfTurnAuto) {
                 await this.delete();
               } else if (
-                expiration === StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT
+                expiration === StatusEffectExpiration.BeginningOfTurnPrompt
               ) {
                 // TODO: trigger prompt based on effect
                 this._promptEffectDeletion();
@@ -219,8 +217,8 @@ export default class SwadeActiveEffect extends ActiveEffect {
         const startRound = this.data.duration.startRound ?? 0;
         const startTurn = this.data.duration.startTurn ?? 0;
         const expiresAtEndOfTurn =
-          expiration === StatusEffectExpiration.END_OF_TURN_AUTO ||
-          expiration === StatusEffectExpiration.END_OF_TURN_PROMPT;
+          expiration === StatusEffectExpiration.EndOfTurnAuto ||
+          expiration === StatusEffectExpiration.EndOfTurnPrompt;
         if (expiresAtEndOfTurn) {
           if (
             (combat.combatant.actor.id === this.parent?.id &&

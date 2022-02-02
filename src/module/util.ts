@@ -152,7 +152,7 @@ export function firstOwner(doc) {
         game.users?.get(id)?.active &&
         level === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER,
     )
-    .map(([id, level]) => id);
+    .map(([id, _level]) => id);
 
   if (playerOwners.length > 0) {
     return game.users?.get(playerOwners[0]);

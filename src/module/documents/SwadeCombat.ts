@@ -546,7 +546,7 @@ export default class SwadeCombat extends Combat {
     await super._onUpdate(changed, options, userId);
 
     for (const combatant of this.combatants) {
-      const effects = combatant.actor?.effects
+      const effects = combatant.actor?.effects;
       if (effects) {
         for (const effect of effects) {
           effect.checkStatusEffect(this.id as string);

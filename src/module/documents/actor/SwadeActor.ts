@@ -75,10 +75,10 @@ export default class SwadeActor extends Actor {
 
   get armorPerLocation(): ArmorPerLocation {
     return {
-      head: this._getArmorForLocation(ArmorLocation.HEAD),
-      torso: this._getArmorForLocation(ArmorLocation.TORSO),
-      arms: this._getArmorForLocation(ArmorLocation.ARMS),
-      legs: this._getArmorForLocation(ArmorLocation.LEGS),
+      head: this._getArmorForLocation(ArmorLocation.Head),
+      torso: this._getArmorForLocation(ArmorLocation.Torso),
+      arms: this._getArmorForLocation(ArmorLocation.Arms),
+      legs: this._getArmorForLocation(ArmorLocation.Legs),
     };
   }
 
@@ -537,7 +537,7 @@ export default class SwadeActor extends Actor {
 
   /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
   calcArmor(): number {
-    return this._getArmorForLocation(ArmorLocation.TORSO);
+    return this._getArmorForLocation(ArmorLocation.Torso);
   }
 
   /**

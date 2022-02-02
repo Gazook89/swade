@@ -1022,19 +1022,19 @@ export default class SwadeHooks {
     const expirationOpt = [
       createOption(undefined, game.i18n.localize('SWADE.Expiration.None')),
       createOption(
-        StatusEffectExpiration.BEGINNING_OF_TURN_AUTO,
+        StatusEffectExpiration.BeginningOfTurnAuto,
         game.i18n.localize('SWADE.Expiration.BeginAuto'),
       ),
       createOption(
-        StatusEffectExpiration.BEGINNING_OF_TURN_PROMPT,
+        StatusEffectExpiration.BeginningOfTurnPrompt,
         game.i18n.localize('SWADE.Expiration.BeginPrompt'),
       ),
       createOption(
-        StatusEffectExpiration.END_OF_TURN_AUTO,
+        StatusEffectExpiration.EndOfTurnAuto,
         game.i18n.localize('SWADE.Expiration.EndAuto'),
       ),
       createOption(
-        StatusEffectExpiration.END_OF_TURN_PROMPT,
+        StatusEffectExpiration.EndOfTurnPrompt,
         game.i18n.localize('SWADE.Expiration.EndPrompt'),
       ),
     ];
