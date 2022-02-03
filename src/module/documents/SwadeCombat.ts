@@ -429,16 +429,20 @@ export default class SwadeCombat extends Combat {
   async nextTurn() {
     const currentTurn = this.turn;
     const nextTurn = currentTurn + 1;
-    const currentTurnEffects = this.turns[currentTurn].actor?.effects ?? [];
+    const currentTurnEffects =
+      this.turns[currentTurn].actor?.effects.values() ?? [];
     const currentTurnEndExpirations = new Array();
     for (const fx of currentTurnEffects) {
       const expiration = fx.getFlag('swade', 'expiration');
       const endAutoExpire = expiration === StatusEffectExpiration.EndOfTurnAuto;
-      const endPromptExpire = expiration === StatusEffectExpiration.EndOfTurnPrompt
+      const endPromptExpire =
+        expiration === StatusEffectExpiration.EndOfTurnPrompt;
       const expiresAtEndOfTurn = endAutoExpire || endPromptExpire;
       const startRound = getProperty(fx, 'data.duration.startRound');
       const startTurn = getProperty(fx, 'data.duration.startTurn');
-      const isNotNew = (startRound === this.round && startTurn < currentTurn) || startRound < this.round;
+      const isNotNew =
+        (startRound === this.round && startTurn < currentTurn) ||
+        startRound < this.round;
       const durationRounds = getProperty(fx, 'data.duration.rounds');
       const roundsPassed = this.round === startRound + durationRounds;
       const durationEnds = !durationRounds || roundsPassed;
@@ -456,12 +460,16 @@ export default class SwadeCombat extends Combat {
       const nextTurnStartExpirations = new Array();
       for (const fx of nextTurnEffects) {
         const expiration = fx.getFlag('swade', 'expiration');
-        const startAutoExpire = expiration === StatusEffectExpiration.StartOfTurnAuto;
-        const startPromptExpire = expiration === StatusEffectExpiration.StartOfTurnPrompt;
+        const startAutoExpire =
+          expiration === StatusEffectExpiration.StartOfTurnAuto;
+        const startPromptExpire =
+          expiration === StatusEffectExpiration.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = await getProperty(fx, 'data.duration.startRound');
         const startTurn = await getProperty(fx, 'data.duration.startTurn');
-        const isNotNew = (startRound === this.round && startTurn < nextTurn) || startRound < this.round;
+        const isNotNew =
+          (startRound === this.round && startTurn < nextTurn) ||
+          startRound < this.round;
         const durationRounds = await getProperty(fx, 'data.duration.rounds');
         const roundsPassed = this.round === startRound + durationRounds;
         const durationEnds = !durationRounds || roundsPassed;
@@ -535,12 +543,16 @@ export default class SwadeCombat extends Combat {
       const turnZeroStartExpirations = new Array();
       for (const fx of turnZeroEffects) {
         const expiration = fx.getFlag('swade', 'expiration');
-        const startAutoExpire = expiration === StatusEffectExpiration.StartOfTurnAuto;
-        const startPromptExpire = expiration === StatusEffectExpiration.StartOfTurnPrompt;
+        const startAutoExpire =
+          expiration === StatusEffectExpiration.StartOfTurnAuto;
+        const startPromptExpire =
+          expiration === StatusEffectExpiration.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = await getProperty(fx, 'data.duration.startRound');
         const startTurn = await getProperty(fx, 'data.duration.startTurn');
-        const isNotNew = (startRound === this.round && startTurn < turnZero) || startRound < this.round;
+        const isNotNew =
+          (startRound === this.round && startTurn < turnZero) ||
+          startRound < this.round;
         const durationRounds = await getProperty(fx, 'data.duration.rounds');
         const roundsPassed = this.round === startRound + durationRounds;
         const durationEnds = !durationRounds || roundsPassed;
