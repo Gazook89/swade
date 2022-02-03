@@ -583,14 +583,6 @@ export default class SwadeCombat extends Combat {
       ui.notifications.info('SWADE.DeckShuffled', { localize: true });
     }
   }
-
-  protected async _onUpdate(
-    changed: DeepPartial<this['data']['_source']>,
-    options: DocumentModificationOptions,
-    userId: string,
-  ): Promise<void> {
-    await super._onUpdate(changed, options, userId);
-  }
 }
 
 interface InitiativeOptions {
