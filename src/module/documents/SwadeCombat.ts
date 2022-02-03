@@ -493,7 +493,7 @@ export default class SwadeCombat extends Combat {
   //FIXME return once types are maybe a bit more lenient
   //@ts-expect-error The types are a bit too strict here
   async nextRound() {
-    if (!game.user!.isGM) {
+    if (!game.user?.isGM) {
       game.socket?.emit('system.swade', {
         type: 'newRound',
         combatId: this.id,

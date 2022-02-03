@@ -214,7 +214,7 @@ export default class SwadeHooks {
     options: ContextMenu.Item[],
   ) {
     options.push({
-      name: 'SWADE.ConverToDeck',
+      name: 'SWADE.ConvertToDeck',
       icon: '<i class="fas fa-file-export"></i>',
       condition: (li) => {
         const pack = game.packs.get(li.data('pack'), { strict: true });

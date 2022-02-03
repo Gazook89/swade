@@ -287,7 +287,7 @@ export function registerSettingRules() {
 
   game.settings.register('swade', 'applyEncumbrance', {
     name: game.i18n.localize('SWADE.ApplyEncumbrance'),
-    hint: game.i18n.format('SWADE.ApplyEncumbraceHint', {
+    hint: game.i18n.format('SWADE.ApplyEncumbranceHint', {
       vigor: game.i18n.localize('SWADE.AttrVig'),
       fatigue: game.i18n.localize('SWADE.Fatigue'),
     }),

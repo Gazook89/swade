@@ -461,7 +461,7 @@ SWADE.Snapfire: Snapfire
 SWADE.UnstablePlatform: Unstable Platform
 SWADE.CannotAddRaceToRace: You cannot add a race/archetype to a race/archetype!
 SWADE.ApplyEncumbrance: Apply Encumbrance Penalties
-SWADE.ApplyEncumbraceHint: >-
+SWADE.ApplyEncumbranceHint: >-
   Apply encumbrance panlties. Please keep in mind that this currently does NOT
   SUPPORT {vigor} tests to resist {fatigue}!
 SWADE.LayOutChaseWithDeck: Use Deck to lay out Chase
@@ -470,12 +470,12 @@ SWADE.NoSceneAvailable: There is no scene available or you've disabled the canva
 SWADE.ChaseCardsCleared: All chase cards have been removed from the scene.
 SWADE.SetUpChase: Set Up Chase
 SWADE.NotADeckCompendium: The compendium you selected doesn't appear to be a legacy deck
-SWADE.ConverToDeck: Convert to Deck
+SWADE.ConvertToDeck: Convert to Deck
+SWADE.Expiration.Expiration: Expiration
 SWADE.Expiration.Behavior: Expiration Behavior
 SWADE.Expiration.BeginAuto: Start of Turn, Automatic
 SWADE.Expiration.BeginPrompt: Start of Turn, Prompt
-SWADE.Expiration.EndAuto: End of Turn, Automatic
-SWADE.Expiration.EndPrompt: End of Turn, Prompt
-SWADE.Expiration.LooseTurnOnHold: Lose Turn on Hold
-SWADE.Expiration.Expiration: Expiration
+SWADE.Expiration.EndAuto: End of Next Turn, Automatic
+SWADE.Expiration.EndPrompt: End of Next Turn, Prompt
 SWADE.Expiration.None: None
+SWADE.Expiration.LooseTurnOnHold: Lose Turn on Hold
