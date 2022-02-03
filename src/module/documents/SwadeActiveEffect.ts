@@ -1,5 +1,8 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
-import { ActiveEffectDataConstructorData, ActiveEffectDataProperties } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import {
+  ActiveEffectDataConstructorData,
+  ActiveEffectDataProperties,
+} from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
@@ -149,6 +152,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
     options: DocumentModificationOptions,
     userId: string,
   ) {
+    await super._onUpdate(changed, options, userId);
     if (this.getFlag('swade', 'loseTurnOnHold')) {
       const combatant = game.combat?.combatants.find(
         (c) => c.actor?.id === this.parent?.id,

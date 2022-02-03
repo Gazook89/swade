@@ -427,7 +427,7 @@ export default class SwadeCombat extends Combat {
   //FIXME return once types are maybe a bit more lenient
   //@ts-expect-error The types are a bit too strict here
   async nextTurn() {
-    const currentTurn = this.turn
+    const currentTurn = this.turn;
     const nextTurn = currentTurn + 1;
     const currentTurnEndExpirations =
       this.turns[currentTurn].actor?.effects.filter(
@@ -438,7 +438,7 @@ export default class SwadeCombat extends Combat {
               StatusEffectExpiration.EndOfTurnPrompt) &&
           ((getProperty(fx, 'data.duration.startRound') === this.round &&
             getProperty(fx, 'data.duration.startTurn') < currentTurn) ||
-            getProperty(fx, 'data.duration.startRound') < this.round)
+            getProperty(fx, 'data.duration.startRound') < this.round),
       ) ?? [];
 
     for (const effect of currentTurnEndExpirations) {
@@ -500,7 +500,7 @@ export default class SwadeCombat extends Combat {
       });
       return;
     } else {
-      const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
+      const jokerDrawn = this.combatants.some((c) => c.hasJoker);
 
       if (jokerDrawn) {
         await utils.resetActionDeck();
@@ -518,9 +518,11 @@ export default class SwadeCombat extends Combat {
       const turnZero = this.turns[0].actor;
 
       if (turnZero?.effects?.size) {
-        for (const effect of turnZero?.effects) {
+        for (const effect of turnZero?.effects ?? []) {
           const expiration = effect.getFlag('swade', 'expiration');
-          const expiresAtStartOfTurn = expiration === StatusEffectExpiration.StartOfTurnAuto || expiration === StatusEffectExpiration.StartOfTurnPrompt;
+          const expiresAtStartOfTurn =
+            expiration === StatusEffectExpiration.StartOfTurnAuto ||
+            expiration === StatusEffectExpiration.StartOfTurnPrompt;
 
           if (expiresAtStartOfTurn) {
             await effect._removeEffect();
