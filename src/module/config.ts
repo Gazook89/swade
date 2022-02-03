@@ -114,7 +114,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.BeginningOfTurnPrompt,
+          expiration: StatusEffectExpiration.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -225,7 +225,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.BeginningOfTurnPrompt,
+          expiration: StatusEffectExpiration.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -253,7 +253,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.BleedingOut',
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.BeginningOfTurnPrompt,
+          expiration: StatusEffectExpiration.StartOfTurnPrompt,
         },
       },
     },

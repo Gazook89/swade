@@ -1,4 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
+import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
 import * as utils from '../util';
 import SwadeCombatant from './SwadeCombatant';
 
@@ -426,6 +427,39 @@ export default class SwadeCombat extends Combat {
   //FIXME return once types are maybe a bit more lenient
   //@ts-expect-error The types are a bit too strict here
   async nextTurn() {
+    const currentTurn = this.turn
+    const nextTurn = currentTurn + 1;
+    const currentTurnEndExpirations =
+      this.turns[currentTurn].actor?.effects.filter(
+        (fx) =>
+          (fx.getFlag('swade', 'expiration') ===
+            StatusEffectExpiration.EndOfTurnAuto ||
+            fx.getFlag('swade', 'expiration') ===
+              StatusEffectExpiration.EndOfTurnPrompt) &&
+          ((getProperty(fx, 'data.duration.startRound') === this.round &&
+            getProperty(fx, 'data.duration.startTurn') < currentTurn) ||
+            getProperty(fx, 'data.duration.startRound') < this.round)
+      ) ?? [];
+
+    for (const effect of currentTurnEndExpirations) {
+      await effect._removeEffect();
+    }
+
+    if (nextTurn < this.turns.length) {
+      const nextTurnStartExpirations =
+        this.turns[nextTurn].actor?.effects.filter(
+          (fx) =>
+            fx.getFlag('swade', 'expiration') ===
+              StatusEffectExpiration.StartOfTurnAuto ||
+            fx.getFlag('swade', 'expiration') ===
+              StatusEffectExpiration.StartOfTurnPrompt,
+        ) ?? [];
+
+      for (const effect of nextTurnStartExpirations) {
+        await effect._removeEffect();
+      }
+    }
+
     const turn = this.turn;
     const skip = this.settings['skipDefeated'] as boolean;
     // Determine the next turn number
@@ -466,7 +500,6 @@ export default class SwadeCombat extends Combat {
       });
       return;
     } else {
-      await super.nextRound();
       const jokerDrawn = this.combatants.some((c) => c.hasJoker ?? false);
 
       if (jokerDrawn) {
@@ -475,11 +508,24 @@ export default class SwadeCombat extends Combat {
       }
       const updates = this._getInitResetUpdates();
       await this.updateEmbeddedDocuments('Combatant', updates);
-
       //Init autoroll
       if (game.settings.get('swade', 'autoInit')) {
         const combatantIds = this.combatants.map((c) => c.id!);
         await this.rollInitiative(combatantIds);
+      }
+      await super.nextRound();
+      // Process turn 0's status effects.
+      const turnZero = this.turns[0].actor;
+
+      if (turnZero?.effects?.size) {
+        for (const effect of turnZero?.effects) {
+          const expiration = effect.getFlag('swade', 'expiration');
+          const expiresAtStartOfTurn = expiration === StatusEffectExpiration.StartOfTurnAuto || expiration === StatusEffectExpiration.StartOfTurnPrompt;
+
+          if (expiresAtStartOfTurn) {
+            await effect._removeEffect();
+          }
+        }
       }
     }
   }
@@ -535,23 +581,6 @@ export default class SwadeCombat extends Combat {
     if (jokerDrawn) {
       await utils.resetActionDeck();
       ui.notifications.info('SWADE.DeckShuffled', { localize: true });
-    }
-  }
-
-  protected async _onUpdate(
-    changed: DeepPartial<this['data']['_source']>,
-    options: DocumentModificationOptions,
-    userId: string,
-  ): Promise<void> {
-    await super._onUpdate(changed, options, userId);
-
-    for (const combatant of this.combatants) {
-      const effects = combatant.actor?.effects;
-      if (effects) {
-        for (const effect of effects) {
-          effect.checkStatusEffect(this.id as string);
-        }
-      }
     }
   }
 }

@@ -179,37 +179,4 @@ export default class SwadeCombatant extends Combatant {
       }
     }
   }
-
-  protected async _onUpdate(
-    changed: DeepPartial<this['data']['_source']>,
-    options: DocumentModificationOptions,
-    userId: string,
-  ) {
-    await super._onUpdate(changed, options, userId);
-
-    const turnZero = game.combat?.turn === 0;
-    const initiativeChanged = !!changed.initiative;
-    const hasEffects = !!this.actor?.effects.size;
-    const firstCombatant = game.combat?.turns[0].id === this.id;
-
-    if (turnZero && initiativeChanged && hasEffects && firstCombatant) {
-      const effects = this.actor?.effects ?? [];
-      for (const effect of effects) {
-        const startRound = effect.data.duration.startRound ?? 0;
-        const startTurn = effect.data.duration.startTurn;
-        const currentRound = game.combat?.round ?? 0;
-        const removeEffectIsFalse =
-          effect.getFlag('swade', 'removeEffect') === false;
-
-        if (
-          currentRound > startRound &&
-          startTurn === 0 &&
-          removeEffectIsFalse
-        ) {
-          await effect.setFlag('swade', 'removeEffect', true);
-          effect.checkStatusEffect(game.combat?.id as string);
-        }
-      }
-    }
-  }
 }
