@@ -111,10 +111,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  async _processStartOfTurn(combat: any) {
-    this._removeEffect();
-  }
-
   async _removeEffect() {
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
