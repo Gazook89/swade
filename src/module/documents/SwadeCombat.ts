@@ -429,31 +429,46 @@ export default class SwadeCombat extends Combat {
   async nextTurn() {
     const currentTurn = this.turn;
     const nextTurn = currentTurn + 1;
-    const currentTurnEndExpirations =
-      this.turns[currentTurn].actor?.effects.filter(
-        (fx) =>
-          (fx.getFlag('swade', 'expiration') ===
-            StatusEffectExpiration.EndOfTurnAuto ||
-            fx.getFlag('swade', 'expiration') ===
-              StatusEffectExpiration.EndOfTurnPrompt) &&
-          ((getProperty(fx, 'data.duration.startRound') === this.round &&
-            getProperty(fx, 'data.duration.startTurn') < currentTurn) ||
-            getProperty(fx, 'data.duration.startRound') < this.round),
-      ) ?? [];
+    const currentTurnEffects = this.turns[currentTurn].actor?.effects ?? [];
+    const currentTurnEndExpirations = new Array();
+    for (const fx of currentTurnEffects) {
+      const expiration = fx.getFlag('swade', 'expiration');
+      const endAutoExpire = expiration === StatusEffectExpiration.EndOfTurnAuto;
+      const endPromptExpire = expiration === StatusEffectExpiration.EndOfTurnPrompt
+      const expiresAtEndOfTurn = endAutoExpire || endPromptExpire;
+      const startRound = getProperty(fx, 'data.duration.startRound');
+      const startTurn = getProperty(fx, 'data.duration.startTurn');
+      const isNotNew = (startRound === this.round && startTurn < currentTurn) || startRound < this.round;
+      const durationRounds = getProperty(fx, 'data.duration.rounds');
+      const roundsPassed = this.round === startRound + durationRounds;
+      const durationEnds = !durationRounds || roundsPassed;
+      const expired = expiresAtEndOfTurn && isNotNew && durationEnds;
+
+      if (expired) currentTurnEndExpirations.push(fx);
+    }
 
     for (const effect of currentTurnEndExpirations) {
       await effect._removeEffect();
     }
 
     if (nextTurn < this.turns.length) {
-      const nextTurnStartExpirations =
-        this.turns[nextTurn].actor?.effects.filter(
-          (fx) =>
-            fx.getFlag('swade', 'expiration') ===
-              StatusEffectExpiration.StartOfTurnAuto ||
-            fx.getFlag('swade', 'expiration') ===
-              StatusEffectExpiration.StartOfTurnPrompt,
-        ) ?? [];
+      const nextTurnEffects = this.turns[nextTurn].actor?.effects ?? [];
+      const nextTurnStartExpirations = new Array();
+      for (const fx of nextTurnEffects) {
+        const expiration = fx.getFlag('swade', 'expiration');
+        const startAutoExpire = expiration === StatusEffectExpiration.StartOfTurnAuto;
+        const startPromptExpire = expiration === StatusEffectExpiration.StartOfTurnPrompt;
+        const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
+        const startRound = await getProperty(fx, 'data.duration.startRound');
+        const startTurn = await getProperty(fx, 'data.duration.startTurn');
+        const isNotNew = (startRound === this.round && startTurn < nextTurn) || startRound < this.round;
+        const durationRounds = await getProperty(fx, 'data.duration.rounds');
+        const roundsPassed = this.round === startRound + durationRounds;
+        const durationEnds = !durationRounds || roundsPassed;
+        const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
+
+        if (expired) nextTurnStartExpirations.push(fx);
+      }
 
       for (const effect of nextTurnStartExpirations) {
         await effect._removeEffect();
@@ -514,20 +529,28 @@ export default class SwadeCombat extends Combat {
         await this.rollInitiative(combatantIds);
       }
       await super.nextRound();
-      // Process turn 0's status effects.
-      const turnZero = this.turns[0].actor;
+      // Process turn 0's status effects that expire at the start of the turn.
+      const turnZero = this.turns[0];
+      const turnZeroEffects = turnZero.actor?.effects ?? [];
+      const turnZeroStartExpirations = new Array();
+      for (const fx of turnZeroEffects) {
+        const expiration = fx.getFlag('swade', 'expiration');
+        const startAutoExpire = expiration === StatusEffectExpiration.StartOfTurnAuto;
+        const startPromptExpire = expiration === StatusEffectExpiration.StartOfTurnPrompt;
+        const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
+        const startRound = await getProperty(fx, 'data.duration.startRound');
+        const startTurn = await getProperty(fx, 'data.duration.startTurn');
+        const isNotNew = (startRound === this.round && startTurn < turnZero) || startRound < this.round;
+        const durationRounds = await getProperty(fx, 'data.duration.rounds');
+        const roundsPassed = this.round === startRound + durationRounds;
+        const durationEnds = !durationRounds || roundsPassed;
+        const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
 
-      if (turnZero?.effects?.size) {
-        for (const effect of turnZero?.effects ?? []) {
-          const expiration = effect.getFlag('swade', 'expiration');
-          const expiresAtStartOfTurn =
-            expiration === StatusEffectExpiration.StartOfTurnAuto ||
-            expiration === StatusEffectExpiration.StartOfTurnPrompt;
+        if (expired) turnZeroStartExpirations.push(fx);
+      }
 
-          if (expiresAtStartOfTurn) {
-            await effect._removeEffect();
-          }
-        }
+      for (const effect of turnZeroStartExpirations) {
+        await effect._removeEffect();
       }
     }
   }
