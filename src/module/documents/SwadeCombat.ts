@@ -428,7 +428,7 @@ export default class SwadeCombat extends Combat {
   //FIXME return once types are maybe a bit more lenient
   //@ts-expect-error The types are a bit too strict here
   async nextTurn() {
-    const currentTurn = this.turn;
+    const currentTurn = this.turn ?? 0;
     const nextTurn = currentTurn + 1;
     const currentTurnEffects = this.turns[currentTurn].actor?.effects.values();
     const currentTurnEndExpirations = new Array<SwadeActiveEffect>();
@@ -483,7 +483,7 @@ export default class SwadeCombat extends Combat {
       }
     }
 
-    const turn = this.turn;
+    const turn = this.turn ?? 0;
     const skip = this.settings['skipDefeated'] as boolean;
     // Determine the next turn number
     let next: number | null = null;

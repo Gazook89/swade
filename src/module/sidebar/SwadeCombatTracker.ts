@@ -142,14 +142,14 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Act Now
   async _onActNow(c: SwadeCombatant) {
     let targetCombatant = this.viewed!.combatant;
-    if (c.id === targetCombatant.id) {
+    if (c.id === targetCombatant?.id) {
       targetCombatant = this.viewed!.turns.find((c) => !c.roundHeld)!;
     }
     await c.update({
       flags: {
         swade: {
-          cardValue: targetCombatant.cardValue,
-          suitValue: targetCombatant.suitValue! + 0.01,
+          cardValue: targetCombatant?.cardValue,
+          suitValue: targetCombatant?.suitValue! + 0.01,
           '-=roundHeld': null,
         },
       },
@@ -181,8 +181,8 @@ export default class SwadeCombatTracker extends CombatTracker {
     await c.update({
       flags: {
         swade: {
-          cardValue: currentCombatant.cardValue,
-          suitValue: currentCombatant.suitValue! - 0.01,
+          cardValue: currentCombatant?.cardValue,
+          suitValue: currentCombatant?.suitValue! - 0.01,
           '-=roundHeld': null,
         },
       },
@@ -205,7 +205,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
 
     this.viewed?.update({
-      turn: await this.viewed.turns.indexOf(currentCombatant),
+      turn: await this.viewed.turns.indexOf(currentCombatant!),
     });
   }
   async _getFollowers(c: SwadeCombatant) {

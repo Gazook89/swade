@@ -8,7 +8,7 @@ export default class SettingConfigurator extends FormApplication {
     this.config = SWADE.settingConfig;
   }
 
-  static get defaultOptions(): FormApplication.Options {
+  static get defaultOptions(): FormApplicationOptions {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: SWADE.settingConfig.id,
       title: SWADE.settingConfig.title,

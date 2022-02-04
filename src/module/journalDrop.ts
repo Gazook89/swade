@@ -12,7 +12,7 @@ export function listenJournalDrop() {
     event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 
-  // Create the tile with the gathered informations
+  // Create the tile with the gathered information
   async function _onDropImage(event: DragEvent, data: JournalImageDropData) {
     if (data.type == 'image') {
       // Determine the tile size
@@ -20,7 +20,7 @@ export function listenJournalDrop() {
       const t = getCanvas().app!.stage.worldTransform;
       const tileData = {
         img: data.src,
-        width: (SWADE.imagedrop.height * tex.width) / tex.height,
+        width: (SWADE.imagedrop.height * tex!.width) / tex!.height,
         height: SWADE.imagedrop.height,
         x: (event.clientX - t.tx) / getCanvas().stage!.scale.x,
         y: (event.clientY - t.ty) / getCanvas().stage!.scale.y,

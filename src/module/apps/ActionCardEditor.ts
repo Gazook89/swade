@@ -13,7 +13,7 @@ interface CardData {
 }
 
 export default class ActionCardEditor extends FormApplication {
-  constructor(cards: Cards, options: Partial<FormApplication.Options> = {}) {
+  constructor(cards: Cards, options: Partial<FormApplicationOptions> = {}) {
     super(cards, options);
   }
 

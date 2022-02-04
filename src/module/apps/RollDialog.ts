@@ -4,7 +4,7 @@ import SwadeItem from '../documents/item/SwadeItem';
 import * as util from '../util';
 
 export default class RollDialog extends FormApplication<
-  FormApplication.Options,
+  FormApplicationOptions,
   object,
   RollDialogContext
 > {
@@ -31,7 +31,7 @@ export default class RollDialog extends FormApplication<
   constructor(
     ctx: RollDialogContext,
     resolve: (roll: Roll | null) => void,
-    options?: Partial<FormApplication.Options>,
+    options?: Partial<FormApplicationOptions>,
   ) {
     super(ctx, options);
     this.resolve = resolve;
