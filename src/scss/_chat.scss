@@ -189,7 +189,7 @@
     }
   }
   &:last-child .initiative-draw .action-card-filter-container,
-  &:nth-last-of-type(2) .initiative-draw .action-card-filter-container  {
+  &:nth-last-of-type(2):not(:nth-of-type(2)) .initiative-draw .action-card-filter-container  {
     transform-origin: bottom left;
 
     &:hover {
