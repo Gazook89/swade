@@ -22,18 +22,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
-## [Unreleased v1.0.0]
+## v1.0.0
 
 ### Added
 
 - Added a `range` getter on the `SwadeItem` that will return the range brackets from the item, if it is a weapon or power
 - Added presets for a Light and Dark Action Deck using `poker` type cards. You can create an Action deck by going to the _Card Stacks_ tab and creating a new stack using the presets.
 - Added a multi-action penalty selection for trait rolls in the roll dialog
-- Added a Dropdown to the roll Dialog which containes a list of common roll modifiers. To add a modifier, select it from the dropdown and click the add button.
-- Added a setting to the Setting Configurator, which controlls whether encumbrance penalties are applied in the appropriate places. This setting defaults to off and needs to be enabled by the GM. Please keep in mind that Vigor tests to resist fatigue are not supported at this time
+- Added a Dropdown to the roll Dialog which contains a list of common roll modifiers. To add a modifier, select it from the dropdown and click the add button.
+- Added a setting to the Setting Configurator, which controls whether encumbrance penalties are applied in the appropriate places. This setting defaults to off and needs to be enabled by the GM. Please keep in mind that Vigor tests to resist fatigue are not supported at this time
 - Added `SwadeActor.isEncumbered` getter which returns true or false and considers whether the setting is even enabled
 - Incorporated the chase layout macro into the system. You can right-click on any deck in the system to lay out cards on the currently viewed scene. **This option is only available if the canvas and a scene are available to lay out cards**. There is also a new button in the tile controls to remove all chase cards from the currently viewed scene. Many thanks go out to `Kristian Serrano#5077` and `brunocalado#1650` for creating the macro and allowing it to be added to the system.
 - Added the ability to convert old, legacy type decks to Foundry VTT card decks. To do this right-click on a compendium containing cards and then select "Convert to Deck"
+- Added Expiration tab to Active Effect sheets
+- Status Effects are now synced to the token HUD. In order to achieve this we have move the status effect checkboxes to apply Active Effects. (Thanks to Kristian Serrano)
+- Added Active Effect duration support (Thanks to Kristian Serrano)
+  - When creating an Active Effect during combat you can now set a duration as well as expiration behavior (such as automatic removal or a prompt). The following status effects now come pre-configured with an expiration:
+    - Shaken
+    - Distracted
+    - Stunned
+    - Vulnerable
+    - Bleeding Out
+    - Protection
 - Added additional translation strings
 
 ### Changed
@@ -49,6 +59,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - `SWADE.Mod` -> `SWADE.Modifier`
 - Removed all references to entities in migration messages
 - Updated the Action Card Editor to now work with the Cards API instead of the legacy deck system
+- Improved styling and visibility on the initiative chat cards. Hovering a card will now enlarge it (Thanks to Kristian Serrano)
 
 ### Removed
 
