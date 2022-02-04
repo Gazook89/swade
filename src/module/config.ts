@@ -323,6 +323,14 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      duration: {
+        rounds: 5,
+      },
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.EndOfTurnPrompt,
+        },
+      },
     },
   ],
 
