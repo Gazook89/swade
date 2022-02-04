@@ -189,6 +189,8 @@ Item:
         skillMod: ''
         dmgMod: ''
         additional: {}
+    bonusDamage:
+      bonusDamageDie: 6
   gear:
     templates:
       - itemDescription
@@ -205,6 +207,7 @@ Item:
       - arcaneDevice
       - vehicular
       - actions
+      - bonusDamage
     damage: ''
     range: ''
     rof: 1
@@ -238,6 +241,7 @@ Item:
       - equipable
       - arcaneDevice
       - actions
+      - bonusDamage
     minStr: ''
     parry: 0
     cover: 0
@@ -256,6 +260,7 @@ Item:
       - itemDescription
       - equipable
       - actions
+      - bonusDamage
     rank: ''
     pp: 0
     damage: ''
@@ -280,3 +285,14 @@ Item:
       - itemDescription
     subtype: special
     grantsPowers: false
+Card:
+  types:
+    - 'poker'
+    - 'base'
+  templates:
+  poker:
+    templates: []
+    suit: 0
+    isJoker: false
+  base:
+    templates: []

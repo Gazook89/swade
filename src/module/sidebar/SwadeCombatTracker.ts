@@ -1,5 +1,5 @@
-import { SWADE } from '../config';
 import SwadeCombatant from '../documents/SwadeCombatant';
+import * as utils from '../util';
 
 /**
  * This class defines a a new Combat Tracker specifically designed for SWADE
@@ -36,13 +36,10 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Reset the Action Deck
   async _onResetActionDeck(event) {
     event.stopImmediatePropagation();
-    const cardTable = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
+    await utils.resetActionDeck();
+    ui.notifications.info('SWADE.ActionDeckResetNotification', {
+      localize: true,
     });
-    cardTable.reset();
-    ui.notifications?.info(
-      game.i18n.localize('SWADE.ActionDeckResetNotification'),
-    );
   }
   async _onCombatantControl(event) {
     super._onCombatantControl(event);
@@ -145,14 +142,14 @@ export default class SwadeCombatTracker extends CombatTracker {
   // Act Now
   async _onActNow(c: SwadeCombatant) {
     let targetCombatant = this.viewed!.combatant;
-    if (c.id === targetCombatant.id) {
+    if (c.id === targetCombatant?.id) {
       targetCombatant = this.viewed!.turns.find((c) => !c.roundHeld)!;
     }
     await c.update({
       flags: {
         swade: {
-          cardValue: targetCombatant.cardValue,
-          suitValue: targetCombatant.suitValue! + 0.01,
+          cardValue: targetCombatant?.cardValue,
+          suitValue: targetCombatant?.suitValue! + 0.01,
           '-=roundHeld': null,
         },
       },
@@ -184,8 +181,8 @@ export default class SwadeCombatTracker extends CombatTracker {
     await c.update({
       flags: {
         swade: {
-          cardValue: currentCombatant.cardValue,
-          suitValue: currentCombatant.suitValue! - 0.01,
+          cardValue: currentCombatant?.cardValue,
+          suitValue: currentCombatant?.suitValue! - 0.01,
           '-=roundHeld': null,
         },
       },
@@ -208,7 +205,7 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
 
     this.viewed?.update({
-      turn: await this.viewed.turns.indexOf(currentCombatant),
+      turn: await this.viewed.turns.indexOf(currentCombatant!),
     });
   }
   async _getFollowers(c: SwadeCombatant) {

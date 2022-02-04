@@ -1,6 +1,7 @@
 import { AbilitySubType } from '../../../globals';
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { TraitDie, WildDie } from '../actor/actor-data-source';
+import { Attribute } from '../actor/SwadeActor';
 
 declare global {
   interface SourceConfig {
@@ -48,7 +49,7 @@ interface Equipable {
 interface ItemDescription {
   description: string;
   notes: string;
-  additionalStats: Partial<Record<string, AdditionalStat>>;
+  additionalStats: Record<string, AdditionalStat>;
 }
 
 interface Vehicular {
@@ -65,7 +66,16 @@ interface Actions {
   };
 }
 
-interface WeaponData extends PhysicalItem, ItemDescription, Vehicular {
+interface BonusDamage {
+  bonusDamageDie: number;
+}
+
+interface WeaponData
+  extends PhysicalItem,
+    ItemDescription,
+    Vehicular,
+    Actions,
+    BonusDamage {
   damage: string;
   range: string;
   rof: number;
@@ -93,7 +103,11 @@ interface ArmorData extends ItemDescription, PhysicalItem {
   };
 }
 
-interface ShieldData extends ItemDescription, PhysicalItem {
+interface ShieldData
+  extends ItemDescription,
+    PhysicalItem,
+    Actions,
+    BonusDamage {
   minStr: string;
   parry: number;
   cover: number;
@@ -110,7 +124,7 @@ interface HindranceData extends ItemDescription {
   major: boolean;
 }
 
-interface PowerData extends ItemDescription, Equipable, Actions {
+interface PowerData extends ItemDescription, Equipable, Actions, BonusDamage {
   rank: string;
   pp: string;
   damage: string;
@@ -123,7 +137,7 @@ interface PowerData extends ItemDescription, Equipable, Actions {
 }
 
 interface SkillData extends ItemDescription {
-  attribute: string;
+  attribute: Attribute | '';
   isCoreSkill: boolean;
   die: TraitDie;
   'wild-die': WildDie;

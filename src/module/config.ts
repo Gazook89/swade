@@ -1,6 +1,9 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { AbilitySubType } from '../globals';
+import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
+import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 import { TemplatePreset } from './enums/TemplatePresetEnum';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -36,13 +39,6 @@ export const SWADE: SwadeConfig = {
     },
   },
 
-  init: {
-    defaultCardCompendium: 'swade.action-cards',
-    cardTable: 'Action Cards',
-  },
-
-  packChoices: {},
-
   imagedrop: {
     height: 300,
   },
@@ -71,7 +67,6 @@ export const SWADE: SwadeConfig = {
       'coreSkillsCompendium',
       'enableConviction',
       'jokersWild',
-      'parryBaseSkill',
       'vehicleMods',
       'vehicleEdges',
       'gmBennies',
@@ -83,8 +78,10 @@ export const SWADE: SwadeConfig = {
       'noPowerPoints',
       'wealthType',
       'currencyName',
-      'weightUnit',
       'hardChoices',
+      'actionDeck',
+      'applyEncumbrance',
+      'actionDeckDiscardPile',
       'bennyImageSheet',
       'bennyImage3DFront',
       'bennyImage3DBack',
@@ -108,6 +105,19 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
       id: 'shaken',
       label: 'SWADE.Shaken',
+      changes: [
+        {
+          key: 'data.status.isShaken',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          loseTurnOnHold: true,
+        },
+      },
     },
     {
       icon: 'icons/svg/skull.svg',
@@ -131,8 +141,8 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.stats.parry.modifier',
-          value: 4,
-          mode: 2,
+          value: '4',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
     },
@@ -150,11 +160,25 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_bound.svg',
       id: 'bound',
       label: 'SWADE.Bound',
+      changes: [
+        {
+          key: 'data.status.isBound',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
     },
     {
       icon: 'systems/swade/assets/icons/status/status_entangled.svg',
       id: 'entangled',
       label: 'SWADE.Entangled',
+      changes: [
+        {
+          key: 'data.status.isEntangled',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
     },
     {
       icon: 'systems/swade/assets/icons/status/status_frightened.svg',
@@ -165,6 +189,18 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_distracted.svg',
       id: 'distracted',
       label: 'SWADE.Distr',
+      changes: [
+        {
+          key: 'data.status.isDistracted',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.EndOfTurnAuto,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_encumbered.svg',
@@ -180,16 +216,46 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_stunned.svg',
       id: 'stunned',
       label: 'SWADE.Stunned',
+      changes: [
+        {
+          key: 'data.status.isStunned',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          loseTurnOnHold: true,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_vulnerable.svg',
       id: 'vulnerable',
       label: 'SWADE.Vuln',
+      changes: [
+        {
+          key: 'data.status.isVulnerable',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+      ],
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.EndOfTurnAuto,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_bleeding_out.svg',
       id: 'bleeding-out',
       label: 'SWADE.BleedingOut',
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_diseased.svg',
@@ -214,12 +280,12 @@ export const SWADE: SwadeConfig = {
     {
       icon: 'systems/swade/assets/icons/status/status_cover_shield.svg',
       id: 'cover-shield',
-      label: 'SWADE.CoverShield',
+      label: 'SWADE.Cover.Shield',
     },
     {
       icon: 'systems/swade/assets/icons/status/status_cover.svg',
       id: 'cover',
-      label: 'SWADE.Cover',
+      label: 'SWADE.Cover._name',
     },
     {
       icon: 'systems/swade/assets/icons/status/status_reach.svg',
@@ -248,15 +314,23 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.stats.toughness.value',
-          value: 0,
-          mode: 2,
+          value: '0',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
         {
           key: 'data.stats.toughness.armor',
-          value: 0,
-          mode: 2,
+          value: '0',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      duration: {
+        rounds: 5,
+      },
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.EndOfTurnPrompt,
+        },
+      },
     },
   ],
 
@@ -341,11 +415,47 @@ export const SWADE: SwadeConfig = {
     },
   },
 
-  allowedActorFlags: [],
+  prototypeRollGroups: [
+    {
+      name: 'SWADE.Range._name',
+      modifiers: [
+        { label: 'SWADE.Range.Medium', value: -2 },
+        { label: 'SWADE.Range.Long', value: -4 },
+        { label: 'SWADE.Range.Extreme', value: -8 },
+      ],
+    },
+    {
+      name: 'SWADE.Cover._name',
+      modifiers: [
+        { label: 'SWADE.Cover.Light', value: -2 },
+        { label: 'SWADE.Cover.Medium', value: -4 },
+        { label: 'SWADE.Cover.Heavy', value: -6 },
+        { label: 'SWADE.Cover.Total', value: -8 },
+      ],
+    },
+    {
+      name: 'SWADE.Illumination._name',
+      modifiers: [
+        { label: 'SWADE.Illumination.Dim', value: -2 },
+        { label: 'SWADE.Illumination.Dark', value: -4 },
+        { label: 'SWADE.Illumination.Pitch', value: -6 },
+      ],
+    },
+    {
+      name: 'SWADE.ModOther',
+      modifiers: [
+        { label: 'SWADE.Snapfire', value: -2 },
+        { label: 'SWADE.UnstablePlatform', value: -2 },
+        { label: 'SWADE.Encumbered', value: -2 },
+      ],
+    },
+  ],
 };
 
 export interface SwadeConfig {
+  //a piece of ASCII art for the init log message
   ASCII: string;
+  //An object to store localization strings
   attributes: {
     agility: {
       long: string;
@@ -368,13 +478,6 @@ export interface SwadeConfig {
       short: string;
     };
   };
-
-  init: {
-    defaultCardCompendium: string;
-    cardTable: string;
-  };
-
-  packChoices: Record<string, string>;
 
   imagedrop: {
     height: number;
@@ -412,7 +515,7 @@ export interface SwadeConfig {
     id: string;
   };
 
-  statusEffects: Array<StatusEffect>;
+  statusEffects: ActiveEffectDataConstructorData & { id: string }[];
 
   wildCardIcons: {
     regular: string;
@@ -428,18 +531,5 @@ export interface SwadeConfig {
 
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
-  allowedActorFlags: Array<string>;
-}
-
-interface StatusEffect {
-  icon: string;
-  id: string;
-  label: string;
-  changes?: Array<StatusEffectChanges>;
-}
-
-interface StatusEffectChanges {
-  key: string;
-  value: string | number;
-  mode: number;
+  prototypeRollGroups: TraitRollModifierGroup[];
 }

@@ -1,6 +1,6 @@
 export enum ArmorLocation {
-  HEAD = 'head',
-  TORSO = 'torso',
-  LEGS = 'legs',
-  ARMS = 'arms',
+  Head = 'head',
+  Torso = 'torso',
+  Legs = 'legs',
+  Arms = 'arms',
 }

@@ -1,7 +1,7 @@
 <section class="flexrow">
   <div>
-    {{localize "SWADE.CarryWeight"}}
-    <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}} {{weightUnit}}</strong>
+      {{localize "SWADE.CarryWeight"}}
+      <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}} {{settingrules.weightUnit}}</strong>
   </div>
   <div class="form-group currency">
     {{#if (eq settingrules.wealthType "currency")}}
@@ -25,7 +25,7 @@
         data-dtype="Number"
         name="data.details.wealth.modifier"
         value="{{signedString data.data.details.wealth.modifier}}"
-        placeholder="{{localize 'SWADE.Mod'}}"
+        placeholder="{{localize 'SWADE.Modifier'}}"
       />
     </span>
     {{/if}}
@@ -147,7 +147,7 @@
   <header class="header shield">
     <span class="header-name">{{localize "SWADE.Shields"}}</span>
     <span class="parry">{{localize "SWADE.Parry"}}</span>
-    <span class="cover">{{localize "SWADE.Cover"}}</span>
+    <span class="cover">{{localize "SWADE.Cover._name"}}</span>
     <span class="note" style="text-align: center"
       >{{localize "SWADE.Notes"}}</span
     >

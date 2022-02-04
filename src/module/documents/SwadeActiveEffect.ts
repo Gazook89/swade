@@ -1,12 +1,28 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
-import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import {
+  ActiveEffectDataConstructorData,
+  ActiveEffectDataProperties,
+} from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
+import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
+import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
+import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
+import { isFirstOwner } from '../util';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
 
 declare global {
   interface DocumentClassConfig {
     ActiveEffect: typeof SwadeActiveEffect;
+  }
+  interface FlagConfig {
+    ActiveEffect: {
+      swade: {
+        removeEffect?: boolean;
+        expiration?: number;
+        loseTurnOnHold?: boolean;
+      };
+    };
   }
 }
 
@@ -98,6 +114,69 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
+  /**
+   * This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion
+   */
+  async removeEffect() {
+    const expiration = this.getFlag('swade', 'expiration');
+    const startOfTurnAuto =
+      expiration === StatusEffectExpiration.StartOfTurnAuto;
+    const startOfTurnPrompt =
+      expiration === StatusEffectExpiration.StartOfTurnPrompt;
+    const endOfTurnAuto = expiration === StatusEffectExpiration.EndOfTurnAuto;
+    const endOfTurnPrompt =
+      expiration === StatusEffectExpiration.EndOfTurnPrompt;
+    const auto = startOfTurnAuto || endOfTurnAuto;
+    const prompt = startOfTurnPrompt || endOfTurnPrompt;
+
+    if (auto) {
+      await this.delete();
+    } else if (prompt) {
+      this.promptEffectDeletion();
+    }
+  }
+
+  /**
+   * //TODO: trigger prompt based on effect
+   * This function creates a dialog for status effect deletion
+   */
+  promptEffectDeletion() {
+    if (isFirstOwner(this.parent)) {
+      Dialog.confirm({
+        title: game.i18n.format('SWADE.RemoveEffectTitle', {
+          label: this.data.label,
+        }),
+        content: game.i18n.format('SWADE.RemoveEffectBody', {
+          label: this.data.label,
+          parent: this.parent?.name,
+        }),
+        defaultYes: false,
+        yes: () => {
+          this.delete();
+        },
+      });
+    } else {
+      game.swade.sockets.removeStatusEffect(this.uuid);
+    }
+  }
+
+  protected async _onUpdate(
+    changed: DeepPartial<PropertiesToSource<ActiveEffectDataProperties>>,
+    options: DocumentModificationOptions,
+    userId: string,
+  ) {
+    await super._onUpdate(changed, options, userId);
+    if (this.getFlag('swade', 'loseTurnOnHold')) {
+      const combatant = game.combat?.combatants.find(
+        (c) => c.actor?.id === this.parent?.id,
+      );
+      if (combatant?.getFlag('swade', 'roundHeld')) {
+        await combatant?.setFlag('swade', 'turnLost', true);
+        await combatant?.unsetFlag('swade', 'roundHeld');
+      }
+    }
+  }
+
   protected async _preUpdate(
     changed: DeepPartial<ActiveEffectDataConstructorData>,
     options: DocumentModificationOptions,
@@ -119,6 +198,30 @@ export default class SwadeActiveEffect extends ActiveEffect {
     //remove the effects from the item
     if (this.affectsItems && parent instanceof CONFIG.Actor.documentClass) {
       this._removeEffectsFromItems(parent);
+    }
+  }
+
+  protected async _preCreate(
+    data: ActiveEffectDataConstructorData,
+    options: DocumentModificationOptions,
+    user: BaseUser,
+  ): Promise<void> {
+    super._preCreate(data, options, user);
+    const label = game.i18n.localize(this.data.label);
+    await this.data.update({ label: label });
+
+    // If there's no duration value and there's a combat, at least set the combat ID which then sets a startRound and startTurn, too.
+    if (!data.duration?.combat && game.combat) {
+      await this.data.update({ 'duration.combat': game.combat.id });
+    }
+    if (this.getFlag('swade', 'loseTurnOnHold')) {
+      const combatant = game.combat?.combatants.find(
+        (c) => c.actor?.id === this.parent?.id,
+      );
+      if (combatant?.getFlag('swade', 'roundHeld')) {
+        await combatant?.setFlag('swade', 'turnLost', true);
+        await combatant?.unsetFlag('swade', 'roundHeld');
+      }
     }
   }
 }

@@ -143,9 +143,9 @@ export default class SwadeItemSheet extends ItemSheet {
       const transfer = $(ev.currentTarget).data('transfer');
       const newEffect = await ActiveEffect.create(
         {
-          label: game.i18n
-            .localize('ENTITY.New')
-            .replace('{entity}', game.i18n.localize('Active Effect')),
+          label: game.i18n.format('DOCUMENT.New', {
+            type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+          }),
           icon: '/icons/svg/mystery-man.svg',
           transfer: transfer,
         },
@@ -299,9 +299,7 @@ export default class SwadeItemSheet extends ItemSheet {
         data.type !== 'Item' ||
         (item.data.type === 'ability' && item.data.data.subtype !== 'special')
       ) {
-        console.warn(
-          'SWADE | You cannot add a race to a race or an archetype to an archetype',
-        );
+        ui.notifications.warn('SWADE.CannotAddRaceToRace', { localize: true });
         return false;
       }
     } catch (error) {

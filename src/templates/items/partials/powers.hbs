@@ -8,7 +8,7 @@
           "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
         </select>
         <input name="data.arcaneSkillDie.modifier" type="text" value="{{data.data.arcaneSkillDie.modifier}}"
-          placeholder="{{localize 'SWADE.Mod'}}" data-dtype="Number" />
+          placeholder="{{localize 'SWADE.Modifier'}}" data-dtype="Number" />
       </span>
     </div>
     <!-- Global counter -->
@@ -47,7 +47,7 @@
         </div>
         <div class="flexrow">
           {{#if power.[1].data.range}}
-          <div>{{localize 'SWADE.Rng'}}: {{power.[1].data.range}}</div>
+          <div>{{localize 'SWADE.Range._name'}}: {{power.[1].data.range}}</div>
           {{/if}} {{#if power.[1].data.duration}}
           <div>{{localize 'SWADE.Dur'}}: {{power.[1].data.duration}}</div>
           {{/if}}

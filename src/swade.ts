@@ -13,6 +13,7 @@ import SwadeActor from './module/documents/actor/SwadeActor';
 import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
 import SwadeActiveEffect from './module/documents/SwadeActiveEffect';
+import SwadeCards from './module/documents/SwadeCards';
 import SwadeCombat from './module/documents/SwadeCombat';
 import SwadeCombatant from './module/documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
@@ -22,7 +23,11 @@ import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
 import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
-import { registerSettingRules, registerSettings } from './module/settings';
+import {
+  register3DBennySettings,
+  registerSettingRules,
+  registerSettings,
+} from './module/settings';
 import CharacterSheet from './module/sheets/official/CharacterSheet';
 import SwadeItemSheet from './module/sheets/SwadeItemSheet';
 import SwadeNPCSheet from './module/sheets/SwadeNPCSheet';
@@ -41,9 +46,9 @@ Hooks.once('init', () => {
   );
 
   // Record Configuration Values
-  //CONFIG.debug.hooks = true;
   CONFIG.SWADE = SWADE;
 
+  //set up global game object
   game.swade = {
     SwadeEntityTweaks,
     rollItemMacro,
@@ -64,18 +69,33 @@ Hooks.once('init', () => {
   CONFIG.Combatant.documentClass = SwadeCombatant;
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
   CONFIG.User.documentClass = SwadeUser;
-
+  CONFIG.Cards.documentClass = SwadeCards;
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
-
   //register custom sidebar tabs
   CONFIG.ui.combat = SwadeCombatTracker;
 
+  //register card presets
+  //@ts-ignore
+  CONFIG.Cards.presets = {
+    actionDeckLight: {
+      label: 'SWADE.ActionDeckPresetLight',
+      src: 'systems/swade/cards/action-deck-light.json',
+      type: 'deck',
+    },
+    actionDeckDark: {
+      label: 'SWADE.ActionDeckPresetDark',
+      src: 'systems/swade/cards/action-deck-dark.json',
+      type: 'deck',
+    },
+  };
+
   //register custom status effects
+  //@ts-ignore
   CONFIG.statusEffects = SWADE.statusEffects;
 
-  //@ts-expect-error Not yet implemented in Types
-  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('data.flags.swade');
+  //@ts-expect-error Types don't properly recognized dotnotation
+  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('flags.swade');
 
   //Preload Handlebars templates
   preloadHandlebarsTemplates();
@@ -83,6 +103,7 @@ Hooks.once('init', () => {
   // Register custom system settings
   registerSettings();
   registerSettingRules();
+  register3DBennySettings();
 
   // Register sheets
   Actors.unregisterSheet('core', ActorSheet);
@@ -114,119 +135,51 @@ Hooks.once('init', () => {
   listenJournalDrop();
 });
 
-Hooks.once('ready', async () => SwadeHooks.onReady());
+Hooks.once('ready', SwadeHooks.onReady);
+Hooks.once('setup', SwadeHooks.onSetup);
+Hooks.on('preCreateItem', SwadeHooks.onPreCreateItem);
+Hooks.on('getSceneControlButtons', SwadeHooks.onGetSceneControlButtons);
+Hooks.on('dropActorSheetData', SwadeHooks.onDropActorSheetData);
+Hooks.on('hotbarDrop', createSwadeMacro);
 
-/** This hook only really exists to stop Races from being added to the actor as an item */
-Hooks.on(
-  'preCreateItem',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  (item: SwadeItem, options: object, userId: string) => {
-    if (item.parent && item.data.type === 'ability') {
-      const subType = item.data.data.subtype;
-      if (subType === 'race' || subType === 'archetype') return false; //return early if we're doing race stuff
-    }
-  },
-);
+/* ------------------------------------ */
+/* Application Render					          */
+/* ------------------------------------ */
+Hooks.on('renderCombatantConfig', SwadeHooks.onRenderCombatantConfig);
+Hooks.on('renderActiveEffectConfig', SwadeHooks.onRenderActiveEffectConfig);
+Hooks.on('renderChatPopout', SwadeHooks.onRenderChatLog);
+Hooks.on('renderActorDirectory', SwadeHooks.onRenderActorDirectory);
+Hooks.on('renderCompendium', SwadeHooks.onRenderCompendium);
+Hooks.on('renderCombatTracker', SwadeHooks.onRenderCombatTracker);
+Hooks.on('renderChatMessage', SwadeHooks.onRenderChatMessage);
+Hooks.on('renderChatLog', SwadeHooks.onRenderChatLog);
+Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
 
-Hooks.on(
-  'renderActorDirectory',
-  (app: ActorDirectory, html: JQuery<HTMLElement>, options: any) =>
-    SwadeHooks.onRenderActorDirectory(app, html, options),
-);
-
+/* ------------------------------------ */
+/* Context Options    				          */
+/* ------------------------------------ */
+Hooks.on('getUserContextOptions', SwadeHooks.onGetUserContextOptions);
+Hooks.on('getActorEntryContext', SwadeHooks.onGetCombatTrackerEntryContext);
+Hooks.on('getChatLogEntryContext', SwadeHooks.onGetChatLogEntryContext);
 Hooks.on(
   'getActorDirectoryEntryContext',
-  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
-    SwadeHooks.onGetActorDirectoryEntryContext(html, options);
-  },
+  SwadeHooks.onGetActorDirectoryEntryContext,
 );
-
-Hooks.on(
-  'getActorEntryContext',
-  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
-    SwadeHooks.onGetCombatTrackerEntryContext(html, options);
-  },
-);
-
-Hooks.on(
-  'renderCompendium',
-  (
-    app: CompendiumCollection<CompendiumCollection.Metadata>,
-    html: JQuery<HTMLElement>,
-    data: any,
-  ) => SwadeHooks.onRenderCompendium(app, html, data),
-);
-
-Hooks.on(
-  'renderCombatTracker',
-  (app: SwadeCombatTracker, html: JQuery<HTMLElement>, data: any) =>
-    SwadeHooks.onRenderCombatTracker(app, html, data),
-);
-
-// Add roll data to the message for formatting of dice pools
-Hooks.on(
-  'renderChatMessage',
-  (message: ChatMessage, html: JQuery<HTMLElement>, data: any) =>
-    SwadeHooks.onRenderChatMessage(message, html, data),
-);
-
-Hooks.on(
-  'getChatLogEntryContext',
-  (html: JQuery<HTMLElement>, options: any[]) =>
-    SwadeHooks.onGetChatLogEntryContext(html, options),
-);
-
-Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>, data: any) =>
-  SwadeHooks.onRenderChatLog(app, html, data),
-);
-
-// Add benny management to the player list
-Hooks.on('renderPlayerList', async (list: any, html: JQuery, options: any) =>
-  SwadeHooks.onRenderPlayerList(list, html, options),
-);
-
-Hooks.on('getUserContextOptions', (html: JQuery, context: any[]) =>
-  SwadeHooks.onGetUserContextOptions(html, context),
-);
-
-Hooks.on('getSceneControlButtons', (sceneControlButtons: any[]) =>
-  SwadeHooks.onGetSceneControlButtons(sceneControlButtons),
-);
-
-Hooks.on('renderChatPopout', (app: any, html: JQuery<HTMLElement>, data: any) =>
-  SwadeHooks.onRenderChatLog(app, html, data),
-);
-
-Hooks.on('dropActorSheetData', (actor, sheet, data) =>
-  SwadeHooks.onDropActorSheetData(actor, sheet, data),
-);
-
-Hooks.on(
-  'renderCombatantConfig',
-  (app: CombatantConfig, html: JQuery<HTMLElement>, options: any) =>
-    SwadeHooks.onRenderCombatantConfig(app, html, options),
-);
-
-Hooks.once('diceSoNiceInit', (dice3d: any) => {
-  SwadeHooks.onDiceSoNiceInit(dice3d);
-});
-
-Hooks.once('diceSoNiceReady', (dice3d: any) => {
-  SwadeHooks.onDiceSoNiceReady(dice3d);
-});
-
-Hooks.on('hotbarDrop', (bar, data, slot) => createSwadeMacro(data, slot));
-
 Hooks.on(
   'getCombatTrackerEntryContext',
-  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
-    SwadeHooks.onGetCombatTrackerEntryContext(html, options);
-  },
+  SwadeHooks.onGetCombatTrackerEntryContext,
 );
-
+Hooks.on(
+  'getCardsDirectoryEntryContext',
+  SwadeHooks.onGetCardsDirectoryEntryContext,
+);
 Hooks.on(
   'getCompendiumDirectoryEntryContext',
-  (html: JQuery<HTMLElement>, options: ContextMenu.Item[]) => {
-    SwadeHooks.onGetCompendiumDirectoryEntryContext(html, options);
-  },
+  SwadeHooks.onGetCompendiumDirectoryEntryContext,
 );
+
+/* ------------------------------------ */
+/* Dice So Nice Hooks					          */
+/* ------------------------------------ */
+Hooks.once('diceSoNiceInit', SwadeHooks.onDiceSoNiceInit);
+Hooks.once('diceSoNiceReady', SwadeHooks.onDiceSoNiceReady);

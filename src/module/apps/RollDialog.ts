@@ -1,10 +1,11 @@
 import { TraitRollModifier } from '../../interfaces/additional';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
+import * as util from '../util';
 
 export default class RollDialog extends FormApplication<
-  FormApplication.Options,
-  any,
+  FormApplicationOptions,
+  object,
   RollDialogContext
 > {
   resolve: (roll: Roll | null) => void;
@@ -30,7 +31,7 @@ export default class RollDialog extends FormApplication<
   constructor(
     ctx: RollDialogContext,
     resolve: (roll: Roll | null) => void,
-    options?: Partial<FormApplication.Options>,
+    options?: Partial<FormApplicationOptions>,
   ) {
     super(ctx, options);
     this.resolve = resolve;
@@ -57,6 +58,14 @@ export default class RollDialog extends FormApplication<
     super.activateListeners(html);
     $(document).on('keydown.chooseDefault', this._onKeyDown.bind(this));
     html.find('button#close').on('click', this.close.bind(this));
+    html.find('button.add-modifier').on('click', () => {
+      this._addModifier();
+      this.render();
+    });
+    html.find('button.add-preset').on('click', () => {
+      this._addPreset();
+      this.render();
+    });
     html.find('button[type="submit"]').on('click', (ev) => {
       this.extraButtonUsed = ev.currentTarget.dataset.type === 'extra';
       this.submit();
@@ -67,25 +76,18 @@ export default class RollDialog extends FormApplication<
       this.ctx.mods[index].ignore = target.checked;
       this.render();
     });
-    html.find('button.add-modifier').on('click', () => {
-      const label = html.find('.new-modifier-label').val() as string;
-      const value = html.find('.new-modifier-value').val() as string;
-      if (!!label && !!value) {
-        const sanitized = this._sanitizeModifierInput(value);
-        this.ctx.mods.push({ label, value: sanitized });
-        this.render();
-      }
-    });
   }
 
-  getData(): object | Promise<object> {
+  async getData(): Promise<object> {
     const data = {
-      formula: this._buildRollForEvaluation().formula,
-      rollMode: game.settings.get('core', 'rollMode'),
       rollModes: CONFIG.Dice.rollModes,
       displayExtraButton: true,
+      modGroups: CONFIG.SWADE.prototypeRollGroups,
       extraButtonLabel: '',
+      rollMode: game.settings.get('core', 'rollMode'),
       modifiers: this.ctx.mods.map(this._normalizeModValue),
+      formula: this._buildRollForEvaluation().formula,
+      isTraitRoll: this._isTraitRoll(),
     };
 
     if (this.ctx.item) {
@@ -108,6 +110,15 @@ export default class RollDialog extends FormApplication<
     Object.values(expanded.modifiers ?? []).forEach(
       (v, i) => (this.ctx.mods[i].ignore = v.ignore),
     );
+    if (expanded.map && expanded.map !== 0) {
+      this.ctx.mods.push({
+        label: game.i18n.localize('SWADE.MAPenalty'),
+        value: expanded.map,
+      });
+    }
+
+    //add any unsubmitted modifiers
+    this._addModifier();
     const roll = await this._evaluateRoll();
     this._resolve(roll);
   }
@@ -120,10 +131,17 @@ export default class RollDialog extends FormApplication<
       return this.close();
     }
 
-    // Confirm default choice
+    // Confirm default choice or add a modifier
     if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
+      const modValue = this.form!.querySelector<HTMLInputElement>(
+        '.new-modifier-value',
+      )?.value;
+      if (modValue) {
+        this._addModifier();
+        return this.render();
+      }
       return this.submit();
     }
   }
@@ -139,7 +157,7 @@ export default class RollDialog extends FormApplication<
     if (this.extraButtonUsed && this.ctx.item && !this.ctx.actor) {
       this.ctx.mods.push({
         label: game.i18n.localize('SWADE.BonusDamage'),
-        value: '+1d6x',
+        value: `+1d${this.ctx.item.data.data['bonusDamageDie']}x`,
       });
     }
 
@@ -195,9 +213,7 @@ export default class RollDialog extends FormApplication<
         this.ctx.mods
           .filter((v) => !v.ignore) //remove the disabled modifiers
           .map(this._normalizeModValue)
-          .reduce((a: string, c: TraitRollModifier) => {
-            return (a += `${c.value}[${c.label}]`);
-          }, ''),
+          .reduce(util.modifierReducer, ''),
         this._getRollData(),
       ),
     ]);
@@ -265,6 +281,44 @@ export default class RollDialog extends FormApplication<
     };
   }
 
+  private _isTraitRoll(): boolean {
+    return !!this.ctx.actor;
+  }
+
+  /** Reads the modifier inputs, sanitizes them and adds the values to the mod array */
+  private _addModifier() {
+    const form = this.form!;
+    const label = form.querySelector<HTMLInputElement>(
+      '.new-modifier-label',
+    )?.value;
+    const value = form.querySelector<HTMLInputElement>(
+      '.new-modifier-value',
+    )?.value;
+    if (value) {
+      this.ctx.mods.push({
+        label: label || game.i18n.localize('SWADE.Addi'),
+        value: this._sanitizeModifierInput(value),
+      });
+    }
+  }
+
+  private _addPreset() {
+    const select =
+      this.form!.querySelector<HTMLSelectElement>('#preset-selection')!;
+    const option = select.options[select.selectedIndex];
+    const index = Number(option.dataset.index);
+    const group = CONFIG.SWADE.prototypeRollGroups.find(
+      (v) => v.name === option.dataset.group,
+    );
+    if (!group) return;
+    const modifier = group.modifiers[index];
+    if (!modifier) return;
+    this.ctx.mods.push({
+      label: modifier.label,
+      value: modifier.value,
+    });
+  }
+
   /** @override */
   close(options?: Application.CloseOptions): Promise<void> {
     //fallback if the roll has not yet been resolved
@@ -288,5 +342,6 @@ interface RollDialogContext {
 
 interface RollDialogFormData {
   modifiers?: TraitRollModifier[];
+  map?: number;
   rollMode: foundry.CONST.DICE_ROLL_MODES;
 }

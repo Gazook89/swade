@@ -20,8 +20,6 @@ const sourcemaps = require('gulp-sourcemaps');
 
 const argv = require('yargs').argv;
 
-sass.compiler = require('sass');
-
 function getConfig() {
   const configPath = path.resolve(process.cwd(), 'foundryconfig.json');
   let config;
@@ -237,6 +235,7 @@ async function copyFiles() {
     'fonts',
     'assets',
     'templates',
+    'cards',
     'module.json',
     'system.json',
     'template.json',
@@ -293,6 +292,7 @@ async function clean() {
       'interfaces',
       'enums',
       'packs',
+      'cards',
       `${name}.js`,
       `${name}.js.map`,
       'module.json',

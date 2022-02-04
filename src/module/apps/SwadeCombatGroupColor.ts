@@ -1,6 +1,6 @@
 /** This class defines a form colorpicker for group leader to assign a group color */
 export default class SwadeCombatGroupColor extends FormApplication<
-  FormApplication.Options,
+  FormApplicationOptions,
   any,
   Combatant
 > {

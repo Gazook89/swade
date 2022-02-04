@@ -9,8 +9,9 @@
           id="{{card.id}}"
           data-card-id="{{card.id}}"
         />
-        <figure>
-          <img src="{{card.data.img}}" />
+        <figure{{#if (eq card.id ../data.highestCardID)}} class="high-card"{{/if}}>
+        <div class="indicator"><i class="fas fa-star"></i></div>
+          <img src="{{card.face.img}}" />
           <figcaption>
             {{card.name}} {{#if (eq card.id ../data.oldCard)}}<br />({{localize
             "SWADE.OldCard"}}){{/if}}

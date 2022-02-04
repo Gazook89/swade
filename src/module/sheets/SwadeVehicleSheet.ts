@@ -263,7 +263,8 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
   }
 
   private async _openDriverSheet() {
-    const driverId = getProperty(this.actor.data, 'data.driver.id');
+    if (this.actor.data.type !== 'vehicle') return;
+    const driverId = this.actor.data.data.driver.id;
     const driver = (await fromUuid(driverId)) as SwadeActor;
     if (driver) {
       driver.sheet?.render(true);
@@ -291,7 +292,7 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    */
   private _calcModSlotsUsed(): number {
     const mods = this.actor.items.filter(
-      (i: SwadeItem) =>
+      (i) =>
         (i.data.type === 'gear' || i.data.type === 'weapon') &&
         i.data.data.isVehicular &&
         i.data.data.equipped,
@@ -310,16 +311,13 @@ export default class SwadeVehicleSheet extends SwadeBaseActorSheet {
    * calculate how many percent of modslots are used
    * @param modsUsed number of active modslots
    */
-  private _calcModsPercentage(modsUsed: number): number | undefined {
-    if (this.actor.data.type !== 'vehicle') return;
+  private _calcModsPercentage(modsUsed: number): number {
+    if (this.actor.data.type !== 'vehicle') return 0;
     const maxMods = this.actor.data.data.maxMods;
-    let p = (modsUsed / maxMods) * 100;
+    const p = (modsUsed / maxMods) * 100;
 
     //cap the percentage at 100
-    if (p > 100) {
-      p = 100;
-    }
-    return p;
+    return Math.min(p, 100);
   }
 
   private _buildOpSkillList() {

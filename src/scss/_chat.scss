@@ -115,6 +115,7 @@
   }
   .initiative-draw {
     display: flex;
+    gap: 1em;
     align-items: center;
     margin: 0.5em;
     .result-text-card {
@@ -122,15 +123,77 @@
       font-weight: 700;
       line-height: 1;
       order: 2;
-      margin-left: 1em;
+      margin-bottom: 0;
     }
-    img.result-image {
-      flex-basis: auto;
-      height: 100px;
-      width: auto;
+    .action-card-filter-container {
+      z-index: 1;
       border: none;
-      box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
-      order: 1;
+      filter: drop-shadow(2px 3px 2px rgb(0 0 0 / 50%));
+      transition: transform 0.2s ease-in, filter 0.2s ease-in, z-index 0.2s step-end;
+      transform-origin: center left;
+
+      .result-image {
+        height: 75px;
+        aspect-ratio: 1/1.4;
+        z-index: 2;
+        border: none;
+        transition: z-index 0.2s step-end;
+      }
+
+      &:hover {
+        z-index: 3;
+        filter: drop-shadow(4px 6px 4px rgb(0 0 0 / 50%));
+        transition: transform 0.2s ease-in, z-index 0.2s step-start;
+
+        .result-image {
+          z-index: 4;
+          transition: z-index 0.2s step-start;
+        }
+      }
+    }
+  }
+  &:nth-child(4n+1) .initiative-draw .action-card-filter-container {
+    transform: rotate(2deg);
+
+    &:hover {
+      transform: rotate(0deg) scale(4.75);
+    }
+  }
+  &:nth-child(4n+2) .initiative-draw .action-card-filter-container {
+    transform: rotate(-4deg);
+
+    &:hover {
+      transform: rotate(0deg) scale(4.75);
+    }
+  }
+  &:nth-child(4n+3) .initiative-draw .action-card-filter-container {
+    transform: rotate(4deg);
+
+    &:hover {
+      transform: rotate(0deg) scale(4.75);
+    }
+  }
+  &:nth-child(4n+4) .initiative-draw .action-card-filter-container {
+    transform: rotate(-2deg);
+
+    &:hover {
+      transform: rotate(0deg) scale(4.75);
+    }
+  }
+  &:first-child .initiative-draw .action-card-filter-container,
+  &:nth-of-type(2) .initiative-draw .action-card-filter-container  {
+    transform-origin: top left;
+
+    &:hover {
+      transform-origin: top left
+    }
+  }
+  &:last-child .initiative-draw .action-card-filter-container,
+  &:nth-last-of-type(2):not(:nth-of-type(2)) .initiative-draw .action-card-filter-container  {
+    transform-origin: bottom left;
+
+    &:hover {
+      transform-origin: bottom left;
     }
   }
 }

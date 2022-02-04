@@ -129,7 +129,7 @@ export default class SwadeCombatant extends Combatant {
     options: DocumentModificationOptions,
     user: SwadeUser,
   ) {
-    super._preUpdate(changed, options, user);
+    await super._preUpdate(changed, options, user);
 
     //return early if there's no flag updates
     if (!hasProperty(changed, 'flags.swade')) return;

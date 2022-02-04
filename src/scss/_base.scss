@@ -62,11 +62,21 @@
     text-align: center;
     figure {
       margin: 0;
+      .indicator {
+        visibility: hidden;
+        margin: 0 auto;
+      }
+      &.high-card {
+        .indicator{
+          visibility: visible
+        }
+      }
     }
     img {
       height: 100px;
       display: block;
       margin: $medium-spacing auto;
+      box-shadow: 2px 3px 3px -2px rgb(0 0 0 / 50%);
       transition: all 0.2s ease-out;
     }
     /* HIDE RADIO */
@@ -142,10 +152,11 @@
     text-overflow: ellipsis;
   }
   .effect-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: .75ch;
     line-height: 24px;
     flex: 0 0 60px;
-    text-align: center;
-
     a,
     button {
       cursor: pointer;

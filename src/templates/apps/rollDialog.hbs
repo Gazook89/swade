@@ -3,6 +3,37 @@
     <label>{{localize 'SWADE.Formula'}}</label>
     <input type='text' name='formula' value='{{formula}}' disabled />
   </div>
+  {{#if isTraitRoll}}
+    <fieldset>
+      <legend>{{localize 'SWADE.MAPenalty'}}</legend>
+      <div class='flexrow'>
+        <input
+          type='radio'
+          id='map-none'
+          name='map'
+          value='0'
+          data-dtype='Number'
+        />
+        <label for='map-none'>None</label>
+        <input
+          type='radio'
+          id='map-2'
+          name='map'
+          value='-2'
+          data-dtype='Number'
+        />
+        <label for='map-2'>-2</label>
+        <input
+          type='radio'
+          id='map-4'
+          name='map'
+          value='-4'
+          data-dtype='Number'
+        />
+        <label for='map-4'>-4</label>
+      </div>
+    </fieldset>
+  {{/if}}
   <fieldset>
     <legend>{{localize 'SWADE.Modifiers'}}</legend>
     <header class='modifier-entry header'>
@@ -24,21 +55,51 @@
         </li>
       {{/each}}
     </ul>
-    <footer class='modifier-entry footer'>
+    <div class='modifier-entry footer'>
       <input
         type='text'
         class='new-modifier-label'
-        placeholder='{{localize "SWADE.Mod"}}'
+        placeholder='{{localize "SWADE.Name"}}'
+        list='modifier-names'
       />
       <input
         type='text'
         class='new-modifier-value'
         placeholder='{{localize "SWADE.RollExample"}}'
+        list='modifier-values'
       />
-      <button type='button' class='add-modifier'>
+      <button
+        type='button'
+        class='add-modifier'
+        title='{{localize "SWADE.Mod.Custom.Add"}}'
+      >
         <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
       </button>
-    </footer>
+    </div>
+    <div class='modifier-presets'>
+      <select id='preset-selection'>
+        <option selected disabled>{{localize
+            'SWADE.Mod.Preset.Choose'
+          }}</option>
+        {{#each modGroups as |group|}}
+          <optgroup label='{{group.name}}'>
+            {{#each group.modifiers}}
+              <option
+                data-group='{{group.name}}'
+                data-index={{@index}}
+              >{{label}}</option>
+            {{/each}}
+          </optgroup>
+        {{/each}}
+      </select>
+      <button
+        type='button'
+        class='add-preset'
+        title='{{localize "SWADE.Mod.Preset.Add"}}'
+      >
+        <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
+      </button>
+    </div>
   </fieldset>
   <div class='form-group'>
     <label>{{localize 'SWADE.RollMode'}}</label>
@@ -67,3 +128,17 @@
     </button>
   </div>
 </form>
+<datalist id='modifier-names'>
+  <option value='{{localize "SWADE.Mod.Support"}}'></option>
+  <option value='{{localize "SWADE.Addi"}}'></option>
+  <option value='{{localize "SWADE.Encumbered"}}'></option>
+</datalist>
+<datalist id='modifier-values'>
+  <option value='+1d6x'></option>
+  <option value='+1'></option>
+  <option value='+2'></option>
+  <option value='+4'></option>
+  <option value='-1'></option>
+  <option value='-2'></option>
+  <option value='-4'></option>
+</datalist>

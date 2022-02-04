@@ -8,7 +8,8 @@ declare global {
       'swade.initiativeSound': boolean;
       'swade.autoInit': boolean;
       'swade.initMessage': boolean;
-      'swade.cardDeck': string;
+      'swade.actionDeck': string;
+      'swade.actionDeckDiscardPile': string;
       'swade.hideNPCWildcards': boolean;
       'swade.autoLinkWildcards': boolean;
       'swade.notifyBennies': boolean;
@@ -37,6 +38,7 @@ declare global {
       'swade.3dBennyFrontBump': string;
       'swade.3dBennyBackBump': string;
       'swade.hardChoices': boolean;
+      'swade.applyEncumbrance': boolean;
       'swade.settingFields': {
         actor: Record<string, AdditionalStat>;
         item: Record<string, AdditionalStat>;
@@ -125,6 +127,19 @@ export function registerSettings() {
     config: true,
   });
 
+  game.settings.register('swade', 'weightUnit', {
+    name: game.i18n.localize('SWADE.WeightUnitLabel'),
+    hint: game.i18n.localize('SWADE.WeightUnitDesc'),
+    default: 'imperial',
+    scope: 'world',
+    type: String,
+    choices: {
+      imperial: 'SWADE.Imperial',
+      metric: 'SWADE.Metric',
+    },
+    config: true,
+  });
+
   game.settings.register('swade', 'useAttributeShorts', {
     name: game.i18n.localize('SWADE.UseAttributeShorts'),
     hint: game.i18n.localize('SWADE.UseAttributeShortsDesc'),
@@ -133,11 +148,34 @@ export function registerSettings() {
     type: Boolean,
     config: true,
   });
+
+  game.settings.register('swade', 'parryBaseSkill', {
+    name: game.i18n.localize('SWADE.ParryBase'),
+    hint: game.i18n.localize('SWADE.ParryBaseDesc'),
+    default: 'Fighting',
+    scope: 'world',
+    type: String,
+    config: true,
+  });
+
+  game.settings.register('swade', 'actionDeck', {
+    name: game.i18n.localize('SWADE.InitCardDeck'),
+    scope: 'world',
+    type: String,
+    config: false,
+  });
+
+  game.settings.register('swade', 'actionDeckDiscardPile', {
+    name: game.i18n.localize('SWADE.InitDiscardPile'),
+    scope: 'world',
+    type: String,
+    config: false,
+  });
 }
 
 export function registerSettingRules() {
   game.settings.register('swade', 'coreSkills', {
-    name: game.i18n.localize('SWADE.CoreSkills'),
+    name: game.i18n.localize('SWADE.CoreSkillsList'),
     hint: game.i18n.localize('SWADE.CoreSkillsDesc'),
     default: 'Athletics, Common Knowledge, Notice, Persuasion, Stealth',
     scope: 'world',
@@ -183,28 +221,6 @@ export function registerSettingRules() {
     default: true,
     scope: 'world',
     type: Boolean,
-    config: false,
-  });
-
-  game.settings.register('swade', 'parryBaseSkill', {
-    name: game.i18n.localize('SWADE.ParryBase'),
-    hint: game.i18n.localize('SWADE.ParryBaseDesc'),
-    default: 'Fighting',
-    scope: 'world',
-    type: String,
-    config: false,
-  });
-
-  game.settings.register('swade', 'weightUnit', {
-    name: game.i18n.localize('SWADE.WeightUnitLabel'),
-    hint: game.i18n.localize('SWADE.WeightUnitDesc'),
-    default: 'imperial',
-    scope: 'world',
-    type: String,
-    choices: {
-      imperial: 'SWADE.Imperial',
-      metric: 'SWADE.Metric',
-    },
     config: false,
   });
 
@@ -269,6 +285,18 @@ export function registerSettingRules() {
     config: false,
   });
 
+  game.settings.register('swade', 'applyEncumbrance', {
+    name: game.i18n.localize('SWADE.ApplyEncumbrance'),
+    hint: game.i18n.format('SWADE.ApplyEncumbranceHint', {
+      vigor: game.i18n.localize('SWADE.AttrVig'),
+      fatigue: game.i18n.localize('SWADE.Fatigue'),
+    }),
+    default: false,
+    scope: 'world',
+    type: Boolean,
+    config: false,
+  });
+
   game.settings.register('swade', 'gmBennies', {
     name: game.i18n.localize('SWADE.GmBennies'),
     hint: game.i18n.localize('SWADE.GmBenniesDesc'),
@@ -315,6 +343,17 @@ export function registerSettingRules() {
     filePicker: 'image',
   });
 
+  game.settings.register('swade', 'hardChoices', {
+    name: game.i18n.localize('SWADE.HardChoices'),
+    hint: game.i18n.localize('SWADE.HardChoicesDesc'),
+    scope: 'world',
+    type: Boolean,
+    default: false,
+    config: false,
+  });
+}
+
+export function register3DBennySettings() {
   game.settings.register('swade', 'bennyImage3DFront', {
     name: game.i18n.localize('SWADE.Benny3DFront'),
     hint: game.i18n.localize('SWADE.Benny3DFrontDesc'),
@@ -328,16 +367,6 @@ export function registerSettingRules() {
   game.settings.register('swade', 'bennyImage3DBack', {
     name: game.i18n.localize('SWADE.Benny3DBack'),
     hint: game.i18n.localize('SWADE.Benny3DBackDesc'),
-    type: String,
-    default: 'systems/swade/assets/benny/benny-chip-front.png',
-    scope: 'world',
-    config: false,
-    filePicker: 'image',
-  });
-
-  game.settings.register('swade', 'bennyImage3DFront', {
-    name: game.i18n.localize('SWADE.Benny3DFront'),
-    hint: game.i18n.localize('SWADE.Benny3DFrontDesc'),
     type: String,
     default: 'systems/swade/assets/benny/benny-chip-front.png',
     scope: 'world',
@@ -363,14 +392,5 @@ export function registerSettingRules() {
     scope: 'world',
     config: false,
     filePicker: 'image',
-  });
-
-  game.settings.register('swade', 'hardChoices', {
-    name: game.i18n.localize('SWADE.HardChoices'),
-    hint: game.i18n.localize('SWADE.HardChoicesDesc'),
-    scope: 'world',
-    type: Boolean,
-    default: false,
-    config: false,
   });
 }

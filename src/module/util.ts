@@ -1,58 +1,9 @@
+import { DropData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocumentMixin';
+import { ConfiguredDocumentClass } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
+import { TraitRollModifier } from '../interfaces/additional';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
-
-export async function createActionCardTable(
-  rebuild?: boolean,
-  cardpack?: string,
-): Promise<void> {
-  let packName = game.settings.get('swade', 'cardDeck') as string;
-  if (cardpack) {
-    packName = cardpack;
-  }
-  const cardPack = game.packs?.get(packName, { strict: true });
-  let cardTable = game.tables?.getName(SWADE.init.cardTable);
-
-  //If the table doesn't exist, create it
-  if (!cardTable) {
-    await RollTable.create(
-      {
-        img: 'systems/swade/assets/ui/wildcard.svg',
-        name: SWADE.init.cardTable,
-        replacement: false,
-        displayRoll: false,
-      },
-      {
-        renderSheet: false,
-      },
-    );
-    cardTable = game.tables?.getName(SWADE.init.cardTable)!;
-  }
-
-  //If it's a rebuild call, delete all entries and then repopulate them
-  if (rebuild) {
-    const deletions = cardTable.results.map((i: TableResult) => i.id!);
-    await cardTable.deleteEmbeddedDocuments('TableResult', deletions);
-  }
-
-  //FIXME Revisit this later as this could probably be done more efficiently by using the index
-  const cards = (await cardPack.getDocuments()) as JournalEntry[];
-  const createData = cards.map((c, i) => {
-    return {
-      type: CONST.TABLE_RESULT_TYPES.COMPENDIUM,
-      text: c.name,
-      img: c.data.img,
-      collection: packName, // Name of the compendium
-      resultId: c.id, //Id of the entry inside the compendium
-      weight: 1,
-      range: [i + 1, i + 1],
-    };
-  });
-
-  await cardTable.createEmbeddedDocuments('TableResult', createData);
-  await cardTable.normalize();
-  ui.tables?.render(true);
-}
 
 /* -------------------------------------------- */
 /*  Hotbar Macros                               */
@@ -65,10 +16,14 @@ export async function createActionCardTable(
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-export async function createSwadeMacro(data: any, slot: number) {
-  if (data.type !== 'Item') return;
+export async function createSwadeMacro(
+  hotbar: Hotbar,
+  data: DropData<InstanceType<ConfiguredDocumentClass<typeof Macro>>>,
+  slot: number,
+) {
+  if (data['type'] !== 'Item') return;
   if (!('data' in data))
-    return ui.notifications?.warn(
+    return ui.notifications.warn(
       'You can only create macro buttons for owned Items',
     );
   const item = data.data;
@@ -92,20 +47,20 @@ export function rollItemMacro(itemName: string) {
   const speaker = ChatMessage.getSpeaker();
   let actor: SwadeActor | undefined = undefined;
   if (speaker.token) actor = game.actors?.tokens[speaker.token];
-  if (!actor) actor = game.actors?.get(speaker.actor!);
+  if (!actor && speaker.actor) actor = game.actors?.get(speaker.actor);
   if (!actor || !actor.isOwner) {
     return null;
   }
   const item = actor.items.getName(itemName);
   if (!item) {
-    ui.notifications?.warn(
+    ui.notifications.warn(
       `Your controlled Actor does not have an item named ${itemName}`,
     );
     return null;
   }
   //Roll the skill
   if (item.type === 'skill') {
-    return actor.rollSkill(item.id!);
+    return actor.rollSkill(item.id);
   } else {
     // Show the item
     return item.show();
@@ -120,7 +75,7 @@ export function rollItemMacro(itemName: string) {
 export function notificationExists(string: string, localize = false): boolean {
   let stringToFind = string;
   if (localize) stringToFind = game.i18n.localize(string);
-  const active = ui.notifications?.active || [];
+  const active = ui.notifications.active || [];
   return active.some((n) => n.text() === stringToFind);
 }
 
@@ -169,3 +124,57 @@ export function getTrait(
   }
   return trait;
 }
+
+export async function resetActionDeck() {
+  const deck = game.cards?.get(game.settings.get('swade', 'actionDeck'));
+  await deck?.reset({ chatNotification: false });
+  await deck?.shuffle({ chatNotification: false });
+}
+
+/**
+ * A generic reducer function that can be used to reduce an array of trait roll modifiers into a string that can be parsed by the Foundry VTT Roll class
+ * @param acc The accumulator string
+ * @param cur The current trait roll modifier
+ * @returns A string which contains all trait roll modifiers, reduced into a parsable string
+ */
+export function modifierReducer(acc: string, cur: TraitRollModifier): string {
+  return (acc += `${cur.value}[${cur.label}]`);
+}
+
+export function firstOwner(doc) {
+  /* null docs could mean an empty lookup, null docs are not owned by anyone */
+  if (!doc) return null;
+  const permissions: Permissions = doc.data.permission ?? {};
+  const playerOwners = Object.entries(permissions)
+    .filter(([id, level]) => {
+      const user = game.users?.get(id);
+      return (
+        user?.active &&
+        !user.isGM &&
+        level === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
+      );
+    })
+    .map(([id, _level]) => id);
+
+  if (playerOwners.length > 0) {
+    return game.users?.get(playerOwners[0]);
+  }
+
+  /* if no online player owns this actor, fall back to first GM */
+  return firstGM();
+}
+
+/* Players first, then GM */
+export function isFirstOwner(doc) {
+  return game.userId === firstOwner(doc)?.id;
+}
+
+export function firstGM() {
+  return game.users?.find((u) => u.isGM && u.active);
+}
+
+export function isFirstGM() {
+  return game.userId !== firstGM()?.id;
+}
+
+type Permissions = Record<string, number>;

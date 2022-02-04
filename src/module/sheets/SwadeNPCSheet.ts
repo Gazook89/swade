@@ -1,3 +1,5 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import { SWADE } from '../config';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
 /**
@@ -170,6 +172,60 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         content.slideDown();
       }
     });
+
+    // Active Effects
+    html
+      .find('.status-container input[type="checkbox"]')
+      .on('change', async (event) => {
+        // Get the key from the target name
+        const id = event.target.dataset.id as string;
+        const key = event.target.dataset.key as string;
+
+        const statusConfigData = SWADE.statusEffects.find(
+          (effect) => effect.id === id,
+        );
+        // Get the current status value
+        const statusValue = this.actor.data.data.status[key];
+        // Get the label from the inner text of the parent label element
+        const statusLabel = event.target.parentElement?.innerText as string;
+        // If the status is checked and the status value is false...
+        if (statusConfigData !== undefined && !statusValue) {
+          // Set render AE sheet to false
+          const renderSheet = false;
+
+          // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
+          const tokens = game.canvas.tokens?.getDocuments();
+          const token = tokens?.find((t) => t.actor?.id === this.actor.id);
+          // So, if there is...
+          if (token) {
+            // Toggle the AE from the token which toggles it on the actor sheet, too
+            //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+            await token.toggleActiveEffect(statusConfigData, { active: true });
+            // Otherwise
+          } else {
+            // Create the AE, passing the label, data, and renderSheet boolean
+            await this._createActiveEffect(
+              statusLabel,
+              statusConfigData as any,
+              renderSheet,
+            );
+          }
+
+          // Otherwise...
+        } else {
+          await this.actor.update({
+            'data.status': {
+              [key]: false,
+            },
+          });
+          // Find the existing effect based on label and flag and delete it.
+          for (const effect of this.actor.data.effects) {
+            if (effect.getFlag('core', 'statusId') === id) {
+              await effect.delete();
+            }
+          }
+        }
+      });
   }
 
   getData() {
@@ -183,13 +239,46 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
     const shields = data.itemsByType['shield'];
     data.parry = 0;
-    if (shields) {
-      shields.forEach((shield: any) => {
-        if (shield.data.equipped) {
-          data.parry += shield.data.parry;
-        }
-      });
-    }
+    shields.forEach((shield) => {
+      if (shield.data.equipped) {
+        data.parry += shield.data.parry;
+      }
+    });
     return data;
+  }
+
+  protected async _createActiveEffect(
+    name?: string,
+    data: ActiveEffectDataConstructorData = {
+      label: '',
+      icon: '',
+      duration: {},
+    },
+    renderSheet = true,
+  ) {
+    let possibleName = game.i18n.format('DOCUMENT.New', {
+      type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+    });
+
+    //Modify the data based on parameters passed in
+    if (name) possibleName = name;
+    data.label = possibleName;
+
+    // Set default icon if none provided.
+    if (!data.icon) {
+      data.icon = '/icons/svg/mystery-man-black.svg';
+    }
+
+    // Set combat ID if none provided.
+    if (!data.duration) {
+      data.duration = {
+        combat: game.combat?.id,
+      };
+    }
+
+    await CONFIG.ActiveEffect.documentClass.create(data, {
+      renderSheet: renderSheet,
+      parent: this.actor,
+    });
   }
 }

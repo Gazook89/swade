@@ -11,43 +11,31 @@ import DiceSettings from './apps/DiceSettings';
 import SwadeCombatGroupColor from './apps/SwadeCombatGroupColor';
 import Bennies from './bennies';
 import CharacterSummarizer from './CharacterSummarizer';
+import * as chaseUtils from './chaseUtils';
 import * as chat from './chat';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
+import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 import * as migrations from './migration';
-import { SwadeSetup } from './setup/setupHandler';
+import * as setup from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
-import { createActionCardTable } from './util';
 
 export default class SwadeHooks {
+  static onSetup() {
+    //localize the protoype modifers
+    for (const group of CONFIG.SWADE.prototypeRollGroups) {
+      group.name = game.i18n.localize(group.name);
+      for (const modifier of group.modifiers) {
+        modifier.label = game.i18n.localize(modifier.label);
+      }
+    }
+  }
   public static async onReady() {
-    const packChoices = {};
-    game
-      .packs!.filter((p) => p.documentClass.documentName === 'JournalEntry')
-      .forEach((p) => {
-        const choice = `${p.metadata.label} (${p.metadata.package})`;
-        packChoices[p.collection] = choice;
-      });
-
-    game.settings.register('swade', 'cardDeck', {
-      name: game.i18n.localize('SWADE.InitCardDeck'), //Card Deck to use for Initiative',
-      scope: 'world',
-      type: String,
-      config: true,
-      default: SWADE.init.defaultCardCompendium,
-      choices: packChoices,
-      onChange: async (choice: string) => {
-        console.log(
-          `Repopulating action cards Table with cards from deck ${choice}`,
-        );
-        await createActionCardTable(true, choice);
-        ui.notifications?.info('Table re-population complete');
-      },
-    });
-    await SwadeSetup.setup();
+    //set up the world if needed
+    await setup.setupWorld();
 
     SWADE.diceConfig.flags = {
       dsnShowBennyAnimation: {
@@ -98,8 +86,9 @@ export default class SwadeHooks {
       currentVersion !== '0.0.0' &&
       foundry.utils.isNewerVersion(currentVersion, compatibleMigrationVersion)
     ) {
-      ui.notifications?.error(game.i18n.localize('SWADE.SysMigrationWarning'), {
+      ui.notifications.error('SWADE.SysMigrationWarning', {
         permanent: true,
+        localize: true,
       });
     }
     migrations.migrateWorld();
@@ -111,22 +100,22 @@ export default class SwadeHooks {
     options: any,
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
-    const found = html.find('.entity-name');
+    const found = html.find('.document-name');
     const actors: Array<SwadeActor> = app.documents;
-    let wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
+    const wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
 
     //if the player is not a GM, then don't mark the NPC wildcards
     if (!game.settings.get('swade', 'hideNPCWildcards') || game.user!.isGM) {
       const npcWildcards = actors.filter(
         (a) => a.isWildcard && !a.hasPlayerOwner,
       );
-      wildcards = wildcards.concat(npcWildcards);
+      wildcards.push(...npcWildcards);
     }
 
     for (let i = 0; i < found.length; i++) {
       const element = found[i];
-      const enitityId = element.parentElement!.dataset.documentId;
-      const wildcard = wildcards.find((a) => a.id === enitityId);
+      const actorID = element.parentElement!.dataset.documentId;
+      const wildcard = wildcards.find((a) => a.id === actorID);
 
       if (wildcard) {
         element.innerHTML = `
@@ -166,8 +155,8 @@ export default class SwadeHooks {
     //Mark Wildcards in the compendium
     if (app.documentName === 'Actor') {
       const content = (await app.getDocuments()) as Array<SwadeActor>;
-      const wildcards = content.filter((entity) => entity.isWildcard);
-      const ids: string[] = wildcards.map((e) => e.id!);
+      const wildcards = content.filter((actor) => actor.isWildcard);
+      const ids: string[] = wildcards.map((actor) => actor.id!);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {
@@ -183,33 +172,113 @@ export default class SwadeHooks {
     }
   }
 
-  public static onGetCompendiumDirectoryEntryContext(
+  public static onGetCardsDirectoryEntryContext(
     html: JQuery,
     options: ContextMenu.Item[],
   ) {
-    const obj: ContextMenu.Item = {
+    const actionCardEditor: ContextMenu.Item = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
-        const pack = game.packs.get(li.data('pack'), {
-          strict: true,
-        });
-        return pack.documentName === 'JournalEntry' && game.user!.isGM;
+        //return early if there's no canvas or scene to lay out cards
+        if (!canvas || !canvas.ready || !canvas.scene) return false;
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        return (
+          deck.type === 'deck' &&
+          deck.cards.contents.every((c) => c.data.type === 'poker') &&
+          deck.isOwner
+        );
+      },
+      callback: async (li) => {
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        new ActionCardEditor(deck).render(true);
+      },
+    };
+    const chaseLayout: ContextMenu.Item = {
+      name: 'SWADE.LayOutChaseWithDeck',
+      icon: '<i class="fas fa-shipping-fast"></i>',
+      condition: (li) => {
+        const cards = game.cards!.get(li.data('documentId'), { strict: true });
+        return cards.type === 'deck';
+      },
+      callback: (li) => {
+        const deck = game.cards!.get(li.data('documentId'), { strict: true });
+        chaseUtils.layoutChase(deck);
+      },
+    };
+    options.push(actionCardEditor, chaseLayout);
+  }
+
+  public static onGetCompendiumDirectoryEntryContext(
+    html: JQuery<HTMLElement>,
+    options: ContextMenu.Item[],
+  ) {
+    options.push({
+      name: 'SWADE.ConvertToDeck',
+      icon: '<i class="fas fa-file-export"></i>',
+      condition: (li) => {
+        const pack = game.packs.get(li.data('pack'), { strict: true });
+        return pack.metadata['type'] === 'JournalEntry';
       },
       callback: async (li) => {
         const pack = game.packs.get(li.data('pack'), {
           strict: true,
         }) as CompendiumCollection<JournalMetadata>;
-        if (pack.locked) {
-          return ui.notifications?.warn('SWADE.WarningPackLocked', {
+        const docs = await pack.getDocuments();
+        const allDocsHaveCardFlags = docs.every((c) =>
+          hasProperty(c, 'data.flags.swade'),
+        );
+        if (!allDocsHaveCardFlags) {
+          return ui.notifications.warn('SWADE.NotADeckCompendium', {
             localize: true,
           });
         }
-        const editor = await ActionCardEditor.fromPack(pack);
-        editor.render(true);
+
+        const suits = ['', 'clubs', 'diamonds', 'hearts', 'spades'];
+        //get the vital information from the journal entry
+        const cards = docs.map((entry) => {
+          return {
+            name: entry.name,
+            text: entry.data.content,
+            img: entry.data.img,
+            suit: entry.getFlag('swade', 'suitValue') as number,
+            value: entry.getFlag('swade', 'cardValue') as number,
+          };
+        });
+        //create the empty deck
+        const deck = await Cards.create({
+          name: pack.metadata.label,
+          type: 'deck',
+        });
+        //map the journal entry data to the raw card data
+        const rawCardData = cards.map((card) => {
+          return {
+            name: card.name,
+            type: 'poker',
+            suit: suits[card.suit],
+            value: card.value,
+            description: card.text,
+            faces: [
+              {
+                img: card.img,
+                name: card.name,
+              },
+            ],
+            face: 0,
+            origin: deck?.id,
+            sort: card.suit * 13 + card.value,
+            data: {
+              suit: card.suit,
+              isJoker: card.value > 90,
+            },
+          };
+        });
+        //create the cards in the deck
+        deck?.createEmbeddedDocuments('Card', rawCardData);
+        //open the sheet once we're done
+        deck?.sheet?.render(true);
       },
-    };
-    options.push(obj);
+    });
   }
 
   public static onRenderCombatTracker(
@@ -335,6 +404,7 @@ export default class SwadeHooks {
     });
   }
 
+  /** Add roll data to the message for formatting of dice pools*/
   public static async onRenderChatMessage(
     message: ChatMessage,
     html: JQuery<HTMLElement>,
@@ -664,8 +734,9 @@ export default class SwadeHooks {
     options.splice(0, 0, ...newOptions);
   }
 
+  /** Add benny management to the player list */
   public static async onRenderPlayerList(
-    list: any,
+    list: PlayerList,
     html: JQuery<HTMLElement>,
     options: any,
   ) {
@@ -674,7 +745,11 @@ export default class SwadeHooks {
     });
   }
 
-  public static onRenderChatLog(app, html: JQuery<HTMLElement>, data: any) {
+  public static onRenderChatLog(
+    app: ChatLog,
+    html: JQuery<HTMLElement>,
+    data: any,
+  ) {
     chat.chatListeners(html);
   }
 
@@ -728,11 +803,23 @@ export default class SwadeHooks {
   }
 
   public static onGetSceneControlButtons(sceneControlButtons: SceneControl[]) {
+    //get the measured template tools
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
-    const newButtons = CONFIG.SWADE.measuredTemplatePresets.map(
+    //add buttons
+    const newTemplateButtons = CONFIG.SWADE.measuredTemplatePresets.map(
       (t) => t.button,
     );
-    measure.tools.splice(measure.tools.length - 1, 0, ...newButtons);
+    measure.tools.splice(measure.tools.length - 1, 0, ...newTemplateButtons);
+
+    //get the tile tools
+    const tile = sceneControlButtons.find((a) => a.name === 'tiles')!;
+    //added the button to clear chase cards
+    tile.tools.push({
+      name: 'clear-chase-cards',
+      title: 'SWADE.ClearChaseCards',
+      icon: 'fas fa-shipping-fast',
+      onClick: () => chaseUtils.removeChaseTiles(canvas.scene!),
+    });
   }
 
   public static async onDropActorSheetData(
@@ -842,55 +929,49 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const cardPack = game.packs!.get(game.settings.get('swade', 'cardDeck'), {
+    const deck = game.cards!.get(game.settings.get('swade', 'actionDeck'), {
       strict: true,
-    }) as CompendiumCollection<JournalMetadata>;
+    });
 
-    const cards = (await cardPack.getDocuments()).sort((a, b) => {
-      const cardA = a.getFlag('swade', 'cardValue') as number;
-      const cardB = b.getFlag('swade', 'cardValue') as number;
+    const cards = Array.from(deck.cards.values()).sort((a, b) => {
+      const cardA = a.data.value!;
+      const cardB = b.data.value!;
       const card = cardA - cardB;
       if (card !== 0) return card;
-      const suitA = a.getFlag('swade', 'suitValue') as number;
-      const suitB = b.getFlag('swade', 'suitValue') as number;
+      const suitA = a.data.data['suit'];
+      const suitB = b.data.data['suit'];
       const suit = suitA - suitB;
       return suit;
     });
 
     //prep list of cards for selection
-    const cardTable = game.tables!.getName(SWADE.init.cardTable, {
-      strict: true,
-    });
 
-    const cardList: any[] = [];
+    const cardList = new Array<any>();
     for (const card of cards) {
-      const cardValue = card.getFlag('swade', 'cardValue') as number;
-      const suitValue = card.getFlag('swade', 'suitValue') as number;
+      const cardValue = card.data.value!;
+      const suitValue = card.data.data['suit'];
       const color =
         suitValue === 2 || suitValue === 3 ? 'color: red;' : 'color: black;';
       const isDealt =
-        options.document.getFlag('swade', 'cardValue') === cardValue &&
-        options.document.getFlag('swade', 'suitValue') === suitValue;
+        options.document.cardValue === cardValue &&
+        options.document.suitValue === suitValue;
 
-      const foundCard = cardTable.results.find(
-        (r) => r.data['text'] === card.name,
-      );
-      const isDrawn = foundCard?.data['drawn'];
-      const isAvailable = isDrawn ? 'text-decoration: line-through;' : '';
+      const isAvailable = card?.data.drawn
+        ? 'text-decoration: line-through;'
+        : '';
 
       cardList.push({
-        cardValue,
-        suitValue,
+        id: card.id,
         isDealt,
         color,
         isAvailable,
         name: card.name,
-        cardString: card.data.content,
-        isJoker: card.getFlag('swade', 'isJoker'),
+        cardString: card.data.description,
+        isJoker: card.data.data['isJoker'],
       });
     }
-    const numberOfJokers = cards.filter((c) =>
-      c.getFlag('swade', 'isJoker'),
+    const numberOfJokers = cards.filter(
+      (card) => card.data.data['isJoker'],
     ).length;
 
     //render and inject new HTML
@@ -900,24 +981,101 @@ export default class SwadeHooks {
     );
 
     //Attach click event to button which will call the combatant update as we can't easily modify the submit function of the FormApplication
-    html.find('footer button').on('click', (ev) => {
+    html.find('footer button').on('click', async (ev) => {
       const selectedCard = html.find('input[name=ActionCard]:checked');
       if (selectedCard.length === 0) {
         return;
       }
-      const cardValue = selectedCard.data().cardValue as number;
-      const suitValue = selectedCard.data().suitValue as number;
-      const hasJoker = selectedCard.data().isJoker as boolean;
-      const cardString = selectedCard.val() as string;
 
-      game.combat?.combatants
+      const cardId = selectedCard.data().cardId as string;
+      const card = deck.cards.get(cardId, { strict: true });
+      const cardValue = card.data.value!;
+      const suitValue = card.data.data['suit'];
+      const hasJoker = card.data.data['isJoker'];
+      const cardString = card.data.description;
+
+      //TODO figure out if the card should be passed to the Discard Pile after being chosen this way
+      await game.combat?.combatants
         .get(options.document.id, { strict: true })
         .update({
           initiative: suitValue + cardValue,
-          flags: { swade: { cardValue, suitValue, hasJoker, cardString } },
+          'flags.swade': { cardValue, suitValue, hasJoker, cardString },
         });
     });
-    return false;
+  }
+
+  public static onRenderActiveEffectConfig(
+    app: ActiveEffectConfig,
+    html: JQuery<HTMLElement>,
+    data,
+  ) {
+    const expiration = app.document.getFlag('swade', 'expiration');
+    const loseTurnOnHold = app.document.getFlag('swade', 'loseTurnOnHold');
+    const createOption = (
+      exp: StatusEffectExpiration | undefined,
+      label: string,
+    ) => {
+      return `<option value="${exp}" ${
+        exp === expiration ? 'selected' : ''
+      }>${label}</option>`;
+    };
+    const expirationOpt = [
+      createOption(undefined, game.i18n.localize('SWADE.Expiration.None')),
+      createOption(
+        StatusEffectExpiration.StartOfTurnAuto,
+        game.i18n.localize('SWADE.Expiration.BeginAuto'),
+      ),
+      createOption(
+        StatusEffectExpiration.StartOfTurnPrompt,
+        game.i18n.localize('SWADE.Expiration.BeginPrompt'),
+      ),
+      createOption(
+        StatusEffectExpiration.EndOfTurnAuto,
+        game.i18n.localize('SWADE.Expiration.EndAuto'),
+      ),
+      createOption(
+        StatusEffectExpiration.EndOfTurnPrompt,
+        game.i18n.localize('SWADE.Expiration.EndPrompt'),
+      ),
+    ];
+    const tab = `
+    <a class="item" data-tab="expiration">
+      <i class="fas fa-sign-out-alt"></i> ${game.i18n.localize(
+        'SWADE.Expiration.Expiration',
+      )}
+    </a>`;
+    const section = `
+    <section class="tab" data-tab="expiration">
+    <div class="form-group">
+      <label>${game.i18n.localize('SWADE.Expiration.Behavior')}</label>
+      <div class="form-fields">
+        <select name="flags.swade.expiration" data-dtype="Number">
+          ${expirationOpt.join('\n')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>${game.i18n.localize('SWADE.Expiration.LooseTurnOnHold')}</label>
+      <div class="form-fields">
+        <input type="checkbox" name="flags.swade.loseTurnOnHold"
+        data-dtype="Boolean" ${loseTurnOnHold ? 'checked' : ''}>
+      </div>
+    </div>
+  </section>`;
+    $(tab).insertAfter('nav.sheet-tabs a[data-tab="duration"]');
+    $(section).insertAfter('section[data-tab="duration"]');
+  }
+
+  /** This hook only really exists to stop Races from being added to the actor as an item */
+  public static onPreCreateItem(
+    item: SwadeItem,
+    options: object,
+    userId: string,
+  ) {
+    if (item.parent && item.data.type === 'ability') {
+      const subType = item.data.data.subtype;
+      if (subType === 'race' || subType === 'archetype') return false; //return early if we're doing race stuff
+    }
   }
 
   public static onDiceSoNiceInit(dice3d: Dice3D) {

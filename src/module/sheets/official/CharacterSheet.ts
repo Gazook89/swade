@@ -1,9 +1,11 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import {
   AdditionalStat,
   ItemAction,
   TraitRollModifier,
 } from '../../../interfaces/additional';
 import { SWADE } from '../../config';
+import { Attribute } from '../../documents/actor/SwadeActor';
 import SwadeItem from '../../documents/item/SwadeItem';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
@@ -80,6 +82,58 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
+      html
+        .find('.status input[type="checkbox"]')
+        .on('change', async (event) => {
+          // Get the key from the target name
+          const id = event.target.dataset.id as string;
+          const key = event.target.dataset.key as string;
+          const statusConfigData = SWADE.statusEffects.find(
+            (effect) => effect.id === id,
+          );
+          // Get the current status value
+          const statusValue = this.actor.data.data.status[key];
+          // Get the label from the inner text of the parent label element
+          const statusLabel = event.target.parentElement?.innerText as string;
+          // If the status is checked and the status value is false...
+          if (!statusValue) {
+            // Set render AE sheet to false
+            const renderSheet = false;
+            // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
+            const tokens = game.canvas.tokens?.getDocuments();
+            const token = tokens?.find((t) => t.actor?.id === this.object.id);
+            // So, if there is...
+            if (token) {
+              // Toggle the AE from the token which toggles it on the actor sheet, too
+              //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+              await token.toggleActiveEffect(statusConfigData, {
+                active: true,
+              });
+              // Otherwise
+            } else {
+              // Create the AE, passing the label, data, and renderSheet boolean
+              await this._createActiveEffect(
+                statusLabel,
+                statusConfigData as any,
+                renderSheet,
+              );
+            }
+
+            // Otherwise...
+          } else {
+            await this.actor.update({
+              'data.status': {
+                [key]: false,
+              },
+            });
+            // Find the existing effect based on label and flag and delete it.
+            for (const effect of this.actor.data.effects) {
+              if (effect.getFlag('core', 'statusId') === id) {
+                await effect.delete();
+              }
+            }
+          }
+        });
     }
 
     //Display Advances on About tab
@@ -128,7 +182,7 @@ export default class CharacterSheet extends ActorSheet {
     //Roll Attribute
     html.find('.attribute-label').on('click', (ev) => {
       const attribute = ev.currentTarget.parentElement!.dataset
-        .attribute! as keyof typeof SWADE.attributes;
+        .attribute! as Attribute;
       this.actor.rollAttribute(attribute);
     });
 
@@ -159,18 +213,29 @@ export default class CharacterSheet extends ActorSheet {
       )}]`;
 
       const mods: TraitRollModifier[] = [
-        { label: game.i18n.localize('SWADE.Pace'), value: pace.signedString() },
+        { label: game.i18n.localize('SWADE.Pace'), value: pace },
       ];
 
       if (runningMod) {
         mods.push({
-          label: 'Modifier',
-          value: runningMod.signedString(),
+          label: game.i18n.localize('SWADE.Modifier'),
+          value: runningMod,
         });
       }
+
+      if (this.actor.isEncumbered) {
+        mods.push({
+          label: game.i18n.localize('SWADE.Encumbered'),
+          value: -2,
+        });
+      }
+
       if (ev.shiftKey) {
         const rollFormula =
-          runningDie + runningMod.signedString() + pace.signedString();
+          runningDie +
+          mods.reduce((acc: string, cur: TraitRollModifier) => {
+            return acc + cur.value + `[${cur.label}]`;
+          }, '');
         const runningRoll = new Roll(rollFormula);
         await runningRoll.evaluate({ async: true });
         await runningRoll.toMessage({
@@ -623,16 +688,12 @@ export default class CharacterSheet extends ActorSheet {
       noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
       wealthType: game.settings.get('swade', 'wealthType'),
       currencyName: game.settings.get('swade', 'currencyName'),
+      weightUnit:
+        game.settings.get('swade', 'weightUnit') === 'imperial' ? 'lbs' : 'kg',
     };
 
     // Progress attribute abbreviation toggle
     data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
-
-    //weight unit
-    data.weightUnit = 'lbs';
-    if (game.settings.get('swade', 'weightUnit') === 'metric') {
-      data.weightUnit = 'kg';
-    }
 
     return data;
   }
@@ -700,24 +761,24 @@ export default class CharacterSheet extends ActorSheet {
     const templateData = {
         types: choices,
         hasTypes: true,
-        name: game.i18n
-          .localize('ENTITY.New')
-          .replace('{entity}', game.i18n.localize('ENTITY.Item')),
+        name: game.i18n.format('DOCUMENT.New', {
+          type: game.i18n.localize('DOCUMENT.Item'),
+        }),
       },
       dlg = await renderTemplate(
-        'templates/sidebar/entity-create.html',
+        'templates/sidebar/document-create.html',
         templateData,
       );
     //Create Dialog window
     return new Promise((resolve) => {
       new Dialog({
-        title: game.i18n
-          .localize('ENTITY.Create')
-          .replace('{entity}', game.i18n.localize('ENTITY.Item')),
+        title: game.i18n.format('DOCUMENT.Create', {
+          type: game.i18n.localize('DOCUMENT.Item'),
+        }),
         content: dlg,
         buttons: {
           ok: {
-            label: game.i18n.localize('ENTITY.CreateNew'),
+            label: 'OK',
             icon: '<i class="fas fa-check"></i>',
             callback: (html: JQuery) => {
               resolve({
@@ -736,17 +797,37 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
-  protected async _createActiveEffect(name?: string) {
-    let possibleName = game.i18n
-      .localize('ENTITY.New')
-      .replace('{entity}', game.i18n.localize('Active Effect'));
+  protected async _createActiveEffect(
+    name?: string,
+    data: ActiveEffectDataConstructorData = {
+      label: '',
+      icon: '',
+      duration: {},
+    },
+    renderSheet = true,
+  ) {
+    let possibleName = game.i18n.format('DOCUMENT.New', {
+      type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+    });
+
+    //Modify the data based on parameters passed in
     if (name) possibleName = name;
-    await CONFIG.ActiveEffect.documentClass.create(
-      {
-        label: possibleName,
-        icon: '/icons/svg/mystery-man-black.svg',
-      },
-      { renderSheet: true, parent: this.actor },
-    );
+    data.label = possibleName;
+
+    // Set default icon if none provided.
+    if (!data.icon) {
+      data.icon = '/icons/svg/mystery-man-black.svg';
+    }
+
+    // Set combat ID if none provided.
+    if (!data.duration) {
+      data.duration = {
+        combat: game.combat?.id,
+      };
+    }
+    return await CONFIG.ActiveEffect.documentClass.create(data, {
+      renderSheet: renderSheet,
+      parent: this.actor,
+    });
   }
 }

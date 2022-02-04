@@ -13,7 +13,7 @@ export default class CharacterSummarizer {
     this.actor = actor;
 
     if (!CharacterSummarizer.isSupportedActorType(actor)) {
-      ui.notifications?.error(
+      ui.notifications.error(
         `Can't do character summariser against actor of type ${actor.type}`,
       );
       this.summary = '';
@@ -101,6 +101,7 @@ export default class CharacterSummarizer {
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
+      // eslint-disable-next-line deprecation/deprecation
       document.execCommand('copy');
       textArea.remove();
     }
@@ -229,7 +230,7 @@ export default class CharacterSummarizer {
           abilities.push(item.name);
           break;
         default:
-          ui.notifications?.error(
+          ui.notifications.error(
             `Item ${item.name} has unknown type ${item.type}`,
           );
       }
@@ -290,7 +291,7 @@ export default class CharacterSummarizer {
             }
             break;
           default:
-            ui.notifications?.error(
+            ui.notifications.error(
               `For ${additionalStatKey}, cannot process additionalStat of type ${stat.dtype}`,
             );
         }

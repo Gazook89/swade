@@ -75,11 +75,24 @@ export default class SwadeActor extends Actor {
 
   get armorPerLocation(): ArmorPerLocation {
     return {
-      head: this._getArmorForLocation(ArmorLocation.HEAD),
-      torso: this._getArmorForLocation(ArmorLocation.TORSO),
-      arms: this._getArmorForLocation(ArmorLocation.ARMS),
-      legs: this._getArmorForLocation(ArmorLocation.LEGS),
+      head: this._getArmorForLocation(ArmorLocation.Head),
+      torso: this._getArmorForLocation(ArmorLocation.Torso),
+      arms: this._getArmorForLocation(ArmorLocation.Arms),
+      legs: this._getArmorForLocation(ArmorLocation.Legs),
     };
+  }
+
+  /**
+   * Returns whether this character is currently encumbered, factoring in whether the rule is even enforced
+   */
+  get isEncumbered(): boolean {
+    const applyEncumbrance = game.settings.get('swade', 'applyEncumbrance');
+    if (!applyEncumbrance) return false;
+    if (this.data.type === 'vehicle') {
+      return false;
+    }
+    const encumbrance = this.data.data.details.encumbrance;
+    return encumbrance.value > encumbrance.max;
   }
 
   /** @override */
@@ -109,26 +122,32 @@ export default class SwadeActor extends Actor {
       attribute.die = this._boundTraitDie(attribute.die);
     }
 
-    //modify pace with wounds
-    if (game.settings.get('swade', 'enableWoundPace')) {
-      //bound maximum wound penalty to -3
-      const wounds = Math.min(this.data.data.wounds.value, 3);
-      const pace = this.data.data.stats.speed.value;
-      //make sure the pace doesn't go below 1
-      const adjustedPace = Math.max(pace - wounds, 1);
-      this.data.data.stats.speed.adjusted = adjustedPace;
-    } else {
-      this.data.data.stats.speed.adjusted = this.data.data.stats.speed.value;
-    }
-
-    //set scale
-    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
-
     //handle carry capacity
     this.data.data.details.encumbrance = {
       max: this.calcMaxCarryCapacity(),
       value: this.calcInventoryWeight(),
     };
+
+    let pace = this.data.data.stats.speed.value;
+
+    //subtract encumbrance, if necessary
+    if (this.isEncumbered) {
+      pace -= 2;
+    }
+
+    //modify pace with wounds
+    if (game.settings.get('swade', 'enableWoundPace')) {
+      //bound maximum wound penalty to -3
+      const wounds = Math.min(this.data.data.wounds.value, 3);
+      //subract wounds
+      pace -= wounds;
+    }
+
+    //make sure the pace doesn't go below 1
+    this.data.data.stats.speed.adjusted = Math.max(pace, 1);
+
+    //set scale
+    this.data.data.stats.scale = this.calcScale(this.data.data.stats.size);
 
     // Toughness calculation
     const shouldAutoCalcToughness = this.data.data.details.autoCalcToughness;
@@ -137,34 +156,33 @@ export default class SwadeActor extends Actor {
       const adjustedArmor = this.data.data.stats.toughness.armor;
 
       //add some sensible lower limits
-      let completeArmor = this.calcArmor() + adjustedArmor;
-      if (completeArmor < 0) completeArmor = 0;
-      let completeTough =
-        this.calcToughness(false) + adjustedTough + completeArmor;
-      if (completeTough < 1) completeTough = 1;
-      this.data.data.stats.toughness.value = completeTough;
-      this.data.data.stats.toughness.armor = completeArmor;
+      const finalArmor = Math.max(this.calcArmor() + adjustedArmor, 0);
+      const finalTough = Math.max(
+        this.calcToughness(false) + adjustedTough + finalArmor,
+        1,
+      );
+      this.data.data.stats.toughness.value = finalTough;
+      this.data.data.stats.toughness.armor = finalArmor;
     }
 
     const shouldAutoCalcParry = this.data.data.details.autoCalcParry;
     if (shouldAutoCalcParry) {
       const adjustedParry = this.data.data.stats.parry.value;
-      let completeParry = this.calcParry() + adjustedParry;
-      if (completeParry < 0) completeParry = 0;
+      const completeParry = Math.max(this.calcParry() + adjustedParry, 0);
       this.data.data.stats.parry.value = completeParry;
     }
   }
 
-  rollAttribute(abilityId: Attribute, options: IRollOptions = {}) {
+  rollAttribute(attribute: Attribute, options: IRollOptions = {}) {
     if (this.data.type === 'vehicle') return;
     if (options.rof && options.rof > 1) {
-      ui.notifications?.warn(
+      ui.notifications.warn(
         'Attribute Rolls with RoF greater than 1 are not currently supported',
       );
     }
-    const label: string = SWADE.attributes[abilityId].long;
+    const label: string = SWADE.attributes[attribute].long;
     const actorData = this.data;
-    const abl = actorData.data.attributes[abilityId];
+    const abl = actorData.data.attributes[attribute];
     const rolls = new Array<Roll>();
 
     const attrRoll = new Roll('');
@@ -182,19 +200,39 @@ export default class SwadeActor extends Actor {
     const basePool = PoolTerm.fromRolls(rolls);
     basePool.modifiers.push('kh');
 
-    const rollMods = this._buildTraitRollModifiers(
+    const modifiers = this._buildTraitRollModifiers(
       abl,
       options,
       game.i18n.localize(label),
     );
 
+    //add encumbrance penalty if necessary
+    if (attribute === 'agility' && this.isEncumbered) {
+      modifiers.push({
+        label: game.i18n.localize('SWADE.Encumbered'),
+        value: -2,
+      });
+    }
+
+    const roll = Roll.fromTerms([basePool]);
+
+    /**
+     * A hook event that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function rollAttribute
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that rolls the attribute
+     * @param {String} attribute                The name of the attribute, in lower case
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollAttribute', this, attribute, roll, modifiers, options);
+
     if (options.suppressChat) {
       return Roll.fromTerms([
-        basePool,
+        ...roll.terms,
         ...Roll.parse(
-          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -202,8 +240,8 @@ export default class SwadeActor extends Actor {
 
     // Roll and return
     return game.swade.RollDialog.asPromise({
-      roll: Roll.fromTerms([basePool]),
-      mods: rollMods,
+      roll: roll,
+      mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
         'SWADE.AttributeTest',
@@ -233,8 +271,8 @@ export default class SwadeActor extends Actor {
     }
 
     const skillRoll = this._handleComplexSkill(skill, options);
-    const basePool = skillRoll[0];
-    const rollMods = skillRoll[1];
+    const roll = skillRoll[0];
+    const modifiers = skillRoll[1];
 
     //Build Flavour
     let flavour = '';
@@ -242,13 +280,23 @@ export default class SwadeActor extends Actor {
       flavour = ` - ${options.flavour}`;
     }
 
+    /**
+     * A hook event that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function rollSkill
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that rolls the skill
+     * @param {Item} skill                      The Skill item that is being rolled
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollSkill', this, skill, roll, modifiers, options);
+
     if (options.suppressChat) {
       return Roll.fromTerms([
-        basePool,
+        ...roll.terms,
         ...Roll.parse(
-          rollMods.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -256,8 +304,8 @@ export default class SwadeActor extends Actor {
 
     // Roll and return
     return game.swade.RollDialog.asPromise({
-      roll: Roll.fromTerms([basePool]),
-      mods: rollMods,
+      roll: roll,
+      mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this }),
       flavor: `${skill.name} ${game.i18n.localize(
         'SWADE.SkillTest',
@@ -276,14 +324,23 @@ export default class SwadeActor extends Actor {
       data: {
         die: {
           sides: 4,
-          modifier: -2,
+          modifier: 0,
         },
         'wild-die': {
           sides: 6,
         },
       },
     });
-    return this.rollSkill('', options, tempSkill);
+    const modifier: TraitRollModifier = {
+      label: game.i18n.localize('SWADE.Unskilled'),
+      value: -2,
+    };
+    if (options.additionalMods) {
+      options.additionalMods.push(modifier);
+    } else {
+      options.additionalMods = [modifier];
+    }
+    return this.rollSkill(null, options, tempSkill);
   }
 
   async makeArcaneDeviceSkillRoll(options: IRollOptions = {}, arcaneSkillDie) {
@@ -310,9 +367,7 @@ export default class SwadeActor extends Actor {
         target: this,
         speaker: game.user,
       });
-      const chatData = {
-        content: message,
-      };
+      const chatData = { content: message };
       ChatMessage.create(chatData);
     }
     await this.update({ 'data.bennies.value': currentBennies - 1 });
@@ -480,11 +535,9 @@ export default class SwadeActor extends Actor {
     return retVal;
   }
 
-  /**
-   * Calculates the correct armor value based on SWADE v5.5 and returns that value
-   */
+  /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
   calcArmor(): number {
-    return this._getArmorForLocation(ArmorLocation.TORSO);
+    return this._getArmorForLocation(ArmorLocation.Torso);
   }
 
   /**
@@ -559,10 +612,10 @@ export default class SwadeActor extends Actor {
   }
 
   calcParry(): number {
-    if (this.data.type === 'vehicle') 0;
+    if (this.data.type === 'vehicle') return 0;
     let parryTotal = 0;
     const parryBase = game.settings.get('swade', 'parryBaseSkill');
-    const parryBaseSkill = this.itemTypes.skill.find(
+    const parryBaseSkill = this.itemTypes['skill'].find(
       (i) => i.name === parryBase,
     );
 
@@ -643,7 +696,7 @@ export default class SwadeActor extends Actor {
       try {
         driver = (await fromUuid(driverId)) as SwadeActor;
       } catch (error) {
-        ui.notifications?.error('The Driver could not be found!');
+        ui.notifications.error('The Driver could not be found!');
       }
     }
     return driver;
@@ -652,11 +705,14 @@ export default class SwadeActor extends Actor {
   protected _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
-  ): [PoolTerm, TraitRollModifier[]] {
-    if (!options.rof) options.rof = 1;
+  ): [Roll, TraitRollModifier[]] {
+    if (this.data.type === 'vehicle') {
+      throw new Error('Only Extras and Wildcards can roll skills!');
+    }
     if (skill.data.type !== 'skill') {
       throw new Error('Detected-non skill in skill roll construction');
     }
+    if (!options.rof) options.rof = 1;
     const skillData = skill.data.data;
 
     const rolls = new Array<Roll>();
@@ -680,21 +736,21 @@ export default class SwadeActor extends Actor {
     const basePool = PoolTerm.fromRolls(rolls);
     basePool.modifiers.push(kh);
 
-    const finalTerms = new Array<RollTerm>();
-    finalTerms.push(basePool);
-
     const rollMods = this._buildTraitRollModifiers(
       skillData,
       options,
       skill.name,
     );
-    rollMods.forEach((m) =>
-      finalTerms.push(
-        ...Roll.parse(`${m.value}[${m.label}]`, this.getRollData()),
-      ),
-    );
 
-    return [basePool, rollMods];
+    //add encumbrance penalty if necessary
+    if (skill.data.data.attribute === 'agility' && this.isEncumbered) {
+      rollMods.push({
+        label: game.i18n.localize('SWADE.Encumbered'),
+        value: -2,
+      });
+    }
+
+    return [Roll.fromTerms([basePool]), rollMods];
   }
 
   /**
@@ -762,16 +818,18 @@ export default class SwadeActor extends Actor {
   private _buildTraitRollModifiers(
     data: any,
     options: IRollOptions,
-    name?: string | null,
+    name: string | null | undefined,
   ): TraitRollModifier[] {
     const mods = new Array<TraitRollModifier>();
 
     //Trait modifier
-    const itemMod = parseInt(data.die.modifier);
-    if (!isNaN(itemMod) && itemMod !== 0) {
+    const modifier = parseInt(data.die.modifier);
+    if (!isNaN(modifier) && modifier !== 0) {
       mods.push({
-        label: name ?? game.i18n.localize('SWADE.TraitMod'),
-        value: itemMod,
+        label: name
+          ? `${name} ${game.i18n.localize('SWADE.Modifier')}`
+          : game.i18n.localize('SWADE.TraitMod'),
+        value: modifier,
       });
     }
 
@@ -982,7 +1040,7 @@ export default class SwadeActor extends Actor {
 
       //Add the Untrained skill
       skills.push({
-        name: 'Untrained',
+        name: game.i18n.localize('SWADE.Unskilled'),
         type: 'skill',
         img: 'systems/swade/assets/icons/skill.svg',
         //@ts-expect-error We're just adding some base data for a skill here.

@@ -2,6 +2,7 @@ import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/fo
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
+import * as util from '../../util';
 
 declare global {
   interface DocumentClassConfig {
@@ -25,11 +26,36 @@ declare global {
 export default class SwadeItem extends Item {
   overrides: DeepPartial<Record<string, string | number | boolean>> = {};
 
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  static RANGE_REGEX = /[0-9]+\/*/g;
+
   get isMeleeWeapon(): boolean {
     if (this.type !== 'weapon') return false;
     const shots = getProperty(this.data, 'data.shots');
     const currentShots = getProperty(this.data, 'data.currentShots');
     return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
+  }
+
+  get range() {
+    //return early if the type doesn't match
+    if (this.data.type !== 'weapon' && this.data.type !== 'power') return;
+    //match the range string via Regex
+    const match = this.data.data.range.match(SwadeItem.RANGE_REGEX);
+    //return early if nothing is found
+    if (!match) return;
+    //split the string and convert the values to numbers
+    const ranges = match.join('').split('/');
+    //make sure the array is 3 values long
+    const increments = Array.from(
+      { ...ranges, length: 4 },
+      (v) => Number(v) || 0,
+    );
+    return {
+      short: increments[0],
+      medium: increments[1],
+      long: increments[2],
+      extreme: increments[3] || increments[2] * 4,
+    };
   }
 
   prepareBaseData() {
@@ -38,7 +64,7 @@ export default class SwadeItem extends Item {
   }
 
   rollDamage(options: IRollOptions = {}) {
-    const mods = new Array<TraitRollModifier>();
+    const modifiers = new Array<TraitRollModifier>();
     let itemData;
     if (['weapon', 'power', 'shield'].includes(this.type)) {
       itemData = this.data.data;
@@ -63,21 +89,13 @@ export default class SwadeItem extends Item {
     //Additional Mods
     if (options.additionalMods) {
       options.additionalMods.forEach((v) => {
-        if (typeof v === 'string') {
+        if (typeof v === 'string' || typeof v === 'number') {
           console.warn(
-            'The use of strings will be soon depreceated, please switch over to the TraitRollModifer interface',
+            'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
           );
-          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
-        } else if (typeof v === 'number') {
-          console.warn(
-            'The use of numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
-          );
-          mods.push({
-            label: game.i18n.localize('SWADE.Addi'),
-            value: v.signedString(),
-          });
+          modifiers.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
         } else {
-          mods.push(v);
+          modifiers.push(v);
         }
       });
     }
@@ -101,7 +119,7 @@ export default class SwadeItem extends Item {
       game.settings.get('swade', 'enableConviction') &&
       actor.data.data.details.conviction.active
     ) {
-      mods.push({
+      modifiers.push({
         label: game.i18n.localize('SWADE.Conv'),
         value: '+1d6x',
       });
@@ -114,21 +132,31 @@ export default class SwadeItem extends Item {
 
     //Joker Modifier
     if (actor.hasJoker) {
-      mods.push({
+      modifiers.push({
         label: game.i18n.localize('SWADE.Joker'),
         value: '+2',
       });
     }
 
-    const newRoll = new Roll(baseRoll.join(''));
+    const roll = new Roll(baseRoll.join(''));
+
+    /**
+     * A hook event that is fired before damage is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * @function rollDamage
+     * @memberof hookEvents
+     * @param {Actor} actor                     The actor that owns the item which rolls the damage
+     * @param {Item} item                       The item that is used to create the damage value
+     * @param {Roll} roll                       The built base roll, without any modifiers
+     * @param {TraitRollModifier[]} modifiers   An array of modifiers which are to be added to the roll
+     * @param {IRollOptions} options            The options passed into the roll function
+     */
+    Hooks.call('swadeRollDamage', this.actor, this, roll, modifiers, options);
 
     if (options.suppressChat) {
       return Roll.fromTerms([
-        ...newRoll.terms,
+        ...roll.terms,
         ...Roll.parse(
-          mods.reduce((acc: string, cur: TraitRollModifier) => {
-            return (acc += `${cur.value}[${cur.label}]`);
-          }, ''),
+          modifiers.reduce(util.modifierReducer, ''),
           this.getRollData(),
         ),
       ]);
@@ -136,8 +164,8 @@ export default class SwadeItem extends Item {
 
     // Roll and return
     return game.swade.RollDialog.asPromise({
-      roll: newRoll,
-      mods: mods,
+      roll: roll,
+      mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this.actor! }),
       flavor: `${label} ${game.i18n.localize('SWADE.Dmg')}${ap}${flavour}`,
       title: `${label} ${game.i18n.localize('SWADE.Dmg')}`,

@@ -16,6 +16,10 @@ ITEM.TypeEdge: Talent
 ITEM.TypeHindrance: Handicap
 ITEM.TypeSkill: Fertigkeit
 ITEM.TypePower: Macht
+CARD.TypeAdventure: Abenteuerkarte
+CARD.TypePoker: Pokerkarte
+SWADE.ActionDeckPresetLight: Aktionskarten (Hell)
+SWADE.ActionDeckPresetDark: Aktionskarten (Dunkel)
 SWADE.Name: Name
 SWADE.Tough: Robustheit
 SWADE.Race: Volk
@@ -63,7 +67,7 @@ SWADE.ArcaneSkill: NEEDS TRANSLATION
 SWADE.ActivateArcaneDevice: NEEDS TRANSLATION
 SWADE.Die: Würfel
 SWADE.WildDie: Wildcard-Würfel
-SWADE.Mod: Modifikator
+SWADE.Modifier: Modifikator
 SWADE.BenniesSpend: Setze einen Benny ein
 SWADE.BenniesGive: Einen Benny geben
 SWADE.BenniesRefresh: Bennys auffrischen
@@ -92,13 +96,11 @@ SWADE.Armor: Rüstung
 SWADE.WeaponsAndArmor: Waffen & Rüstungen
 SWADE.Dmg: Schaden
 SWADE.DmgOver: Schaden überschreiben
-SWADE.Rng: Reichweite
 SWADE.Ap: Pzbr
 SWADE.APLong: Panzerbrechend
 SWADE.RoF: Feuerrate
 SWADE.Mag: Schuss
 SWADE.Parry: Parade
-SWADE.Cover: Deckung
 SWADE.Notes: Notizen
 SWADE.ActionsEffects: Aktionen & Effekte
 SWADE.Actions: Aktionen
@@ -199,7 +201,7 @@ SWADE.AutoLink: NSC Wildcards mit Token verbinden
 SWADE.AutoLinkDesc: >-
   NSC Wildcards beim Umschalten zwischen Statist und Wildcard mit Token
   verbinden
-SWADE.GmBennies: SL Bennys
+SWADE.GmBennies: Spielleiter Bennys
 SWADE.GmBenniesDesc: Anzahl Bennys die du als SL beim auffrischen selbiger erhälst
 SWADE.EnableBennyNotify: Nachrichten zu Bennys
 SWADE.EnableBennyNotifyDesc: Zeige Chatnachricht beim Nehmen, Einsetzen oder Auffrischen von Bennys
@@ -257,7 +259,6 @@ SWADE.AmmoManagementDesc: >-
 SWADE.AutoReload: Braucht keine Aktion zum nachladen
 SWADE.Berserk: Berserkerrausch
 SWADE.BleedingOut: Verblutend
-SWADE.CoverShield: Deckung - Schild
 SWADE.DSNNone: '- Kein -'
 SWADE.Defending: Verteidigend
 SWADE.DiceConf: Würfel Konfiguration
@@ -418,3 +419,38 @@ SWADE.Benny3DFrontBumpDesc: Bump Map der Vorderseite
 SWADE.Benny3DBackBumpDesc: Bump Map der Rückseite
 SWADE.Modifiers: Modifikatoren
 SWADE.Duplicates: Duplikate Gefunden
+SWADE.InitDiscardPile: Initiative-Ablagestapel
+SWADE.Wealth: Vermögen
+SWADE.BennyImageSheet: Benny
+SWADE.Characters: Charaktere
+SWADE.CoreSkillsList: Liste der Grundfertigkeiten
+SWADE.MAPenalty: Mehrfachaktionsabzug
+SWADE.Mod.Custom.Add: Eigenen Modifikator hinzufügen
+SWADE.Mod.Support: Unterstützung
+SWADE.Mod.Preset.Choose: Voreinstellung auswählen...
+SWADE.Mod.Preset.Add: Voreinstellung hinzufügen
+SWADE.Illumination._name: Beleuchtung
+SWADE.Illumination.Dim: Düster
+SWADE.Illumination.Dark: Dunkel
+SWADE.Illumination.Pitch: Finsternis
+SWADE.Cover._name: Deckung
+SWADE.Cover.Shield: Deckung - Schild
+SWADE.Cover.Light: Leichte Deckung
+SWADE.Cover.Medium: Mittlere Deckung
+SWADE.Cover.Heavy: Schwere Deckung
+SWADE.Cover.Total: Vollständige Deckung
+SWADE.Range._name: Reichweite
+SWADE.Range.Medium: Reichweite, Mittel
+SWADE.Range.Long: Reichweite, Weit
+SWADE.Range.Extreme: Reichweite, Extrem
+SWADE.ModOther: Andere Modifikatioren
+SWADE.Snapfire: Schnellschuss
+SWADE.UnstablePlatform: Unsicheren Grund
+SWADE.ApplyEncumbrance: Belastungsabzüge anwenden
+SWADE.ApplyEncumbraceHint: >-
+  Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand
+  gegen {fatigue} derzeit NICHT unterstüzt sind
+SWADE.NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
+SWADE.SetUpChase: Verfolgungsjagd erstellen
+SWADE.NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
+SWADE.ConvertToDeck: Zu Deck konvertieren
