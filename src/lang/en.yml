@@ -462,7 +462,7 @@ SWADE.UnstablePlatform: Unstable Platform
 SWADE.CannotAddRaceToRace: You cannot add a race/archetype to a race/archetype!
 SWADE.ApplyEncumbrance: Apply Encumbrance Penalties
 SWADE.ApplyEncumbranceHint: >-
-  Apply encumbrance panlties. Please keep in mind that this currently does NOT
+  Apply encumbrance penalties. Please keep in mind that this currently does NOT
   SUPPORT {vigor} tests to resist {fatigue}!
 SWADE.LayOutChaseWithDeck: Use Deck to lay out Chase
 SWADE.ClearChaseCards: Clear Chase cards from Scene
@@ -479,3 +479,5 @@ SWADE.Expiration.EndAuto: End of Next Turn, Automatic
 SWADE.Expiration.EndPrompt: End of Next Turn, Prompt
 SWADE.Expiration.None: None
 SWADE.Expiration.LooseTurnOnHold: Lose Turn on Hold
+SWADE.RemoveEffectTitle: Remove {label} ?
+SWADE.RemoveEffectBody: '<p style="text-align: center;">Remove <strong>{label}</strong> from <strong>{parent}</strong>?</p>'

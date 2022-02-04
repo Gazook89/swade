@@ -137,9 +137,14 @@ export default class SwadeActiveEffect extends ActiveEffect {
   protected _promptEffectDeletion() {
     if (isFirstOwner(this.parent)) {
       Dialog.confirm({
+        title: game.i18n.format('SWADE.RemoveEffectTitle', {
+          label: this.data.label,
+        }),
+        content: game.i18n.format('SWADE.RemoveEffectBody', {
+          label: this.data.label,
+          parent: this.parent?.name,
+        }),
         defaultYes: false,
-        title: `Remove ${this.data.label} ?`,
-        content: `<p>Remove ${this.data.label} from ${this.parent?.name}?</p>`,
         yes: () => {
           this.delete();
         },
