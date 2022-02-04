@@ -11,7 +11,7 @@ export default interface SwadeGame {
   CharacterSummarizer: typeof CharacterSummarizer;
   itemChatCardHelper: typeof ItemChatCardHelper;
   RollDialog: typeof RollDialog;
-  sockets: SwadeSocketHandler | null;
+  sockets: SwadeSocketHandler;
   rollItemMacro: typeof rollItemMacro;
   migrations: typeof migrations;
 }

@@ -114,7 +114,10 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  async _removeEffect() {
+  /**
+   * This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion
+   */
+  async removeEffect() {
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
       expiration === StatusEffectExpiration.StartOfTurnAuto;
@@ -129,12 +132,15 @@ export default class SwadeActiveEffect extends ActiveEffect {
     if (auto) {
       await this.delete();
     } else if (prompt) {
-      // TODO: trigger prompt based on effect
-      this._promptEffectDeletion();
+      this.promptEffectDeletion();
     }
   }
 
-  protected _promptEffectDeletion() {
+  /**
+   * //TODO: trigger prompt based on effect
+   * This function creates a dialog for status effect deletion
+   */
+  promptEffectDeletion() {
     if (isFirstOwner(this.parent)) {
       Dialog.confirm({
         title: game.i18n.format('SWADE.RemoveEffectTitle', {
@@ -149,6 +155,8 @@ export default class SwadeActiveEffect extends ActiveEffect {
           this.delete();
         },
       });
+    } else {
+      game.swade.sockets.removeStatusEffect(this.uuid);
     }
   }
 

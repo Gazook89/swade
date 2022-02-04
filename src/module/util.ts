@@ -144,14 +144,16 @@ export function modifierReducer(acc: string, cur: TraitRollModifier): string {
 export function firstOwner(doc) {
   /* null docs could mean an empty lookup, null docs are not owned by anyone */
   if (!doc) return null;
-
-  const playerOwners = Object.entries(doc.data.permission ?? {})
-    .filter(
-      ([id, level]) =>
-        !game.users?.get(id)?.isGM &&
-        game.users?.get(id)?.active &&
-        level === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER,
-    )
+  const permissions: Permissions = doc.data.permission ?? {};
+  const playerOwners = Object.entries(permissions)
+    .filter(([id, level]) => {
+      const user = game.users?.get(id);
+      return (
+        user?.active &&
+        !user.isGM &&
+        level === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER
+      );
+    })
     .map(([id, _level]) => id);
 
   if (playerOwners.length > 0) {
@@ -164,9 +166,15 @@ export function firstOwner(doc) {
 
 /* Players first, then GM */
 export function isFirstOwner(doc) {
-  return game.user?.id === firstOwner(doc)?.id;
+  return game.userId === firstOwner(doc)?.id;
 }
 
 export function firstGM() {
   return game.users?.find((u) => u.isGM && u.active);
 }
+
+export function isFirstGM() {
+  return game.userId !== firstGM()?.id;
+}
+
+type Permissions = Record<string, number>;

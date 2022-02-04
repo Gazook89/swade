@@ -308,7 +308,7 @@ export default class SwadeCombat extends Combat {
   }: IPickACard): Promise<Card | undefined> {
     // any card
 
-    let immedeateRedraw = false;
+    let immediateRedraw = false;
     if (isQuickDraw) {
       enableRedraw = !cards.some((card) => card.data.value! > 5);
     }
@@ -349,7 +349,7 @@ export default class SwadeCombat extends Combat {
         icon: '<i class="fas fa-plus"></i>',
         label: game.i18n.localize('SWADE.Redraw'),
         callback: () => {
-          immedeateRedraw = true;
+          immediateRedraw = true;
         },
       },
     };
@@ -365,7 +365,7 @@ export default class SwadeCombat extends Combat {
         buttons: buttons,
         default: 'ok',
         close: async () => {
-          if (immedeateRedraw) {
+          if (immediateRedraw) {
             const newCards = await this.drawCard();
             card = await this.pickACard({
               cards: [...cards, ...newCards],
@@ -428,7 +428,7 @@ export default class SwadeCombat extends Combat {
   //FIXME return once types are maybe a bit more lenient
   //@ts-expect-error The types are a bit too strict here
   async nextTurn() {
-    const currentTurn = this.turn ?? 0;
+    const currentTurn = this.turn as number;
     const nextTurn = currentTurn + 1;
     const currentTurnEffects = this.turns[currentTurn].actor?.effects.values();
     const currentTurnEndExpirations = new Array<SwadeActiveEffect>();
@@ -452,7 +452,7 @@ export default class SwadeCombat extends Combat {
     }
 
     for (const effect of currentTurnEndExpirations) {
-      await effect._removeEffect();
+      await effect.removeEffect();
     }
 
     if (nextTurn < this.turns.length) {
@@ -479,11 +479,11 @@ export default class SwadeCombat extends Combat {
       }
 
       for (const effect of nextTurnStartExpirations) {
-        await effect._removeEffect();
+        await effect.removeEffect();
       }
     }
 
-    const turn = this.turn ?? 0;
+    const turn = this.turn as number;
     const skip = this.settings['skipDefeated'] as boolean;
     // Determine the next turn number
     let next: number | null = null;
@@ -562,7 +562,7 @@ export default class SwadeCombat extends Combat {
       }
 
       for (const effect of turnZeroStartExpirations) {
-        await effect._removeEffect();
+        await effect.removeEffect();
       }
     }
   }
