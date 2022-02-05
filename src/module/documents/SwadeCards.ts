@@ -26,7 +26,7 @@ export default class SwadeCards extends Cards {
     const toDelete = new Array<string>();
     for (const card of drawn) {
       const createData = card.toObject();
-      if (!createData.origin) createData.origin = this.id;
+      if (card.isHome || !createData.origin) createData.origin = this.id;
       toCreate.push(createData);
       if (card.isHome) toUpdate.push({ _id: card.id, drawn: true });
       else toDelete.push(card.id);

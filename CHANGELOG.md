@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.1
+
+### Fixed
+
+- Fixed a bug that would duplicate cards when dealing initiative
+
 ## v1.0.0
 
 ### Added
