@@ -5,7 +5,6 @@
   "description": "An implementation of the Savage Worlds Adventure Edition game system for Foundry Virtual Tabletop (http://foundryvtt.com). This work is permitted under the Pinnacle Entertainment Group Fan License (https://www.peginc.com/licensing)",
   "author": "FloRad",
   "license": "https://gitlab.com/peginc/swade/-/blob/develop/LICENSE.md",
-  "type": "module",
   "homepage": "https://gitlab.com/peginc/swade",
   "repository": {
     "type": "git",
