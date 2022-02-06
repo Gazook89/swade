@@ -114,7 +114,7 @@ export async function formatRoll(
     .replace('+-', '-'); //turn all +- into just minuses
   try {
     if (modString.length > 2) {
-      mod = eval(modString) as number;
+      mod = Roll.safeEval(modString);
     }
   } catch (err) {
     console.error(err);
