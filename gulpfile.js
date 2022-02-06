@@ -574,6 +574,7 @@ exports.clean = clean;
 exports.link = linkUserData;
 exports.package = packageBuild;
 exports.update = updateManifest;
+exports.packs = buildPack;
 exports.publish = gulp.series(
   clean,
   updateManifest,
