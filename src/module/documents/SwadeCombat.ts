@@ -43,7 +43,12 @@ export default class SwadeCombat extends Combat {
       { strict: true },
     );
     if (ids.length > actionCardDeck.availableCards.length) {
-      ui.notifications!.warn('SWADE.NoCardsLeft', { localize: true });
+      ui.notifications.warn(
+        game.i18n.format('SWADE.NoCardsLeft', {
+          needed: ids.length,
+          current: actionCardDeck.availableCards.length,
+        }),
+      );
       return this;
     }
 
