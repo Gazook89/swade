@@ -5,8 +5,6 @@
     "lib": ["DOM", "ES6", "ES2020"],
     "types": ["@league-of-foundry-developers/foundry-vtt-types"],
     "moduleResolution": "node",
-    "sourceMap": true,
-    "inlineSourceMap": false,
     "strict": false,
     "strictNullChecks": true
   }
