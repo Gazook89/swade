@@ -1,5 +1,4 @@
-import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
-import { AbilitySubType } from '../globals';
+import { AbilitySubType, StatusEffect } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
@@ -515,7 +514,7 @@ export interface SwadeConfig {
     id: string;
   };
 
-  statusEffects: ActiveEffectDataConstructorData & { id: string }[];
+  statusEffects: StatusEffect[];
 
   wildCardIcons: {
     regular: string;

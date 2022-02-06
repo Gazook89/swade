@@ -1,3 +1,4 @@
+import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { Dice3D } from './interfaces/DiceSoNice';
 import SwadeGame from './interfaces/SwadeGame';
 import { SwadeConfig } from './module/config';
@@ -20,6 +21,7 @@ declare global {
 }
 
 export type AbilitySubType = 'special' | 'race' | 'archetype';
+export type StatusEffect = ActiveEffectDataConstructorData & { id: string };
 
 export type ActorMetadata = CompendiumCollection.Metadata & { entity: 'Actor' };
 export type ItemMetadata = CompendiumCollection.Metadata & { entity: 'Item' };

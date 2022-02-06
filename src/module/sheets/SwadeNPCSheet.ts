@@ -1,4 +1,5 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import { StatusEffect } from '../../globals';
 import { SWADE } from '../config';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
@@ -183,13 +184,13 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
 
         const statusConfigData = SWADE.statusEffects.find(
           (effect) => effect.id === id,
-        );
+        ) as StatusEffect;
         // Get the current status value
         const statusValue = this.actor.data.data.status[key];
         // Get the label from the inner text of the parent label element
         const statusLabel = event.target.parentElement?.innerText as string;
         // If the status is checked and the status value is false...
-        if (statusConfigData !== undefined && !statusValue) {
+        if (!statusValue) {
           // Set render AE sheet to false
           const renderSheet = false;
 
@@ -204,9 +205,10 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
             // Otherwise
           } else {
             // Create the AE, passing the label, data, and renderSheet boolean
+            setProperty(statusConfigData, 'flags.core.statusId', id);
             await this._createActiveEffect(
               statusLabel,
-              statusConfigData as any,
+              statusConfigData,
               renderSheet,
             );
           }
