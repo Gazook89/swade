@@ -36,6 +36,7 @@ import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
 import { createSwadeMacro, rollItemMacro } from './module/util';
+import './swade.scss';
 
 /* ------------------------------------ */
 /* Initialize system					          */
