@@ -22,7 +22,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
-## v1.0.1
+## v1.0.2
+
+### Fixed
+
+- Fixed a bug that would prevent a status effect from being removed on the sheet if it was created on the sheet while the actor didn't have a token
 
 ### Fixed
 

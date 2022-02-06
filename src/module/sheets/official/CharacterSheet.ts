@@ -1,4 +1,5 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
+import { StatusEffect } from '../../../globals';
 import {
   AdditionalStat,
   ItemAction,
@@ -90,7 +91,7 @@ export default class CharacterSheet extends ActorSheet {
           const key = event.target.dataset.key as string;
           const statusConfigData = SWADE.statusEffects.find(
             (effect) => effect.id === id,
-          );
+          ) as StatusEffect;
           // Get the current status value
           const statusValue = this.actor.data.data.status[key];
           // Get the label from the inner text of the parent label element
@@ -112,9 +113,10 @@ export default class CharacterSheet extends ActorSheet {
               // Otherwise
             } else {
               // Create the AE, passing the label, data, and renderSheet boolean
+              setProperty(statusConfigData, 'flags.core.statusId', id);
               await this._createActiveEffect(
                 statusLabel,
-                statusConfigData as any,
+                statusConfigData,
                 renderSheet,
               );
             }
