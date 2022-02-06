@@ -1090,8 +1090,7 @@ export default class SwadeHooks {
   }
 
   public static onDiceSoNiceReady(dice3d: Dice3D) {
-    //@ts-expect-error Load the DiceColors file. This should work fine since the file is only present in the same situation in which the hook is fired
-    import('/modules/dice-so-nice/DiceColors.js')
+    import(foundry.utils.getRoute('/modules/dice-so-nice/DiceColors.js'))
       .then((obj) => {
         SWADE.dsnColorSets = obj.COLORSETS;
         SWADE.dsnTextureList = obj.TEXTURELIST;
