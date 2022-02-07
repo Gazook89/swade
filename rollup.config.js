@@ -12,7 +12,7 @@ const srcDirectory = 'src';
 
 const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 // eslint-disable-next-line no-undef
-const isProduction = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production';
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -26,12 +26,12 @@ const config = {
     assetFileNames: '[name].[ext]',
   },
   plugins: [
-    typescript({ noEmitOnError: isProduction }),
+    typescript({ noEmitOnError: isProd }),
     styles({
       mode: ['extract', `${name}.css`],
       url: false,
       sourceMap: true,
-      minimize: isProduction,
+      minimize: isProd,
     }),
     copy({
       targets: [
@@ -61,15 +61,9 @@ const config = {
         },
       ],
     }),
-    !isProduction &&
-      livereload({
-        watch: distDirectory,
-        inject: !isProduction,
-      }),
-    isProduction &&
-      terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),
+    !isProd && livereload(distDirectory),
+    isProd && terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),
   ],
-  external: ['/modules/dice-so-nice/DiceColors.js'],
 };
 
 export default config;

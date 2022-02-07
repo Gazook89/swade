@@ -16,8 +16,9 @@
   "scripts": {
     "build:watch": "rollup -cw",
     "build": "rollup -c && gulp link",
+    "build:packs": "gulp packs",
     "package": "gulp package",
-    "clean": "gulp clean && gulp link --clean",
+    "clean": "rimraf dist && gulp link --clean",
     "check:lint": "eslint --ext .ts,.js ./src",
     "check:types": "tsc --noEmit",
     "prepare": "husky install",
