@@ -449,15 +449,22 @@ export default class SwadeCombat extends Combat {
         (startRound === this.round && startTurn < currentTurn) ||
         startRound < this.round;
       const durationRounds = getProperty(fx, 'data.duration.rounds');
-      const roundsPassed = this.round === startRound + durationRounds;
+      const roundsPassed = this.round >= startRound + durationRounds;
       const durationEnds = !durationRounds || roundsPassed;
       const expired = expiresAtEndOfTurn && isNotNew && durationEnds;
-
+      /**
+       * Round durations are weird if the start round is before the target's turn
+       * as it counts from the end of the target's turn in the next round,
+       * not the end of the targets turn in that round.
+       */
+      if (startRound === this.round && startTurn < currentTurn) {
+        await fx.update({'duration.rounds': durationRounds - 1})
+      }
       if (expired) currentTurnEndExpirations.push(fx);
     }
 
     for (const effect of currentTurnEndExpirations) {
-      await effect.removeEffect();
+        await effect.removeEffect();
     }
 
     if (nextTurn < this.turns.length) {
@@ -476,7 +483,7 @@ export default class SwadeCombat extends Combat {
           (startRound === this.round && startTurn < nextTurn) ||
           startRound < this.round;
         const durationRounds = getProperty(fx, 'data.duration.rounds');
-        const roundsPassed = this.round === startRound + durationRounds;
+        const roundsPassed = this.round >= startRound + durationRounds;
         const durationEnds = !durationRounds || roundsPassed;
         const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
 
@@ -541,6 +548,7 @@ export default class SwadeCombat extends Combat {
         const combatantIds = this.combatants.map((c) => c.id!);
         await this.rollInitiative(combatantIds);
       }
+      await game.combat?.update({turn: 0})
       await super.nextRound();
       // Process turn 0's status effects that expire at the start of the turn.
       const turnZero = this.turns[0];
@@ -559,7 +567,7 @@ export default class SwadeCombat extends Combat {
           (startRound === this.round && startTurn < turnZero) ||
           startRound < this.round;
         const durationRounds = getProperty(fx, 'data.duration.rounds');
-        const roundsPassed = this.round === startRound + durationRounds;
+        const roundsPassed = this.round >= startRound + durationRounds;
         const durationEnds = !durationRounds || roundsPassed;
         const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
 
