@@ -454,8 +454,8 @@ export default class SwadeCombat extends Combat {
       const expired = expiresAtEndOfTurn && isNotNew && durationEnds;
       /**
        * Round durations are weird if the start round is before the target's turn
-       * as it counts from the end of the target's turn in the next round,
-       * not the end of the targets turn in that round.
+       * as it counts from the target's turn in the next round,
+       * not the target's turn in that round.
        */
       if (startRound === this.round && startTurn < currentTurn) {
         await fx.update({'duration.rounds': durationRounds - 1})
