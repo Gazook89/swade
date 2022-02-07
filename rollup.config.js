@@ -3,6 +3,7 @@ import copy from '@guanghechen/rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
 import styles from 'rollup-plugin-styles';
 import { terser } from 'rollup-plugin-terser';
+import livereload from 'rollup-plugin-livereload';
 import * as yaml from 'js-yaml';
 
 const name = 'swade';
@@ -25,7 +26,7 @@ const config = {
     assetFileNames: '[name].[ext]',
   },
   plugins: [
-    typescript({ noEmitOnError: true }),
+    typescript({ noEmitOnError: isProduction }),
     styles({
       mode: ['extract', `${name}.css`],
       url: false,
@@ -60,7 +61,13 @@ const config = {
         },
       ],
     }),
-    isProduction && terser({ ecma: 2020, keep_fnames: true }),
+    !isProduction &&
+      livereload({
+        watch: distDirectory,
+        inject: !isProduction,
+      }),
+    isProduction &&
+      terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),
   ],
   external: ['/modules/dice-so-nice/DiceColors.js'],
 };
