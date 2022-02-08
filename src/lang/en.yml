@@ -475,8 +475,8 @@ SWADE.Expiration.Expiration: Expiration
 SWADE.Expiration.Behavior: Expiration Behavior
 SWADE.Expiration.BeginAuto: Start of Turn, Automatic
 SWADE.Expiration.BeginPrompt: Start of Turn, Prompt
-SWADE.Expiration.EndAuto: End of Next Turn, Automatic
-SWADE.Expiration.EndPrompt: End of Next Turn, Prompt
+SWADE.Expiration.EndAuto: End of Turn, Automatic
+SWADE.Expiration.EndPrompt: End of Turn, Prompt
 SWADE.Expiration.None: None
 SWADE.Expiration.LooseTurnOnHold: Lose Turn on Hold
 SWADE.RemoveEffectTitle: Remove {label} ?
