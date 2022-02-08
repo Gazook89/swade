@@ -1025,11 +1025,17 @@ export default class SwadeActor extends Actor {
   ) {
     await super._preCreate(data, options, user);
 
-    const tokenData = mergeObject(
-      this.data.token.toObject(),
-      { actorLink: data.type === 'character', vision: true },
-      { overwrite: false },
-    );
+    const autoLinkWildcards = game.settings.get('swade', 'autoLinkWildcards');
+    //only link PCs if the autolink setting is on and they're not getting imported from somewhere
+    const autoActorLink =
+      data.type === 'character' &&
+      autoLinkWildcards &&
+      !hasProperty(data, 'flags.core.sourceId');
+
+    const tokenData = mergeObject(this.data.token.toObject(), {
+      actorLink: autoActorLink,
+      vision: true,
+    });
 
     this.data.token.update(tokenData);
     const coreSkillList = game.settings.get('swade', 'coreSkills');

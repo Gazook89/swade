@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed a bug where status effects were accidentally added to all tokens with the same base actor, even if the token actor was not linked
+- Fixed a bug that prevented Player Character actors from being automatically linked on creation. In addition to that, the creation now also respects the automatic wildcard linking setting. Imported actors retain whatever config they have in the compendium
 
 ## v1.0.2
 
