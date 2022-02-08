@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Fixed a bug that prevented Player Character actors from being automatically linked on creation. In addition to that, the creation now also respects the automatic wildcard linking setting. Imported actors retain whatever config they have in the compendium
 - Wildcards in a compendium are now marked again with an icon
 - Fixed an error that would prevent weapons to fire if they have 1 shot only (thanks to Jae Davas)
+- Fixed an issue that would prevent the PP for a specific power to show in the Quick Access
 
 ## v1.0.2
 
