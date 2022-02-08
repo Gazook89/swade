@@ -59,8 +59,8 @@ export function rollItemMacro(itemName: string) {
     return null;
   }
   //Roll the skill
-  if (item.type === 'skill') {
-    return actor.rollSkill(item.id);
+  if (item.data.type === 'skill') {
+    return item.roll();
   } else {
     // Show the item
     return item.show();
