@@ -268,13 +268,11 @@ export default class SwadeItem extends Item {
     return data;
   }
 
-  /**
-   * A shorthand function to roll skills directly
-   */
+  /** A shorthand function to roll skills directly */
   async roll(options: IRollOptions = {}) {
     //return early if there's no parent or this isn't a skill
     if (this.data.type !== 'skill' || !this.parent) return null;
-    this.parent.rollSkill(this.id, options);
+    return this.parent.rollSkill(this.id, options);
   }
 
   /**
