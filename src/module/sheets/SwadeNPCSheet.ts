@@ -181,52 +181,16 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
         // Get the key from the target name
         const id = event.target.dataset.id as string;
         const key = event.target.dataset.key as string;
-
         const statusConfigData = SWADE.statusEffects.find(
           (effect) => effect.id === id,
         ) as StatusEffect;
-        // Get the current status value
-        const statusValue = this.actor.data.data.status[key];
-        // Get the label from the inner text of the parent label element
-        const statusLabel = event.target.parentElement?.innerText as string;
-        // If the status is checked and the status value is false...
-        if (!statusValue) {
-          // Set render AE sheet to false
-          const renderSheet = false;
-
-          // See if there's a token for this actor on the scene. If there is and we toggle the AE from the sheet, it double applies because of the token.
-          const tokens = game.canvas.tokens?.getDocuments();
-          const token = tokens?.find((t) => t.actor?.id === this.actor.id);
-          // So, if there is...
-          if (token) {
-            // Toggle the AE from the token which toggles it on the actor sheet, too
-            //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
-            await token.toggleActiveEffect(statusConfigData, { active: true });
-            // Otherwise
-          } else {
-            // Create the AE, passing the label, data, and renderSheet boolean
-            setProperty(statusConfigData, 'flags.core.statusId', id);
-            await this._createActiveEffect(
-              statusLabel,
-              statusConfigData,
-              renderSheet,
-            );
-          }
-
-          // Otherwise...
-        } else {
-          await this.actor.update({
-            'data.status': {
-              [key]: false,
-            },
-          });
-          // Find the existing effect based on label and flag and delete it.
-          for (const effect of this.actor.data.effects) {
-            if (effect.getFlag('core', 'statusId') === id) {
-              await effect.delete();
-            }
-          }
-        }
+        // this is just to make sure the status is false in the source data
+        await this.actor.update({
+          'data.status': {
+            [key]: false,
+          },
+        });
+        this.actor.toggleActiveEffect(statusConfigData);
       });
   }
 

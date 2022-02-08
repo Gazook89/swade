@@ -22,6 +22,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.3
+
+### Added
+
+- Added `SwadeActor#toggleActiveEffect` which has the same interface as `TokenDocument#toggleActiveEffect` and behaves roughly the same. When toggling an effect on a linked actor, the effect is applied to all tokens of the actor in the scene.
+
+### Changed
+
+- Changed warning that displays when not enough cards are available to draw initiative. It should be more informative now.
+- Active Effects can now expire at the end of the turn they were created in. Changed expiration dropdown to make the behavior more clear
+
+### Fixed
+
+- Fixed a bug where status effects were accidentally added to all tokens with the same base actor, even if the token actor was not linked
+
 ## v1.0.2
 
 ### Fixed
