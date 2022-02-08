@@ -39,9 +39,8 @@ export async function createSwadeMacro(
 }
 
 /**
- *
- * @param itemName
- * @returns
+ * A simple function to allow quick access to an item such as a skill or weapon. Skills are rolled while other items are posted to the chat as a chatcard
+ * @param itemName the name of the item that should be called
  */
 export function rollItemMacro(itemName: string) {
   const speaker = ChatMessage.getSpeaker();
