@@ -471,7 +471,8 @@ SWADE.ChaseCardsCleared: All chase cards have been removed from the scene.
 SWADE.SetUpChase: Set Up Chase
 SWADE.NotADeckCompendium: The compendium you selected doesn't appear to be a legacy deck
 SWADE.ConvertToDeck: Convert to Deck
-SWADE.Expiration.Expiration: Expiration
+SWADE.Expiration.TabLabel: Turn Behavior
+SWADE.Expiration.Description: <p>Effects expire on the target's <em>next turn or later</em>.</p>
 SWADE.Expiration.Behavior: Expiration Behavior
 SWADE.Expiration.BeginAuto: Start of Turn, Automatic
 SWADE.Expiration.BeginPrompt: Start of Turn, Prompt
