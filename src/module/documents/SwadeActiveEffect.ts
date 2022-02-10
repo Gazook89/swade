@@ -208,11 +208,11 @@ export default class SwadeActiveEffect extends ActiveEffect {
   ): Promise<void> {
     super._preCreate(data, options, user);
     const label = game.i18n.localize(this.data.label);
-    await this.data.update({ label: label });
+    this.data.update({ label: label });
 
     // If there's no duration value and there's a combat, at least set the combat ID which then sets a startRound and startTurn, too.
     if (!data.duration?.combat && game.combat) {
-      await this.data.update({ 'duration.combat': game.combat.id });
+      this.data.update({ 'duration.combat': game.combat.id });
     }
     if (this.getFlag('swade', 'loseTurnOnHold')) {
       const combatant = game.combat?.combatants.find(

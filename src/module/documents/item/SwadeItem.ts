@@ -268,6 +268,13 @@ export default class SwadeItem extends Item {
     return data;
   }
 
+  /** A shorthand function to roll skills directly */
+  async roll(options: IRollOptions = {}) {
+    //return early if there's no parent or this isn't a skill
+    if (this.data.type !== 'skill' || !this.parent) return null;
+    return this.parent.rollSkill(this.id, options);
+  }
+
   /**
    * Assembles data and creates a chat card for the item
    * @returns the rendered chatcard

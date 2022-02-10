@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
+  DsnCustomWildDieOptions
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -105,7 +105,7 @@ export default class SwadeHooks {
     const wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
 
     //if the player is not a GM, then don't mark the NPC wildcards
-    if (!game.settings.get('swade', 'hideNPCWildcards') || game.user!.isGM) {
+    if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM) {
       const npcWildcards = actors.filter(
         (a) => a.isWildcard && !a.hasPlayerOwner,
       );
@@ -152,18 +152,25 @@ export default class SwadeHooks {
     html: JQuery<HTMLElement>,
     data: any,
   ) {
+    //don't mark if the user is not a GM
+    if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM)
+      return;
     //Mark Wildcards in the compendium
-    if (app.documentName === 'Actor') {
-      const content = (await app.getDocuments()) as Array<SwadeActor>;
-      const wildcards = content.filter((actor) => actor.isWildcard);
-      const ids: string[] = wildcards.map((actor) => actor.id!);
+    if (app.metadata['type'] === 'Actor') {
+      const content = data.index;
+      const wildcards = content.filter(
+        (actor) =>
+          getProperty(actor, 'data.wildcard') &&
+          actor.name !== '#[CF_tempEntity]',
+      );
+      const ids: string[] = wildcards.map((actor) => actor._id);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {
-        const entryId = el.dataset.entryId!;
-        if (ids.includes(entryId)) {
-          const entityName = el.children[1];
-          entityName.children[0].insertAdjacentHTML(
+        const id = el.dataset.documentId!;
+        if (ids.includes(id)) {
+          const name = el.children[1];
+          name.children[0].insertAdjacentHTML(
             'afterbegin',
             `<img src="${SWADE.wildCardIcons.compendium}" class="wildcard-icon">`,
           );
@@ -1040,12 +1047,13 @@ export default class SwadeHooks {
     ];
     const tab = `
     <a class="item" data-tab="expiration">
-      <i class="fas fa-sign-out-alt"></i> ${game.i18n.localize(
-        'SWADE.Expiration.Expiration',
+      <i class="fas fa-step-forward"></i> ${game.i18n.localize(
+        'SWADE.Expiration.TabLabel',
       )}
     </a>`;
     const section = `
     <section class="tab" data-tab="expiration">
+    ${game.i18n.localize('SWADE.Expiration.Description')}
     <div class="form-group">
       <label>${game.i18n.localize('SWADE.Expiration.Behavior')}</label>
       <div class="form-fields">

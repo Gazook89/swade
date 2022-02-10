@@ -96,7 +96,7 @@ Hooks.once('init', () => {
   CONFIG.statusEffects = SWADE.statusEffects;
 
   //@ts-expect-error Types don't properly recognized dotnotation
-  CompendiumCollection.INDEX_FIELDS.JournalEntry.push('flags.swade');
+  CompendiumCollection.INDEX_FIELDS.Actor.push('data.wildcard');
 
   //Preload Handlebars templates
   preloadHandlebarsTemplates();

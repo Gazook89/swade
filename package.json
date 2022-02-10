@@ -1,10 +1,10 @@
 {
   "private": true,
   "name": "swade",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "An implementation of the Savage Worlds Adventure Edition game system for Foundry Virtual Tabletop (http://foundryvtt.com). This work is permitted under the Pinnacle Entertainment Group Fan License (https://www.peginc.com/licensing)",
   "author": "FloRad",
-  "license": "https://gitlab.com/peginc/swade/-/blob/develop/LICENSE.md",
+  "license": "https://gitlab.com/peginc/swade/-/blob/master/LICENSE.md",
   "homepage": "https://gitlab.com/peginc/swade",
   "repository": {
     "type": "git",
