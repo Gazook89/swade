@@ -1047,7 +1047,9 @@ export default class SwadeHooks {
     ];
     const tab = `
     <a class="item" data-tab="expiration">
-      <i class="fas fa-sign-out-alt"></i> ${game.i18n.localize('SWADE.Expiration.TabLabel')}
+      <i class="fas fa-forward-step"></i> ${game.i18n.localize(
+        'SWADE.Expiration.TabLabel',
+      )}
     </a>`;
     const section = `
     <section class="tab" data-tab="expiration">
