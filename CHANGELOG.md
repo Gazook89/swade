@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Changed warning that displays when not enough cards are available to draw initiative. It should be more informative now.
-- Active Effects can now expire at the end of the turn they were created in. Changed expiration dropdown to make the behavior more clear (thanks to Kristian Serrano)
+- Renamed Expiration tab to Turn Behavior and added description explaining when the Active Effect ends. (thanks to Kristian Serrano)
 
 ### Fixed
 

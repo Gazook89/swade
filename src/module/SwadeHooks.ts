@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions,
+  DsnCustomWildDieOptions
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -1047,7 +1047,7 @@ export default class SwadeHooks {
     ];
     const tab = `
     <a class="item" data-tab="expiration">
-      <i class="fas fa-forward-step"></i> ${game.i18n.localize(
+      <i class="fas fa-step-forward"></i> ${game.i18n.localize(
         'SWADE.Expiration.TabLabel',
       )}
     </a>`;
