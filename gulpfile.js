@@ -6,18 +6,13 @@ const path = require('path');
 const chalk = require('chalk');
 const archiver = require('archiver');
 const stringify = require('json-stringify-pretty-compact');
-const typescript = require('typescript');
 const mergeStream = require('merge-stream');
 const through2 = require('through2');
 
-const ts = require('gulp-typescript');
-const sass = require('gulp-dart-sass');
 const git = require('gulp-git');
 const gyaml = require('gulp-yaml');
 const concat = require('gulp-concat');
 const rename = require('gulp-rename');
-const sourcemaps = require('gulp-sourcemaps');
-
 const argv = require('yargs').argv;
 
 function getConfig() {
@@ -57,142 +52,14 @@ function getManifest() {
   return json;
 }
 
-/**
- * TypeScript transformers
- * @returns {typescript.TransformerFactory<typescript.SourceFile>}
- */
-function createTransformer() {
-  /**
-   * @param {typescript.Node} node
-   */
-  function shouldMutateModuleSpecifier(node) {
-    if (
-      !typescript.isImportDeclaration(node) &&
-      !typescript.isExportDeclaration(node)
-    )
-      return false;
-    if (node.moduleSpecifier === undefined) return false;
-    if (!typescript.isStringLiteral(node.moduleSpecifier)) return false;
-    if (
-      !node.moduleSpecifier.text.startsWith('./') &&
-      !node.moduleSpecifier.text.startsWith('../')
-    )
-      return false;
-    if (path.extname(node.moduleSpecifier.text) !== '') return false;
-    return true;
-  }
-
-  /**
-   * Transforms import/export declarations to append `.js` extension
-   * @param {typescript.TransformationContext} context
-   */
-  function importTransformer(context) {
-    return (node) => {
-      /**
-       * @param {typescript.Node} node
-       */
-      function visitor(node) {
-        if (shouldMutateModuleSpecifier(node)) {
-          if (typescript.isImportDeclaration(node)) {
-            const newModuleSpecifier = typescript.createLiteral(
-              `${node.moduleSpecifier.text}.js`,
-            );
-            return typescript.updateImportDeclaration(
-              node,
-              node.decorators,
-              node.modifiers,
-              node.importClause,
-              newModuleSpecifier,
-            );
-          } else if (typescript.isExportDeclaration(node)) {
-            const newModuleSpecifier = typescript.createLiteral(
-              `${node.moduleSpecifier.text}.js`,
-            );
-            return typescript.updateExportDeclaration(
-              node,
-              node.decorators,
-              node.modifiers,
-              node.exportClause,
-              newModuleSpecifier,
-            );
-          }
-        }
-        return typescript.visitEachChild(node, visitor, context);
-      }
-
-      return typescript.visitNode(node, visitor);
-    };
-  }
-
-  return importTransformer;
-}
-
-const tsConfig = ts.createProject('tsconfig.json', {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getCustomTransformers: (_program) => ({
-    after: [createTransformer()],
-  }),
-});
-
 /********************/
 /*		BUILD		*/
 /********************/
 
 /**
- * Build TypeScript
- */
-function buildTSDevel() {
-  return gulp
-    .src(['src/**/*.ts', '!src/interfaces/*.ts'])
-    .pipe(sourcemaps.init())
-    .pipe(tsConfig())
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'));
-}
-
-/**
- * Build TypeScript
- */
-function buildTS() {
-  return gulp
-    .src(['src/**/*.ts', '!src/interfaces/*.ts'])
-    .pipe(tsConfig())
-    .pipe(gulp.dest('dist'));
-}
-
-/**
- * Build YAML to json
- */
-function buildYaml() {
-  return gulp
-    .src(['src/**/*.yml', '!src/packs/**/*.yml'])
-    .pipe(gyaml({ space: 2, safe: true }))
-    .pipe(gulp.dest('dist'));
-}
-
-/**
- * Build SASS
- */
-function buildSASS() {
-  return gulp
-    .src('src/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('dist'));
-}
-
-function buildSASSDevel() {
-  return gulp
-    .src('src/*.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'));
-}
-
-/**
  * Build Compendiums
  */
-function buildPack() {
+function buildCompendiums() {
   const packFolders = fs.readdirSync('src/packs/').filter(function (file) {
     return fs.statSync(path.join('src/packs', file)).isDirectory();
   });
@@ -225,49 +92,6 @@ function buildPack() {
       .pipe(gulp.dest('dist/packs'));
   });
   return mergeStream.call(null, packs);
-}
-
-/**
- * Copy static files
- */
-async function copyFiles() {
-  const statics = [
-    'fonts',
-    'assets',
-    'templates',
-    'cards',
-    'module.json',
-    'system.json',
-    'template.json',
-  ];
-  try {
-    for (const file of statics) {
-      if (fs.existsSync(path.join('src', file))) {
-        await fs.copy(path.join('src', file), path.join('dist', file));
-      }
-    }
-    return Promise.resolve();
-  } catch (err) {
-    Promise.reject(err);
-  }
-}
-
-/**
- * Watch for changes for each build step
- */
-function buildWatch() {
-  gulp.watch('src/**/*.ts', { ignoreInitial: false }, buildTSDevel);
-  gulp.watch('src/**/*.scss', { ignoreInitial: false }, buildSASSDevel);
-  gulp.watch(
-    ['src/**/*.yml', '!src/packs/**/*.yml'],
-    { ignoreInitial: false },
-    buildYaml,
-  );
-  gulp.watch(
-    ['src/fonts', 'src/templates', 'src/packs', 'src/assets'],
-    { ignoreInitial: false },
-    copyFiles,
-  );
 }
 
 /********************/
@@ -560,13 +384,7 @@ function gitTag() {
 
 const execGit = gulp.series(gitAdd, gitCommit, gitTag);
 
-const execBuild = gulp.parallel(
-  buildTS,
-  buildSASS,
-  buildYaml,
-  copyFiles,
-  buildPack,
-);
+const execBuild = gulp.parallel(buildCompendiums);
 
 exports.build = gulp.series(clean, execBuild);
 exports.watch = buildWatch;
@@ -574,7 +392,7 @@ exports.clean = clean;
 exports.link = linkUserData;
 exports.package = packageBuild;
 exports.update = updateManifest;
-exports.packs = buildPack;
+exports.packs = buildCompendiums;
 exports.publish = gulp.series(
   clean,
   updateManifest,
