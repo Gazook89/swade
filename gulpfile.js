@@ -10,7 +10,7 @@ const mergeStream = require('merge-stream');
 const through2 = require('through2');
 
 const git = require('gulp-git');
-const gyaml = require('gulp-yaml');
+const yaml = require('gulp-yaml');
 const concat = require('gulp-concat');
 const rename = require('gulp-rename');
 const argv = require('yargs').argv;
@@ -86,7 +86,7 @@ function buildCompendiums() {
           cb(null, file);
         }),
       )
-      .pipe(gyaml({ space: 0, safe: true, json: true }))
+      .pipe(yaml({ space: 0, safe: true, json: true }))
       .pipe(concat(folder + '.json'))
       .pipe(rename(folder + '.db'))
       .pipe(gulp.dest('dist/packs'));
