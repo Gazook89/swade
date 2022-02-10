@@ -1,7 +1,7 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
-import { ItemMetadata } from '../../../globals';
+import { ItemMetadata, StatusEffect } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
@@ -406,6 +406,44 @@ export default class SwadeActor extends Actor {
     await this.update({
       'data.bennies.value': this.data.data.bennies.value + 1,
     });
+  }
+
+  async toggleActiveEffect(
+    effectData: StatusEffect,
+    options: { overlay?: boolean; active?: boolean } = { overlay: false },
+  ) {
+    //get the active tokens
+    const tokens = this.getActiveTokens();
+    //if there's tokens, iterate over them to toggle the effect directly
+    if (tokens.length) {
+      for (const token of tokens) {
+        //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+        await token.document.toggleActiveEffect(effectData, options);
+      }
+      return;
+    }
+
+    const existingEffect = this.effects.find(
+      (e) => e.getFlag('core', 'statusId') === effectData.id,
+    );
+    const state = options.active ?? !existingEffect;
+    if (!state && existingEffect) {
+      //temove the existing effect
+      await existingEffect.delete();
+    } else if (state) {
+      //add new effect
+      const createData = foundry.utils.deepClone(
+        effectData,
+      ) as Partial<StatusEffect>;
+      //localize the label
+      createData.label = game.i18n.localize(effectData.label as string);
+      setProperty(createData, 'flags.core.statusId', effectData.id);
+      if (options.overlay) setProperty(createData, 'flags.core.overlay', true);
+      //remove id property to not violate validation
+      delete createData.id;
+      const cls = getDocumentClass('ActiveEffect');
+      await cls.create(createData, { parent: this });
+    }
   }
 
   /**
@@ -987,11 +1025,17 @@ export default class SwadeActor extends Actor {
   ) {
     await super._preCreate(data, options, user);
 
-    const tokenData = mergeObject(
-      this.data.token.toObject(),
-      { actorLink: data.type === 'character', vision: true },
-      { overwrite: false },
-    );
+    const autoLinkWildcards = game.settings.get('swade', 'autoLinkWildcards');
+    //only link PCs if the autolink setting is on and they're not getting imported from somewhere
+    const autoActorLink =
+      data.type === 'character' &&
+      autoLinkWildcards &&
+      !hasProperty(data, 'flags.core.sourceId');
+
+    const tokenData = mergeObject(this.data.token.toObject(), {
+      actorLink: autoActorLink,
+      vision: true,
+    });
 
     this.data.token.update(tokenData);
     const coreSkillList = game.settings.get('swade', 'coreSkills');

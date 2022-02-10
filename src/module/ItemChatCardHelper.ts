@@ -106,12 +106,9 @@ export default class ItemChatCardHelper {
     const ammo = actor.items.getName(getProperty(item.data, 'data.ammo'));
     const usesAmmoManagement =
       game.settings.get('swade', 'ammoManagement') && !item.isMeleeWeapon;
-    const drawsAmmoFromInv = getProperty(
-      item.data,
-      'data.autoReload',
-    ) as boolean;
+    const drawsAmmoFromInv = getProperty(item.data, 'data.autoReload');
     const ammoAvailable = ammo && getProperty(ammo, 'data.data.quantity') > 0;
-    const enoughShots = getProperty(item.data, 'data.currentShots') > 1;
+    const enoughShots = getProperty(item.data, 'data.currentShots') > 0;
     const canReload = this.isReloadPossible(actor) && usesAmmoManagement;
 
     const cannotShoot =
