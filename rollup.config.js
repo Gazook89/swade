@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/naming-convention */
 import copy from '@guanghechen/rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
@@ -11,8 +12,9 @@ const distDirectory = 'dist';
 const srcDirectory = 'src';
 
 const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
-// eslint-disable-next-line no-undef
+
 const isProd = process.env.NODE_ENV === 'production';
+const isDev = process.env.NODE_ENV === 'development';
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -61,7 +63,7 @@ const config = {
         },
       ],
     }),
-    !isProd && livereload(distDirectory),
+    isDev && livereload(distDirectory),
     isProd && terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),
   ],
 };
