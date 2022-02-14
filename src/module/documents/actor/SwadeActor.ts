@@ -549,7 +549,6 @@ export default class SwadeActor extends Actor {
     return out;
   }
 
-  //@ts-expect-error The definition in the types is too strict so I opted to override it here
   getRollData(): Record<string, number | string> {
     const retVal = this.getRollShortcuts();
     retVal['wounds'] = this.data.data.wounds.value || 0;

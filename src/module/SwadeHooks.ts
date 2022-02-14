@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
+  DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -156,7 +156,7 @@ export default class SwadeHooks {
     if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM)
       return;
     //Mark Wildcards in the compendium
-    if (app.metadata['type'] === 'Actor') {
+    if (app.metadata.type === 'Actor') {
       const content = data.index;
       const wildcards = content.filter(
         (actor) =>
@@ -225,7 +225,7 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-file-export"></i>',
       condition: (li) => {
         const pack = game.packs.get(li.data('pack'), { strict: true });
-        return pack.metadata['type'] === 'JournalEntry';
+        return pack.metadata.type === 'JournalEntry';
       },
       callback: async (li) => {
         const pack = game.packs.get(li.data('pack'), {
