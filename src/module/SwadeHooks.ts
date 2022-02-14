@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
+  DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -100,21 +100,23 @@ export default class SwadeHooks {
     options: any,
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
-    const found = html.find('.document-name');
+    const entries = html.find('.document-name');
     const actors: Array<SwadeActor> = app.documents;
-    const wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
+    const wildcards = actors.filter(
+      (a) => a.isWildcard && a.type === 'character',
+    );
 
     //if the player is not a GM, then don't mark the NPC wildcards
     if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM) {
       const npcWildcards = actors.filter(
-        (a) => a.isWildcard && !a.hasPlayerOwner,
+        (a) => a.isWildcard && a.type === 'npc',
       );
       wildcards.push(...npcWildcards);
     }
 
-    for (let i = 0; i < found.length; i++) {
-      const element = found[i];
-      const actorID = element.parentElement!.dataset.documentId;
+    for (let i = 0; i < entries.length; i++) {
+      const element = entries[i];
+      const actorID = element.parentElement?.dataset.documentId;
       const wildcard = wildcards.find((a) => a.id === actorID);
 
       if (wildcard) {
@@ -158,12 +160,12 @@ export default class SwadeHooks {
     //Mark Wildcards in the compendium
     if (app.metadata['type'] === 'Actor') {
       const content = data.index;
-      const wildcards = content.filter(
-        (actor) =>
-          getProperty(actor, 'data.wildcard') &&
-          actor.name !== '#[CF_tempEntity]',
-      );
-      const ids: string[] = wildcards.map((actor) => actor._id);
+      const ids: string[] = content
+        .filter(
+          (a) =>
+            getProperty(a, 'data.wildcard') && a.name !== '#[CF_tempEntity]',
+        )
+        .map((actor) => actor._id);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {

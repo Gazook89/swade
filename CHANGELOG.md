@@ -24,6 +24,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## v1.0.3
 
+### Fixed
+
+- Wildcards no longer require a user with owner permissions to display their status in the actor directory
+
+## v1.0.3
+
 ### Added
 
 - Added `SwadeActor#toggleActiveEffect` which has the same interface as `TokenDocument#toggleActiveEffect` and behaves roughly the same. When toggling an effect on a linked actor, the effect is applied to all tokens of the actor in the scene.
