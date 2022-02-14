@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## v1.0.3
 
+### Changed
+
+- Action Decks created by the system setup function are now automatically shuffled after creation
+
 ### Fixed
 
 - Wildcards no longer require a user with owner permissions to display their status in the actor directory
