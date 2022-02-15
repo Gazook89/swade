@@ -5,10 +5,11 @@
   }
   li.combatant {
     .roll {
-      background: url(../../systems/swade/assets/ui/ace-white.svg) no-repeat 50%
+      background: url(../../icons/svg/card-hand.svg) no-repeat 50%
         50%;
+        background-size: 100%;
       &:hover {
-        background: url(../../systems/swade/assets/ui/ace-color.svg) no-repeat
+        background: url(../../systems/swade/assets/ui/card-hand-gradient.svg) no-repeat
           50% 50%;
       }
     }
