@@ -107,7 +107,7 @@ export default class SwadeHooks {
     );
 
     //if the player is not a GM, then don't mark the NPC wildcards
-    if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM) {
+    if (!game.settings.get('swade', 'hideNPCWildcards') || game.user?.isGM) {
       const npcWildcards = actors.filter(
         (a) => a.isWildcard && a.type === 'npc',
       );

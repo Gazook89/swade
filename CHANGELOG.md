@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.4
+
+### Fixed
+
+- Fixed a bug which would cause Wildcards to only be marked as such on the sidebar if the actor had at least 1 player owner
+
 ## v1.0.3
 
 ### Changed
