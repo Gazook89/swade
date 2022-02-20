@@ -32,6 +32,8 @@
   </div>
 </section>
 <section class="inventory">
+
+    <!-- Weapons -->
   <header class="header weapon">
     <span class="header-name">{{localize "SWADE.Weapons"}}</span>
     <span class="damage">{{localize "SWADE.Dmg"}}</span>
@@ -47,7 +49,7 @@
     </span>
   </header>
   <ul>
-    {{#each actor.itemTypes.weapon}}
+    {{#each itemTypes.weapon}}
     <li class="item weapon" data-item-id="{{id}}">
       <img class="item-img" src="{{img}}" />
       <button
@@ -90,6 +92,7 @@
     {{/each}}
   </ul>
 
+  <!-- Armor -->
   <header class="header armor">
     <span class="header-name">{{localize "SWADE.Armors"}}</span>
     <span class="bonus">{{localize "SWADE.Armor"}}</span>
@@ -105,7 +108,7 @@
     </span>
   </header>
   <ul>
-    {{#each actor.itemTypes.armor}}
+    {{#each itemTypes.armor}}
     <li class="item armor" data-item-id="{{id}}">
       <img class="item-img" src="{{img}}" />
       <button
@@ -144,6 +147,7 @@
     {{/each}}
   </ul>
 
+  <!-- Shields -->
   <header class="header shield">
     <span class="header-name">{{localize "SWADE.Shields"}}</span>
     <span class="parry">{{localize "SWADE.Parry"}}</span>
@@ -159,7 +163,7 @@
     </span>
   </header>
   <ul>
-    {{#each actor.itemTypes.shield}}
+    {{#each itemTypes.shield}}
     <li class="item shield" data-item-id="{{id}}">
       <img class="item-img" src="{{img}}" />
       <button
@@ -197,6 +201,7 @@
     {{/each}}
   </ul>
 
+  <!-- Misc Gear -->
   <header class="header misc">
     <span class="header-name">{{localize "SWADE.Misc"}}</span>
     <span class="weight">{{localize "SWADE.Weight"}}</span>
@@ -207,7 +212,7 @@
     </span>
   </header>
   <ul>
-    {{#each actor.itemTypes.gear}}
+    {{#each itemTypes.gear}}
     <li class="item misc" data-item-id="{{id}}">
       <img class="item-img" src="{{img}}" />
       <button

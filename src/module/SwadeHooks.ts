@@ -836,29 +836,34 @@ export default class SwadeHooks {
     sheet: ActorSheet,
     data: any,
   ) {
-    if (data.type === 'Actor' && sheet instanceof SwadeVehicleSheet) {
+    const sheetIsVehicleSheet = sheet instanceof SwadeVehicleSheet;
+
+    if (data.type === 'Actor' && sheetIsVehicleSheet) {
       const activeTab = getProperty(sheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
         let idToSet = `Actor.${data.id}`;
-        if ('pack' in data) {
+        if (data.pack) {
           idToSet = `Compendium.${data.pack}.${data.id}`;
         }
         await sheet.actor.update({ 'data.driver.id': idToSet });
       }
     }
     //handle race item creation
-    if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
+    const isNewItemDrop = data.type === 'Item' && !data.data;
+    if (isNewItemDrop && !sheetIsVehicleSheet) {
       let item: SwadeItem | StoredDocument<SwadeItem>;
-      if ('pack' in data) {
+      //retrieve the item
+      if (data.pack) {
         const pack = game.packs.get(data.pack, {
           strict: true,
         }) as CompendiumCollection<ItemMetadata>;
         item = (await pack.getDocument(data.id)) as StoredDocument<SwadeItem>;
-      } else if ('actorId' in data) {
+      } else if (data.actorId) {
         item = new SwadeItem(data.data);
       } else {
         item = game.items!.get(data.id, { strict: true });
       }
+      //check if it's the proper type and subtype
       if (item.data.type !== 'ability') return;
       const subType = item.data.data.subtype;
       if (subType === 'special') return;

@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed a bug which would cause Wildcards to only be marked as such on the sidebar if the actor had at least 1 player owner
+- Restored the ability for gear, edges and hindrances to be sorted on the character sheet
 
 ## v1.0.3
 
