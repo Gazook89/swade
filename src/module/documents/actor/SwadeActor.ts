@@ -417,7 +417,7 @@ export default class SwadeActor extends Actor {
     //if there's tokens, iterate over them to toggle the effect directly
     if (tokens.length > 0) {
       for (const token of tokens) {
-        //@ts-expect-error TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+        //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
         await token.document.toggleActiveEffect(effectData, options);
       }
       return;
