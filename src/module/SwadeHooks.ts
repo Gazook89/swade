@@ -943,9 +943,8 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const deck = game.cards!.get(game.settings.get('swade', 'actionDeck'), {
-      strict: true,
-    });
+    const actionDeckID = game.settings.get('swade', 'actionDeck');
+    const deck = game.cards!.get(actionDeckID, { strict: true });
 
     const cards = Array.from(deck.cards.values()).sort((a, b) => {
       const cardA = a.data.value!;
@@ -994,27 +993,55 @@ export default class SwadeHooks {
       `#combatant-config-${options.document.id} footer`,
     );
 
+    //pull the combatant from the Config Object
+    const combatant = app.object;
+    const combat = combatant.parent;
+
     //Attach click event to button which will call the combatant update as we can't easily modify the submit function of the FormApplication
     html.find('footer button').on('click', async (ev) => {
-      const selectedCard = html.find('input[name=ActionCard]:checked');
+      const selectedCard = html.find('input[name=action-card]:checked');
       if (selectedCard.length === 0) {
         return;
       }
 
       const cardId = selectedCard.data().cardId as string;
       const card = deck.cards.get(cardId, { strict: true });
-      const cardValue = card.data.value!;
-      const suitValue = card.data.data['suit'];
-      const hasJoker = card.data.data['isJoker'];
+
+      const cardValue = card.data.value as number;
+      const suitValue = card.data.data['suit'] as number;
+      const hasJoker = card.data.data['isJoker'] as boolean;
       const cardString = card.data.description;
 
-      //TODO figure out if the card should be passed to the Discard Pile after being chosen this way
-      await game.combat?.combatants
-        .get(options.document.id, { strict: true })
-        .update({
-          initiative: suitValue + cardValue,
-          'flags.swade': { cardValue, suitValue, hasJoker, cardString },
-        });
+      //move the card to the discard pile
+      const discardPileId = game.settings.get('swade', 'actionDeckDiscardPile');
+      const discardPile = game.cards!.get(discardPileId, { strict: true });
+      await card.discard(discardPile, { chatNotification: false });
+
+      //update the combatant with the new card
+      const updates = new Array<Record<string, unknown>>();
+      updates.push({
+        _id: combatant.id,
+        initiative: suitValue + cardValue,
+        'flags.swade': { cardValue, suitValue, hasJoker, cardString },
+      });
+
+      //update followers, if applicable
+      if (combatant.isGroupLeader) {
+        const followers =
+          combat?.combatants.filter((f) => f.groupId === combatant.id) ?? [];
+        for (const follower of followers) {
+          updates.push({
+            _id: follower.id,
+            initiative: suitValue + cardValue,
+            'flags.swade': {
+              cardValue,
+              hasJoker,
+              suitValue: suitValue - 0.001,
+            },
+          });
+        }
+      }
+      await combat?.updateEmbeddedDocuments('Combatant', updates);
     });
   }
 

@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Fixed a bug which would cause Wildcards to only be marked as such on the sidebar if the actor had at least 1 player owner
 - Restored the ability for gear, edges and hindrances to be sorted on the character sheet
+- Giving a combatant a new card via the Combatant Config now properly applies the new card to all followers as well
 
 ## v1.0.3
 
