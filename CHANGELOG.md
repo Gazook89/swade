@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## v1.0.4
 
+### Changed
+
+- The system will no longer force vision on on all newly created actors.. If you want to keep similar functionality I suggest using the default token settings in Foundry Core settings
+
 ### Fixed
 
 - Fixed a bug which would cause Wildcards to only be marked as such on the sidebar if the actor had at least 1 player owner

@@ -415,20 +415,21 @@ export default class SwadeActor extends Actor {
     //get the active tokens
     const tokens = this.getActiveTokens();
     //if there's tokens, iterate over them to toggle the effect directly
-    if (tokens.length) {
+    if (tokens.length > 0) {
       for (const token of tokens) {
-        //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
+        //@ts-expect-error TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
         await token.document.toggleActiveEffect(effectData, options);
       }
       return;
     }
 
+    //else toggle the effect directly on the actor
     const existingEffect = this.effects.find(
       (e) => e.getFlag('core', 'statusId') === effectData.id,
     );
     const state = options.active ?? !existingEffect;
     if (!state && existingEffect) {
-      //temove the existing effect
+      //remove the existing effect
       await existingEffect.delete();
     } else if (state) {
       //add new effect
@@ -1034,7 +1035,6 @@ export default class SwadeActor extends Actor {
 
     const tokenData = mergeObject(this.data.token.toObject(), {
       actorLink: autoActorLink,
-      vision: true,
     });
 
     this.data.token.update(tokenData);
