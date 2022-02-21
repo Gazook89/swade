@@ -3,10 +3,14 @@ import { SWADE } from '../config';
 /**
  * This class defines a submenu for the system settings which will handle the DSN Settings
  */
-export default class DiceSettings extends FormApplication {
+export default class DiceSettings extends FormApplication<
+  FormApplicationOptions,
+  any,
+  undefined
+> {
   config: any;
   customWildDieDefaultColors: any;
-  constructor(object = {}, options = {}) {
+  constructor(object, options) {
     super(object, options);
     this.config = SWADE.diceConfig;
     this.customWildDieDefaultColors =

@@ -132,6 +132,23 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_enraged.svg',
       id: 'berserk',
       label: 'SWADE.Berserk',
+      changes: [
+        {
+          key: 'data.attributes.strength.die.sides',
+          value: '2',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
+        },
+        {
+          key: 'data.stats.toughness.value',
+          value: '2',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
+        },
+        {
+          key: 'data.wounds.ignored',
+          value: '1',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
+        },
+      ],
     },
     {
       icon: 'systems/swade/assets/icons/status/status_defending.svg',

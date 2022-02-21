@@ -51,6 +51,15 @@ Hooks.once('init', () => {
 
   //set up global game object
   game.swade = {
+    sheets: {
+      CharacterSheet,
+      SwadeItemSheet,
+      SwadeNPCSheet,
+      SwadeVehicleSheet,
+    },
+    apps: {
+      SwadeEntityTweaks,
+    },
     SwadeEntityTweaks,
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
@@ -148,12 +157,12 @@ Hooks.on('hotbarDrop', createSwadeMacro);
 /* ------------------------------------ */
 Hooks.on('renderCombatantConfig', SwadeHooks.onRenderCombatantConfig);
 Hooks.on('renderActiveEffectConfig', SwadeHooks.onRenderActiveEffectConfig);
-Hooks.on('renderChatPopout', SwadeHooks.onRenderChatLog);
 Hooks.on('renderActorDirectory', SwadeHooks.onRenderActorDirectory);
 Hooks.on('renderCompendium', SwadeHooks.onRenderCompendium);
 Hooks.on('renderCombatTracker', SwadeHooks.onRenderCombatTracker);
 Hooks.on('renderChatMessage', SwadeHooks.onRenderChatMessage);
 Hooks.on('renderChatLog', SwadeHooks.onRenderChatLog);
+Hooks.on('renderChatPopout', SwadeHooks.onRenderChatLog);
 Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
 
 /* ------------------------------------ */

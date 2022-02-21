@@ -1,9 +1,13 @@
 import { SWADE } from '../config';
 
-export default class SettingConfigurator extends FormApplication {
+export default class SettingConfigurator extends FormApplication<
+  FormApplicationOptions,
+  any,
+  undefined
+> {
   config: typeof SWADE.settingConfig;
   settingStats: any;
-  constructor(object = {}, options) {
+  constructor(object, options) {
     super(object, options);
     this.config = SWADE.settingConfig;
   }

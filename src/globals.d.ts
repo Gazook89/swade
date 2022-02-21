@@ -23,9 +23,9 @@ declare global {
 export type AbilitySubType = 'special' | 'race' | 'archetype';
 export type StatusEffect = ActiveEffectDataConstructorData & { id: string };
 
-export type ActorMetadata = CompendiumCollection.Metadata & { entity: 'Actor' };
-export type ItemMetadata = CompendiumCollection.Metadata & { entity: 'Item' };
-export type CardMetadata = CompendiumCollection.Metadata & { entity: 'Card' };
+export type ActorMetadata = CompendiumCollection.Metadata & { type: 'Actor' };
+export type ItemMetadata = CompendiumCollection.Metadata & { type: 'Item' };
+export type CardMetadata = CompendiumCollection.Metadata & { type: 'Card' };
 export type JournalMetadata = CompendiumCollection.Metadata & {
-  entity: 'JournalEntry';
+  type: 'JournalEntry';
 };

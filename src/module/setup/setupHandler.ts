@@ -8,31 +8,34 @@ async function setupActionDeck() {
   //check the action deck
   const actionDeckId = game.settings.get('swade', 'actionDeck');
   const actionDeck = game.cards?.get(actionDeckId);
-  if (!actionDeckId || !actionDeck) {
-    ui.notifications.info('SWADE.NoActionDeckFound', { localize: true });
-    const preset = CONFIG.Cards.presets['actionDeckLight'];
-    const data = await fetch(preset.src).then((r) => r.json());
-    const newActionDeck = await CONFIG.Cards.documentClass.create(data);
-    await game.settings.set('swade', 'actionDeck', newActionDeck?.id!);
-  }
+  //return early if both the deck and the ID exist in the world
+  if (actionDeckId && actionDeck) return;
+  ui.notifications.info('SWADE.NoActionDeckFound', { localize: true });
+  const preset = CONFIG.Cards.presets['actionDeckLight'];
+  const data = await fetch(preset.src).then((r) => r.json());
+  const cardsCls = getDocumentClass('Cards');
+  const newActionDeck = await cardsCls.create(data);
+  await game.settings.set('swade', 'actionDeck', newActionDeck?.id!);
+  await newActionDeck?.shuffle({ chatNotification: false });
 }
 
 async function setupDiscardPile() {
   //check the action deck discard pile
   const discardPileId = game.settings.get('swade', 'actionDeckDiscardPile');
   const discardPile = game.cards?.get(discardPileId);
-  if (!discardPileId || !discardPile) {
-    ui.notifications.info('SWADE.NoActionDeckDiscardPileFound', {
-      localize: true,
-    });
-    const newDiscardPile = await CONFIG.Cards.documentClass.create({
-      name: 'Discard Pile',
-      type: 'pile',
-    });
-    await game.settings.set(
-      'swade',
-      'actionDeckDiscardPile',
-      newDiscardPile?.id!,
-    );
-  }
+  //return early if both the discard pile and the ID exist in the world
+  if (discardPileId && discardPile) return;
+  ui.notifications.info('SWADE.NoActionDeckDiscardPileFound', {
+    localize: true,
+  });
+  const cardsCls = getDocumentClass('Cards');
+  const newDiscardPile = await cardsCls.create({
+    name: 'Discard Pile',
+    type: 'pile',
+  });
+  await game.settings.set(
+    'swade',
+    'actionDeckDiscardPile',
+    newDiscardPile?.id!,
+  );
 }

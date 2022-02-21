@@ -3,7 +3,7 @@ import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
-  DsnCustomWildDieOptions
+  DsnCustomWildDieOptions,
 } from '../interfaces/DiceIntegration';
 import { Dice3D } from '../interfaces/DiceSoNice';
 import ActionCardEditor from './apps/ActionCardEditor';
@@ -100,21 +100,23 @@ export default class SwadeHooks {
     options: any,
   ) {
     // Mark all Wildcards in the Actors sidebars with an icon
-    const found = html.find('.document-name');
+    const entries = html.find('.document-name');
     const actors: Array<SwadeActor> = app.documents;
-    const wildcards = actors.filter((a) => a.isWildcard && a.hasPlayerOwner);
+    const wildcards = actors.filter(
+      (a) => a.isWildcard && a.type === 'character',
+    );
 
     //if the player is not a GM, then don't mark the NPC wildcards
-    if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM) {
+    if (!game.settings.get('swade', 'hideNPCWildcards') || game.user?.isGM) {
       const npcWildcards = actors.filter(
-        (a) => a.isWildcard && !a.hasPlayerOwner,
+        (a) => a.isWildcard && a.type === 'npc',
       );
       wildcards.push(...npcWildcards);
     }
 
-    for (let i = 0; i < found.length; i++) {
-      const element = found[i];
-      const actorID = element.parentElement!.dataset.documentId;
+    for (let i = 0; i < entries.length; i++) {
+      const element = entries[i];
+      const actorID = element.parentElement?.dataset.documentId;
       const wildcard = wildcards.find((a) => a.id === actorID);
 
       if (wildcard) {
@@ -156,14 +158,14 @@ export default class SwadeHooks {
     if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM)
       return;
     //Mark Wildcards in the compendium
-    if (app.metadata['type'] === 'Actor') {
+    if (app.metadata.type === 'Actor') {
       const content = data.index;
-      const wildcards = content.filter(
-        (actor) =>
-          getProperty(actor, 'data.wildcard') &&
-          actor.name !== '#[CF_tempEntity]',
-      );
-      const ids: string[] = wildcards.map((actor) => actor._id);
+      const ids: string[] = content
+        .filter(
+          (a) =>
+            getProperty(a, 'data.wildcard') && a.name !== '#[CF_tempEntity]',
+        )
+        .map((actor) => actor._id);
 
       const found = html.find('.directory-item');
       found.each((i, el) => {
@@ -225,7 +227,7 @@ export default class SwadeHooks {
       icon: '<i class="fas fa-file-export"></i>',
       condition: (li) => {
         const pack = game.packs.get(li.data('pack'), { strict: true });
-        return pack.metadata['type'] === 'JournalEntry';
+        return pack.metadata.type === 'JournalEntry';
       },
       callback: async (li) => {
         const pack = game.packs.get(li.data('pack'), {
@@ -834,29 +836,34 @@ export default class SwadeHooks {
     sheet: ActorSheet,
     data: any,
   ) {
-    if (data.type === 'Actor' && sheet instanceof SwadeVehicleSheet) {
+    const sheetIsVehicleSheet = sheet instanceof SwadeVehicleSheet;
+
+    if (data.type === 'Actor' && sheetIsVehicleSheet) {
       const activeTab = getProperty(sheet, '_tabs')[0].active;
       if (activeTab === 'summary') {
         let idToSet = `Actor.${data.id}`;
-        if ('pack' in data) {
+        if (data.pack) {
           idToSet = `Compendium.${data.pack}.${data.id}`;
         }
         await sheet.actor.update({ 'data.driver.id': idToSet });
       }
     }
     //handle race item creation
-    if (data.type === 'Item' && !(sheet instanceof SwadeVehicleSheet)) {
+    const isNewItemDrop = data.type === 'Item' && !data.data;
+    if (isNewItemDrop && !sheetIsVehicleSheet) {
       let item: SwadeItem | StoredDocument<SwadeItem>;
-      if ('pack' in data) {
+      //retrieve the item
+      if (data.pack) {
         const pack = game.packs.get(data.pack, {
           strict: true,
         }) as CompendiumCollection<ItemMetadata>;
         item = (await pack.getDocument(data.id)) as StoredDocument<SwadeItem>;
-      } else if ('actorId' in data) {
+      } else if (data.actorId) {
         item = new SwadeItem(data.data);
       } else {
         item = game.items!.get(data.id, { strict: true });
       }
+      //check if it's the proper type and subtype
       if (item.data.type !== 'ability') return;
       const subType = item.data.data.subtype;
       if (subType === 'special') return;
@@ -936,9 +943,8 @@ export default class SwadeHooks {
     html.find('input[name="initiative"]').parents('div.form-group').remove();
 
     //grab cards and sort them
-    const deck = game.cards!.get(game.settings.get('swade', 'actionDeck'), {
-      strict: true,
-    });
+    const actionDeckID = game.settings.get('swade', 'actionDeck');
+    const deck = game.cards!.get(actionDeckID, { strict: true });
 
     const cards = Array.from(deck.cards.values()).sort((a, b) => {
       const cardA = a.data.value!;
@@ -987,27 +993,56 @@ export default class SwadeHooks {
       `#combatant-config-${options.document.id} footer`,
     );
 
+    //pull the combatant from the Config Object
+    const combatant = app.object;
+    const combat = combatant.parent;
+
     //Attach click event to button which will call the combatant update as we can't easily modify the submit function of the FormApplication
     html.find('footer button').on('click', async (ev) => {
-      const selectedCard = html.find('input[name=ActionCard]:checked');
+      const selectedCard = html.find('input[name=action-card]:checked');
       if (selectedCard.length === 0) {
         return;
       }
 
       const cardId = selectedCard.data().cardId as string;
       const card = deck.cards.get(cardId, { strict: true });
-      const cardValue = card.data.value!;
-      const suitValue = card.data.data['suit'];
-      const hasJoker = card.data.data['isJoker'];
+
+      const cardValue = card.data.value as number;
+      const suitValue = card.data.data['suit'] as number;
+      const hasJoker = card.data.data['isJoker'] as boolean;
       const cardString = card.data.description;
 
-      //TODO figure out if the card should be passed to the Discard Pile after being chosen this way
-      await game.combat?.combatants
-        .get(options.document.id, { strict: true })
-        .update({
-          initiative: suitValue + cardValue,
-          'flags.swade': { cardValue, suitValue, hasJoker, cardString },
-        });
+      //move the card to the discard pile
+      const discardPileId = game.settings.get('swade', 'actionDeckDiscardPile');
+      const discardPile = game.cards!.get(discardPileId, { strict: true });
+      await card.discard(discardPile, { chatNotification: false });
+
+      //update the combatant with the new card
+      const updates = new Array<Record<string, unknown>>();
+      updates.push({
+        _id: combatant.id,
+        initiative: suitValue + cardValue,
+        'flags.swade': { cardValue, suitValue, hasJoker, cardString },
+      });
+
+      //update followers, if applicable
+      if (combatant.isGroupLeader) {
+        const followers =
+          combat?.combatants.filter((f) => f.groupId === combatant.id) ?? [];
+        for (const follower of followers) {
+          updates.push({
+            _id: follower.id,
+            initiative: suitValue + cardValue,
+            'flags.swade': {
+              cardString,
+              cardValue,
+              hasJoker,
+              suitValue: suitValue - 0.001,
+            },
+          });
+        }
+      }
+      await combat?.updateEmbeddedDocuments('Combatant', updates);
     });
   }
 
@@ -1070,8 +1105,9 @@ export default class SwadeHooks {
       </div>
     </div>
   </section>`;
-    $(tab).insertAfter('nav.sheet-tabs a[data-tab="duration"]');
-    $(section).insertAfter('section[data-tab="duration"]');
+
+    html.find('nav.sheet-tabs a[data-tab="duration"]').after(tab);
+    html.find('section[data-tab="duration"]').after(section);
   }
 
   /** This hook only really exists to stop Races from being added to the actor as an item */
