@@ -50,6 +50,15 @@ Hooks.once('init', () => {
 
   //set up global game object
   game.swade = {
+    sheets: {
+      CharacterSheet,
+      SwadeItemSheet,
+      SwadeNPCSheet,
+      SwadeVehicleSheet,
+    },
+    apps: {
+      SwadeEntityTweaks,
+    },
     SwadeEntityTweaks,
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
