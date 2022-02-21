@@ -24,6 +24,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## v1.0.4
 
+### Added
+
+- Added Actor and Item sheet classes to the global `game.swade.sheets` object,
+- Added Tweaks application class to the global `game.swade.apps` object
+- Added AE changes to Berserk status effect
+
 ### Changed
 
 - The system will no longer force vision on on all newly created actors.. If you want to keep similar functionality I suggest using the default token settings in Foundry Core settings
