@@ -544,10 +544,13 @@ export default class CharacterSheet extends ActorSheet {
   getData() {
     const data: any = super.getData();
 
-    data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
+    //retrieve the items and sort them by their sort value
+    const items = Array.from(this.actor.items.values()).sort(
+      (a, b) => a.data.sort - b.data.sort,
+    );
 
     const ammoManagement = game.settings.get('swade', 'ammoManagement');
-    for (const item of Array.from(this.actor.items.values()) as any[]) {
+    for (const item of items as any[]) {
       // Basic template rendering data
       const data = item.data;
       const actions = item.data.data?.actions?.additional ?? {};
@@ -579,6 +582,15 @@ export default class CharacterSheet extends ActorSheet {
 
       item.powerPoints = this.getPowerPoints(data);
     }
+
+    const itemTypes: Record<string, SwadeItem[]> = {};
+    for (const item of items) {
+      const type = item.type;
+      if (!itemTypes[type]) itemTypes[type] = [];
+      itemTypes[type].push(item);
+    }
+
+    data.itemTypes = itemTypes;
 
     //sort skills alphabetically
     data.sortedSkills = this.actor.itemTypes.skill.sort((a, b) =>
@@ -657,7 +669,10 @@ export default class CharacterSheet extends ActorSheet {
         game.settings.get('swade', 'weightUnit') === 'imperial' ? 'lbs' : 'kg',
     };
 
-    // Progress attribute abbreviation toggle
+    //add benny image URI
+    data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
+
+    // Procoess attribute abbreviation toggle
     data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
 
     return data;

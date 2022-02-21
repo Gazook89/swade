@@ -22,6 +22,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.4
+
+### Added
+
+- Added Actor and Item sheet classes to the global `game.swade.sheets` object,
+- Added Tweaks application class to the global `game.swade.apps` object
+- Added AE changes to Berserk status effect
+
+### Changed
+
+- The system will no longer force vision on on all newly created actors.. If you want to keep similar functionality I suggest using the default token settings in Foundry Core settings
+
+### Fixed
+
+- Fixed a bug which would cause Wildcards to only be marked as such on the sidebar if the actor had at least 1 player owner
+- Restored the ability for gear, edges and hindrances to be sorted on the character sheet
+- Giving a combatant a new card via the Combatant Config now properly applies the new card to all followers as well
+- Fixed a bug that causes Active Effect sheets to have multiple expiration tabs if multiple sheets were opened simultaneously
+
+## v1.0.3
+
+### Changed
+
+- Action Decks created by the system setup function are now automatically shuffled after creation
+
+### Fixed
+
+- Wildcards no longer require a user with owner permissions to display their status in the actor directory
+
 ## v1.0.3
 
 ### Added
