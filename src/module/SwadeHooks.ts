@@ -1034,6 +1034,7 @@ export default class SwadeHooks {
             _id: follower.id,
             initiative: suitValue + cardValue,
             'flags.swade': {
+              cardString,
               cardValue,
               hasJoker,
               suitValue: suitValue - 0.001,
