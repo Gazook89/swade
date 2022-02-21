@@ -1104,8 +1104,9 @@ export default class SwadeHooks {
       </div>
     </div>
   </section>`;
-    $(tab).insertAfter('nav.sheet-tabs a[data-tab="duration"]');
-    $(section).insertAfter('section[data-tab="duration"]');
+
+    html.find('nav.sheet-tabs a[data-tab="duration"]').after(tab);
+    html.find('section[data-tab="duration"]').after(section);
   }
 
   /** This hook only really exists to stop Races from being added to the actor as an item */
