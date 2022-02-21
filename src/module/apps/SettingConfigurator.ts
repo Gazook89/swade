@@ -190,7 +190,7 @@ export default class SettingConfigurator extends FormApplication<
           (e) => e.name !== '#[CF_tempEntity]',
         );
         const isItem =
-          p.metadata['type'] === 'Item' || p.metadata.entity === 'Item';
+          p.metadata.type === 'Item' || p.metadata.entity === 'Item';
         return isItem && index.every((v) => v['type'] === 'skill');
       })
       .forEach((p) => {
