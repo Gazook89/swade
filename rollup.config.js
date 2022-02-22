@@ -6,6 +6,7 @@ import styles from 'rollup-plugin-styles';
 import { terser } from 'rollup-plugin-terser';
 import livereload from 'rollup-plugin-livereload';
 import * as yaml from 'js-yaml';
+import buildCompendiums from './tools/rollup-plugin-build-compendiums';
 
 const name = 'swade';
 const distDirectory = 'dist';
@@ -62,6 +63,10 @@ const config = {
           rename: (name, _ext) => `${name}.json`,
         },
       ],
+    }),
+    buildCompendiums({
+      src: `${srcDirectory}/packs`,
+      dest: `${distDirectory}/packs`,
     }),
     isDev && livereload(distDirectory),
     isProd && terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),

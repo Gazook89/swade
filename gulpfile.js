@@ -1,18 +1,12 @@
 /* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const gulp = require('gulp');
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const archiver = require('archiver');
 const stringify = require('json-stringify-pretty-compact');
-const mergeStream = require('merge-stream');
-const through2 = require('through2');
 
 const git = require('gulp-git');
-const yaml = require('gulp-yaml');
-const concat = require('gulp-concat');
-const rename = require('gulp-rename');
 const argv = require('yargs').argv;
 
 function getConfig() {
@@ -50,48 +44,6 @@ function getManifest() {
   }
 
   return json;
-}
-
-/********************/
-/*		BUILD		*/
-/********************/
-
-/**
- * Build Compendiums
- */
-function buildCompendiums() {
-  const packFolders = fs.readdirSync('src/packs/').filter(function (file) {
-    return fs.statSync(path.join('src/packs', file)).isDirectory();
-  });
-  function makeid(length) {
-    var result = '';
-    var characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
-  var packs = packFolders.map(function (folder) {
-    return gulp
-      .src(path.join('src/packs/', folder, '/**/*.yml'))
-      .pipe(
-        through2.obj((file, enc, cb) => {
-          file.contents = Buffer.concat([
-            Buffer.from(`_id: ${makeid(16)}\n`),
-            file.contents,
-          ]);
-          cb(null, file);
-        }),
-      )
-      .pipe(yaml({ space: 0, safe: true, json: true }))
-      .pipe(concat(folder + '.json'))
-      .pipe(rename(folder + '.db'))
-      .pipe(gulp.dest('dist/packs'));
-  });
-  return mergeStream.call(null, packs);
 }
 
 /********************/
@@ -385,14 +337,9 @@ function gitTag() {
 const execGit = gulp.series(gitAdd, gitCommit, gitTag);
 
 const execBuild = gulp.parallel(buildCompendiums);
-
-exports.build = gulp.series(clean, execBuild);
-exports.watch = buildWatch;
-exports.clean = clean;
 exports.link = linkUserData;
 exports.package = packageBuild;
 exports.update = updateManifest;
-exports.packs = buildCompendiums;
 exports.publish = gulp.series(
   clean,
   updateManifest,
