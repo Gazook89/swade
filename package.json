@@ -15,8 +15,9 @@
     "url": "https://gitlab.com/peginc/swade/-/issues"
   },
   "scripts": {
-    "build:watch": "rollup -cw",
     "build": "rollup -c",
+    "build:watch": "rollup -cw",
+    "build: packs": "node ./tools/build-packs.js",
     "link-project": "node ./tools/link-project.js",
     "clean": "rimraf dist",
     "clean:link": "node ./tools/link-project.js --clean",

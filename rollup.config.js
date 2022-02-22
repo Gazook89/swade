@@ -6,7 +6,6 @@ import styles from 'rollup-plugin-styles';
 import { terser } from 'rollup-plugin-terser';
 import livereload from 'rollup-plugin-livereload';
 import * as yaml from 'js-yaml';
-import buildCompendiums from './tools/rollup-plugin-build-compendiums';
 
 const name = 'swade';
 const distDirectory = 'dist';
@@ -17,9 +16,7 @@ const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
 
-/**
- * @type {import('rollup').RollupOptions}
- */
+/** @type {import('rollup').RollupOptions} */
 const config = {
   input: { [`${name}`]: `${srcDirectory}/${name}.ts` },
   output: {
@@ -63,10 +60,6 @@ const config = {
           rename: (name, _ext) => `${name}.json`,
         },
       ],
-    }),
-    buildCompendiums({
-      src: `${srcDirectory}/packs`,
-      dest: `${distDirectory}/packs`,
     }),
     isDev && livereload(distDirectory),
     isProd && terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),
