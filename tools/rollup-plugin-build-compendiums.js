@@ -1,8 +1,10 @@
 import path from 'node:path';
-import { readdir, readFile, writeFile, mkdir, exists } from 'node:fs/promises';
+import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { load as yamlLoad } from 'js-yaml';
+import { existsSync } from 'node:fs';
 
 /**
+ * //TODO possibly revisit for watch functionality
  * @param {object} options
  * @param {string} options.src - The source directory which contains a subdirectory per compendium pack
  * @param {string} options.dest - The destination directory
@@ -35,8 +37,7 @@ export default function buildCompendiums({ src, dest }) {
 
         //check if the output directory exists, and create it if necessary
         const outputDir = path.resolve(dest);
-        const outputDirExists = await exists(outputDir);
-        if (!outputDirExists) await mkdir(outputDir);
+        if (!existsSync(outputDir)) await mkdir(outputDir);
 
         //write the contents to the pack file
         await writeFile(
