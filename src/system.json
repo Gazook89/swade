@@ -37,13 +37,6 @@
       "system": "swade",
       "path": "./packs/hindrances.db",
       "type": "Item"
-    },
-    {
-      "name": "action-cards",
-      "label": "Basic Action Cards",
-      "system": "swade",
-      "path": "./packs/action-cards.db",
-      "type": "JournalEntry"
     }
   ],
   "languages": [
