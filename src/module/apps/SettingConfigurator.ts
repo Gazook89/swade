@@ -51,8 +51,8 @@ export default class SettingConfigurator extends FormApplication<
         Die: 'SWADE.Die',
       },
       coreSkillPackChoices: this._buildCoreSkillPackChoices(),
-      actioDeckChoices: this._buildActionDeckChoices(),
-      discardPileChoices: this._buildActioDeckDiscardPileChoices(),
+      actionDeckChoices: this._buildActionDeckChoices(),
+      discardPileChoices: this._buildActionDeckDiscardPileChoices(),
     };
     for (const setting of this.config.settings) {
       data.settingRules[setting] = game.settings.get('swade', setting);
@@ -94,11 +94,11 @@ export default class SettingConfigurator extends FormApplication<
     const actorAttributes = this._handleKeyValidityCheck(formActorAttrs);
     const itemAttributes = this._handleKeyValidityCheck(formItemAttrs);
     const saveValue = {
-      actor: this._handleDeletableAttributes(
+      actor: this._handleRemovableAttributes(
         actorAttributes,
         settingFields.actor,
       ),
-      item: this._handleDeletableAttributes(itemAttributes, settingFields.item),
+      item: this._handleRemovableAttributes(itemAttributes, settingFields.item),
     };
     await game.settings.set('swade', 'settingFields', saveValue);
 
@@ -172,7 +172,7 @@ export default class SettingConfigurator extends FormApplication<
    * @param attributes
    * @param base
    */
-  private _handleDeletableAttributes(attributes: any, base: any) {
+  private _handleRemovableAttributes(attributes: any, base: any) {
     for (const k of Object.keys(base)) {
       if (!attributes.hasOwnProperty(k)) {
         delete attributes[k];
@@ -210,7 +210,7 @@ export default class SettingConfigurator extends FormApplication<
     return deckChoices;
   }
 
-  private _buildActioDeckDiscardPileChoices() {
+  private _buildActionDeckDiscardPileChoices() {
     const discardPiles: Record<string, string> = {};
     game.cards
       ?.filter((stack) => stack.data.type === 'pile')
