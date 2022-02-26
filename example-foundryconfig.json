@@ -1,6 +1,3 @@
 {
-  "dataPath": "[local-path-to]/FoundryVTT",
-  "manifest": "src",
-  "repository": "https://gitlab.com/peginc/swade",
-  "rawURL": ""
+  "dataPath": "[local-path-to]/FoundryVTT"
 }
