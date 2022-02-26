@@ -60,13 +60,24 @@ Hooks.once('init', () => {
     apps: {
       SwadeEntityTweaks,
     },
-    SwadeEntityTweaks,
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
-    itemChatCardHelper: ItemChatCardHelper,
     migrations: migrations,
+    ItemChatCardHelper: ItemChatCardHelper,
     CharacterSummarizer,
     RollDialog,
+    get SwadeEntityTweaks() {
+      console.warn(
+        'Please use `game.swade.apps.SwadeEntityTweaks` instead. This accessor is getting deprecated and removed with system version 1.2.0',
+      );
+      return SwadeEntityTweaks;
+    },
+    get itemChatCardHelper() {
+      console.warn(
+        'Please use `game.swade.ItemChatCardHelper` instead. This accessor is getting deprecated and removed with system version 1.2.0',
+      );
+      return ItemChatCardHelper;
+    },
   };
 
   //register custom Handlebars helpers
