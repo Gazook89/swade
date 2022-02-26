@@ -22,8 +22,8 @@
     "clean": "rimraf dist",
     "clean:link": "node ./tools/link-project.js --clean",
     "check:types": "tsc --noEmit",
-    "check:lint": "eslint --ext .ts,.js ./src",
-    "lint:fix": "eslint --ext .ts,.js  ./src --fix",
+    "check:lint": "eslint --ext .ts,.js .",
+    "lint:fix": "eslint --ext .ts,.js  . --fix",
     "prepare": "husky install",
     "pretty-staged": "pretty-quick --staged --pattern '**/*.!(hbs)'"
   },
