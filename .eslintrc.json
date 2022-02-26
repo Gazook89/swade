@@ -19,6 +19,7 @@
     "project": "./tsconfig.json"
   },
   "plugins": ["@typescript-eslint/eslint-plugin", "deprecation"],
+  "ignorePatterns": ["dist/*"],
   "rules": {
     "quotes": ["warn", "single"],
     "no-prototype-builtins": ["off"],
