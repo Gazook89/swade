@@ -4,10 +4,9 @@ _by Pinnacle Entertainment Group, Inc._
 
 <div align="center">
 
-<img title="Minimum core version" src="https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=core&query=minimumCoreVersion&suffix=%2B&style=flat-square&color=important">
-<img title="Latest compatible version" src="https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=compatible&query=compatibleCoreVersion&style=flat-square&color=important">
-<img src="https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=version&query=version&style=flat-square&color=success">
-<img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square">
+![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https%3A%2F%2Fgitlab.com%2Fpeginc%2Fswade%2F-%2Fraw%2Fdevelop%2Fsrc%2Fsystem.json)
+![Current system version](https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=version&query=version&color=success)
+![Build Status](https://img.shields.io/gitlab/pipeline-status/peginc/swade?branch=master)
 
 ![Savage Worlds Adventure Edition for Foundry Virtual Tabletop](https://gitlab.com/peginc/swade/-/raw/master/images/logos/SWADE_FVTT.png)
 
@@ -102,7 +101,9 @@ Pinnacle Entertainment Group, Inc. reserves the rights for the following assets 
 - swade_logo.webp
 - benny-chip-front.png
 
-## This is a FAQ style of clarifications about what is and what isn’t allowed by our license. To clarify, you may do any of the following in your private games at any point. This specifically applies to publicly distributing, through Github or other means, code to allow others to do this, which falls under “public use.”
+### License FAQ
+
+**This is a FAQ style of clarifications about what is and what isn’t allowed by our license. To clarify, you may do any of the following in your private games at any point. This specifically applies to publicly distributing, through Github or other means, code to allow others to do this, which falls under “public use.”**
 
 1. Can I sell a module that I have created for swade?
 
