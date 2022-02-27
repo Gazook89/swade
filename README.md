@@ -4,7 +4,7 @@ _by Pinnacle Entertainment Group, Inc._
 
 <div align="center">
 
-![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https%3A%2F%2Fgitlab.com%2Fpeginc%2Fswade%2F-%2Fraw%2Fdevelop%2Fsrc%2Fsystem.json)
+![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://gitlab.com/peginc/swade/-/raw/develop/src/system.json)
 ![Current system version](https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=version&query=version&color=success)
 ![Build Status](https://img.shields.io/gitlab/pipeline-status/peginc/swade?branch=master)
 
