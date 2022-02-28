@@ -132,6 +132,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_enraged.svg',
       id: 'berserk',
       label: 'SWADE.Berserk',
+      duration: {
+        rounds: 10,
+      },
       changes: [
         {
           key: 'data.attributes.strength.die.sides',
@@ -149,6 +152,11 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.EndOfTurnPrompt,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_defending.svg',
@@ -161,6 +169,11 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      flags: {
+        swade: {
+          expiration: StatusEffectExpiration.StartOfTurnAuto,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_flying.svg',
