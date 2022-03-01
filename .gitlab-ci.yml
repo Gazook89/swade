@@ -37,6 +37,8 @@ typecheck:
 
 build:
   stage: build
+  variables:
+    NODE_ENV: 'production'
   before_script:
     - apt --yes update
     - apt --yes install jq
