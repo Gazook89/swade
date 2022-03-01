@@ -14,7 +14,17 @@ const srcDirectory = 'src';
 const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 
 const isProd = process.env.NODE_ENV === 'production';
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = !isProd;
+
+//this simple plugin displays which environment we're in when rollup starts
+const envPlugin = () => {
+  return {
+    name: 'environment',
+    buildStart() {
+      console.log('\x1b[32m%s%s\x1b[0m', 'Environment: ', process.env.NODE_ENV);
+    },
+  };
+};
 
 /** @type {import('rollup').RollupOptions} */
 const config = {
@@ -26,6 +36,7 @@ const config = {
     assetFileNames: '[name].[ext]',
   },
   plugins: [
+    envPlugin(),
     typescript({ noEmitOnError: isProd }),
     styles({
       mode: ['extract', `${name}.css`],
