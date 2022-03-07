@@ -22,6 +22,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.5
+
+### Fixed
+
+- Fixed an issue where Active Effects changes wouldn't be applied to an Item if the attribute key contained a non-alphanumerical character
+- Fixed an issue where Active Effects changes wouldn't be applied to an Item if the name of the target item contained period
+- Damned Regular Expressions
+
 ## v1.0.4
 
 ### Added

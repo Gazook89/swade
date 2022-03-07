@@ -44,7 +44,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
     return false;
   }
 
-  static ITEM_REGEXP = /@([a-zA-Z0-9]+){([^.]+)}\[([a-zA-Z0-9.]+)\]/;
+  static ITEM_REGEXP = /@([a-zA-Z0-9]+)\{(.+)\}\[([\S.]+)\]/;
 
   /** @override */
   apply(actor: SwadeActor, change: EffectChangeData) {
