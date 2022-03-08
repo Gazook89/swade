@@ -41,8 +41,8 @@ build:
     - apt --yes update
     - apt --yes install jq
     - npm ci --cache .npm --prefer-offline
-    - NODE_ENV=production
   script: |
+    NODE_ENV=production
     jq '.version = $version | .url = $url | .manifest = $manifest | .download = $download' \
     --arg version "${CI_COMMIT_TAG:1}" \
     --arg url "$CI_PROJECT_URL" \
