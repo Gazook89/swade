@@ -24,7 +24,7 @@
     "check:types": "tsc --noEmit",
     "check:lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --ext .ts,.js  . --fix",
-    "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\"",
+    "prepare": "husky install",
     "pretty-staged": "pretty-quick --staged --pattern '**/*.!(hbs)'"
   },
   "devDependencies": {
