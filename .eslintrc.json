@@ -71,7 +71,8 @@
         "format": ["PascalCase"],
         "leadingUnderscore": "allow"
       },
-      { "selector": "typeLike", "format": ["PascalCase"] }
+      { "selector": "typeLike", "format": ["PascalCase"] },
+      { "selector": ["objectLiteralProperty", "typeProperty"], "format": null }
     ],
     "deprecation/deprecation": "warn"
   }
