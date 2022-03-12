@@ -63,7 +63,7 @@ Hooks.once('init', () => {
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
     migrations: migrations,
-    ItemChatCardHelper: ItemChatCardHelper,
+    itemChatCardHelper: ItemChatCardHelper,
     CharacterSummarizer,
     RollDialog,
     get SwadeEntityTweaks() {
@@ -71,12 +71,6 @@ Hooks.once('init', () => {
         'Please use `game.swade.apps.SwadeEntityTweaks` instead. This accessor is getting deprecated and removed with system version 1.2.0',
       );
       return SwadeEntityTweaks;
-    },
-    get itemChatCardHelper() {
-      console.warn(
-        'Please use `game.swade.ItemChatCardHelper` instead. This accessor is getting deprecated and removed with system version 1.2.0',
-      );
-      return ItemChatCardHelper;
     },
   };
 

@@ -21,7 +21,6 @@ export default interface SwadeGame {
     SwadeEntityTweaks: typeof SwadeEntityTweaks;
   };
   CharacterSummarizer: typeof CharacterSummarizer;
-  ItemChatCardHelper: typeof ItemChatCardHelper;
   RollDialog: typeof RollDialog;
   sockets: SwadeSocketHandler;
   rollItemMacro: typeof rollItemMacro;
@@ -32,9 +31,5 @@ export default interface SwadeGame {
    * @since v1.1.0
    */
   SwadeEntityTweaks: typeof SwadeEntityTweaks;
-  /**
-   * @deprecated use game.swade.ItemChatCardHelper instead
-   * @since v1.1.0
-   */
   itemChatCardHelper: typeof ItemChatCardHelper;
 }
