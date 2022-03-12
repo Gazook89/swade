@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import copy from '@guanghechen/rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
+import * as yaml from 'js-yaml';
+import livereload from 'rollup-plugin-livereload';
 import styles from 'rollup-plugin-styles';
 import { terser } from 'rollup-plugin-terser';
-import livereload from 'rollup-plugin-livereload';
-import * as yaml from 'js-yaml';
 
 const name = 'swade';
 const distDirectory = 'dist';
@@ -16,14 +16,19 @@ const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
 
-//this simple plugin displays which environment we're in when rollup starts
-const envPlugin = () => {
-  return {
+/**
+ * this simple plugin displays which environment we're in when rollup starts
+ * @param {string} environment - the environment to display
+ */
+const environment = (environment) => {
+  /** @type {import('rollup').PluginContext} */
+  const plugin = {
     name: 'environment',
     buildStart() {
-      console.log('\x1b[32m%s%s\x1b[0m', 'Environment: ', process.env.NODE_ENV);
+      console.log('\x1b[32m%s%s\x1b[0m', 'Environment: ', environment);
     },
   };
+  return plugin;
 };
 
 /** @type {import('rollup').RollupOptions} */
@@ -36,7 +41,7 @@ const config = {
     assetFileNames: '[name].[ext]',
   },
   plugins: [
-    envPlugin(),
+    environment(process.env.NODE_ENV),
     typescript({ noEmitOnError: isProd }),
     styles({
       mode: ['extract', `${name}.css`],
