@@ -5,7 +5,6 @@ import { ItemMetadata, StatusEffect } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
-import { ArmorLocation } from '../../enums/ArmorLocationsEnum';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
@@ -75,10 +74,12 @@ export default class SwadeActor extends Actor {
 
   get armorPerLocation(): ArmorPerLocation {
     return {
-      head: this._getArmorForLocation(ArmorLocation.Head),
-      torso: this._getArmorForLocation(ArmorLocation.Torso),
-      arms: this._getArmorForLocation(ArmorLocation.Arms),
-      legs: this._getArmorForLocation(ArmorLocation.Legs),
+      head: this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Head),
+      torso: this._getArmorForLocation(
+        CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Torso,
+      ),
+      arms: this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Arms),
+      legs: this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Legs),
     };
   }
 
@@ -575,7 +576,7 @@ export default class SwadeActor extends Actor {
 
   /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
   calcArmor(): number {
-    return this._getArmorForLocation(ArmorLocation.Torso);
+    return this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Torso);
   }
 
   /**
@@ -962,7 +963,9 @@ export default class SwadeActor extends Actor {
    * @param location The location of the armor such as head, torso, arms or legs
    * @returns The total amount of armor for that location
    */
-  private _getArmorForLocation(location: ArmorLocation): number {
+  private _getArmorForLocation(
+    location: ValueOf<typeof SWADE.CONST.ARMOR_LOCATIONS>,
+  ): number {
     if (this.data.type === 'vehicle') return 0;
 
     let totalArmorVal = 0;
@@ -1134,11 +1137,6 @@ export default class SwadeActor extends Actor {
   }
 }
 
-export interface ArmorPerLocation {
-  head: number;
-  arms: number;
-  torso: number;
-  legs: number;
-}
-
 export type Attribute = keyof typeof SWADE.attributes;
+type ArmorLocation = ValueOf<typeof SWADE.CONST.ARMOR_LOCATIONS>;
+type ArmorPerLocation = Record<ArmorLocation, number>;

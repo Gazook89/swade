@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { AbilitySubType, StatusEffect } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
-import { TemplatePreset } from './enums/TemplatePresetEnum';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SWADE: SwadeConfig = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
@@ -372,52 +371,60 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
       button: {
-        name: TemplatePreset.CONE,
+        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.CONE,
         title: 'SWADE.Cone',
         icon: 'text-icon cone',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.CONE);
+          SwadeMeasuredTemplate.fromPreset(
+            CONFIG.SWADE.CONST.TEMPLATE_PRESET.CONE,
+          );
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
       button: {
-        name: TemplatePreset.SBT,
+        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.SBT,
         title: 'SWADE.SBT',
         icon: 'text-icon sbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.SBT);
+          SwadeMeasuredTemplate.fromPreset(
+            CONFIG.SWADE.CONST.TEMPLATE_PRESET.SBT,
+          );
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
       button: {
-        name: TemplatePreset.MBT,
+        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.MBT,
         title: 'SWADE.MBT',
         icon: 'text-icon mbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.MBT);
+          SwadeMeasuredTemplate.fromPreset(
+            CONFIG.SWADE.CONST.TEMPLATE_PRESET.MBT,
+          );
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
       button: {
-        name: TemplatePreset.LBT,
+        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.LBT,
         title: 'SWADE.LBT',
         icon: 'text-icon lbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.LBT);
+          SwadeMeasuredTemplate.fromPreset(
+            CONFIG.SWADE.CONST.TEMPLATE_PRESET.LBT,
+          );
         },
       },
     },
@@ -479,11 +486,35 @@ export const SWADE: SwadeConfig = {
       ],
     },
   ],
+
+  CONST: {
+    ARMOR_LOCATIONS: {
+      Head: 'head',
+      Torso: 'torso',
+      Legs: 'legs',
+      Arms: 'arms',
+    },
+    TEMPLATE_PRESET: {
+      CONE: 'swcone',
+      SBT: 'sbt',
+      MBT: 'mbt',
+      LBT: 'lbt',
+    },
+    STATUS_EFFECT_EXPIRATION: {
+      StartOfTurnAuto: 0,
+      StartOfTurnPrompt: 1,
+      EndOfTurnAuto: 2,
+      EndOfTurnPrompt: 3,
+    },
+  },
 };
 
 export interface SwadeConfig {
   //a piece of ASCII art for the init log message
   ASCII: string;
+
+  CONST: SystemConstants;
+
   //An object to store localization strings
   attributes: {
     agility: {
@@ -561,4 +592,25 @@ export interface SwadeConfig {
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
   prototypeRollGroups: TraitRollModifierGroup[];
+}
+
+interface SystemConstants {
+  ARMOR_LOCATIONS: {
+    Head: 'head';
+    Torso: 'torso';
+    Legs: 'legs';
+    Arms: 'arms';
+  };
+  TEMPLATE_PRESET: {
+    CONE: 'swcone';
+    SBT: 'sbt';
+    MBT: 'mbt';
+    LBT: 'lbt';
+  };
+  STATUS_EFFECT_EXPIRATION: {
+    StartOfTurnAuto: 0;
+    StartOfTurnPrompt: 1;
+    EndOfTurnAuto: 2;
+    EndOfTurnPrompt: 3;
+  };
 }

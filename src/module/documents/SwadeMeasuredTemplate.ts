@@ -1,5 +1,4 @@
 import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateConfig';
-import { TemplatePreset } from '../enums/TemplatePresetEnum';
 
 declare global {
   interface PlaceableObjectClassConfig {
@@ -15,7 +14,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
    * @param preset the preset to use.
    * @returns SwadeTemplate | null
    */
-  static fromPreset(preset: TemplatePreset | string) {
+  static fromPreset(preset: string) {
     const existingPreview = CONFIG.SWADE.activeMeasuredTemplatePreview;
     if (existingPreview && !existingPreview._destroyed) {
       existingPreview.destroy({ children: true });
@@ -26,7 +25,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       CONFIG.SWADE.activeMeasuredTemplatePreview.drawPreview();
   }
 
-  private static _constructPreset(preset: TemplatePreset | string) {
+  private static _constructPreset(preset: string) {
     // Prepare template data
     const templateBaseData: MeasuredTemplateConstructorDataData = {
       user: game.user?.id,
