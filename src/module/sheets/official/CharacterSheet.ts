@@ -38,8 +38,25 @@ export default class CharacterSheet extends ActorSheet {
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
-    // Drag events for macros.
+    this.form!.addEventListener('keypress', (ev: KeyboardEvent) => {
+      const target = ev.target as HTMLButtonElement;
+      const targetIsButton = 'button' === target?.type;
+      if (!targetIsButton && ev.key === 'Enter') {
+        ev.preventDefault();
+        this.submit({ preventClose: true, preventRender: false });
+        return false;
+      }
+    });
 
+    // Input focus and update
+    const inputs = html.find('input');
+    inputs.on('focus', (ev) => ev.currentTarget.select());
+    inputs
+      .addBack()
+      .find('[data-dtype="Number"]')
+      .on('change', this._onChangeInputDelta.bind(this));
+
+    // Drag events for macros.
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.
@@ -108,15 +125,9 @@ export default class CharacterSheet extends ActorSheet {
 
     //Toggle Conviction
     html.find('.conviction-toggle').on('click', async () => {
-      const current = getProperty(
-        this.actor.data,
-        'data.details.conviction.value',
-      ) as number;
-      const active = getProperty(
-        this.actor.data,
-        'data.details.conviction.active',
-      ) as boolean;
-
+      if (this.actor.data.type === 'vehicle') return;
+      const current = this.actor.data.data.details.conviction.value;
+      const active = this.actor.data.data.details.conviction.active;
       if (current > 0 && !active) {
         await this.actor.update({
           'data.details.conviction.value': current - 1,
@@ -786,13 +797,13 @@ export default class CharacterSheet extends ActorSheet {
     },
     renderSheet = true,
   ) {
-    let possibleName = game.i18n.format('DOCUMENT.New', {
-      type: game.i18n.localize('DOCUMENT.ActiveEffect'),
-    });
-
     //Modify the data based on parameters passed in
-    if (name) possibleName = name;
-    data.label = possibleName;
+    if (!name) {
+      name = game.i18n.format('DOCUMENT.New', {
+        type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+      });
+    }
+    data.label = name;
 
     // Set default icon if none provided.
     if (!data.icon) {
@@ -809,5 +820,20 @@ export default class CharacterSheet extends ActorSheet {
       renderSheet: renderSheet,
       parent: this.actor,
     });
+  }
+
+  /**
+   * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
+   * @param {Event} event  Triggering event.
+   */
+  protected _onChangeInputDelta(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    if (['+', '-'].includes(value[0])) {
+      const delta = parseInt(value, 10);
+      input.value = getProperty(this.actor.data, input.name) + delta;
+    } else if (value[0] === '=') {
+      input.value = value.slice(1);
+    }
   }
 }
