@@ -10,12 +10,15 @@
       <input
         name="data.details.currency"
         type="text"
+        data-dtype="Number"
         value="{{data.data.details.currency}}"
         placeholder="{{localize 'SWADE.Currency'}}"
       />
     </span>
     {{else if (eq settingrules.wealthType "wealthDie")}}
-    <label><button class="roll">{{localize "SWADE.WealthDie"}}</button></label>
+    <label>
+      <button class="roll">{{localize "SWADE.WealthDie"}}</button>
+    </label>
     <span class="form-fields">
       <select data-dtype="Number" name="data.details.wealth.die">
         {{#select data.data.details.wealth.die}} {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
