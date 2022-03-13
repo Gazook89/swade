@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added End of Turn prompt expiration to Berserk status effect template
 - Added Start of Turn auto expiration to Defending status effect template
 - Added `CONFIG.SWADE.CONST` object which will contain constants and enums
+- Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
 
 ### Changed
 
@@ -45,6 +46,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Removed
 
 - Removed the Basic Action Cards compendium. Please be aware that only the compendium is removed. The image files for existing decks are still in the system assets.
+
+### Fixed
+
+- Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
 
 ## v1.0.5
 
