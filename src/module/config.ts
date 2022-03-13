@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { AbilitySubType, StatusEffect } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
+import { SystemConstants } from '../interfaces/SystemConstants';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
+import { constants } from './constants';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 
 export const SWADE: SwadeConfig = {
@@ -111,8 +113,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration:
-            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -153,8 +154,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration:
-            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         },
       },
     },
@@ -171,8 +171,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration:
-            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
         },
       },
     },
@@ -228,7 +227,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         },
       },
     },
@@ -255,8 +254,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration:
-            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -274,7 +272,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         },
       },
     },
@@ -284,8 +282,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.BleedingOut',
       flags: {
         swade: {
-          expiration:
-            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
         },
       },
     },
@@ -360,8 +357,7 @@ export const SWADE: SwadeConfig = {
       },
       flags: {
         swade: {
-          expiration:
-            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         },
       },
     },
@@ -376,60 +372,52 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
       button: {
-        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.CONE,
+        name: constants.TEMPLATE_PRESET.CONE,
         title: 'SWADE.Cone',
         icon: 'text-icon cone',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(
-            CONFIG.SWADE.CONST.TEMPLATE_PRESET.CONE,
-          );
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.CONE);
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
       button: {
-        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.SBT,
+        name: constants.TEMPLATE_PRESET.SBT,
         title: 'SWADE.SBT',
         icon: 'text-icon sbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(
-            CONFIG.SWADE.CONST.TEMPLATE_PRESET.SBT,
-          );
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.SBT);
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
       button: {
-        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.MBT,
+        name: constants.TEMPLATE_PRESET.MBT,
         title: 'SWADE.MBT',
         icon: 'text-icon mbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(
-            CONFIG.SWADE.CONST.TEMPLATE_PRESET.MBT,
-          );
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.MBT);
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
       button: {
-        name: CONFIG.SWADE.CONST.TEMPLATE_PRESET.LBT,
+        name: constants.TEMPLATE_PRESET.LBT,
         title: 'SWADE.LBT',
         icon: 'text-icon lbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(
-            CONFIG.SWADE.CONST.TEMPLATE_PRESET.LBT,
-          );
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.LBT);
         },
       },
     },
@@ -492,26 +480,7 @@ export const SWADE: SwadeConfig = {
     },
   ],
 
-  CONST: {
-    ARMOR_LOCATIONS: {
-      Head: 'head',
-      Torso: 'torso',
-      Legs: 'legs',
-      Arms: 'arms',
-    },
-    TEMPLATE_PRESET: {
-      CONE: 'swcone',
-      SBT: 'sbt',
-      MBT: 'mbt',
-      LBT: 'lbt',
-    },
-    STATUS_EFFECT_EXPIRATION: {
-      StartOfTurnAuto: 0,
-      StartOfTurnPrompt: 1,
-      EndOfTurnAuto: 2,
-      EndOfTurnPrompt: 3,
-    },
-  },
+  CONST: constants,
 };
 
 export interface SwadeConfig {
@@ -597,25 +566,4 @@ export interface SwadeConfig {
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
   prototypeRollGroups: TraitRollModifierGroup[];
-}
-
-interface SystemConstants {
-  ARMOR_LOCATIONS: {
-    Head: 'head';
-    Torso: 'torso';
-    Legs: 'legs';
-    Arms: 'arms';
-  };
-  TEMPLATE_PRESET: {
-    CONE: 'swcone';
-    SBT: 'sbt';
-    MBT: 'mbt';
-    LBT: 'lbt';
-  };
-  STATUS_EFFECT_EXPIRATION: {
-    StartOfTurnAuto: 0;
-    StartOfTurnPrompt: 1;
-    EndOfTurnAuto: 2;
-    EndOfTurnPrompt: 3;
-  };
 }
