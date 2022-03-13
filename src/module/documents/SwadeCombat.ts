@@ -1,5 +1,4 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
-import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
 import * as utils from '../util';
 import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
@@ -439,9 +438,12 @@ export default class SwadeCombat extends Combat {
     const currentTurnEndExpirations = new Array<SwadeActiveEffect>();
     for (const fx of currentTurnEffects ?? []) {
       const expiration = fx.getFlag('swade', 'expiration');
-      const endAutoExpire = expiration === StatusEffectExpiration.EndOfTurnAuto;
+      const endAutoExpire =
+        expiration ===
+        CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
       const endPromptExpire =
-        expiration === StatusEffectExpiration.EndOfTurnPrompt;
+        expiration ===
+        CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
       const expiresAtEndOfTurn = endAutoExpire || endPromptExpire;
       const startRound = getProperty(fx, 'data.duration.startRound');
       const startTurn = getProperty(fx, 'data.duration.startTurn');
@@ -458,13 +460,13 @@ export default class SwadeCombat extends Combat {
        * not the target's turn in that round.
        */
       if (startRound === this.round && startTurn < currentTurn) {
-        await fx.update({'duration.rounds': durationRounds - 1})
+        await fx.update({ 'duration.rounds': durationRounds - 1 });
       }
       if (expired) currentTurnEndExpirations.push(fx);
     }
 
     for (const effect of currentTurnEndExpirations) {
-        await effect.removeEffect();
+      await effect.removeEffect();
     }
 
     if (nextTurn < this.turns.length) {
@@ -473,9 +475,11 @@ export default class SwadeCombat extends Combat {
       for (const fx of nextTurnEffects ?? []) {
         const expiration = fx.getFlag('swade', 'expiration');
         const startAutoExpire =
-          expiration === StatusEffectExpiration.StartOfTurnAuto;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
         const startPromptExpire =
-          expiration === StatusEffectExpiration.StartOfTurnPrompt;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = getProperty(fx, 'data.duration.startRound');
         const startTurn = getProperty(fx, 'data.duration.startTurn');
@@ -548,7 +552,7 @@ export default class SwadeCombat extends Combat {
         const combatantIds = this.combatants.map((c) => c.id!);
         await this.rollInitiative(combatantIds);
       }
-      await game.combat?.update({turn: 0})
+      await game.combat?.update({ turn: 0 });
       await super.nextRound();
       // Process turn 0's status effects that expire at the start of the turn.
       const turnZero = this.turns[0];
@@ -557,9 +561,11 @@ export default class SwadeCombat extends Combat {
       for (const fx of turnZeroEffects) {
         const expiration = fx.getFlag('swade', 'expiration');
         const startAutoExpire =
-          expiration === StatusEffectExpiration.StartOfTurnAuto;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
         const startPromptExpire =
-          expiration === StatusEffectExpiration.StartOfTurnPrompt;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = getProperty(fx, 'data.duration.startRound');
         const startTurn = getProperty(fx, 'data.duration.startTurn');

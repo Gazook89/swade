@@ -17,7 +17,6 @@ import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
-import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 import * as migrations from './migration';
 import * as setup from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
@@ -26,7 +25,7 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 export default class SwadeHooks {
   static onSetup() {
     //localize the protoype modifers
-    for (const group of CONFIG.SWADE.prototypeRollGroups) {
+    for (const group of SWADE.prototypeRollGroups) {
       group.name = game.i18n.localize(group.name);
       for (const modifier of group.modifiers) {
         modifier.label = game.i18n.localize(modifier.label);
@@ -815,7 +814,7 @@ export default class SwadeHooks {
     //get the measured template tools
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
     //add buttons
-    const newTemplateButtons = CONFIG.SWADE.measuredTemplatePresets.map(
+    const newTemplateButtons = SWADE.measuredTemplatePresets.map(
       (t) => t.button,
     );
     measure.tools.splice(measure.tools.length - 1, 0, ...newTemplateButtons);
@@ -1054,7 +1053,7 @@ export default class SwadeHooks {
     const expiration = app.document.getFlag('swade', 'expiration');
     const loseTurnOnHold = app.document.getFlag('swade', 'loseTurnOnHold');
     const createOption = (
-      exp: StatusEffectExpiration | undefined,
+      exp: ValueOf<typeof SWADE.CONST.STATUS_EFFECT_EXPIRATION> | undefined,
       label: string,
     ) => {
       return `<option value="${exp}" ${
@@ -1064,19 +1063,19 @@ export default class SwadeHooks {
     const expirationOpt = [
       createOption(undefined, game.i18n.localize('SWADE.Expiration.None')),
       createOption(
-        StatusEffectExpiration.StartOfTurnAuto,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
         game.i18n.localize('SWADE.Expiration.BeginAuto'),
       ),
       createOption(
-        StatusEffectExpiration.StartOfTurnPrompt,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
         game.i18n.localize('SWADE.Expiration.BeginPrompt'),
       ),
       createOption(
-        StatusEffectExpiration.EndOfTurnAuto,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         game.i18n.localize('SWADE.Expiration.EndAuto'),
       ),
       createOption(
-        StatusEffectExpiration.EndOfTurnPrompt,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         game.i18n.localize('SWADE.Expiration.EndPrompt'),
       ),
     ];

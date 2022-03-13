@@ -3,7 +3,6 @@ import { AbilitySubType, StatusEffect } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
-import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 
 export const SWADE: SwadeConfig = {
   ASCII: `
@@ -112,7 +111,8 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          expiration:
+            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -153,7 +153,8 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnPrompt,
+          expiration:
+            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         },
       },
     },
@@ -170,7 +171,8 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnAuto,
+          expiration:
+            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
         },
       },
     },
@@ -226,7 +228,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnAuto,
+          expiration: CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         },
       },
     },
@@ -253,7 +255,8 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          expiration:
+            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -271,7 +274,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnAuto,
+          expiration: CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         },
       },
     },
@@ -281,7 +284,8 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.BleedingOut',
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          expiration:
+            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
         },
       },
     },
@@ -356,7 +360,8 @@ export const SWADE: SwadeConfig = {
       },
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnPrompt,
+          expiration:
+            CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         },
       },
     },

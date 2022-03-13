@@ -6,7 +6,6 @@ import {
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
-import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
 import { isFirstOwner } from '../util';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
@@ -120,12 +119,16 @@ export default class SwadeActiveEffect extends ActiveEffect {
   async removeEffect() {
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
-      expiration === StatusEffectExpiration.StartOfTurnAuto;
+      expiration ===
+      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
     const startOfTurnPrompt =
-      expiration === StatusEffectExpiration.StartOfTurnPrompt;
-    const endOfTurnAuto = expiration === StatusEffectExpiration.EndOfTurnAuto;
+      expiration ===
+      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
+    const endOfTurnAuto =
+      expiration === CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
     const endOfTurnPrompt =
-      expiration === StatusEffectExpiration.EndOfTurnPrompt;
+      expiration ===
+      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
     const auto = startOfTurnAuto || endOfTurnAuto;
     const prompt = startOfTurnPrompt || endOfTurnPrompt;
 
