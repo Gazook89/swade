@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.7
+
+## Fixed
+
+- Fixed an issue that would cause actor imports to fail
+
 ## v1.0.6
 
 ### Added

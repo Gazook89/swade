@@ -1020,32 +1020,33 @@ export default class SwadeActor extends Actor {
   }
 
   async _preCreate(
-    data: ActorDataConstructorData,
+    createData: ActorDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
   ) {
-    await super._preCreate(data, options, user);
+    await super._preCreate(createData, options, user);
     //return early if it's a vehicle
-    if (data.type === 'vehicle') return;
+    if (createData.type === 'vehicle') return;
 
-    const autoLinkWildcards = game.settings.get('swade', 'autoLinkWildcards');
     //only link NPCs if the autolink setting is on and they're not getting imported from somewhere
-    const autoActorLink =
-      data.type === 'npc' &&
-      autoLinkWildcards &&
-      getProperty(data, 'wildcard') &&
-      !hasProperty(data, 'flags.core.sourceId');
+    if (game.settings.get('swade', 'autoLinkWildcards')) {
+      const autoActorLink =
+        createData.type === 'npc' &&
+        foundry.utils.getProperty(createData, 'data.wildcard') &&
+        !foundry.utils.hasProperty(createData, 'flags.core.sourceId');
 
-    const tokenData = mergeObject(this.data.token.toObject(), {
-      actorLink: autoActorLink,
-    });
+      const tokenData = foundry.utils.mergeObject(this.data.token.toObject(), {
+        actorLink: autoActorLink,
+      });
 
-    this.data.token.update(tokenData);
+      this.data.token.update(tokenData);
+    }
+
     const coreSkillList = game.settings.get('swade', 'coreSkills');
     //only do this if this is a PC with no prior skills
     if (
       coreSkillList &&
-      data.type === 'character' &&
+      createData.type === 'character' &&
       this.itemTypes.skill.length <= 0
     ) {
       //Get list of core skills from settings
