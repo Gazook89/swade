@@ -22,6 +22,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.6
+
+### Added
+
+- Added additional translation strings
+
+### Fixed
+
+- Fixed abbreviation for PP in german translation
+
 ## v1.0.5
 
 ### Fixed
