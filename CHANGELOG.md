@@ -50,13 +50,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
+
 ## v1.0.6
 
 ### Added
 
 - Added additional translation strings
 
-###
+### Changed
 
 - Renamed `dealForInitative` to `dealForInitiative`. The old function will still be available until v1.1
 
