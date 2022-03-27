@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed abbreviation for PP in german translation
+- The autolink Wildcards setting should now only apply to NPCs again
 
 ## v1.0.5
 

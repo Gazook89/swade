@@ -1025,12 +1025,15 @@ export default class SwadeActor extends Actor {
     user: User,
   ) {
     await super._preCreate(data, options, user);
+    //return early if it's avehicle
+    if (data.type === 'vehicle') return;
 
     const autoLinkWildcards = game.settings.get('swade', 'autoLinkWildcards');
-    //only link PCs if the autolink setting is on and they're not getting imported from somewhere
+    //only link NPCs if the autolink setting is on and they're not getting imported from somewhere
     const autoActorLink =
-      data.type === 'character' &&
+      data.type === 'npc' &&
       autoLinkWildcards &&
+      getProperty(data, 'wildcard') &&
       !hasProperty(data, 'flags.core.sourceId');
 
     const tokenData = mergeObject(this.data.token.toObject(), {
@@ -1109,13 +1112,15 @@ export default class SwadeActor extends Actor {
   ) {
     await super._preUpdate(changed, options, user);
     //wildcards will be linked, extras unlinked
+    const autoLinkWildcards = game.settings.get('swade', 'autoLinkWildcards');
     if (
-      this.data.type !== 'vehicle' &&
-      game.settings.get('swade', 'autoLinkWildcards') &&
+      this.type === 'npc' &&
+      autoLinkWildcards &&
       hasProperty(changed, 'data.wildcard')
     ) {
+      const isWildcard = getProperty(changed, 'data.wildcard') as boolean;
       await this.data.token.update({
-        actorLink: getProperty(changed, 'data.wildcard') as boolean,
+        actorLink: isWildcard,
       });
     }
   }
