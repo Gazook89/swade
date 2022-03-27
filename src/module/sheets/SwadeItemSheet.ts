@@ -127,7 +127,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.item.effects.get(effectId)!;
+      const effect = this.item.effects.get(effectId, {strict: true});
       const action = a.dataset.action;
       switch (action) {
         case 'edit':

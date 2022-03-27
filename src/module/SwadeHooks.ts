@@ -24,7 +24,7 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 
 export default class SwadeHooks {
   static onSetup() {
-    //localize the protoype modifers
+    //localize the prototype modifiers
     for (const group of SWADE.prototypeRollGroups) {
       group.name = game.i18n.localize(group.name);
       for (const modifier of group.modifiers) {
@@ -1175,20 +1175,21 @@ export default class SwadeHooks {
       'no',
     );
 
-    const data = {
-      type: 'db',
-      system: 'swade',
-      colorset: 'black',
-      labels: [
-        game.settings.get('swade', 'bennyImage3DFront'),
-        game.settings.get('swade', 'bennyImage3DBack'),
-      ].filter(Boolean),
-      bumpMaps: [
-        game.settings.get('swade', '3dBennyFrontBump'),
-        game.settings.get('swade', '3dBennyBackBump'),
-      ].filter(Boolean),
-    };
-
-    dice3d.addDicePreset(data, 'd2');
+    dice3d.addDicePreset(
+      {
+        type: 'db',
+        system: 'swade',
+        colorset: 'black',
+        labels: [
+          game.settings.get('swade', 'bennyImage3DFront'),
+          game.settings.get('swade', 'bennyImage3DBack'),
+        ].filter(Boolean),
+        bumpMaps: [
+          game.settings.get('swade', '3dBennyFrontBump'),
+          game.settings.get('swade', '3dBennyBackBump'),
+        ].filter(Boolean),
+      },
+      'd2',
+    );
   }
 }

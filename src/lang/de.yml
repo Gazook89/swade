@@ -230,7 +230,9 @@ SWADE.IgnWounds: Wunden ignorieren
 SWADE.Size: Größe
 SWADE.Scale: Größenkategorie
 SWADE.PickACard: Wähle eine Karte für
-SWADE.NoCardsLeft: Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed} benötigten Karten verfügbar
+SWADE.NoCardsLeft: >-
+  Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed}
+  benötigten Karten verfügbar
 SWADE.OldCard: Alte Karte
 SWADE.ActionCard: Aktionskarte
 SWADE.ConvictionActivate: aktiviert Entschlossenheit!
@@ -454,3 +456,4 @@ SWADE.NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausg
 SWADE.SetUpChase: Verfolgungsjagd erstellen
 SWADE.NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
 SWADE.ConvertToDeck: Zu Deck konvertieren
+SWADE.PPAbbreviation: MP

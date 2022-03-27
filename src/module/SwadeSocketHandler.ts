@@ -46,6 +46,13 @@ export default class SwadeSocketHandler {
     });
   }
 
+  newRound(combatId: string) {
+    game.socket?.emit(this.identifier, {
+      type: 'newRound',
+      combatId: combatId,
+    });
+  }
+
   private async _onRemoveStatusEffect(data: RemoveStatusEffectEvent) {
     const effect = (await fromUuid(data.effectUUID)) as SwadeActiveEffect;
     if (util.isFirstOwner(effect.parent)) {
