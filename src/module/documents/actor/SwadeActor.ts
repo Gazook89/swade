@@ -139,7 +139,7 @@ export default class SwadeActor extends Actor {
     if (game.settings.get('swade', 'enableWoundPace')) {
       //bound maximum wound penalty to -3
       const wounds = Math.min(this.data.data.wounds.value, 3);
-      //subract wounds
+      //subtract wounds
       pace -= wounds;
     }
 
@@ -217,7 +217,7 @@ export default class SwadeActor extends Actor {
     const roll = Roll.fromTerms([basePool]);
 
     /**
-     * A hook event that is fired before an attribute is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * A hook event that is fired before an attribute is rolled, giving the opportunity to programmatically adjust a roll and its modifiers
      * @function rollAttribute
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that rolls the attribute
@@ -281,7 +281,7 @@ export default class SwadeActor extends Actor {
     }
 
     /**
-     * A hook event that is fired before a skill is rolled, giving the opportunity to programatically adjust a roll and its modifiers
+     * A hook event that is fired before a skill is rolled, giving the opportunity to programmatically adjust a roll and its modifiers
      * @function rollSkill
      * @memberof hookEvents
      * @param {Actor} actor                     The actor that rolls the skill
@@ -624,7 +624,7 @@ export default class SwadeActor extends Actor {
     const strength = deepClone(this.data.data.attributes.strength);
     const stepAdjust = Math.max(strength.encumbranceSteps * 2, 0);
     strength.die.sides += stepAdjust;
-    //bound the adjusted strenght die to 12
+    //bound the adjusted strength die to 12
     const encumbDie = this._boundTraitDie(strength.die);
 
     if (unit === 'imperial') {
@@ -632,7 +632,7 @@ export default class SwadeActor extends Actor {
     } else if (unit === 'metric') {
       return this._calcMetricCapacity(encumbDie);
     } else {
-      throw new Error(`Value ${unit} is an unkown value!`);
+      throw new Error(`Value ${unit} is an unknown value!`);
     }
   }
 
@@ -690,7 +690,7 @@ export default class SwadeActor extends Actor {
     return parryTotal;
   }
 
-  /** Helper Function for Vehicle Actors, to roll Maneuevering checks */
+  /** Helper Function for Vehicle Actors, to roll Maneuvering checks */
   async rollManeuverCheck() {
     if (this.data.type !== 'vehicle') return;
     const driver = await this.getDriver();
@@ -895,7 +895,7 @@ export default class SwadeActor extends Actor {
       options.additionalMods.forEach((v) => {
         if (typeof v === 'string' || typeof v === 'number') {
           console.warn(
-            'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
+            'The use of bare strings and numbers will be soon deprecated, please switch over to the TraitRollModifier interface',
           );
           mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
         } else {
@@ -913,7 +913,7 @@ export default class SwadeActor extends Actor {
     }
 
     if (this.data.type !== 'vehicle') {
-      //Status penalites
+      //Status penalties
       if (this.data.data.status.isEntangled) {
         mods.push({
           label: game.i18n.localize('SWADE.Entangled'),
@@ -968,7 +968,7 @@ export default class SwadeActor extends Actor {
 
     let totalArmorVal = 0;
 
-    //get armor items and retieve their data
+    //get armor items and retrieve their data
     const armorList = this.itemTypes.armor.map((i) =>
       i.data.type === 'armor' ? i.data : null,
     );
