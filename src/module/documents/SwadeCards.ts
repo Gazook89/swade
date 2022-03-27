@@ -7,7 +7,31 @@ declare global {
 }
 
 export default class SwadeCards extends Cards {
+  /**
+   * @deprecated - will be removed with 1.1 in favor of a function without a spelling mistake in the name >_>"
+   * Draw cards for initiative
+   * @param to - The cards document to which the cards are deposited
+   * @param number - How many cards to draw
+   * @param how - How to draw the, e.g. from the top of the deck
+   * @returns an array of the drawn cards, in the order they were drawn
+   */
   async dealForInitative(
+    to: Cards,
+    number = 1,
+    how: foundry.CONST.CARD_DRAW_MODES = foundry.CONST.CARD_DRAW_MODES.TOP,
+  ): Promise<Card[]> {
+    console.warn('The name for this function');
+    return this.dealForInitiative(to, number, how);
+  }
+
+  /**
+   * Draw cards for initiative
+   * @param to - The cards document to which the cards are deposited
+   * @param number - How many cards to draw
+   * @param how - How to draw the, e.g. from the top of the deck
+   * @returns an array of the drawn cards, in the order they were drawn
+   */
+  async dealForInitiative(
     to: Cards,
     number = 1,
     how: foundry.CONST.CARD_DRAW_MODES = foundry.CONST.CARD_DRAW_MODES.TOP,
