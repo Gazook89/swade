@@ -43,14 +43,15 @@
           {{#if isOwner}}
           <button
             type="button"
-            class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
+            class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+            data-toggle="favorite"
           >
             <i class="fas fa-star"></i>
           </button>
           <button type="button" class="item-show">
             <i class="far fa-comment-alt"></i>
           </button>
-          <button type="button" class="item-edit">
+          <button type="button" class="item-edit" title="{{localize 'SWADE.Ed'}}">
             <i class="fas fa-edit"></i>
           </button>
           {{/if}}
@@ -114,14 +115,15 @@
           {{#if isOwner}}
           <button
             type="button"
-            class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
+            class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+            data-toggle="favorite"
           >
             <i class="fas fa-star"></i>
           </button>
           <button type="button" class="item-show">
             <i class="far fa-comment-alt"></i>
           </button>
-          <button type="button" class="item-edit">
+          <button type="button" class="item-edit" title="{{localize 'SWADE.Ed'}}">
             <i class="fas fa-edit"></i>
           </button>
           {{/if}}
