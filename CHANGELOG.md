@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added Start of Turn auto expiration to Defending status effect template
 - Added `CONFIG.SWADE.CONST` object which will contain constants and enums
 - Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
+- _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
 
 ### Changed
 
