@@ -288,7 +288,7 @@ export default class SwadeCombat extends Combat {
     const discardPile = game.cards!.get(discardPileId, {
       strict: true,
     });
-    return actionCardDeck.dealForInitative(
+    return actionCardDeck.dealForInitiative(
       discardPile,
       count,
       foundry.CONST.CARD_DRAW_MODES.TOP,
@@ -419,15 +419,13 @@ export default class SwadeCombat extends Combat {
 
   async startCombat() {
     //Init autoroll
-    await super.startCombat();
     if (game.settings.get('swade', 'autoInit')) {
-      const combatantIds: string[] = [];
-      for (const c of this.combatants.filter((c) => c.initiative === null)) {
-        combatantIds.push(c.id!);
-      }
+      const combatantIds = this.combatants
+        .filter((c) => c.initiative === null)
+        .map((c) => c.id!);
       await this.rollInitiative(combatantIds);
     }
-    return this;
+    return super.startCombat();
   }
 
   //FIXME return once types are maybe a bit more lenient
@@ -458,13 +456,13 @@ export default class SwadeCombat extends Combat {
        * not the target's turn in that round.
        */
       if (startRound === this.round && startTurn < currentTurn) {
-        await fx.update({'duration.rounds': durationRounds - 1})
+        await fx.update({ 'duration.rounds': durationRounds - 1 });
       }
       if (expired) currentTurnEndExpirations.push(fx);
     }
 
     for (const effect of currentTurnEndExpirations) {
-        await effect.removeEffect();
+      await effect.removeEffect();
     }
 
     if (nextTurn < this.turns.length) {
@@ -529,10 +527,7 @@ export default class SwadeCombat extends Combat {
   //@ts-expect-error The types are a bit too strict here
   async nextRound() {
     if (!game.user?.isGM) {
-      game.socket?.emit('system.swade', {
-        type: 'newRound',
-        combatId: this.id,
-      });
+      game.swade.sockets.newRound(this.id!);
       return;
     } else {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker);
@@ -548,8 +543,8 @@ export default class SwadeCombat extends Combat {
         const combatantIds = this.combatants.map((c) => c.id!);
         await this.rollInitiative(combatantIds);
       }
-      await game.combat?.update({turn: 0})
       await super.nextRound();
+
       // Process turn 0's status effects that expire at the start of the turn.
       const turnZero = this.turns[0];
       const turnZeroEffects = turnZero.actor?.effects ?? [];

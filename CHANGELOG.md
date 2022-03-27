@@ -28,10 +28,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added additional translation strings
 
+###
+
+- Renamed `dealForInitative` to `dealForInitiative`. The old function will still be available until v1.1
+
 ### Fixed
 
 - Fixed abbreviation for PP in german translation
 - The autolink Wildcards setting should now only apply to NPCs again
+- Fixed a few spelling mistakes in code comments
 
 ## v1.0.5
 

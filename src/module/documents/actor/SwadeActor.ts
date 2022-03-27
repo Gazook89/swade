@@ -1025,7 +1025,7 @@ export default class SwadeActor extends Actor {
     user: User,
   ) {
     await super._preCreate(data, options, user);
-    //return early if it's avehicle
+    //return early if it's a vehicle
     if (data.type === 'vehicle') return;
 
     const autoLinkWildcards = game.settings.get('swade', 'autoLinkWildcards');
