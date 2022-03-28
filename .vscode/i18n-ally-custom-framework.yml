@@ -5,8 +5,6 @@
 languageIds:
   - javascript
   - typescript
-  - javascriptreact
-  - typescriptreact
   - handlebars
 
 # An array of RegExes to find the key usage. **The key should be captured in the first match group**.
