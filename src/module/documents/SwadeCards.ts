@@ -9,6 +9,7 @@ declare global {
 export default class SwadeCards extends Cards {
   /**
    * @deprecated - will be removed with 1.1 in favor of a function without a spelling mistake in the name >_>"
+   * @since 1.0.6
    * Draw cards for initiative
    * @param to - The cards document to which the cards are deposited
    * @param number - How many cards to draw
