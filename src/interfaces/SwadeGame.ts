@@ -25,11 +25,10 @@ export default interface SwadeGame {
   sockets: SwadeSocketHandler;
   rollItemMacro: typeof rollItemMacro;
   migrations: typeof migrations;
-  /** Depreciations */
+  itemChatCardHelper: typeof ItemChatCardHelper;
   /**
    * @deprecated use game.swade.apps.SwadeEntityTweaks instead
    * @since v1.1.0
    */
   SwadeEntityTweaks: typeof SwadeEntityTweaks;
-  itemChatCardHelper: typeof ItemChatCardHelper;
 }
