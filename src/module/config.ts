@@ -195,6 +195,16 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
+        {
+          key: 'data.status.isDistracted',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+        {
+          key: 'data.status.isVulnerable',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
       ],
     },
     {
@@ -204,6 +214,11 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.status.isEntangled',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+        {
+          key: 'data.status.isDistracted',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },

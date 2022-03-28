@@ -164,16 +164,16 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li')!.dataset.effectId!;
-      const effect = this.actor.effects.get(effectId);
+      const effect = this.actor.effects.get(effectId, { strict: true });
       const action = a.dataset.action;
 
       switch (action) {
         case 'edit':
-          return effect!.sheet.render(true);
+          return effect.sheet?.render(true);
         case 'delete':
-          return effect!.delete();
+          return effect.delete();
         case 'toggle':
-          return effect!.update({ disabled: !effect?.data.disabled });
+          return effect.update({ disabled: !effect?.data.disabled });
         case 'open-origin':
           fromUuid(effect!.data?.origin!).then((item: SwadeItem) => {
             if (item) this.actor.items.get(item.id!)!.sheet?.render(true);
@@ -197,7 +197,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         },
         { renderSheet: true, parent: this.actor },
       );
-      this.actor.effects.get(effect?.id!)?.sheet.render(true);
+      this.actor.effects.get(effect?.id!, { strict: true }).sheet?.render(true);
     });
 
     html.find('.additional-stats .roll').on('click', async (ev) => {
