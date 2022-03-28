@@ -127,11 +127,11 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.item.effects.get(effectId, {strict: true});
+      const effect = this.item.effects.get(effectId, { strict: true });
       const action = a.dataset.action;
       switch (action) {
         case 'edit':
-          return effect.sheet.render(true);
+          return effect.sheet?.render(true);
         case 'delete':
           return effect.delete();
         case 'toggle':
@@ -151,7 +151,7 @@ export default class SwadeItemSheet extends ItemSheet {
         },
         { parent: this.item },
       );
-      newEffect?.sheet.render(true);
+      newEffect?.sheet?.render(true);
     });
 
     html.find('.delete-embedded').on('click', (ev) => {

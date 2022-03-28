@@ -10,8 +10,8 @@ export default class DiceSettings extends FormApplication<
 > {
   config: any;
   customWildDieDefaultColors: any;
-  constructor(object, options) {
-    super(object, options);
+  constructor() {
+    super();
     this.config = SWADE.diceConfig;
     this.customWildDieDefaultColors =
       this.config.flags.dsnCustomWildDieColors.default;

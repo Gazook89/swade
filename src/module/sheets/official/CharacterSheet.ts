@@ -340,14 +340,14 @@ export default class CharacterSheet extends ActorSheet {
 
     html.find('.effect-action').on('click', async (ev) => {
       const a = ev.currentTarget;
-      const effectId = a.closest('li')!.dataset.effectId!;
-      const effect = this.actor.effects.get(effectId)!;
+      const effectId = a.closest('li')!.dataset.effectId as string;
+      const effect = this.actor.effects.get(effectId, { strict: true });
       const action = a.dataset.action;
       let item: SwadeItem | null = null;
 
       switch (action) {
         case 'edit':
-          return effect.sheet.render(true);
+          return effect.sheet?.render(true);
         case 'delete':
           return effect.delete();
         case 'toggle':

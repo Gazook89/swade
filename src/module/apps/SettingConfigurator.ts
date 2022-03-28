@@ -7,8 +7,8 @@ export default class SettingConfigurator extends FormApplication<
 > {
   config: typeof SWADE.settingConfig;
   settingStats: any;
-  constructor(object, options) {
-    super(object, options);
+  constructor() {
+    super();
     this.config = SWADE.settingConfig;
   }
 
