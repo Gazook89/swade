@@ -22,9 +22,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.8
+
+### Fixed
+
+- Fixed an issue that would cause actor imports to fail. (This time for real, fingers crossed)
+
 ## v1.0.7
 
-## Fixed
+### Fixed
 
 - Fixed an issue that would cause actor imports to fail
 
@@ -34,7 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added additional translation strings
 
-###
+### Changed
 
 - Renamed `dealForInitative` to `dealForInitiative`. The old function will still be available until v1.1
 

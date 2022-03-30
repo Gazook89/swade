@@ -1030,13 +1030,13 @@ export default class SwadeActor extends Actor {
 
     //only link NPCs if the autolink setting is on and they're not getting imported from somewhere
     if (game.settings.get('swade', 'autoLinkWildcards')) {
-      const autoActorLink =
-        createData.type === 'npc' &&
-        foundry.utils.getProperty(createData, 'data.wildcard') &&
-        !foundry.utils.hasProperty(createData, 'flags.core.sourceId');
+      const isWildcard = !!getProperty(createData, 'data.wildcard');
+      const isImported = hasProperty(createData, 'flags.core.sourceId');
+      const isNPC = createData.type === 'npc';
+      const autoActorLink = isNPC && isWildcard && !isImported;
 
       const tokenData = foundry.utils.mergeObject(this.data.token.toObject(), {
-        actorLink: autoActorLink,
+        actorLink: autoActorLink ?? false,
       });
 
       this.data.token.update(tokenData);
