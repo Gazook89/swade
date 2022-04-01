@@ -195,6 +195,7 @@
     width: auto;
     padding: $small-spacing;
     margin: $small-spacing;
+    cursor: pointer;
     i {
       margin: 0;
     }
@@ -740,11 +741,25 @@
       }
     }
 
+    .item-name {
+      text-align: left;
+    }
+
     .item-img {
-      height: 30px;
+      height: 32px;
+      width: 32px;
       border: none;
-      margin-right: $small-spacing;
-      object-fit: cover;
+      background-size: cover;
+      background-position: center;
+      &:hover, &:focus{
+        &::after{
+          font-family: "Font Awesome 5 Free";
+          content: "\f27a";
+          text-align: center;
+          font-size: 1.25em;
+        }
+        background-image: none !important;
+      }
     }
     .description {
       display: none;
@@ -777,7 +792,8 @@
   }
 
   .weapon {
-    grid-template-columns: 30px 3fr 1fr 1fr 2fr 1fr 80px;
+    grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
+    column-gap: $small-spacing;
     align-items: center;
 
     .item-img {
@@ -821,7 +837,8 @@
   }
 
   .armor {
-    grid-template-columns: 30px 3fr 1fr 1fr 2fr 1fr 80px;
+    grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
+    column-gap: $small-spacing;
     align-items: center;
     .item-img {
       grid-column: 1;
@@ -860,7 +877,8 @@
   }
 
   .shield {
-    grid-template-columns: 30px 3fr 1fr 1fr 2fr 1fr 80px;
+    grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
+    column-gap: $small-spacing;
     align-items: center;
     .item-img {
       grid-column: 1;
@@ -899,7 +917,8 @@
   }
 
   .misc {
-    grid-template-columns: 30px 7fr 1fr 80px;
+    grid-template-columns: 32px 7fr 1fr 80px;
+    column-gap: $small-spacing;
     align-items: center;
     .item-img {
       grid-column: 1;
@@ -973,27 +992,41 @@
       margin-bottom: $small-spacing;
       padding-bottom: $small-spacing;
       border-bottom: $solid-line;
+      display: grid;
+      grid-template-columns: 32px 1fr 80px;
+      column-gap: $small-spacing;
     }
     ul {
       list-style: none;
       padding: 0;
-      margin-top: 0;
     }
+
     .item-name {
-      line-height: 30px;
       text-align: left;
       padding-left: $medium-spacing;
       justify-self: flex-start;
       button {
-        line-height: 24px;
         font-size: $small-font;
       }
     }
-    .item-image {
-      height: 30px;
-      flex: 0 0 30px;
+
+    .item-img {
+      height: 32px;
+      width: 32px;
       border: none;
+      background-size: cover;
+      background-position: center;
+      &:hover, &:focus{
+        &::after{
+          font-family: "Font Awesome 5 Free";
+          content: "\f27a";
+          text-align: center;
+          font-size: 1.25em;
+        }
+        background-image: none !important;
+      }
     }
+
     .item-controls {
       display: flex;
       line-height: 30px;
@@ -1013,6 +1046,9 @@
       font-family: 'Signika', serif;
       max-height: 300px;
       overflow-y: scroll;
+      grid-column: 1 / -1;
+      white-space: normal;
+      line-height: normal;
     }
   }
 
@@ -1032,10 +1068,12 @@
       margin-bottom: $small-spacing;
       padding-bottom: $small-spacing;
       border-bottom: $solid-line;
+      display: grid;
+      grid-template-columns: 32px 1fr 80px;
+      column-gap: $small-spacing;
     }
 
     .item-name {
-      line-height: 30px;
       text-align: left;
       padding-left: $medium-spacing;
       justify-self: flex-start;
@@ -1044,10 +1082,21 @@
       }
     }
 
-    .item-image {
-      height: 30px;
-      flex: 0 0 30px;
+    .item-img {
+      height: 32px;
+      width: 30px;
       border: none;
+      background-size: cover;
+      background-position: center;
+      &:hover, &:focus{
+        &::after{
+          font-family: "Font Awesome 5 Free";
+          content: "\f27a";
+          text-align: center;
+          font-size: 1.25em;
+        }
+        background-image: none !important;
+      }
     }
 
     .item-controls {
@@ -1070,6 +1119,9 @@
       font-family: 'Signika', serif;
       max-height: 300px;
       overflow-y: scroll;
+      grid-column: 1 / -1;
+      white-space: normal;
+      line-height: normal;
 
       .power-details {
         font-family: var(--default-font);
