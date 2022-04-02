@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed an issue that would prevent Racial/Archetype abilities from being removable from a sheet
+- Fixed incorrect translation strings on NPC sheet
 
 ## v1.0.8
 
