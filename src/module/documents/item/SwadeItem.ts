@@ -58,6 +58,13 @@ export default class SwadeItem extends Item {
     };
   }
 
+  /**
+   * @returns whether this item can be an arcane device
+   */
+  get canBeArcaneDevice(): boolean {
+    return ['gear', 'armor', 'shield', 'weapon'].includes(this.type);
+  }
+
   prepareBaseData() {
     super.prepareBaseData();
     if (!this.overrides) this.overrides = {};
