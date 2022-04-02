@@ -57,16 +57,11 @@ export default class SwadeItemSheet extends ItemSheet {
     new SwadeEntityTweaks(this.item).render(true);
   }
 
-  protected _canBeArcaneDevice(itemType: string) {
-    const permissableTypes = ['gear', 'armor', 'shield', 'weapon'];
-    return permissableTypes.includes(itemType);
-  }
-
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
     if (
-      this._canBeArcaneDevice(this.item.data.type) ||
+      this.item.canBeArcaneDevice ||
       (this.item.data.type === 'ability' &&
         this.item.data.data.subtype !== 'special')
     ) {
@@ -318,10 +313,7 @@ export default class SwadeItemSheet extends ItemSheet {
       propertyName = 'embeddedAbilities';
     }
 
-    if (
-      this._canBeArcaneDevice(this.item.data.type) &&
-      item.data.type === 'power'
-    ) {
+    if (this.item.canBeArcaneDevice && item.data.type === 'power') {
       propertyName = 'embeddedPowers';
     }
     //pull the array from the flags, and push the new entry into it
