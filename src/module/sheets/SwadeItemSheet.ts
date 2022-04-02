@@ -57,16 +57,11 @@ export default class SwadeItemSheet extends ItemSheet {
     new SwadeEntityTweaks(this.item).render(true);
   }
 
-  protected _canBeArcaneDevice(itemType: string) {
-    const permissableTypes = ['gear', 'armor', 'shield', 'weapon'];
-    return permissableTypes.includes(itemType);
-  }
-
   activateListeners(html) {
     super.activateListeners(html);
     if (!this.isEditable) return;
     if (
-      this._canBeArcaneDevice(this.item.data.type) ||
+      this.item.canBeArcaneDevice ||
       (this.item.data.type === 'ability' &&
         this.item.data.data.subtype !== 'special')
     ) {
@@ -127,7 +122,7 @@ export default class SwadeItemSheet extends ItemSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li').dataset.effectId;
-      const effect = this.item.effects.get(effectId, {strict: true});
+      const effect = this.item.effects.get(effectId, { strict: true });
       const action = a.dataset.action;
       switch (action) {
         case 'edit':
@@ -318,10 +313,7 @@ export default class SwadeItemSheet extends ItemSheet {
       propertyName = 'embeddedAbilities';
     }
 
-    if (
-      this._canBeArcaneDevice(this.item.data.type) &&
-      item.data.type === 'power'
-    ) {
+    if (this.item.canBeArcaneDevice && item.data.type === 'power') {
       propertyName = 'embeddedPowers';
     }
     //pull the array from the flags, and push the new entry into it
