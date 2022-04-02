@@ -406,13 +406,13 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       case 'toughness':
         targetLabel = `${game.i18n.localize(
           'SWADE.Tough',
-        )} ${game.i18n.localize('SWADE.Mod')}`;
+        )} ${game.i18n.localize('SWADE.Modifier')}`;
         targetProperty = 'toughness.modifier';
         break;
       default:
         targetLabel = `${game.i18n.localize(
           'SWADE.Tough',
-        )} ${game.i18n.localize('SWADE.Mod')}`;
+        )} ${game.i18n.localize('SWADE.Modifier')}`;
         targetProperty = 'toughness.value';
         break;
     }

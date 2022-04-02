@@ -28,10 +28,17 @@ export const registerCustomHelpers = function () {
   });
 
   // Sheet
-  Handlebars.registerHelper('localizeSkillAttribute', (attribute, useShorthand = false) => {
-    if (!attribute) return '';
-    return game.i18n.localize(useShorthand? SWADE.attributes[attribute].short : SWADE.attributes[attribute].long);
-  });
+  Handlebars.registerHelper(
+    'localizeSkillAttribute',
+    (attribute, useShorthand = false) => {
+      if (!attribute) return '';
+      return game.i18n.localize(
+        useShorthand
+          ? SWADE.attributes[attribute].short
+          : SWADE.attributes[attribute].long,
+      );
+    },
+  );
 
   Handlebars.registerHelper('modifier', (str) => {
     str = str === '' || str === null ? '0' : str;
@@ -74,7 +81,7 @@ export const registerCustomHelpers = function () {
           <img src="${val.img}" alt="${type}" class="effect-icon" />
           <span class="effect-label">${type} - ${val.name} ${majorMinor}</span>
           <span class="effect-controls">
-            <a class="effect-action delete-embedded" data-Id="${key}">
+            <a class="delete-embedded" data-Id="${key}">
               <i class="fas fa-trash"></i>
             </a>
           </span>

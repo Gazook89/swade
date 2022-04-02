@@ -22,6 +22,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.9
+
+### Added
+
+- Added `canBeArcaneDevice` getter to `SwadeItem` class
+
+### Fixed
+
+- Fixed an issue that would prevent Racial/Archetype abilities from being removable from a sheet
+- Fixed incorrect translation strings on NPC sheet
+
 ## v1.0.8
 
 ### Fixed
