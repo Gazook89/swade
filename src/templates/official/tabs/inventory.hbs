@@ -54,18 +54,14 @@
   <ul>
     {{#each itemTypes.weapon}}
     <li class="item weapon" data-item-id="{{id}}">
-      <img class="item-img" src="{{img}}" />
-      <button
-        type="button"
-        class="name flexrow item-name"
-        title="{{name}}"
-      >
+      <button type="button" class="item-img item-show" style="background-image: url('{{img}}');" title="{{localize 'SWADE.ShowInChat'}}"/>
+      <button type="button" class="name item-name" title="{{localize "SWADE.ExpandDescription"}}" >
         {{#if (gte data.data.quantity 2)}} (x{{data.data.quantity}}) {{/if}}
         {{name}}
       </button>
       <span class="damage">
         {{#if data.data.damage}}
-        <button type="button" class="damage-roll">{{data.data.damage}}</button>
+          <button type="button" class="damage-roll" title="{{localize 'SWADE.RollDamage'}}">{{data.data.damage}}</button>
         {{/if}}
       </span>
       <span class="ap">{{data.data.ap}}</span>
@@ -76,16 +72,23 @@
         <button
           type="button"
           class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
+          data-toggle="equipped"
+          title="{{localize "SWADE.Equip"}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
-        <button type="button" class="item-show">
-          <i class="far fa-comment-alt"></i>
+        <button
+            type="button"
+            class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+            data-toggle="favorite"
+            title="{{localize "SWADE.Favorite"}}"
+          >
+            <i class="fas fa-star"></i>
         </button>
-        <button type="button" class="item-edit">
+        <button type="button" class="item-edit"  title="{{localize 'SWADE.Ed'}}">
           <i class="fas fa-edit"></i>
         </button>
-        <button type="button" class="item-delete">
+        <button type="button" class="item-delete" title="{{localize 'SWADE.Del'}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
@@ -113,11 +116,11 @@
   <ul>
     {{#each itemTypes.armor}}
     <li class="item armor" data-item-id="{{id}}">
-      <img class="item-img" src="{{img}}" />
+      <button type="button" class="item-img item-show" style="background-image: url('{{img}}');" title="{{localize 'SWADE.ShowInChat'}}"/>
       <button
         type="button"
-        class="name flexrow item-name"
-        title="{{item.name}}"
+        class="name item-name"
+        title="{{localize "SWADE.ExpandDescription"}}"
       >
         {{#if (gte data.data.quantity 2)}} (x{{data.data.quantity}}) {{/if}}
         {{name}}
@@ -127,20 +130,27 @@
       <span class="note">{{enrich data.data.notes}}</span>
       <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
-        {{#if ../owner}}
+        {{#if isOwner}}
         <button
           type="button"
           class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
+          data-toggle="equipped"
+          title="{{localize "SWADE.Equip"}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
-        <button type="button" class="item-show">
-          <i class="far fa-comment-alt"></i>
+        <button
+            type="button"
+            class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+            data-toggle="favorite"
+            title="{{localize "SWADE.Favorite"}}"
+          >
+            <i class="fas fa-star"></i>
         </button>
-        <button type="button" class="item-edit">
+        <button type="button" class="item-edit"  title="{{localize 'SWADE.Ed'}}">
           <i class="fas fa-edit"></i>
         </button>
-        <button type="button" class="item-delete">
+        <button type="button" class="item-delete" title="{{localize 'SWADE.Del'}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
@@ -168,11 +178,11 @@
   <ul>
     {{#each itemTypes.shield}}
     <li class="item shield" data-item-id="{{id}}">
-      <img class="item-img" src="{{img}}" />
+      <button type="button" class="item-img item-show" style="background-image: url('{{img}}');" title="{{localize 'SWADE.ShowInChat'}}"/>
       <button
         type="button"
-        class="name flexrow item-name"
-        title="{{name}}"
+        class="name item-name"
+        title="{{localize "SWADE.ExpandDescription"}}"
       >
         {{#if (gte data.data.quantity 2)}} (x{{data.data.quantity}}) {{/if}}
         {{data.name}}
@@ -185,16 +195,23 @@
         <button
           type="button"
           class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
+          data-toggle="equipped"
+          title="{{localize "SWADE.Equip"}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
-        <button type="button" class="item-show">
-          <i class="far fa-comment-alt"></i>
+        <button
+            type="button"
+            class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+            data-toggle="favorite"
+            title="{{localize "SWADE.Favorite"}}"
+          >
+            <i class="fas fa-star"></i>
         </button>
-        <button type="button" class="item-edit">
+        <button type="button" class="item-edit"  title="{{localize 'SWADE.Ed'}}">
           <i class="fas fa-edit"></i>
         </button>
-        <button type="button" class="item-delete">
+        <button type="button" class="item-delete" title="{{localize 'SWADE.Del'}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}
@@ -217,31 +234,37 @@
   <ul>
     {{#each itemTypes.gear}}
     <li class="item misc" data-item-id="{{id}}">
-      <img class="item-img" src="{{img}}" />
+      <button type="button" class="item-img item-show" style="background-image: url('{{img}}');" title="{{localize 'SWADE.ShowInChat'}}"/>
       <button
         type="button"
-        class="name flexrow item-name"
-        title="{{name}}"
+        class="name item-name"
+        title="{{localize "SWADE.ExpandDescription"}}"
       >
         (x{{data.data.quantity}}) {{name}}
       </button>
       <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
-        {{#if isOwner}} {{#if data.data.equippable}}
+        {{#if isOwner}}
         <button
           type="button"
           class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
+          data-toggle="equipped"
+          title="{{localize "SWADE.Equip"}}"
         >
           <i class="fas fa-tshirt"></i>
         </button>
-        {{/if}}
-        <button type="button" class="item-show">
-          <i class="far fa-comment-alt"></i>
+        <button
+            type="button"
+            class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+            data-toggle="favorite"
+            title="{{localize "SWADE.Favorite"}}"
+          >
+            <i class="fas fa-star"></i>
         </button>
-        <button type="button" class="item-edit">
+        <button type="button" class="item-edit"  title="{{localize 'SWADE.Ed'}}">
           <i class="fas fa-edit"></i>
         </button>
-        <button type="button" class="item-delete">
+        <button type="button" class="item-delete" title="{{localize 'SWADE.Del'}}">
           <i class="fas fa-trash"></i>
         </button>
         {{/if}}

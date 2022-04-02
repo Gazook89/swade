@@ -41,6 +41,10 @@ interface ArcaneDevice {
   } & Record<string, { value: number; max: number }>;
 }
 
+interface Favorite {
+  favorite: true;
+}
+
 interface Equipable {
   equippable: boolean;
   equipped: boolean;
@@ -75,7 +79,8 @@ interface WeaponData
     ItemDescription,
     Vehicular,
     Actions,
-    BonusDamage {
+    BonusDamage,
+    Favorite {
   damage: string;
   range: string;
   rof: number;
@@ -88,9 +93,9 @@ interface WeaponData
   parry: number;
 }
 
-interface GearData extends ItemDescription, PhysicalItem, Vehicular {}
+interface GearData extends ItemDescription, PhysicalItem, Vehicular, Favorite {}
 
-interface ArmorData extends ItemDescription, PhysicalItem {
+interface ArmorData extends ItemDescription, PhysicalItem, Favorite {
   minStr: string;
   armor: number | string;
   toughness: number;
@@ -107,24 +112,30 @@ interface ShieldData
   extends ItemDescription,
     PhysicalItem,
     Actions,
-    BonusDamage {
+    BonusDamage,
+    Favorite {
   minStr: string;
   parry: number;
   cover: number;
 }
 
-interface EdgeData extends ItemDescription {
+interface EdgeData extends ItemDescription, Favorite {
   isArcaneBackground: boolean;
   requirements: {
     value: string;
   };
 }
 
-interface HindranceData extends ItemDescription {
+interface HindranceData extends ItemDescription, Favorite {
   major: boolean;
 }
 
-interface PowerData extends ItemDescription, Equipable, Actions, BonusDamage {
+interface PowerData
+  extends ItemDescription,
+    Equipable,
+    Actions,
+    BonusDamage,
+    Favorite {
   rank: string;
   pp: string;
   damage: string;
@@ -136,16 +147,16 @@ interface PowerData extends ItemDescription, Equipable, Actions, BonusDamage {
   modifiers: any[];
 }
 
+interface AbilityData extends ItemDescription, Favorite {
+  subtype: AbilitySubType;
+  grantsPowers: boolean;
+}
+
 interface SkillData extends ItemDescription {
   attribute: Attribute | '';
   isCoreSkill: boolean;
   die: TraitDie;
   'wild-die': WildDie;
-}
-
-interface AbilityData extends ItemDescription {
-  subtype: AbilitySubType;
-  grantsPowers: boolean;
 }
 
 interface WeaponItemDataSource {

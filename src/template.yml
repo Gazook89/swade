@@ -191,6 +191,8 @@ Item:
         additional: {}
     bonusDamage:
       bonusDamageDie: 6
+    favorite:
+      favorite: false
   gear:
     templates:
       - itemDescription
@@ -199,6 +201,7 @@ Item:
       - arcaneDevice
       - vehicular
       - actions
+      - favorite
   weapon:
     templates:
       - itemDescription
@@ -208,6 +211,7 @@ Item:
       - vehicular
       - actions
       - bonusDamage
+      - favorite
     damage: ''
     range: ''
     rof: 1
@@ -225,6 +229,7 @@ Item:
       - equipable
       - arcaneDevice
       - actions
+      - favorite
     minStr: ''
     armor: 0
     toughness: 0
@@ -242,25 +247,28 @@ Item:
       - arcaneDevice
       - actions
       - bonusDamage
+      - favorite
     minStr: ''
     parry: 0
     cover: 0
   edge:
     templates:
       - itemDescription
+      - favorite
     isArcaneBackground: false
     requirements:
       value: ''
   hindrance:
     templates:
       - itemDescription
+      - favorite
     major: false
   power:
     templates:
       - itemDescription
-      - equipable
       - actions
       - bonusDamage
+      - favorite
     rank: ''
     pp: 0
     damage: ''
@@ -283,6 +291,7 @@ Item:
   ability:
     templates:
       - itemDescription
+      - favorite
     subtype: special
     grantsPowers: false
 Card:

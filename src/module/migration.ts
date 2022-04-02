@@ -1,3 +1,5 @@
+import { ActorDataSource } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
+import { ItemDataSource } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData';
 import {
   ActorData,
   ItemData,
@@ -12,8 +14,8 @@ export async function migrateWorld() {
   // Migrate World Actors
   for (const actor of game.actors!) {
     try {
-      const updateData = migrateActorData(actor.data as unknown as ActorData);
-      if (!isObjectEmpty(updateData)) {
+      const updateData = migrateActorData(actor.toObject());
+      if (!foundry.utils.isObjectEmpty(updateData)) {
         console.log(`Migrating Actor document ${actor.name}`);
         await actor.update(updateData, { enforceTypes: false });
       }
@@ -26,8 +28,8 @@ export async function migrateWorld() {
   // Migrate World Items
   for (const item of game.items!) {
     try {
-      const updateData = migrateItemData(item.data as unknown as ItemData);
-      if (!isObjectEmpty(updateData)) {
+      const updateData = migrateItemData(item.toObject());
+      if (!foundry.utils.isObjectEmpty(updateData)) {
         console.log(`Migrating Item document ${item.name}`);
         await item.update(updateData, { enforceTypes: false });
       }
@@ -75,30 +77,30 @@ export async function migrateCompendium(
   const documents = await pack.getDocuments();
 
   // Iterate over compendium entries - applying fine-tuned migration functions
-  for (const document of documents) {
+  for (const doc of documents) {
     let updateData: Record<string, any> = {};
     try {
       switch (type) {
         case 'Actor':
-          updateData = migrateActorData(document.data as unknown as ActorData);
+          updateData = migrateActorData(doc.toObject() as ActorDataSource);
           break;
         case 'Item':
-          updateData = migrateItemData(document.data as unknown as ItemData);
+          updateData = migrateItemData(doc.toObject() as ItemDataSource);
           break;
         case 'Scene':
-          updateData = migrateSceneData(document.data as SceneData);
+          updateData = migrateSceneData(doc.data as SceneData);
           break;
       }
       if (isObjectEmpty(updateData)) continue;
 
       // Save the entry, if data was changed
-      await document.update(updateData);
+      await doc.update(updateData);
       console.log(
-        `Migrated ${type} document ${document.name} in Compendium ${pack.collection}`,
+        `Migrated ${type} document ${doc.name} in Compendium ${pack.collection}`,
       );
     } catch (err) {
       // Handle migration failures
-      err.message = `Failed swade system migration for document ${document.name} in pack ${pack.collection}: ${err.message}`;
+      err.message = `Failed swade system migration for document ${doc.name} in pack ${pack.collection}: ${err.message}`;
       console.error(err);
     }
   }
@@ -117,39 +119,41 @@ export async function migrateCompendium(
 /**
  * Migrate a single Actor document to incorporate latest data model changes
  * Return an Object of updateData to be applied
- * @param {object} data    The actor data object to update
+ * @param {object} actor    The actor data object to update
  * @return {Object}         The updateData to apply
  */
-export function migrateActorData(data: ActorData) {
+export function migrateActorData(actor: ActorDataSource) {
   const updateData: Record<string, any> = {};
 
   // Actor Data Updates
-  _migrateVehicleOperator(data, updateData);
+  _migrateVehicleOperator(actor, updateData);
 
   // Migrate Owned Items
-  if (!data.items) return updateData;
-  let hasItemUpdates = false;
-  const items = data.items.map((i) => {
+  if (!actor.items) return updateData;
+  const items = actor.items.reduce((arr, i) => {
     // Migrate the Owned Item
-    const itemUpdate = migrateItemData(i.data);
+    const itemUpdate = migrateItemData(i);
 
     // Update the Owned Item
     if (!isObjectEmpty(itemUpdate)) {
-      hasItemUpdates = true;
-      return mergeObject(i, itemUpdate, {
-        enforceTypes: false,
-        inplace: false,
-      });
-    } else return i;
-  });
-  if (hasItemUpdates) updateData.items = items;
+      itemUpdate._id = i._id;
+      arr.push(foundry.utils.expandObject(itemUpdate));
+    }
+
+    return arr;
+  }, new Array<Record<string, unknown>>());
+
+  if (items.length > 0) updateData.items = items;
   return updateData;
 }
 
-export function migrateItemData(data: ItemData) {
+export function migrateItemData(data: ItemDataSource) {
   const updateData: Record<string, any> = {};
   if (data.type === 'weapon') {
     _migrateWeaponAPToNumber(data, updateData);
+  }
+  if (data.type === 'power') {
+    _migratePowerEquipToFavorite(data, updateData);
   }
   return updateData;
 }
@@ -157,31 +161,35 @@ export function migrateItemData(data: ItemData) {
 /**
  * Migrate a single Scene document to incorporate changes to the data model of it's actor data overrides
  * Return an Object of updateData to be applied
- * @param {Object} data  The Scene data to Update
+ * @param {Object} scene  The Scene data to Update
  * @return {Object}       The updateData to apply
  */
-export function migrateSceneData(data: SceneData) {
-  const tokens = data.tokens.map((token) => {
-    const t = token.data;
+export function migrateSceneData(scene: SceneData) {
+  const tokens = scene.tokens.map((token) => {
+    const t = token.toObject();
+    const update: Record<string, unknown> = {};
+    if (Object.keys(update).length) foundry.utils.mergeObject(t, update);
     if (!t.actorId || t.actorLink) {
       t.actorData = {};
-    } else if (!game.actors?.has(t.actorId)) {
+    } else if (!game?.actors?.has(t.actorId)) {
       t.actorId = null;
       t.actorData = {};
     } else if (!t.actorLink) {
-      const actorData = foundry.utils.duplicate(t.actorData);
+      const actorData = foundry.utils.duplicate(t.actorData) as any;
       actorData.type = token.actor?.type;
-      const update = migrateActorData(actorData as unknown as ActorData);
-      ['items', 'effects'].forEach((embed) => {
-        if (!update[embed]?.length) return;
-        const updates = new Map(update[embed].map((u) => [u._id, u]));
-        t.actorData[embed].forEach((original) => {
-          const update = updates.get(original._id) as any;
+      const update = migrateActorData(actorData);
+      ['items', 'effects'].forEach((embeddedName) => {
+        if (!update[embeddedName]?.length) return;
+        const updates = new Map<string, any>(
+          update[embeddedName].map((u) => [u._id, u]),
+        );
+        t.actorData[embeddedName].forEach((original) => {
+          const update = updates.get(original._id);
           if (update) foundry.utils.mergeObject(original, update);
         });
-        delete update[embed];
+        delete update[embeddedName];
       });
-      mergeObject(t.actorData, update);
+      foundry.utils.mergeObject(t.actorData, update);
     }
     return t;
   });
@@ -206,7 +214,7 @@ export function removeDeprecatedObjects(data: ItemData | ActorData) {
 }
 
 function _migrateVehicleOperator(
-  data: ActorData,
+  data: ActorDataSource,
   updateData: Record<string, unknown>,
 ) {
   if (data.type !== 'vehicle') return updateData;
@@ -219,12 +227,24 @@ function _migrateVehicleOperator(
 }
 
 function _migrateWeaponAPToNumber(
-  data: ItemData,
+  data: ItemDataSource,
   updateData: Record<string, unknown>,
 ) {
   if (data.type !== 'weapon') return updateData;
 
   if (data.data.ap && typeof data.data.ap === 'string') {
     updateData['data.ap'] = Number(data.data.ap);
+  }
+}
+
+function _migratePowerEquipToFavorite(
+  data: ItemDataSource,
+  updateData: Record<string, unknown>,
+) {
+  if (data.type !== 'power') return updateData;
+  if (data.data.equipped) {
+    updateData['data.favorite'] = true;
+    updateData['data.-=equipped'] = null;
+    updateData['data.-=equippable'] = null;
   }
 }

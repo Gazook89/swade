@@ -330,12 +330,12 @@ export default class CharacterSheet extends ActorSheet {
 
     //Toggle Equipment Status
     html.find('.item-toggle').on('click', async (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
+      const target = ev.currentTarget;
+      const li = $(target).parents('.item');
       const itemID = li.data('itemId');
-      const item = this.actor.items.get(itemID);
-      await this.actor.updateEmbeddedDocuments('Item', [
-        this._toggleEquipped(itemID, item),
-      ]);
+      const item = this.actor.items.get(itemID, { strict: true });
+      const toggle = target.dataset.toggle as string;
+      await item.update(this._toggleItem(item, toggle));
     });
 
     html.find('.effect-action').on('click', async (ev) => {
@@ -730,11 +730,11 @@ export default class CharacterSheet extends ActorSheet {
     new game.swade.apps.SwadeEntityTweaks(this.actor).render(true);
   }
 
-  protected _toggleEquipped(id: string, item: any): any {
+  protected _toggleItem(item: SwadeItem, toggle: string): any {
     return {
-      _id: id,
+      _id: item.id,
       data: {
-        equipped: !item.data.data.equipped,
+        [toggle]: !item.data.data[toggle],
       },
     };
   }

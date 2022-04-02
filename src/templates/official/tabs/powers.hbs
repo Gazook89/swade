@@ -34,28 +34,23 @@
   <ul>
     {{#each actor.itemTypes.power}} {{#unless data.data.arcane}}
     <li class="power item" data-item-id="{{id}}">
-      <span class="flexrow">
-        <img class="item-image" src="{{img}}" alt="{{name}}" />
-        <span class="item-name">
-          <button type="button">{{name}}</button>
-        </span>
-        <div class="item-controls">
-          {{#if isOwner}}
-          <button
-            type="button"
-            class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
-          >
-            <i class="fas fa-star"></i>
-          </button>
-          <button type="button" class="item-show">
-            <i class="far fa-comment-alt"></i>
-          </button>
-          <button type="button" class="item-edit">
-            <i class="fas fa-edit"></i>
-          </button>
-          {{/if}}
-        </div>
-      </span>
+      <button type="button" class="item-img item-show" style="background-image: url('{{img}}');" title="{{localize 'SWADE.ShowInChat'}}"/>
+      <button type="button" class="name item-name" title="{{localize "SWADE.ExpandDescription"}}">{{name}}</button>
+      <div class="item-controls">
+        {{#if isOwner}}
+        <button
+          type="button"
+          class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+          data-toggle="favorite"
+          title="{{localize "SWADE.Favorite"}}"
+        >
+          <i class="fas fa-star"></i>
+        </button>
+        <button type="button" class="item-edit" title="{{localize 'SWADE.Ed'}}">
+          <i class="fas fa-edit"></i>
+        </button>
+        {{/if}}
+      </div>
       <div class="description">
         <div class="description-grid">
           <span class="power-details">
@@ -105,28 +100,23 @@
   <ul>
     {{#each arcane.powers}}
     <li class="power item" data-item-id="{{id}}">
-      <span class="flexrow">
-        <img class="item-image" src="{{img}}" alt="{{name}}" />
-        <span class="item-name">
-          <button type="button">{{name}}</button>
-        </span>
-        <div class="item-controls">
-          {{#if isOwner}}
-          <button
-            type="button"
-            class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
-          >
-            <i class="fas fa-star"></i>
-          </button>
-          <button type="button" class="item-show">
-            <i class="far fa-comment-alt"></i>
-          </button>
-          <button type="button" class="item-edit">
-            <i class="fas fa-edit"></i>
-          </button>
-          {{/if}}
-        </div>
-      </span>
+      <button type="button" class="item-img item-show" style="background-image: url('{{img}}');" title="{{localize 'SWADE.ShowInChat'}}"/>
+      <button type="button" class="name item-name" title="{{localize "SWADE.ExpandDescription"}}">{{name}}</button>
+      <div class="item-controls">
+        {{#if isOwner}}
+        <button
+          type="button"
+          class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
+          data-toggle="favorite"
+          title="{{localize "SWADE.Favorite"}}"
+        >
+          <i class="fas fa-star"></i>
+        </button>
+        <button type="button" class="item-edit" title="{{localize 'SWADE.Ed'}}">
+          <i class="fas fa-edit"></i>
+        </button>
+        {{/if}}
+      </div>
       <div class="description">
         <div class="description-grid">
           <span class="power-details">
