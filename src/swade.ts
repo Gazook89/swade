@@ -162,13 +162,18 @@ Hooks.on('hotbarDrop', createSwadeMacro);
 /* ------------------------------------ */
 Hooks.on('renderCombatantConfig', SwadeHooks.onRenderCombatantConfig);
 Hooks.on('renderActiveEffectConfig', SwadeHooks.onRenderActiveEffectConfig);
-Hooks.on('renderActorDirectory', SwadeHooks.onRenderActorDirectory);
 Hooks.on('renderCompendium', SwadeHooks.onRenderCompendium);
-Hooks.on('renderCombatTracker', SwadeHooks.onRenderCombatTracker);
 Hooks.on('renderChatMessage', SwadeHooks.onRenderChatMessage);
+Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
+
+/* ------------------------------------ */
+/* Sidebar Tab Render					          */
+/* ------------------------------------ */
+Hooks.on('renderActorDirectory', SwadeHooks.onRenderActorDirectory);
+Hooks.on('renderSettings', SwadeHooks.onRenderSettings);
+Hooks.on('renderCombatTracker', SwadeHooks.onRenderCombatTracker);
 Hooks.on('renderChatLog', SwadeHooks.onRenderChatLog);
 Hooks.on('renderChatPopout', SwadeHooks.onRenderChatLog);
-Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
 
 /* ------------------------------------ */
 /* Context Options    				          */

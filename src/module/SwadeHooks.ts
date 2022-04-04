@@ -126,6 +126,35 @@ export default class SwadeHooks {
     }
   }
 
+  public static onRenderSettings(app: Settings, html: JQuery<HTMLElement>) {
+    //get system info
+    const systemInfo = html.find('#game-details li.system');
+
+    //create system links
+    const systemLinks = $('<li>').addClass('system-links');
+    const links: Array<{ label: string; url: string }> = [
+      {
+        label: game.i18n.localize('SWADE.SystemLinks.ReportAnIssue'),
+        url: 'https://gitlab.com/peginc/swade/-/issues/new',
+      },
+      {
+        label: game.i18n.localize('SWADE.SystemLinks.Changelog'),
+        url: game.system.data.changelog as string,
+      },
+      {
+        label: game.i18n.localize('SWADE.SystemLinks.Wiki'),
+        url: game.system.data.readme as string,
+      },
+    ];
+
+    //insert links links
+    links.forEach((link) =>
+      systemLinks.append(`<a href="${link.url}">${link.label}</a>`),
+    );
+
+    systemInfo.after(systemLinks);
+  }
+
   public static async onGetActorDirectoryEntryContext(
     html: JQuery<HTMLElement>,
     options: ContextMenu.Item[],
