@@ -59,6 +59,7 @@
               {{localize "SWADE.Dmg"}}: {{data.data.damage}}
             </button>
             {{/if}}
+            <span>{{localize "SWADE.Ap"}}: {{data.data.ap}}&nbsp;</span>
             <span>{{localize "SWADE.Rank"}}: {{data.data.rank}}&nbsp;</span>
             <span>{{localize "SWADE.PP"}}: {{data.data.pp}}&nbsp;</span>
             <span>{{localize "SWADE.Range._name"}}: {{data.data.range}}&nbsp;</span>
@@ -78,7 +79,7 @@
   {{#each powers.arcanes as |arcane key|}}
   <header class="section-header">
     <span class="name">{{key}}</span>
-    {{#unless ../settingrules.noPowerPoints}}
+    {{#unless @root.settingrules.noPowerPoints}}
     <span class="pp-counter controls">
       {{localize "SWADE.PPAbbreviation"}}:&nbsp;
       <label>
@@ -125,6 +126,7 @@
               {{localize "SWADE.Dmg"}}: {{data.data.damage}}
             </button>
             {{/if}}
+            <span>{{localize "SWADE.Ap"}}: {{data.data.ap}}&nbsp;</span>
             <span>{{localize "SWADE.Rank"}}: {{data.data.rank}}&nbsp;</span>
             <span>{{localize "SWADE.PP"}}: {{data.data.pp}}&nbsp;</span>
             <span>{{localize "SWADE.Range._name"}}: {{data.data.range}}&nbsp;</span>

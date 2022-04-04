@@ -181,7 +181,7 @@ export default class SwadeItem extends Item {
     });
   }
 
-  getChatData(htmlOptions) {
+  getChatData(htmlOptions = {}) {
     const data = deepClone(this.data.data) as any;
 
     // Rich text description
@@ -227,21 +227,19 @@ export default class SwadeItem extends Item {
         );
         props.push(data.locations.arms ? game.i18n.localize('SWADE.Arms') : '');
         props.push(data.locations.legs ? game.i18n.localize('SWADE.Legs') : '');
-
         break;
       case 'edge':
         props.push(data.requirements.value);
         props.push(data.isArcaneBackground ? 'Arcane' : '');
         break;
       case 'power':
-        props.push(
-          data.rank,
-          data.arcane,
-          `${data.pp}PP`,
-          `<i class="fas fa-ruler"></i> ${data.range}`,
-          `<i class='fas fa-hourglass-half'></i> ${data.duration}`,
-          data.trapping,
-        );
+        props.push(data.rank);
+        props.push(data.arcane);
+        props.push(`${data.pp} ${game.i18n.localize('SWADE.PPAbbreviation')}`);
+        props.push(`<i class="fas fa-ruler"></i> ${data.range}`);
+        props.push(`<i class='fas fa-shield-alt'></i> ${data.ap}`);
+        props.push(`<i class='fas fa-hourglass-half'></i> ${data.duration}`);
+        props.push(data.trapping);
         break;
       case 'weapon':
         props.push(
@@ -323,7 +321,7 @@ export default class SwadeItem extends Item {
       actor: this.actor,
       tokenId: tokenId,
       item: this.data,
-      data: this.getChatData({}),
+      data: this.getChatData(),
       hasAmmoManagement: hasAmmoManagement,
       hasReloadButton: hasReloadButton,
       hasDamage: hasDamage,

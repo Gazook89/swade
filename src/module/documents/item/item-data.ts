@@ -144,6 +144,7 @@ interface PowerData
   trapping: string;
   arcane: string;
   skill: string;
+  ap: number;
   modifiers: any[];
 }
 

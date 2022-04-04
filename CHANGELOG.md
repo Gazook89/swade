@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
 - _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
 - Added some informative to system documentation links to the settings tab, under the system version.
+- Powers can now record an AP value
 - Added addition translation strings
 
 ### Changed

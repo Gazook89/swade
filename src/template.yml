@@ -277,6 +277,7 @@ Item:
     trapping: ''
     arcane: ''
     skill: ''
+    ap: 0
     modifiers: []
   skill:
     templates:
