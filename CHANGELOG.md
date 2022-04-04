@@ -32,6 +32,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added `CONFIG.SWADE.CONST` object which will contain constants and enums
 - Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
 - _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
+- Added some informative to system documentation links to the settings tab, under the system version.
+- Added addition translation strings
 
 ### Changed
 
