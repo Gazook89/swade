@@ -11,7 +11,6 @@ declare global {
       'swade.actionDeck': string;
       'swade.actionDeckDiscardPile': string;
       'swade.hideNPCWildcards': boolean;
-      'swade.autoLinkWildcards': boolean;
       'swade.notifyBennies': boolean;
       'swade.hideNpcItemChatCards': boolean;
       'swade.useAttributeShorts': boolean;
@@ -94,15 +93,6 @@ export function registerSettings() {
   game.settings.register('swade', 'hideNPCWildcards', {
     name: game.i18n.localize('SWADE.HideWC'),
     hint: game.i18n.localize('SWADE.HideWCDesc'),
-    default: true,
-    scope: 'world',
-    type: Boolean,
-    config: true,
-  });
-
-  game.settings.register('swade', 'autoLinkWildcards', {
-    name: game.i18n.localize('SWADE.AutoLink'),
-    hint: game.i18n.localize('SWADE.AutoLinkDesc'),
     default: true,
     scope: 'world',
     type: Boolean,

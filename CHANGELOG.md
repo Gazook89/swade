@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.0.10
+
+### Removed
+
+- Removed the option to automatically link Wildcard actors
+
 ## v1.0.9
 
 ### Added
