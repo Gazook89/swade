@@ -5,7 +5,6 @@ import typescript from '@rollup/plugin-typescript';
 import * as yaml from 'js-yaml';
 import livereload from 'rollup-plugin-livereload';
 import styles from 'rollup-plugin-styles';
-import { terser } from 'rollup-plugin-terser';
 
 const name = 'swade';
 const distDirectory = 'dist';
@@ -78,7 +77,6 @@ const config = {
       ],
     }),
     isDev && livereload(distDirectory),
-    isProd && terser({ ecma: 2020, keep_fnames: true, keep_classnames: true }),
   ],
 };
 
