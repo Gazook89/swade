@@ -54,6 +54,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
+## v1.0.10
+
+### Removed
+
+- Removed the option to automatically link Wildcard actors
 
 ## v1.0.9
 
