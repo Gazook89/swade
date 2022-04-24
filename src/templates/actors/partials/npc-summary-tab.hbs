@@ -77,8 +77,8 @@
   </div>
 </section>
 <div class="flexrow grid-row --grid-row-npc-summary">
-  <div class="left-panel">
     {{!-- Left panel --}}
+  <div class="left-panel">
     <section class="gear skills">
       <header class="header-field flexrow">
         <div>
@@ -173,8 +173,8 @@
       {{> "systems/swade/templates/setting-fields.hbs"}}
     </section>
   </div>
-  <div>
     {{!-- Right panel --}}
+  <div>
     <section class="gear">
       <header class="header-field flexrow">
         <div>{{ localize "SWADE.Effects" }}</div>
@@ -193,6 +193,32 @@
           <a class="item-create" data-type="choice"><i class="fa fa-plus"></i></a>
         </div>
       </header>
+  <div class="form-group currency">
+    {{#if (eq settingrules.wealthType "currency")}}
+    <label>{{settingrules.currencyName}}</label>
+    <span class="form-fields">
+      <input
+        name="data.details.currency"
+        type="text"
+        data-dtype="Number"
+        value="{{data.data.details.currency}}"
+        placeholder="{{localize 'SWADE.Currency'}}"
+      />
+    </span>
+    {{else if (eq settingrules.wealthType "wealthDie")}}
+      <button type="button" class="roll">{{localize "SWADE.WealthDie"}}</button>
+      <select data-dtype="Number" name="data.details.wealth.die">
+        {{#select data.data.details.wealth.die}} {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
+      </select>
+      <input
+        type="text"
+        data-dtype="Number"
+        name="data.details.wealth.modifier"
+        value="{{signedString data.data.details.wealth.modifier}}"
+        placeholder="{{localize 'SWADE.Modifier'}}"
+      />
+    {{/if}}
+  </div>
       <div class="quickaccess-list">
         <ol class="gear-list weapon-list">
           {{#each itemsByType.weapon}} {{>

@@ -72,7 +72,7 @@
     overflow: auto;
 
     .item {
-      display: inline-block
+      display: inline-block;
     }
   }
 
@@ -154,6 +154,18 @@
   .powers {
     .header-field {
       padding: 5px;
+    }
+  }
+
+  .currency {
+    button {
+      height: calc(var(--form-field-height) + 1px);
+      background: rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--color-border-light-tertiary);
+      border-radius: 3px;
+      padding: 0 3px;
+      text-decoration: underline;
+      text-decoration-style: dashed;
     }
   }
 }

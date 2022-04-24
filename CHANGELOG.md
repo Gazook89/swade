@@ -33,6 +33,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
 - _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
 - Added some informative to system documentation links to the settings tab, under the system version.
+- Added `SwadeActor#rollWealthDie` function
+- Added the currency controls on NPC sheet
 - Powers can now record an AP value
 - Added new Keybindings, all of which are editable
   - You can now select a favorite card hand in the user config and open it with the `H` keybinding
