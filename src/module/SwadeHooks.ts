@@ -157,9 +157,9 @@ export default class SwadeHooks {
 
   public static async onGetActorDirectoryEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
-    const newOptions: ContextMenu.Item[] = [];
+    const newOptions: ContextMenuEntry[] = [];
 
     // Invoke character summarizer on selected character
     newOptions.push({
@@ -211,9 +211,9 @@ export default class SwadeHooks {
 
   public static onGetCardsDirectoryEntryContext(
     html: JQuery,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
-    const actionCardEditor: ContextMenu.Item = {
+    const actionCardEditor: ContextMenuEntry = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
@@ -231,7 +231,7 @@ export default class SwadeHooks {
         new ActionCardEditor(deck).render(true);
       },
     };
-    const chaseLayout: ContextMenu.Item = {
+    const chaseLayout: ContextMenuEntry = {
       name: 'SWADE.LayOutChaseWithDeck',
       icon: '<i class="fas fa-shipping-fast"></i>',
       condition: (li) => {
@@ -248,7 +248,7 @@ export default class SwadeHooks {
 
   public static onGetCompendiumDirectoryEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
     options.push({
       name: 'SWADE.ConvertToDeck',
@@ -456,7 +456,7 @@ export default class SwadeHooks {
 
   public static onGetChatLogEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
     const canApply = (li: JQuery<HTMLElement>) => {
       const message = game.messages?.get(li.data('messageId'))!;
@@ -487,7 +487,7 @@ export default class SwadeHooks {
 
   public static async onGetCombatTrackerEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
     const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
     if (index !== -1) {
@@ -495,7 +495,7 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    const newOptions = new Array<ContextMenu.Item>();
+    const newOptions = new Array<ContextMenuEntry>();
 
     // Set as group leader
     newOptions.push({
@@ -792,7 +792,7 @@ export default class SwadeHooks {
 
   public static onGetUserContextOptions(
     html: JQuery<HTMLElement>,
-    context: ContextMenu.Item[],
+    context: ContextMenuEntry[],
   ) {
     const players = html.find('#players');
     if (!players) return;

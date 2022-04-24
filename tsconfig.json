@@ -5,6 +5,7 @@
     "lib": ["DOM", "ES6", "ES2020"],
     "types": ["@league-of-foundry-developers/foundry-vtt-types"],
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "strict": false,
     "strictNullChecks": true
   }
