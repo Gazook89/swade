@@ -1,7 +1,7 @@
 <section class="flexrow">
-  <div>
-      {{localize "SWADE.CarryWeight"}}
-      <strong>{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}} {{settingrules.weightUnit}}</strong>
+  <div class="encumbrance">
+    <span class="label">{{localize "SWADE.CarryWeight"}}</span>
+    <span class="value">{{formatNumber data.data.details.encumbrance.value}} / {{data.data.details.encumbrance.max}} {{settingrules.weightUnit}}</span>
   </div>
   <div class="form-group currency">
     {{#if (eq settingrules.wealthType "currency")}}

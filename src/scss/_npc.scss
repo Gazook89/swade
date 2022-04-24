@@ -1,12 +1,14 @@
 .swade.sheet.actor.npc {
   min-height: 240px;
   max-height: 740px;
+
   .header-field {
     padding: 1px;
     & + .item {
       padding-top: 2px;
     }
   }
+
   .sheet-header {
     .profile-img-container {
       height: 120px;
@@ -18,6 +20,7 @@
       margin-left: auto;
     }
   }
+
   .extra-gear-card {
     border-bottom: $decorative-line;
     padding-bottom: 2px;
@@ -36,6 +39,7 @@
       flex-basis: 40px;
     }
   }
+
   .editor {
     height: 200px;
     padding: 2px;

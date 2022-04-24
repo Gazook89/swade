@@ -719,6 +719,14 @@
     max-width: 33%;
   }
 
+  .encumbrance {
+    justify-self: flex-start;
+    line-height: var(--form-field-height);
+    .value {
+      font-weight: 700;
+    }
+  }
+
   .inventory {
     ul {
       list-style: none;
@@ -751,10 +759,11 @@
       border: none;
       background-size: cover;
       background-position: center;
-      &:hover, &:focus{
-        &::after{
-          font-family: "Font Awesome 5 Free";
-          content: "\f27a";
+      &:hover,
+      &:focus {
+        &::after {
+          font-family: 'Font Awesome 5 Free';
+          content: '\f27a';
           text-align: center;
           font-size: 1.25em;
         }
@@ -1016,10 +1025,11 @@
       border: none;
       background-size: cover;
       background-position: center;
-      &:hover, &:focus{
-        &::after{
-          font-family: "Font Awesome 5 Free";
-          content: "\f27a";
+      &:hover,
+      &:focus {
+        &::after {
+          font-family: 'Font Awesome 5 Free';
+          content: '\f27a';
           text-align: center;
           font-size: 1.25em;
         }
@@ -1088,10 +1098,11 @@
       border: none;
       background-size: cover;
       background-position: center;
-      &:hover, &:focus{
-        &::after{
-          font-family: "Font Awesome 5 Free";
-          content: "\f27a";
+      &:hover,
+      &:focus {
+        &::after {
+          font-family: 'Font Awesome 5 Free';
+          content: '\f27a';
           text-align: center;
           font-size: 1.25em;
         }
