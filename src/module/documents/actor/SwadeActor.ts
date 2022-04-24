@@ -317,6 +317,27 @@ export default class SwadeActor extends Actor {
     });
   }
 
+  rollWealthDie() {
+    if (this.data.type === 'vehicle') return;
+    const die = this.data.data.details.wealth.die ?? 6;
+    const mod = this.data.data.details.wealth.modifier ?? 0;
+    const wildDie = this.data.data.details.wealth['wild-die'] ?? 6;
+    const dieLabel = game.i18n.localize('SWADE.WealthDie');
+    const wildDieLabel = game.i18n.localize('SWADE.WildDie');
+    const formula = this.isWildcard
+      ? `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh`
+      : `{1d${die}x[${dieLabel}]}`;
+
+    return game.swade.RollDialog.asPromise({
+      roll: new Roll(formula),
+      mods: [{ label: 'Modifier', value: mod }],
+      speaker: ChatMessage.getSpeaker(),
+      actor: this,
+      flavor: game.i18n.localize('SWADE.WealthDie'),
+      title: game.i18n.localize('SWADE.WealthDie'),
+    });
+  }
+
   async makeUnskilledAttempt(options: IRollOptions = {}) {
     const tempSkill = new SwadeItem({
       name: game.i18n.localize('SWADE.Unskilled'),
