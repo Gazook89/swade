@@ -34,6 +34,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
 - Added some informative to system documentation links to the settings tab, under the system version.
 - Powers can now record an AP value
+- Added new Keybindings, all of which are editable
+  - You can now select a favorite card hand in the user config and open it with the `H` keybinding
+  - You can now spend a Benny by pressing `B` and receive a Benny by pressing `Alt+H`
 - Added addition translation strings
 
 ### Changed
@@ -54,6 +57,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
+
 ## v1.0.10
 
 ### Removed

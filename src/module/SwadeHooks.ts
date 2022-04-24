@@ -782,6 +782,46 @@ export default class SwadeHooks {
     });
   }
 
+  public static onRenderUserConfig(
+    app: UserConfig,
+    html: JQuery<HTMLElement>,
+    data: Record<string, unknown>,
+  ) {
+    // resize the element so it'll fit the new stuff
+    html.css({ height: 'auto' });
+
+    //get possible
+    const possibleCardsDocs = game.cards!.filter(
+      (c) =>
+        c.type === 'hand' &&
+        c.permission === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER,
+    );
+
+    const actorDirectory = html.find('div.stacked.directory');
+
+    //return early to avoid double rendering
+    if (html.find('div.swade-favorite-cards').length) return;
+
+    const userConfigLabel = game.i18n.localize(
+      'SWADE.Keybindings.OpenFavoriteCards.UserConfigLabel',
+    );
+    const options = possibleCardsDocs.map((c) => {
+      const favoriteCards = game.user?.getFlag('swade', 'favoriteCardsDoc');
+      const sel = c.id === favoriteCards ? 'selected' : '';
+      return `<option value="${c.id}" ${sel}>${c.name}</option>`;
+    });
+
+    const template = `
+    <div class="form-group swade-favorite-cards">
+      <label>${userConfigLabel}</label>
+      <select name="flags.swade.favoriteCardsDoc">
+      <option value="">None</option>
+      ${options.join('\n')}
+      </select>
+    </div>`;
+    actorDirectory.before(template);
+  }
+
   public static onRenderChatLog(
     app: ChatLog,
     html: JQuery<HTMLElement>,

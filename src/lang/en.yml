@@ -495,3 +495,9 @@ SWADE.RollDamage: Roll Damage
 SWADE.SystemLinks.Changelog: Changelog
 SWADE.SystemLinks.Wiki: Wiki
 SWADE.SystemLinks.ReportAnIssue: Report an Issue
+SWADE.Keybindings.OpenFavoriteCards.Name: Open Favorite Card Hand
+SWADE.Keybindings.OpenFavoriteCards.UserConfigLabel: Favorite Card Hand
+SWADE.Keybindings.OpenFavoriteCards.Hint: You can set your favorite hand in the User Config
+SWADE.Keybindings.OpenFavoriteCards.NoCardsWarning: You don't have a favorite card hand set!
+SWADE.Keybindings.Bennies.Name: Spend/Receive a Benny
+SWADE.Keybindings.Bennies.Hint: Press to spend a Benny, hold down Alt while you press the key to receive a Benny instead

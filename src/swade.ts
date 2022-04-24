@@ -21,6 +21,7 @@ import SwadeUser from './module/documents/SwadeUser';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
+import { registerKeybindings } from './module/keybindings';
 import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import {
@@ -120,6 +121,9 @@ Hooks.once('init', () => {
   registerSettingRules();
   register3DBennySettings();
 
+  //register keyboard shortcuts
+  registerKeybindings();
+
   // Register sheets
   Actors.unregisterSheet('core', ActorSheet);
   Items.unregisterSheet('core', ItemSheet);
@@ -165,6 +169,7 @@ Hooks.on('renderActiveEffectConfig', SwadeHooks.onRenderActiveEffectConfig);
 Hooks.on('renderCompendium', SwadeHooks.onRenderCompendium);
 Hooks.on('renderChatMessage', SwadeHooks.onRenderChatMessage);
 Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
+Hooks.on('renderUserConfig', SwadeHooks.onRenderUserConfig);
 
 /* ------------------------------------ */
 /* Sidebar Tab Render					          */
