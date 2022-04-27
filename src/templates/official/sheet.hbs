@@ -95,7 +95,7 @@
     {{#if actor.hasArcaneBackground}}
     <a class="item" data-tab="powers">{{localize "SWADE.Pow"}}</a>
     {{/if}}
-    <a class="item" data-tab="description">{{localize "SWADE.About"}}</a>
+    <a class="item" data-tab="about">{{localize "SWADE.About"}}</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -115,16 +115,15 @@
       {{> "systems/swade/templates/official/tabs/inventory.hbs"}}
     </section>
 
-    {{!-- Powers Tab --}} {{#if actor.hasArcaneBackground}}
+    {{!-- Powers Tab --}} 
+    {{#if actor.hasArcaneBackground}}
     <section class="tab powers" data-group="primary" data-tab="powers">
       {{> "systems/swade/templates/official/tabs/powers.hbs"}}
     </section>
-    {{/if}} {{!-- Biography Tab --}}
-    <section
-      class="tab description"
-      data-group="primary"
-      data-tab="description"
-    >
+    {{/if}}
+
+    {{!-- Biography Tab --}}
+    <section class="tab about" data-group="primary" data-tab="about">
       {{> "systems/swade/templates/official/tabs/about.hbs"}}
     </section>
   </main>

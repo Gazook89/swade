@@ -782,6 +782,157 @@
       white-space: normal;
       line-height: normal;
     }
+
+    .weapon {
+      grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
+      column-gap: $small-spacing;
+      align-items: center;
+
+      .item-img {
+        grid-column: 1;
+      }
+
+      .name {
+        grid-column: 2;
+        flex-wrap: nowrap;
+      }
+      .damage {
+        grid-column: 3;
+        text-align: center;
+        button {
+          width: 90%;
+        }
+      }
+      .ap {
+        grid-column: 4;
+        text-align: center;
+      }
+      .note {
+        grid-column: 5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .weight {
+        grid-column: 6;
+        text-align: center;
+      }
+      .item-controls {
+        grid-column: 7;
+        text-align: center;
+        display: flex;
+        justify-content: flex-end;
+        button {
+          padding: 0;
+        }
+      }
+    }
+
+    .armor {
+      grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
+      column-gap: $small-spacing;
+      align-items: center;
+      .item-img {
+        grid-column: 1;
+      }
+      .name {
+        grid-column: 2;
+        flex-wrap: nowrap;
+      }
+      .bonus {
+        grid-column: 3;
+        text-align: center;
+      }
+      .min-str {
+        grid-column: 4;
+        text-align: center;
+      }
+      .note {
+        grid-column: 5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .weight {
+        grid-column: 6;
+        text-align: center;
+      }
+      .item-controls {
+        grid-column: 7;
+        text-align: center;
+        display: flex;
+        justify-content: flex-end;
+        button {
+          padding: 0;
+        }
+      }
+    }
+
+    .shield {
+      grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
+      column-gap: $small-spacing;
+      align-items: center;
+      .item-img {
+        grid-column: 1;
+      }
+      .name {
+        grid-column: 2;
+        flex-wrap: nowrap;
+      }
+      .parry {
+        grid-column: 3;
+        text-align: center;
+      }
+      .cover {
+        grid-column: 4;
+        text-align: center;
+      }
+      .note {
+        grid-column: 5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .weight {
+        grid-column: 6;
+        text-align: center;
+      }
+      .item-controls {
+        grid-column: 7;
+        text-align: center;
+        display: flex;
+        justify-content: flex-end;
+        button {
+          padding: 0;
+        }
+      }
+    }
+
+    .misc {
+      grid-template-columns: 32px 7fr 1fr 80px;
+      column-gap: $small-spacing;
+      align-items: center;
+      .item-img {
+        grid-column: 1;
+      }
+      .name {
+        grid-column: 2;
+        flex-wrap: nowrap;
+      }
+      .weight {
+        grid-column: 3;
+        text-align: center;
+      }
+      .item-controls {
+        grid-column: 4;
+        text-align: center;
+        display: flex;
+        justify-content: flex-end;
+        button {
+          padding: 0;
+        }
+      }
+    }
   }
 
   .header {
@@ -797,196 +948,6 @@
     }
     .header-name {
       grid-column: 1 / span 2;
-    }
-  }
-
-  .weapon {
-    grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
-    column-gap: $small-spacing;
-    align-items: center;
-
-    .item-img {
-      grid-column: 1;
-    }
-
-    .name {
-      grid-column: 2;
-      flex-wrap: nowrap;
-    }
-    .damage {
-      grid-column: 3;
-      text-align: center;
-      button {
-        width: 90%;
-      }
-    }
-    .ap {
-      grid-column: 4;
-      text-align: center;
-    }
-    .note {
-      grid-column: 5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .weight {
-      grid-column: 6;
-      text-align: center;
-    }
-    .item-controls {
-      grid-column: 7;
-      text-align: center;
-      display: flex;
-      justify-content: flex-end;
-      button {
-        padding: 0;
-      }
-    }
-  }
-
-  .armor {
-    grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
-    column-gap: $small-spacing;
-    align-items: center;
-    .item-img {
-      grid-column: 1;
-    }
-    .name {
-      grid-column: 2;
-      flex-wrap: nowrap;
-    }
-    .bonus {
-      grid-column: 3;
-      text-align: center;
-    }
-    .min-str {
-      grid-column: 4;
-      text-align: center;
-    }
-    .note {
-      grid-column: 5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .weight {
-      grid-column: 6;
-      text-align: center;
-    }
-    .item-controls {
-      grid-column: 7;
-      text-align: center;
-      display: flex;
-      justify-content: flex-end;
-      button {
-        padding: 0;
-      }
-    }
-  }
-
-  .shield {
-    grid-template-columns: 32px 3fr 1fr 1fr 2fr 1fr 80px;
-    column-gap: $small-spacing;
-    align-items: center;
-    .item-img {
-      grid-column: 1;
-    }
-    .name {
-      grid-column: 2;
-      flex-wrap: nowrap;
-    }
-    .parry {
-      grid-column: 3;
-      text-align: center;
-    }
-    .cover {
-      grid-column: 4;
-      text-align: center;
-    }
-    .note {
-      grid-column: 5;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .weight {
-      grid-column: 6;
-      text-align: center;
-    }
-    .item-controls {
-      grid-column: 7;
-      text-align: center;
-      display: flex;
-      justify-content: flex-end;
-      button {
-        padding: 0;
-      }
-    }
-  }
-
-  .misc {
-    grid-template-columns: 32px 7fr 1fr 80px;
-    column-gap: $small-spacing;
-    align-items: center;
-    .item-img {
-      grid-column: 1;
-    }
-    .name {
-      grid-column: 2;
-      flex-wrap: nowrap;
-    }
-    .weight {
-      grid-column: 3;
-      text-align: center;
-    }
-    .item-controls {
-      grid-column: 4;
-      text-align: center;
-      display: flex;
-      justify-content: flex-end;
-      button {
-        padding: 0;
-      }
-    }
-  }
-
-  //#######################
-  // Description Tab
-  //#######################
-  .description {
-    .advances {
-      padding: $small-spacing;
-      margin: $medium-spacing 0;
-      .editor {
-        height: 170px;
-        padding: 3px;
-      }
-    }
-    .char-img-container {
-      background-image: url('./assets/char-bg.webp');
-      background-position: center;
-      background-size: contain;
-      background-repeat: no-repeat;
-      display: grid;
-      img {
-        align-self: center;
-        justify-self: center;
-        max-width: 190px;
-        max-height: 190px;
-        object-fit: contain;
-        cursor: pointer;
-        margin: 0;
-        border: none;
-      }
-    }
-    .biography {
-      margin-top: $medium-spacing;
-      font-size: $small-font;
-      .editor {
-        height: 270px;
-        padding: 3px;
-      }
     }
   }
 
@@ -1164,6 +1125,45 @@
       color: black;
       input {
         width: 50px;
+      }
+    }
+  }
+
+  //#######################
+  // Description Tab
+  //#######################
+  .description {
+    .advances {
+      padding: $small-spacing;
+      margin: $medium-spacing 0;
+      .editor {
+        height: 170px;
+        padding: 3px;
+      }
+    }
+    .char-img-container {
+      background-image: url('./assets/char-bg.webp');
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      display: grid;
+      img {
+        align-self: center;
+        justify-self: center;
+        max-width: 190px;
+        max-height: 190px;
+        object-fit: contain;
+        cursor: pointer;
+        margin: 0;
+        border: none;
+      }
+    }
+    .biography {
+      margin-top: $medium-spacing;
+      font-size: $small-font;
+      .editor {
+        height: 270px;
+        padding: 3px;
       }
     }
   }
