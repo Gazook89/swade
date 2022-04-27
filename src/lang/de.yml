@@ -123,7 +123,7 @@ SWADE.Equippable: Ausrüstbar
 SWADE.ArcaneDevice: Arkanes Gerät
 SWADE.Misc: Sonstiges
 SWADE.QuickAccess: Schnellzugriff
-SWADE.Effects: Aktive Effekte
+SWADE.Effects: Effekte
 SWADE.Hindrances: Handicaps
 SWADE.MajHind: Schweres Handicap
 SWADE.Major: (Schwer)
@@ -340,8 +340,8 @@ SWADE.SpecialAbility: Spezialfähigkeit
 SWADE.SpecialAbilities: Spezialfähigkeiten
 SWADE.RacialAbilities: Volkseigenschaften
 SWADE.ArchetypeAbilities: Archetypeigenschaften
-SWADE.About: Beschreibung
-SWADE.EdgesHindrances: Talente & Handicaps
+SWADE.About: Bio
+SWADE.EdgesHindrances: Talente
 SWADE.GrantsPowers: Gewährt Mächte
 SWADE.Passengers: Passagiere
 SWADE.Crew: Besatzung
@@ -465,3 +465,4 @@ SWADE.RollDamage: Schaden würfeln
 SWADE.SystemLinks.Changelog: Changelog
 SWADE.SystemLinks.Wiki: Wiki
 SWADE.SystemLinks.ReportAnIssue: Ein Problem melden
+SWADE.Biography: Biografie

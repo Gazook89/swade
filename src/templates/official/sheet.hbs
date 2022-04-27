@@ -91,6 +91,7 @@
   <nav class="gridcell tabs" data-group="primary">
     <a class="item" data-tab="summary">{{localize "SWADE.Summary"}}</a>
     <a class="item" data-tab="edges">{{localize "SWADE.EdgesHindrances"}}</a>
+    <a class="item" data-tab="effects">{{localize "SWADE.Effects"}}</a>
     <a class="item" data-tab="inventory">{{localize "SWADE.Inv"}}</a>
     {{#if actor.hasArcaneBackground}}
     <a class="item" data-tab="powers">{{localize "SWADE.Pow"}}</a>
@@ -108,6 +109,11 @@
     {{!-- Edges/Hindrances Tab --}}
     <section class="tab edges" data-group="primary" data-tab="edges">
       {{> "systems/swade/templates/official/tabs/edges.hbs"}}
+    </section>
+
+    {{!-- Effects Tab --}}
+    <section class="tab effects" data-group="primary" data-tab="effects">
+      {{> "systems/swade/templates/official/tabs/effects.hbs"}}
     </section>
 
     {{!-- Inventory Tab --}}

@@ -47,6 +47,7 @@ export const preloadHandlebarsTemplates = async function () {
     //tabs
     'systems/swade/templates/official/tabs/summary.hbs',
     'systems/swade/templates/official/tabs/edges.hbs',
+    'systems/swade/templates/official/tabs/effects.hbs',
     'systems/swade/templates/official/tabs/inventory.hbs',
     'systems/swade/templates/official/tabs/powers.hbs',
     'systems/swade/templates/official/tabs/about.hbs',

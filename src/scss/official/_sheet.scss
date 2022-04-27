@@ -145,7 +145,7 @@
       padding: $small-spacing 1ch;
       font-family: 'Anton', 'Signika', sans-serif;
       text-align: center;
-      font-size: $large-font;
+      font-size: 1.5em;
       color: black;
       border-radius: 8px 8px 0 0;
       box-shadow: 0px -4px 6px -3px #0000009e, 0px -4px 6px -3px #0000002b inset;
@@ -629,41 +629,6 @@
       padding-left: $large-spacing;
       width: 95%;
     }
-    .effects-list {
-      li {
-        padding-bottom: $small-spacing;
-        margin-bottom: $small-spacing;
-        border-bottom: $solid-line;
-      }
-      .effect-icon {
-        flex: 0 0 24px;
-        height: 24px;
-        margin-right: $small-spacing;
-        border: none;
-      }
-      span.effect-label {
-        flex: 1;
-        line-height: 24px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      button.effect-label {
-        font-size: 14px;
-        text-align: left;
-        cursor: pointer;
-        padding-left: 5px;
-        justify-self: flex-start;
-      }
-      .effect-controls {
-        line-height: 24px;
-        flex: 0 0 60px;
-        text-align: center;
-        button {
-          padding: 0;
-          margin: 0;
-        }
-      }
-    }
   }
 
   .gear-card {
@@ -673,11 +638,17 @@
     .item-name {
       font-size: 14px;
       text-align: left;
-      cursor: pointer;
       padding-left: $medium-spacing;
       justify-self: flex-start;
-      &:focus {
-        border: none;
+    }
+    button.item-name {
+      cursor: pointer;
+    }
+
+    &.disabled-effect {
+      .item-name {
+        text-decoration: line-through;
+        text-decoration-thickness: $small-spacing;
       }
     }
     .item-image {
@@ -1024,6 +995,38 @@
   }
 
   //#######################
+  // Effects Tab
+  //#######################
+  .effects.active {
+    .effects-list {
+      li {
+        padding-bottom: $small-spacing;
+        margin-bottom: $small-spacing;
+        border-bottom: $solid-line;
+      }
+      .effect-icon {
+        flex: 0 0 24px;
+        height: 24px;
+        margin-right: $small-spacing;
+        border: none;
+      }
+      span.effect-label {
+        flex: 1;
+        line-height: 24px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      button.effect-label {
+        font-size: 14px;
+        text-align: left;
+        cursor: pointer;
+        padding-left: 5px;
+        justify-self: flex-start;
+      }
+    }
+  }
+
+  //#######################
   // Powers Tab
   //#######################
   .powers {
@@ -1130,9 +1133,9 @@
   }
 
   //#######################
-  // Description Tab
+  // About Tab
   //#######################
-  .description {
+  .about.active {
     .advances {
       padding: $small-spacing;
       margin: $medium-spacing 0;
