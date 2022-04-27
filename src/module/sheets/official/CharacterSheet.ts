@@ -8,6 +8,7 @@ import {
 import { SWADE } from '../../config';
 import { Attribute } from '../../documents/actor/SwadeActor';
 import SwadeItem from '../../documents/item/SwadeItem';
+import SwadeActiveEffect from '../../documents/SwadeActiveEffect';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
 
 export default class CharacterSheet extends ActorSheet {
@@ -343,7 +344,8 @@ export default class CharacterSheet extends ActorSheet {
       const a = ev.currentTarget;
       const effectId = a.closest('li')!.dataset.effectId as string;
       const effect = this.actor.effects.get(effectId, { strict: true });
-      const action = a.dataset.action;
+      const action = a.dataset.action as string;
+      const toggle = a.dataset.toggle as string;
       let item: SwadeItem | null = null;
 
       switch (action) {
@@ -352,7 +354,7 @@ export default class CharacterSheet extends ActorSheet {
         case 'delete':
           return effect.delete();
         case 'toggle':
-          return effect.update({ disabled: !effect.data.disabled });
+          return effect.update(this._toggleItem(effect, toggle));
         case 'open-origin':
           item = (await fromUuid(effect.data.origin!)) as SwadeItem;
           if (item) item?.sheet?.render(true);
@@ -714,12 +716,14 @@ export default class CharacterSheet extends ActorSheet {
     new game.swade.apps.SwadeEntityTweaks(this.actor).render(true);
   }
 
-  protected _toggleItem(item: SwadeItem, toggle: string): any {
+  protected _toggleItem(
+    doc: SwadeItem | SwadeActiveEffect,
+    toggle: string,
+  ): Record<string, unknown> {
+    const oldVal = !!getProperty(doc.data, toggle);
     return {
-      _id: item.id,
-      data: {
-        [toggle]: !item.data.data[toggle],
-      },
+      _id: doc.id,
+      [toggle]: !oldVal,
     };
   }
 
