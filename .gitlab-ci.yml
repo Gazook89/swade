@@ -44,9 +44,8 @@ build:
     - |-
       npm run update-manifest -- \
       --systemVersion=${CI_COMMIT_TAG:1} \
-      --url=$PACKAGE_REGISTRY_URL/latest/$PACKAGE_TYPE.json \
       --manifest=$PACKAGE_REGISTRY_URL/latest/$PACKAGE_TYPE.json \
-      --download="$CI_PROJECT_URL/-/releases/$CI_COMMIT_TAG/downloads/$PACKAGE_ARCHIVE.zip"
+      --download=$CI_PROJECT_URL/-/releases/$CI_COMMIT_TAG/downloads/$PACKAGE_ARCHIVE.zip
     - npm run build:packs
     - npm run build
   cache:
@@ -55,6 +54,8 @@ build:
     paths:
       - dist
     expire_in: 1 week
+  # rules:
+  #   - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/'
 
 publish-artifacts:
   stage: prepare-release

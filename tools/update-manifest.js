@@ -7,7 +7,6 @@ const manifestPath = 'src/system.json';
 
 const argv = await yargs(hideBin(process.argv))
   .option('systemVersion')
-  .option('url')
   .option('manifest')
   .option('download')
   .help()
@@ -16,19 +15,30 @@ const argv = await yargs(hideBin(process.argv))
 const manifestRaw = await readFile(manifestPath, 'utf-8');
 const manifest = JSON.parse(manifestRaw);
 
-console.log(chalk.blue.bold('Updating system.json with following data:'));
-console.table({
-  version: argv.systemVersion,
-  url: argv.url,
-  manifest: argv.manifest,
-  download: argv.download,
-});
+const newManifestData = {
+  version: getSystemVersion(),
+  manifest: argv.manifest ?? manifest.manifest,
+  download: argv.download ?? manifest.download,
+};
 
-manifest.version = argv.systemVersion ?? manifest.version;
-manifest.url = argv.url ?? manifest.url;
-manifest.manifest = argv.manifest ?? manifest.manifest;
-manifest.download = argv.download ?? manifest.manifest;
+console.log(chalk.blue.bold('Updating system.json with following data:'));
+console.table(newManifestData);
+
+manifest.version = newManifestData.systemVersion;
+manifest.manifest = newManifestData.manifest;
+manifest.download = newManifestData.download;
 
 await writeFile(manifestPath, JSON.stringify(manifest, null, 2), {
   encoding: 'utf-8',
 });
+
+function getSystemVersion() {
+  const commitSha = process.env.CI_COMMIT_SHORT_SHA;
+  const tag = process.env.CI_COMMIT_TAG;
+  if (!tag && commitSha) {
+    return `${manifest.version}-${commitSha}`;
+  } else if (tag) {
+    return argv.systemVersion;
+  }
+  return manifest.version;
+}
