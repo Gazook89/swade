@@ -500,4 +500,7 @@ SWADE.Keybindings.OpenFavoriteCards.UserConfigLabel: Favorite Card Hand
 SWADE.Keybindings.OpenFavoriteCards.Hint: You can set your favorite hand in the User Config
 SWADE.Keybindings.OpenFavoriteCards.NoCardsWarning: You don't have a favorite card hand set!
 SWADE.Keybindings.Bennies.Name: Spend/Receive a Benny
-SWADE.Keybindings.Bennies.Hint: Press to spend a Benny, hold down Alt while you press the key to receive a Benny instead
+SWADE.Keybindings.Bennies.Hint: >-
+  Press to spend a Benny, hold down Alt while you press the key to receive a
+  Benny instead
+SWADE.OpenOrigin: Open origin

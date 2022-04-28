@@ -227,14 +227,14 @@
         <i class="fa fa-plus"></i>{{localize "SWADE.Add"}}
       </button>
     </header>
-    <ul class="effects-list">
+    <ol class="quick-list">
       {{#each actor.effects}}
         {{#if data.flags.swade.favorite}}
           <li class="gear-card item {{#if data.disabled}}disabled-effect{{/if}}" data-effect-id="{{id}}">
-            <header class="card-header flexrow">
+            <div class="card-header flexrow">
               <div class="item-image" style="background-image: url('{{data.icon}}')"></div>
               {{#if data.origin}}
-                <button type="button" class="item-name effect-action" data-action="open-origin">{{data.label}}</button>
+                <button type="button" class="item-name effect-action" data-action="open-origin" title="{{localize "SWADE.OpenOrigin"}}">{{data.label}}</button>
               {{else}}
                 <div class="item-name">{{data.label}}</div>
               {{/if}}
@@ -243,11 +243,11 @@
                   <i class="fas fa-power-off"></i>
                 </button>
               </div>
-            </header>
+            </div>
           </li>
         {{/if}}
       {{/each}}
-    </ul>
+    </ol>
     <ol class="quick-list">
       {{#each actor.itemTypes.weapon}} {{#if data.data.favorite}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
