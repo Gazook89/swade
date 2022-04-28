@@ -44,7 +44,7 @@ export default class CharacterSheet extends ActorSheet {
       const targetIsButton = 'button' === target?.type;
       if (!targetIsButton && ev.key === 'Enter') {
         ev.preventDefault();
-        this.submit({ preventClose: true, preventRender: false });
+        this.submit({ preventClose: true });
         return false;
       }
     });

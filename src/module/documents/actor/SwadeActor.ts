@@ -457,8 +457,7 @@ export default class SwadeActor extends Actor {
       const createData = foundry.utils.deepClone(
         effectData,
       ) as Partial<StatusEffect>;
-      //localize the label
-      createData.label = game.i18n.localize(effectData.label as string);
+      //set the status id
       setProperty(createData, 'flags.core.statusId', effectData.id);
       if (options.overlay) setProperty(createData, 'flags.core.overlay', true);
       //remove id property to not violate validation

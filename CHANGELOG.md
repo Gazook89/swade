@@ -33,6 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
 - _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
 - Added some informative to system documentation links to the settings tab, under the system version.
+- Added the ability to favorite Edges, Hindrances, Special Abilities, Active Effects, Weapons, Armor, Shields and Gear
 - Added `SwadeActor#rollWealthDie` function
 - Added the currency controls on NPC sheet
 - Powers can now record an AP value
@@ -44,6 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - Changed the way the system is delivered. The system is now bundled as a singular JS file, reducing the number of JS files from 44 to 1. In addition to that we're no delivering sourcemaps which should help with troubleshooting. For more information please visit [ticket #464] (https://gitlab.com/peginc/swade/-/issues/464). All in all this should not have any noticeable drawbacks for end users and should slightly increase the responsiveness of the system on world load.
+- Changed the way the Quick Access behaves. Instead of automatically displaying all equipped items it now only displays favorited items. See `Added` for the list of document types that can be favorited. Status Effects are automatically shown in the Quick Access
 
 ### Deprecated
 
