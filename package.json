@@ -19,6 +19,7 @@
     "build:watch": "rollup -cw",
     "build:packs": "node ./tools/build-packs.js",
     "link-project": "node ./tools/link-project.js",
+    "update-manifest": "node ./tools/update-manifest.js",
     "clean": "rimraf dist",
     "clean:link": "node ./tools/link-project.js --clean",
     "check:types": "tsc --noEmit",
