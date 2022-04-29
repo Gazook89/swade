@@ -20,6 +20,7 @@ declare global {
         removeEffect?: boolean;
         expiration?: number;
         loseTurnOnHold?: boolean;
+        favorite?: boolean;
       };
     };
   }

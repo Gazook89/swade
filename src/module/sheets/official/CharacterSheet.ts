@@ -288,46 +288,7 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     html.find('.item-create').on('click', async (ev) => {
-      const header = ev.currentTarget;
-      const type = header.dataset.type!;
-
-      // item creation helper func
-      const createItem = function (
-        type: string,
-        name: string = `New ${type.capitalize()}`,
-      ): any {
-        const itemData = {
-          name: name ? name : `New ${type.capitalize()}`,
-          type: type,
-          data: header.dataset,
-        };
-        delete itemData.data['type'];
-        return itemData;
-      };
-      switch (type) {
-        case 'choice':
-          this._chooseItemType().then(async (dialogInput: any) => {
-            if (dialogInput.type !== 'effect') {
-              const itemData = createItem(dialogInput.type, dialogInput.name);
-              await Item.create(itemData, {
-                renderSheet: true,
-                parent: this.actor,
-              });
-            } else {
-              this._createActiveEffect(dialogInput.name);
-            }
-          });
-          break;
-        case 'effect':
-          this._createActiveEffect();
-          break;
-        default:
-          await Item.create(createItem(type), {
-            renderSheet: true,
-            parent: this.actor,
-          });
-          break;
-      }
+      this._inlineItemCreate(ev.currentTarget as HTMLButtonElement);
     });
 
     //Toggle Equipment Status
@@ -538,7 +499,7 @@ export default class CharacterSheet extends ActorSheet {
     html.find('.currency .roll').on('click', () => this.actor.rollWealthDie());
   }
 
-  getData() {
+  async getData() {
     const data: any = super.getData();
 
     //retrieve the items and sort them by their sort value
@@ -588,6 +549,7 @@ export default class CharacterSheet extends ActorSheet {
     }
 
     data.itemTypes = itemTypes;
+    data.effects = await this._getEffects();
 
     //sort skills alphabetically
     data.sortedSkills = this.actor.itemTypes.skill.sort((a, b) =>
@@ -810,6 +772,71 @@ export default class CharacterSheet extends ActorSheet {
     });
   }
 
+  protected async _getEffects() {
+    const temporary = new Array<Effect>();
+    const permanent = new Array<Effect>();
+    for (const effect of this.actor.effects) {
+      const val: Effect = {
+        id: effect.id!,
+        label: effect.data.label,
+        icon: effect.data.icon,
+        disabled: effect.data.disabled,
+        favorite: effect.getFlag('swade', 'favorite'),
+      };
+      if (effect.data.origin) {
+        const origin = await fromUuid(effect.data.origin);
+        val.origin = origin?.name;
+      }
+      if (effect.isTemporary) {
+        temporary.push(val);
+      } else {
+        permanent.push(val);
+      }
+    }
+    return { temporary, permanent };
+  }
+
+  protected async _inlineItemCreate(button: HTMLButtonElement) {
+    const type = button.dataset.type!;
+    // item creation helper func
+    const createItem = function (
+      type: string,
+      name: string = `New ${type.capitalize()}`,
+    ): any {
+      const itemData = {
+        name: name ? name : `New ${type.capitalize()}`,
+        type: type,
+        data: button.dataset,
+      };
+      delete itemData.data['type'];
+      return itemData;
+    };
+    switch (type) {
+      case 'choice':
+        this._chooseItemType().then(async (dialogInput: any) => {
+          if (dialogInput.type !== 'effect') {
+            const itemData = createItem(dialogInput.type, dialogInput.name);
+            await Item.create(itemData, {
+              renderSheet: true,
+              parent: this.actor,
+            });
+          } else {
+            this._createActiveEffect(dialogInput.name);
+          }
+        });
+        break;
+      case 'effect':
+        this._createActiveEffect();
+        break;
+      default:
+        await Item.create(createItem(type), {
+          renderSheet: true,
+          parent: this.actor,
+        });
+        break;
+    }
+  }
+
   /**
    * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
    * @param {Event} event  Triggering event.
@@ -824,4 +851,13 @@ export default class CharacterSheet extends ActorSheet {
       input.value = value.slice(1);
     }
   }
+}
+
+interface Effect {
+  id: string;
+  icon: string | undefined | null;
+  disabled: boolean;
+  favorite?: boolean;
+  origin?: string | undefined | null;
+  label?: string;
 }

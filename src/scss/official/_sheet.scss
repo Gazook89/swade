@@ -919,6 +919,7 @@
     }
     .header-name {
       grid-column: 1 / span 2;
+      font-weight: 700;
     }
   }
 
@@ -999,29 +1000,49 @@
   //#######################
   .effects.active {
     .effects-list {
-      li {
-        padding-bottom: $small-spacing;
-        margin-bottom: $small-spacing;
-        border-bottom: $solid-line;
-      }
-      .effect-icon {
-        flex: 0 0 24px;
-        height: 24px;
-        margin-right: $small-spacing;
-        border: none;
-      }
-      span.effect-label {
-        flex: 1;
-        line-height: 24px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      button.effect-label {
-        font-size: 14px;
+      list-style: none;
+      margin-bottom: 1em;
+    }
+    .effect,
+    .effect-header {
+      display: grid;
+      grid-template-columns: 40px 3fr 2fr 80px;
+      column-gap: 2px;
+      align-items: center;
+      padding: 2px 5px;
+    }
+    .effect-header {
+      border-radius: $medium-spacing;
+      background-image: url('./assets/header_bg.webp');
+      background-position: left center;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      line-height: 24px;
+      text-align: center;
+      margin-bottom: $large-spacing;
+      & .effect-label {
         text-align: left;
-        cursor: pointer;
-        padding-left: 5px;
-        justify-self: flex-start;
+        grid-column: 1 / span 2;
+        font-weight: 700;
+      }
+      & .effect-controls {
+        justify-content: space-around;
+      }
+    }
+    .effect-label {
+      text-align: left;
+    }
+    .effect-source {
+      text-align: center;
+      font-size: var(--font-size-12);
+    }
+    .effect-controls {
+      text-align: center;
+      display: flex;
+      justify-content: flex-end;
+      gap: initial;
+      & > * {
+        padding: 0;
       }
     }
   }

@@ -1,41 +1,58 @@
-    <ul class="effects-list">
-      {{#each actor.effects}}
-      <li
-        class="item flexrow {{#unless data.origin}}active-effect{{/unless}} {{#if data.disabled}}disabled-effect{{/if}}"
-        data-effect-id="{{id}}"
+{{#*inline "effectPartial"}}
+  {{log effect}}
+  <li class="item effect {{#if effect.disabled}}disabled-effect{{/if}}" data-effect-id="{{effect.id}}" >
+    <img src="{{effect.icon}}" alt="{{effect.label}}" class="effect-icon" />
+    <span class="effect-label">{{effect.label}}</span>
+    {{#if effect.origin}}
+    <button type="button" class="effect-source effect-action" data-action="open-origin">
+      {{effect.origin}}
+    </button>
+    {{else}}
+    <span class="effect-source"></span>
+    {{/if}}
+    <span class="effect-controls">
+      <button type="button" class="effect-action" data-action="toggle" data-toggle="disabled">
+        <i class="fas fa-power-off"></i>
+      </button>
+      <button 
+        type="button" 
+        class="effect-action {{#unless effect.favorite}}item-unequipped{{/unless}}" 
+        data-action="toggle"
+        data-toggle="flags.swade.favorite"
+        title="{{localize "SWADE.Favorite"}}"
       >
-        <img src="{{data.icon}}" alt="{{data.label}}" class="effect-icon" />
-        {{#if origin}}
-        <button
-          type="button"
-          class="effect-label {{#if data.origin}}effect-action{{/if}}"
-          data-action="open-origin"
-        >
-          {{label}}
-        </button>
-        {{else}}
-        <span class="effect-label">{{data.label}}</span>
-        {{/if}}
-        <span class="effect-controls">
-          <button type="button" class="effect-action" data-action="toggle" data-toggle="disabled">
-            <i class="fas fa-power-off"></i>
-          </button>
-          <button 
-          type="button" 
-          class="effect-action {{#unless data.flags.swade.favorite}}item-unequipped{{/unless}}" 
-          data-action="toggle"
-          data-toggle="flags.swade.favorite"
-          title="{{localize "SWADE.Favorite"}}"
-          >
-            <i class="fas fa-star"></i>
-          </button>
-          <button type="button" class="effect-action" data-action="edit">
-            <i class="fas fa-edit"></i>
-          </button>
-          <a class="effect-action" data-action="delete">
-            <i class="fas fa-trash"></i>
-          </a>
-        </span>
-      </li>
-      {{/each}}
-    </ul>
+        <i class="fas fa-star"></i>
+      </button>
+      <button type="button" class="effect-action" data-action="edit">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button type="button" class="effect-action" data-action="delete">
+        <i class="fas fa-trash"></i>
+      </button>
+    </span>
+  </li>
+{{/inline}}
+<div class="effect-header">
+  <span class="effect-label">{{localize 'SWADE.EffectsTemporary'}}</span>
+  <span class="effect-source">Source</span>
+  <span class="effect-controls">
+    <button type='button' class='item-create' data-type='effect'>
+      <i class='fa fa-plus'></i>{{localize 'SWADE.Add'}}
+    </button>
+  </span>
+</div>
+<ul class="effects-list">
+  {{#each effects.temporary}}{{> effectPartial effect=this}}{{/each}}
+</ul>
+<div class="effect-header">
+  <span class="effect-label">{{localize 'SWADE.EffectsPermanent'}}</span>
+  <span class="effect-source">Source</span>
+  <span class="effect-controls">
+    <button type='button' class='item-create' data-type='effect'>
+      <i class='fa fa-plus'></i>{{localize 'SWADE.Add'}}
+    </button>
+  </span>
+</div>
+<ul class="effects-list">
+  {{#each effects.permanent}}{{> effectPartial effect=this}}{{/each}}
+</ul>

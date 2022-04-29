@@ -504,3 +504,5 @@ SWADE.Keybindings.Bennies.Hint: >-
   Press to spend a Benny, hold down Alt while you press the key to receive a
   Benny instead
 SWADE.OpenOrigin: Open origin
+SWADE.EffectsTemporary: Temporary Effects
+SWADE.EffectsPermanent: Permanent Effects
