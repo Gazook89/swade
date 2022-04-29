@@ -91,6 +91,9 @@ Hooks.once('init', () => {
   //register custom sidebar tabs
   CONFIG.ui.combat = SwadeCombatTracker;
 
+  //set up round timers to 6 seconds
+  CONFIG.time.roundTime = 6;
+
   //register card presets
   //@ts-ignore
   CONFIG.Cards.presets = {

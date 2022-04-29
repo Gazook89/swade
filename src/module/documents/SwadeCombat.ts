@@ -518,12 +518,17 @@ export default class SwadeCombat extends Combat {
     if (this.round === 0 || next === null || next >= this.turns.length) {
       return this.nextRound();
     }
+
+    //update time
+    let advanceTime =
+      Math.max(this.turns.length - this.turn!, 0) * CONFIG.time.turnTime;
+    advanceTime += CONFIG.time.roundTime;
     // Update the encounter
     return this.update(
       { round: round, turn: next },
       //FIXME return once types are updated
       //@ts-expect-error The property doesn't seem to be defined in the types
-      { advanceTime: CONFIG.time.turnTime },
+      { advanceTime },
     );
   }
 
