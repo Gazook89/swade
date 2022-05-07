@@ -158,6 +158,31 @@
     }
   }
 
+  .sub-tabs {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    border-top: 1px solid var(--color-border-light-primary);
+    border-bottom: 1px solid var(--color-border-light-primary);
+    padding: $medium-spacing 0px;
+    margin: $medium-spacing 0px;
+    .item {
+      flex-grow: 1;
+      text-align: center;
+      font-size: $medium-font;
+      &:hover {
+        text-shadow: 0 0 20px var(--color-shadow-primary);
+      }
+      &.active {
+        text-shadow: 0 0 10px var(--color-shadow-primary);
+      }
+    }
+    .item + .item {
+      border-left: 1px solid var(--color-border-light-primary);
+    }
+  }
+
   .sheet-body {
     grid-row: 4 / -1;
     grid-column: 1 / -1;
@@ -208,7 +233,6 @@
   }
 
   .editor {
-    border: $solid-line;
     width: 100%;
   }
 
@@ -1159,12 +1183,19 @@
   // About Tab
   //#######################
   .about.active {
+    display: grid;
+    grid-template-rows: max-content auto;
+    .about-body {
+      border: $solid-line;
+      overflow: hidden;
+      max-height: 100%;
+    }
+    .tab {
+      padding: 0 $medium-spacing;
+    }
     .advances {
-      padding: $small-spacing;
-      margin: $medium-spacing 0;
       .editor {
-        height: 170px;
-        padding: 3px;
+        height: 100%;
       }
     }
     .char-img-container {
@@ -1185,11 +1216,8 @@
       }
     }
     .biography {
-      margin-top: $medium-spacing;
-      font-size: $small-font;
       .editor {
-        height: 270px;
-        padding: 3px;
+        height: 100%;
       }
     }
   }

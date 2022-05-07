@@ -89,14 +89,14 @@
 
   {{!-- Sheet Tab Navigation --}}
   <nav class="gridcell tabs" data-group="primary">
-    <a class="item" data-tab="summary">{{localize "SWADE.Summary"}}</a>
-    <a class="item" data-tab="edges">{{localize "SWADE.EdgesHindrances"}}</a>
-    <a class="item" data-tab="effects">{{localize "SWADE.Effects"}}</a>
-    <a class="item" data-tab="inventory">{{localize "SWADE.Inv"}}</a>
+    <a class="item" data-tab="summary" data-group="primary">{{localize "SWADE.Summary"}}</a>
+    <a class="item" data-tab="edges" data-group="primary">{{localize "SWADE.EdgesHindrances"}}</a>
+    <a class="item" data-tab="effects" data-group="primary">{{localize "SWADE.Effects"}}</a>
+    <a class="item" data-tab="inventory" data-group="primary">{{localize "SWADE.Inv"}}</a>
     {{#if actor.hasArcaneBackground}}
-    <a class="item" data-tab="powers">{{localize "SWADE.Pow"}}</a>
+    <a class="item" data-tab="powers" data-group="primary">{{localize "SWADE.Pow"}}</a>
     {{/if}}
-    <a class="item" data-tab="about">{{localize "SWADE.About"}}</a>
+    <a class="item" data-tab="about" data-group="primary">{{localize "SWADE.About"}}</a>
   </nav>
 
   {{!-- Sheet Body --}}

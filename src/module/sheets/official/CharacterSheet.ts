@@ -25,6 +25,11 @@ export default class CharacterSheet extends ActorSheet {
           contentSelector: '.sheet-body',
           initial: 'summary',
         },
+        {
+          navSelector: '.about-tabs',
+          contentSelector: '.about-body',
+          initial: 'advances',
+        },
       ],
     };
   }
@@ -683,10 +688,7 @@ export default class CharacterSheet extends ActorSheet {
     toggle: string,
   ): Record<string, unknown> {
     const oldVal = !!getProperty(doc.data, toggle);
-    return {
-      _id: doc.id,
-      [toggle]: !oldVal,
-    };
+    return { _id: doc.id, [toggle]: !oldVal };
   }
 
   protected async _chooseItemType(choices?: any) {

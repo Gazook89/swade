@@ -1,4 +1,4 @@
-<span class='flexrow'>
+{{!-- <span class='flexrow'>
   <div class='char-img-container'>
     <img
       class='profile-img'
@@ -27,4 +27,43 @@
     owner=owner
     editable=editable
   }}
-</div>
+</div> --}}
+<nav class='about-tabs sub-tabs' data-group='about'>
+  <a
+    class='item section-header active'
+    data-tab='advances'
+    data-group='about'
+  >{{localize 'SWADE.Adv'}}</a>
+  <a
+    class='item section-header'
+    data-tab='biography'
+    data-group='about'
+  >{{localize 'SWADE.Biography'}}</a>
+  <a class='item section-header' data-tab='notes' data-group='about'>{{localize
+      'SWADE.Notes'
+    }}</a>
+</nav>
+<section class='about-body'>
+  <section class='tab advances active' data-group='about' data-tab='advances'>
+    {{log this}}
+    {{editor
+      content=data.data.advances.details
+      target='data.advances.details'
+      button=true
+      owner=owner
+      editable=editable
+    }}
+  </section>
+  <section class='tab biography' data-group='about' data-tab='biography'>
+    {{editor
+      content=data.data.details.biography.value
+      target='data.details.biography.value'
+      button=true
+      owner=owner
+      editable=editable
+    }}
+  </section>
+  <section class='tab notes' data-group='about' data-tab='notes'>
+    <p>Notes</p>
+  </section>
+</section>
