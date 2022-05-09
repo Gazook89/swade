@@ -111,6 +111,7 @@ export interface CharacterDataSourceData {
     ignored: number;
   };
   advances: {
+    mode: 'legacy' | 'expanded';
     value: number;
     rank: string;
     details: string;

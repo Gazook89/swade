@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { AbilitySubType, StatusEffect } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
-import { SystemConstants } from '../interfaces/SystemConstants';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
 import { constants } from './constants';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
@@ -502,7 +501,7 @@ export interface SwadeConfig {
   //a piece of ASCII art for the init log message
   ASCII: string;
 
-  CONST: SystemConstants;
+  CONST: typeof constants;
 
   //An object to store localization strings
   attributes: {

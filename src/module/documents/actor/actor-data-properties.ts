@@ -1,3 +1,4 @@
+import { Advance } from '../../../interfaces/Advance';
 import {
   CharacterDataSourceData,
   VehicleDataSourceData,
@@ -41,6 +42,9 @@ export type CharacterDataPropertiesData = CharacterDataSourceData & {
       max: number;
       value: number;
     };
+  };
+  advances: {
+    list: Collection<Advance>;
   };
 };
 

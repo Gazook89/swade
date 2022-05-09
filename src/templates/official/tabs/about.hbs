@@ -28,6 +28,23 @@
     editable=editable
   }}
 </div> --}}
+{{#*inline "expandedAdvances"}}
+  <ul>
+    <li class="form-group">
+      <div>{{localize "Type"}}</div>
+      <div>{{localize "SWADE.Rank"}}</div>
+      <div>{{localize "SWADE.Notes"}}</div>
+    </li>
+    {{#each advances}}
+    <li class="form-group">
+      <div>{{advanceType type}}</div>
+      <div>{{rank}}</div>
+      <div>{{enrich notes}}</div>
+    </li>
+    {{/each}}
+  </ul>
+{{/inline}}
+
 <nav class='about-tabs sub-tabs' data-group='about'>
   <a
     class='item section-header active'
@@ -45,14 +62,14 @@
 </nav>
 <section class='about-body'>
   <section class='tab advances active' data-group='about' data-tab='advances'>
-    {{log this}}
-    {{editor
+    {{!-- {{editor
       content=data.data.advances.details
       target='data.advances.details'
       button=true
       owner=owner
       editable=editable
-    }}
+    }} --}}
+  {{> expandedAdvances advances=data.data.advances.list}}
   </section>
   <section class='tab biography' data-group='about' data-tab='biography'>
     {{editor

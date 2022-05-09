@@ -1,6 +1,4 @@
-import { SystemConstants } from '../interfaces/SystemConstants';
-
-export const constants: SystemConstants = {
+export const constants = {
   ARMOR_LOCATIONS: {
     Head: 'head',
     Torso: 'torso',
@@ -18,5 +16,12 @@ export const constants: SystemConstants = {
     StartOfTurnPrompt: 1,
     EndOfTurnAuto: 2,
     EndOfTurnPrompt: 3,
+  },
+  ADVANCE_TYPE: {
+    EDGE: 0,
+    SINGLE_SKILL: 1,
+    TWO_SKILLS: 2,
+    ATTRIBUTE: 3,
+    HINDRANCE: 4,
   },
 };

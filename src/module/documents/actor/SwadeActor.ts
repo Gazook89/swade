@@ -2,6 +2,7 @@ import { DocumentModificationOptions } from '@league-of-foundry-developers/found
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { Attribute, ItemMetadata, StatusEffect } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
+import { Advance } from '../../../interfaces/Advance';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
 import * as util from '../../util';
@@ -82,9 +83,7 @@ export default class SwadeActor extends Actor {
     };
   }
 
-  /**
-   * Returns whether this character is currently encumbered, factoring in whether the rule is even enforced
-   */
+  /** @return whether this character is currently encumbered, factoring in whether the rule is even enforced */
   get isEncumbered(): boolean {
     const applyEncumbrance = game.settings.get('swade', 'applyEncumbrance');
     if (!applyEncumbrance) return false;
@@ -104,6 +103,10 @@ export default class SwadeActor extends Actor {
       this.data.data.stats.toughness.value = 0;
       this.data.data.stats.toughness.armor = 0;
     }
+    //set up advances
+    this.data.data.advances.list = new Collection<Advance>(
+      getProperty(this.data._source, 'data.advances.list'),
+    );
 
     if (this.data.data.details.autoCalcParry) {
       //same procedure as with Toughness
@@ -462,8 +465,7 @@ export default class SwadeActor extends Actor {
       if (options.overlay) setProperty(createData, 'flags.core.overlay', true);
       //remove id property to not violate validation
       delete createData.id;
-      const cls = getDocumentClass('ActiveEffect');
-      await cls.create(createData, { parent: this });
+      await this.createEmbeddedDocuments('ActiveEffect', [createData]);
     }
   }
 

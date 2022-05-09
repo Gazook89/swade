@@ -79,9 +79,11 @@ Actor:
         max: 3
         ignored: 0
       advances:
+        mode: expanded
         value: 0
         rank: Novice
         details: ''
+        list: []
       bennies:
         value: 3
         max: 3
