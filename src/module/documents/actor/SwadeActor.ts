@@ -1,6 +1,6 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
-import { ItemMetadata, StatusEffect } from '../../../globals';
+import { Attribute, ItemMetadata, StatusEffect } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
@@ -1127,7 +1127,5 @@ export default class SwadeActor extends Actor {
     }
   }
 }
-
-export type Attribute = keyof typeof SWADE.attributes;
 type ArmorLocation = ValueOf<typeof SWADE.CONST.ARMOR_LOCATIONS>;
 type ArmorPerLocation = Record<ArmorLocation, number>;

@@ -1,7 +1,6 @@
-import { AbilitySubType } from '../../../globals';
+import { AbilitySubType, Attribute } from '../../../globals';
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { TraitDie, WildDie } from '../actor/actor-data-source';
-import { Attribute } from '../actor/SwadeActor';
 
 declare global {
   interface SourceConfig {

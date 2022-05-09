@@ -1,12 +1,11 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
-import { StatusEffect } from '../../../globals';
+import { Attribute, StatusEffect } from '../../../globals';
 import {
   AdditionalStat,
   ItemAction,
   TraitRollModifier,
 } from '../../../interfaces/additional';
 import { SWADE } from '../../config';
-import { Attribute } from '../../documents/actor/SwadeActor';
 import SwadeItem from '../../documents/item/SwadeItem';
 import SwadeActiveEffect from '../../documents/SwadeActiveEffect';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
