@@ -11,6 +11,9 @@
     </div>
     <div class="header-fields">
       <div class="charline flexrow">
+        {{#if actor.isWildcard}}
+          <img src="systems/swade/assets/ui/wildcard-dark.svg" class="wildcard-indicator" alt="{{localize "SWADE.WildCard"}}" title="{{localize "SWADE.WildCard"}}">
+        {{/if}}
         <input
           class="charname"
           name="name"
@@ -19,7 +22,7 @@
           placeholder="{{localize 'SWADE.Name'}}"
         />
         {{#if actor.isWildcard}}
-        <div class="vitals-container">
+        <div class="conviction">
           <div>
             <strong>{{localize "SWADE.Bennies"}}</strong>
           </div>
@@ -41,7 +44,7 @@
             />
           </div>
         </div>
-        {{/if}} {{#if actor.isWildcard}}{{#if settingrules.conviction}}
+        {{#if settingrules.conviction}}
         <div class="conviction">
           <a
             class="conviction-toggle {{#if data.data.details.conviction.active}}pulse{{/if}}"
@@ -61,7 +64,8 @@
             />
           </div>
         </div>
-        {{/if}} {{/if}}
+        {{/if}}
+        {{/if}}
       </div>
       <section class="vitals flexrow">
         <div class="vitals-container">

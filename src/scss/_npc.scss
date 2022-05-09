@@ -16,6 +16,15 @@
     .conviction {
       width: 30%;
     }
+    .wildcard-indicator {
+      max-height: 48px;
+      max-width: 48px;
+      margin: 0;
+      border: none;
+      flex: none;
+      display: grid;
+      place-self: center;
+    }
     .status-container {
       margin-left: auto;
     }
