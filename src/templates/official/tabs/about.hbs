@@ -30,7 +30,7 @@
 </div> --}}
 {{#*inline "expandedAdvances"}}
   <ul>
-    <li class="form-group">
+    <li class="form-group advance">
       <div>{{localize "Type"}}</div>
       <div>{{localize "SWADE.Rank"}}</div>
       <div>{{localize "SWADE.Notes"}}</div>
@@ -62,14 +62,17 @@
 </nav>
 <section class='about-body'>
   <section class='tab advances active' data-group='about' data-tab='advances'>
-    {{!-- {{editor
-      content=data.data.advances.details
-      target='data.advances.details'
-      button=true
-      owner=owner
-      editable=editable
-    }} --}}
-  {{> expandedAdvances advances=data.data.advances.list}}
+    {{#if (eq data.data.advances.mode "expanded")}}
+      {{> expandedAdvances advances=data.data.advances.list}}
+    {{else}}
+      {{editor
+        content=data.data.advances.details
+        target='data.advances.details'
+        button=true
+        owner=owner
+        editable=editable
+      }}
+    {{/if}}
   </section>
   <section class='tab biography' data-group='about' data-tab='biography'>
     {{editor

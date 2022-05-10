@@ -103,11 +103,6 @@ export default class SwadeActor extends Actor {
       this.data.data.stats.toughness.value = 0;
       this.data.data.stats.toughness.armor = 0;
     }
-    //set up advances
-    this.data.data.advances.list = new Collection<Advance>(
-      getProperty(this.data._source, 'data.advances.list'),
-    );
-
     if (this.data.data.details.autoCalcParry) {
       //same procedure as with Toughness
       this.data.data.stats.parry.value = 0;
@@ -131,12 +126,24 @@ export default class SwadeActor extends Actor {
       value: this.calcInventoryWeight(),
     };
 
+    //handle advances
+    const advances = this.data.data.advances;
+    if (advances.mode === 'expanded') {
+      const advRaw = getProperty(
+        this.data._source,
+        'data.advances.list',
+      ) as Advance[];
+      const list = new Collection<Advance>();
+      advRaw.forEach((adv, i) => list.set(i.toString(), adv));
+      advances.value = list.size;
+      advances.list = list;
+      advances.rank = this.calcRank();
+    }
+
     let pace = this.data.data.stats.speed.value;
 
     //subtract encumbrance, if necessary
-    if (this.isEncumbered) {
-      pace -= 2;
-    }
+    if (this.isEncumbered) pace -= 2;
 
     //modify pace with wounds
     if (game.settings.get('swade', 'enableWoundPace')) {
@@ -145,7 +152,6 @@ export default class SwadeActor extends Actor {
       //subtract wounds
       pace -= wounds;
     }
-
     //make sure the pace doesn't go below 1
     this.data.data.stats.speed.adjusted = Math.max(pace, 1);
 
@@ -709,6 +715,22 @@ export default class SwadeActor extends Actor {
     }
 
     return parryTotal;
+  }
+
+  calcRank(advance?: number): string {
+    if (this.data.type === 'vehicle') return '';
+    const val = advance ?? this.data.data.advances.list.size;
+    if (val <= 3) {
+      return game.i18n.localize('SWADE.Ranks.Novice');
+    } else if (val.between(4, 7)) {
+      return game.i18n.localize('SWADE.Ranks.Seasoned');
+    } else if (val.between(8, 11)) {
+      return game.i18n.localize('SWADE.Ranks.Veteran');
+    } else if (val.between(12, 15)) {
+      return game.i18n.localize('SWADE.Ranks.Heroic');
+    } else {
+      return game.i18n.localize('SWADE.Ranks.Legendary');
+    }
   }
 
   /** Helper Function for Vehicle Actors, to roll Maneuvering checks */

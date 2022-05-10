@@ -37,7 +37,7 @@ export default class CharacterSheet extends ActorSheet {
     return 'systems/swade/templates/official/sheet.hbs';
   }
 
-  activateListeners(html: JQuery): void {
+  activateListeners(html: JQuery<HTMLFormElement>): void {
     super.activateListeners(html);
 
     // Everything below here is only needed if the sheet is editable
@@ -56,6 +56,7 @@ export default class CharacterSheet extends ActorSheet {
     // Input focus and update
     const inputs = html.find('input');
     inputs.on('focus', (ev) => ev.currentTarget.select());
+
     inputs
       .addBack()
       .find('[data-dtype="Number"]')
@@ -126,7 +127,8 @@ export default class CharacterSheet extends ActorSheet {
 
     //Display Advances on About tab
     html.find('label.advances').on('click', async () => {
-      this._tabs[0].activate('description');
+      this._tabs[1].activate('advances');
+      this._tabs[0].activate('about');
     });
 
     //Toggle Conviction
@@ -505,6 +507,7 @@ export default class CharacterSheet extends ActorSheet {
 
   async getData() {
     const data: any = super.getData();
+    if (this.actor.data.type === 'vehicle') return data;
 
     //retrieve the items and sort them by their sort value
     const items = Array.from(this.actor.items.values()).sort(
@@ -632,6 +635,11 @@ export default class CharacterSheet extends ActorSheet {
         game.settings.get('swade', 'weightUnit') === 'imperial' ? 'lbs' : 'kg',
     };
 
+    data.advances = {
+      expanded: this.actor.data.data.advances.mode === 'expanded',
+      list: this._getAdvances(),
+    };
+
     //add benny image URI
     data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
 
@@ -639,6 +647,15 @@ export default class CharacterSheet extends ActorSheet {
     data.useAttributeShorts = game.settings.get('swade', 'useAttributeShorts');
 
     return data;
+  }
+  private _getAdvances() {
+    if (this.actor.data.type === 'vehicle') return [];
+    const retVal = new Array<Record<string, unknown>>();
+    return this.actor.data.data.advances.list.toJSON().forEach((a, i) => {
+      retVal.push(
+        foundry.utils.mergeObject(a, { rank: this.actor.calcRank(i + 1) }),
+      );
+    });
   }
 
   getPowerPoints(item: SwadeItem) {

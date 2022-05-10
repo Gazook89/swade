@@ -24,4 +24,11 @@ export const constants = {
     ATTRIBUTE: 3,
     HINDRANCE: 4,
   },
+  RANK: {
+    NOVICE: 0,
+    SEASONED: 1,
+    VETERAN: 2,
+    HEROIC: 3,
+    LEGENDARY: 4,
+  },
 };

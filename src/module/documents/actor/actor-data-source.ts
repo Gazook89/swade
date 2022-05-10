@@ -115,6 +115,7 @@ export interface CharacterDataSourceData {
     value: number;
     rank: string;
     details: string;
+    // list: Array<Advance>;
   };
   bennies: {
     value: number;
