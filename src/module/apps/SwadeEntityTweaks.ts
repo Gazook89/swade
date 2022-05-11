@@ -2,16 +2,20 @@ import { AdditionalStat } from '../../interfaces/additional';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 
-export default class SwadeEntityTweaks extends FormApplication {
+export default class SwadeEntityTweaks extends FormApplication<
+  FormApplicationOptions,
+  Record<string, unknown>,
+  SwadeActor | SwadeItem
+> {
   constructor(object, options = {}) {
     super(object, options);
   }
   object: SwadeActor | SwadeItem;
   static get defaultOptions() {
-    const options = super.defaultOptions;
-    options.id = 'sheet-tweaks';
-    options.width = 380;
-    return options;
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      id: 'sheet-tweaks',
+      width: 380,
+    });
   }
 
   /* -------------------------------------------- */
@@ -59,9 +63,10 @@ export default class SwadeEntityTweaks extends FormApplication {
     };
     data['settingFields'] = settingFields;
     data['isActor'] = this._isActor();
-    data['isCharacter'] = this.object.data.type === 'character';
-    data['isNPC'] = this.object.data.type === 'npc';
-    data['isVehicle'] = this.object.data.type === 'vehicle';
+    data['isCharacter'] = this.object.type === 'character';
+    data['isNPC'] = this.object.type === 'npc';
+    data['isVehicle'] = this.object.type === 'vehicle';
+    data['advanceTypes'] = this._getAdvanceTypes();
     return data;
   }
 
@@ -143,11 +148,11 @@ export default class SwadeEntityTweaks extends FormApplication {
   }
 
   private _isActor() {
-    return this.object.documentName === 'Actor';
+    return this.object instanceof SwadeActor;
   }
 
   /** @override */
-  _getSubmitData(updateData = {}) {
+  protected _getSubmitData(updateData = {}) {
     const data = super._getSubmitData(updateData);
     // Prevent submitting overridden values
     const overrides = foundry.utils.flattenObject(this.object.overrides);
@@ -155,5 +160,12 @@ export default class SwadeEntityTweaks extends FormApplication {
       delete data[k];
     }
     return data;
+  }
+
+  private _getAdvanceTypes(): Record<string, string> {
+    return {
+      legacy: 'SWADE.Advances.Modes.Legacy',
+      expanded: 'SWADE.Advances.Modes.Expanded',
+    };
   }
 }

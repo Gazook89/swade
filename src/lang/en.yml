@@ -515,6 +515,8 @@ SWADE.Advances.EditorTitle: Advance Editor
 SWADE.Advances.Toggle: Toggle Advance Planned Status
 SWADE.Advances.Delete: Delete Advance
 SWADE.Advances.Planned: Planned
+SWADE.Advances.Modes.Legacy: Legacy
+SWADE.Advances.Modes.Expanded: Expanded
 SWADE.Advances.Types.Edge: New Edge
 SWADE.Advances.Types.SingleSkill: Raise Single Skill
 SWADE.Advances.Types.TwoSkills: Raise Two Skills

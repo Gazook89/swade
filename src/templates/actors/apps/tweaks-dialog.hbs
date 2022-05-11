@@ -28,6 +28,20 @@
             />
           </span>
         </div>
+        <div class='form-group'>
+          <label for='{{_id}}-advances'>{{localize 'SWADE.Adv'}}</label>
+          <span class='form-fields'>
+            <select name='data.advances.mode' id='{{_id}}-advances'>
+              {{#select data.advances.mode}}
+                {{selectOptions
+                  advanceTypes
+                  selected=data.advances.mode
+                  localize=true
+                }}
+              {{/select}}
+            </select>
+          </span>
+        </div>
         <div class='form-group' id='basePace'>
           <label>{{localize 'SWADE.BasePace'}}</label>
           <span class='form-fields'>
@@ -142,8 +156,6 @@
         </div>
       {{/if}}
     </section>
-  {{/if}}
-  {{#if isActor}}
     <section id='initiative'>
       <h2>{{localize 'SWADE.Init'}}</h2>
       <div class='form-group'>
@@ -225,7 +237,8 @@
           <p class='notes'>{{localize 'SWADE.AutoCalcParry'}}</p>
         </div>
       </section>
-    {{/unless}}{{/if}}
+    {{/unless}}
+  {{/if}}
   <section id='additionalStats'>
     <h2>{{localize 'SWADE.AddStats'}}</h2>
     <header class='form-group flexrow additionalStats-header'>
