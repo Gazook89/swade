@@ -58,20 +58,24 @@ const config = {
           //Convert the template
           src: [`${srcDirectory}/template.yml`],
           dest: distDirectory,
-          transform: (content, src, _dst) =>
-            JSON.stringify(yaml.load(content.toString(), { filename: src })),
+          transform: (content, src, _dst) => {
+            return JSON.stringify(
+              yaml.load(content.toString(), { filename: src }),
+            );
+          },
           rename: (name, _ext) => `${name}.json`,
         },
         {
           //Convert the language files
           src: [`${srcDirectory}/lang/*.yml`],
           dest: `${distDirectory}/lang`,
-          transform: (content, src, _dst) =>
-            JSON.stringify(
+          transform: (content, src, _dst) => {
+            return JSON.stringify(
               yaml.load(content.toString(), { filename: src }),
               null,
               2,
-            ),
+            );
+          },
           rename: (name, _ext) => `${name}.json`,
         },
       ],

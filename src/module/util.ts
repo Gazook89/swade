@@ -2,6 +2,7 @@ import { DropData } from '@league-of-foundry-developers/foundry-vtt-types/src/fo
 import { ConfiguredDocumentClass } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { TraitRollModifier } from '../interfaces/additional';
 import { SWADE } from './config';
+import { constants } from './constants';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 
@@ -174,6 +175,24 @@ export function firstGM() {
 
 export function isFirstGM() {
   return game.userId !== firstGM()?.id;
+}
+
+export function getRankFromAdvance(advance: number): number {
+  if (advance <= 3) {
+    return constants.RANK.NOVICE;
+  } else if (advance.between(4, 7)) {
+    return constants.RANK.SEASONED;
+  } else if (advance.between(8, 11)) {
+    return constants.RANK.VETERAN;
+  } else if (advance.between(12, 15)) {
+    return constants.RANK.HEROIC;
+  } else {
+    return constants.RANK.LEGENDARY;
+  }
+}
+
+export function getRankFromAdvanceAsString(advance: number): string {
+  return SWADE.ranks[getRankFromAdvance(advance)];
 }
 
 type Permissions = Record<string, number>;

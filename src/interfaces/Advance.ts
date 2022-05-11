@@ -1,9 +1,10 @@
 import { constants } from '../module/constants';
 
 export interface Advance {
-  type: typeof constants.ADVANCE_TYPE;
+  type: ValueOf<typeof constants.ADVANCE_TYPE>;
   notes: string;
   sort: number;
-  parked: boolean;
+  planned: boolean;
   id: string;
+  rank?: ValueOf<typeof constants.RANK>;
 }

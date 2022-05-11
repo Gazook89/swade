@@ -511,3 +511,13 @@ SWADE.Ranks.Seasoned: Seasoned
 SWADE.Ranks.Veteran: Veteran
 SWADE.Ranks.Heroic: Heroic
 SWADE.Ranks.Legendary: Legendary
+SWADE.Advances.EditorTitle: Advance Editor
+SWADE.Advances.Toggle: Toggle Advance Planned Status
+SWADE.Advances.Delete: Delete Advance
+SWADE.Advances.Planned: Planned
+SWADE.Advances.Types.Edge: New Edge
+SWADE.Advances.Types.SingleSkill: Raise Single Skill
+SWADE.Advances.Types.TwoSkills: Raise Two Skills
+SWADE.Advances.Types.Attribute: Raise Attribute
+SWADE.Advances.Types.Hindrance: Decrease Hindrance
+SWADE.AddAdvance: Add Advance

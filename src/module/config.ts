@@ -495,6 +495,14 @@ export const SWADE: SwadeConfig = {
   ],
 
   CONST: constants,
+
+  ranks: [
+    'SWADE.Ranks.Novice',
+    'SWADE.Ranks.Seasoned',
+    'SWADE.Ranks.Veteran',
+    'SWADE.Ranks.Heroic',
+    'SWADE.Ranks.Legendary',
+  ],
 };
 
 export interface SwadeConfig {
@@ -580,4 +588,6 @@ export interface SwadeConfig {
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
   prototypeRollGroups: TraitRollModifierGroup[];
+
+  ranks: string[];
 }

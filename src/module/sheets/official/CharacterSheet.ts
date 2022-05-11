@@ -5,10 +5,14 @@ import {
   ItemAction,
   TraitRollModifier,
 } from '../../../interfaces/additional';
+import { Advance } from '../../../interfaces/Advance';
+import { AdvanceEditor } from '../../apps/AdvanceEditor';
 import { SWADE } from '../../config';
+import { constants } from '../../constants';
 import SwadeItem from '../../documents/item/SwadeItem';
 import SwadeActiveEffect from '../../documents/SwadeActiveEffect';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
+import * as util from '../../util';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
@@ -503,6 +507,31 @@ export default class CharacterSheet extends ActorSheet {
 
     //Wealth Die Roll
     html.find('.currency .roll').on('click', () => this.actor.rollWealthDie());
+
+    //Advances
+    html.find('.advance-action').on('click', (ev) => {
+      if (this.actor.data.type === 'vehicle') return;
+      const button = ev.currentTarget;
+      const id = $(button).parents('li.advance').data().advanceId;
+      switch (button.dataset.action) {
+        case 'edit':
+          new AdvanceEditor({
+            advance: this.actor.data.data.advances.list.get(id, {
+              strict: true,
+            }),
+            actor: this.actor,
+          }).render(true);
+          break;
+        case 'delete':
+          this._deleteAdvance(id);
+          break;
+        case 'toggle-planned':
+          this._toggleAdvancePlanned(id);
+          break;
+        default:
+          throw new Error(`Action ${button.dataset.action} not supported`);
+      }
+    });
   }
 
   async getData() {
@@ -545,7 +574,7 @@ export default class CharacterSheet extends ActorSheet {
       item.hasReloadButton =
         ammoManagement && data.data.shots > 0 && !data.data.autoReload;
 
-      item.powerPoints = this.getPowerPoints(data);
+      item.powerPoints = this._getPowerPoints(data);
     }
 
     const itemTypes: Record<string, SwadeItem[]> = {};
@@ -648,20 +677,30 @@ export default class CharacterSheet extends ActorSheet {
 
     return data;
   }
+
   private _getAdvances() {
     if (this.actor.data.type === 'vehicle') return [];
-    const retVal = new Array<Record<string, unknown>>();
-    return this.actor.data.data.advances.list.toJSON().forEach((a, i) => {
-      retVal.push(
-        foundry.utils.mergeObject(a, { rank: this.actor.calcRank(i + 1) }),
-      );
-    });
+    const retVal = new Array<{ rank: string; list: Advance[] }>();
+    const advances = this.actor.data.data.advances.list;
+    for (const advance of advances) {
+      const sort = advance.sort;
+      const rankIndex = util.getRankFromAdvance(advance.sort);
+      const rank = util.getRankFromAdvanceAsString(sort);
+      if (!retVal[rankIndex]) {
+        retVal.push({
+          rank: rank,
+          list: [],
+        });
+      }
+      retVal[rankIndex].list.push(advance);
+    }
+    return retVal;
   }
 
-  getPowerPoints(item: SwadeItem) {
+  protected _getPowerPoints(item: SwadeItem) {
     if (item.data.type !== 'power') return {};
     const arcane = item.data.data.arcane;
-    let current = getProperty(item.actor!, 'data.data.data.powerPoints.value');
+    let current = getProperty(item.actor!, 'data.data.powerPoints.value');
     let max = getProperty(item.actor!, 'data.data.powerPoints.max');
     if (arcane) {
       current = getProperty(
@@ -846,6 +885,9 @@ export default class CharacterSheet extends ActorSheet {
       case 'effect':
         this._createActiveEffect();
         break;
+      case 'advance':
+        this._addAdvance();
+        break;
       default:
         await Item.create(createItem(type), {
           renderSheet: true,
@@ -853,6 +895,69 @@ export default class CharacterSheet extends ActorSheet {
         });
         break;
     }
+  }
+
+  private async _addAdvance() {
+    if (this.actor.data.type === 'vehicle') return;
+    const advances = this.actor.data.data.advances.list;
+    const newAdvance: Advance = {
+      id: foundry.utils.randomID(8),
+      type: constants.ADVANCE_TYPE.EDGE,
+      sort: advances.size + 1,
+      planned: false,
+      notes: '',
+    };
+    advances.set(newAdvance.id, newAdvance);
+    await this.actor.update({ 'data.advances.list': advances.toJSON() });
+    new AdvanceEditor({
+      advance: newAdvance,
+      actor: this.actor,
+    }).render(true);
+  }
+
+  private async _deleteAdvance(id: string) {
+    if (this.actor.data.type === 'vehicle') return;
+    Dialog.confirm({
+      title: game.i18n.localize('SWADE.Advances.Delete'),
+      content: `<form>
+      <div style="text-align: center;">
+        <p>Are you sure?</p>
+      </div>
+    </form>`,
+      defaultYes: false,
+      yes: () => {
+        if (this.actor.data.type === 'vehicle') return;
+        const advances = this.actor.data.data.advances.list;
+        advances.delete(id);
+        const arr = advances.toJSON();
+        arr.forEach((a, i) => (a.sort = i + 1));
+        this.actor.update({ 'data.advances.list': arr });
+      },
+    });
+  }
+
+  private async _toggleAdvancePlanned(id: string) {
+    if (this.actor.data.type === 'vehicle') return;
+    Dialog.confirm({
+      title: game.i18n.localize('SWADE.Advances.Toggle'),
+      content: `<form>
+        <div style="text-align: center;">
+          <p>Are you sure?</p>
+        </div>
+      </form>`,
+      defaultYes: false,
+      yes: () => {
+        if (this.actor.data.type === 'vehicle') return;
+        const advances = this.actor.data.data.advances.list;
+        const advance = advances.get(id, { strict: true });
+        advance.planned = !advance.planned;
+        advances.set(id, advance);
+        this.actor.update(
+          { 'data.advances.list': advances.toJSON() },
+          { diff: false },
+        );
+      },
+    });
   }
 
   /**

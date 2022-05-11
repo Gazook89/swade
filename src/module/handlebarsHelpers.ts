@@ -44,23 +44,23 @@ export const registerCustomHelpers = function () {
   Handlebars.registerHelper('advanceType', (type: number) => {
     switch (type) {
       case constants.ADVANCE_TYPE.EDGE:
-        return 'Edge';
+        return game.i18n.localize('SWADE.Advances.Types.Edge');
       case constants.ADVANCE_TYPE.SINGLE_SKILL:
-        return 'Raise Single Skill';
+        return game.i18n.localize('SWADE.Advances.Types.SingleSkill');
       case constants.ADVANCE_TYPE.TWO_SKILLS:
-        return 'Raise Two Skills';
+        return game.i18n.localize('SWADE.Advances.Types.TwoSkills');
       case constants.ADVANCE_TYPE.ATTRIBUTE:
-        return 'Raise Attribute';
+        return game.i18n.localize('SWADE.Advances.Types.Attribute');
       case constants.ADVANCE_TYPE.HINDRANCE:
-        return 'Decrease Hindrance';
+        return game.i18n.localize('SWADE.Advances.Types.Hindrance');
       default:
         return 'Unknown';
     }
   });
 
-  Handlebars.registerHelper('modifier', (str) => {
+  Handlebars.registerHelper('modifier', (str: string) => {
     str = str === '' || str === null ? '0' : str;
-    const value = typeof str == 'string' ? parseInt(str) : str;
+    const value = typeof str == 'string' ? Number(str) : str;
     return value == 0 ? '' : value > 0 ? ` + ${value}` : ` - ${-value}`;
   });
 

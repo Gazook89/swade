@@ -31,7 +31,12 @@ export default class SwadeHooks {
         modifier.label = game.i18n.localize(modifier.label);
       }
     }
+    for (let i = 0; i < SWADE.ranks.length; i++) {
+      const element = SWADE.ranks[i];
+      SWADE.ranks[i] = game.i18n.localize(element);
+    }
   }
+
   public static async onReady() {
     //set up the world if needed
     await setup.setupWorld();

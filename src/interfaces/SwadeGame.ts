@@ -1,3 +1,4 @@
+import { AdvanceEditor } from '../module/apps/AdvanceEditor';
 import RollDialog from '../module/apps/RollDialog';
 import SwadeEntityTweaks from '../module/apps/SwadeEntityTweaks';
 import CharacterSummarizer from '../module/CharacterSummarizer';
@@ -19,6 +20,7 @@ export default interface SwadeGame {
   };
   apps: {
     SwadeEntityTweaks: typeof SwadeEntityTweaks;
+    AdvanceEditor: typeof AdvanceEditor;
   };
   CharacterSummarizer: typeof CharacterSummarizer;
   RollDialog: typeof RollDialog;

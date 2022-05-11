@@ -134,10 +134,11 @@ export default class SwadeActor extends Actor {
         'data.advances.list',
       ) as Advance[];
       const list = new Collection<Advance>();
-      advRaw.forEach((adv, i) => list.set(i.toString(), adv));
-      advances.value = list.size;
+      advRaw.forEach((adv) => list.set(adv.id, adv));
+      const activeAdvances = list.filter((a) => !a.planned).length;
       advances.list = list;
-      advances.rank = this.calcRank();
+      advances.value = activeAdvances;
+      advances.rank = util.getRankFromAdvanceAsString(activeAdvances);
     }
 
     let pace = this.data.data.stats.speed.value;
@@ -715,22 +716,6 @@ export default class SwadeActor extends Actor {
     }
 
     return parryTotal;
-  }
-
-  calcRank(advance?: number): string {
-    if (this.data.type === 'vehicle') return '';
-    const val = advance ?? this.data.data.advances.list.size;
-    if (val <= 3) {
-      return game.i18n.localize('SWADE.Ranks.Novice');
-    } else if (val.between(4, 7)) {
-      return game.i18n.localize('SWADE.Ranks.Seasoned');
-    } else if (val.between(8, 11)) {
-      return game.i18n.localize('SWADE.Ranks.Veteran');
-    } else if (val.between(12, 15)) {
-      return game.i18n.localize('SWADE.Ranks.Heroic');
-    } else {
-      return game.i18n.localize('SWADE.Ranks.Legendary');
-    }
   }
 
   /** Helper Function for Vehicle Actors, to roll Maneuvering checks */

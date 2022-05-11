@@ -1197,6 +1197,26 @@
       .editor {
         height: 100%;
       }
+      .advance-track {
+        list-style: none;
+        .advance {
+          display: grid;
+          grid-template-columns: 25% auto 80px;
+          text-align: left;
+        }
+        .planned {
+          font-style: italic;
+          color: $input-bg-dark;
+        }
+        .item-controls {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+      .advance-add {
+        display: flex;
+        justify-content: flex-end;
+      }
     }
     .char-img-container {
       background-image: url('./assets/char-bg.webp');

@@ -5,6 +5,7 @@
  * Software License: Apache License, Version 2.0
  */
 
+import { AdvanceEditor } from './module/apps/AdvanceEditor';
 import RollDialog from './module/apps/RollDialog';
 import SwadeEntityTweaks from './module/apps/SwadeEntityTweaks';
 import CharacterSummarizer from './module/CharacterSummarizer';
@@ -60,6 +61,7 @@ Hooks.once('init', () => {
     },
     apps: {
       SwadeEntityTweaks,
+      AdvanceEditor,
     },
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
@@ -157,8 +159,8 @@ Hooks.once('init', () => {
   listenJournalDrop();
 });
 
-Hooks.once('ready', SwadeHooks.onReady);
 Hooks.once('setup', SwadeHooks.onSetup);
+Hooks.once('ready', SwadeHooks.onReady);
 Hooks.on('preCreateItem', SwadeHooks.onPreCreateItem);
 Hooks.on('getSceneControlButtons', SwadeHooks.onGetSceneControlButtons);
 Hooks.on('dropActorSheetData', SwadeHooks.onDropActorSheetData);
