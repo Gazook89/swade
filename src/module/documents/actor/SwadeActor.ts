@@ -16,9 +16,6 @@ declare global {
   }
 }
 
-/**
- * @noInheritDoc
- */
 export default class SwadeActor extends Actor {
   /**
    * @returns true when the actor is a Wild Card
@@ -86,16 +83,14 @@ export default class SwadeActor extends Actor {
   /** @return whether this character is currently encumbered, factoring in whether the rule is even enforced */
   get isEncumbered(): boolean {
     const applyEncumbrance = game.settings.get('swade', 'applyEncumbrance');
-    if (!applyEncumbrance) return false;
-    if (this.data.type === 'vehicle') {
+    if (this.data.type === 'vehicle' || !applyEncumbrance) {
       return false;
     }
     const encumbrance = this.data.data.details.encumbrance;
     return encumbrance.value > encumbrance.max;
   }
 
-  /** @override */
-  prepareBaseData() {
+  override prepareBaseData() {
     if (this.data.type === 'vehicle') return;
     //auto calculations
     if (this.data.data.details.autoCalcToughness) {
@@ -109,8 +104,7 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  /** @override */
-  prepareDerivedData() {
+  override prepareDerivedData() {
     this._filterOverrides();
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
@@ -579,7 +573,7 @@ export default class SwadeActor extends Actor {
     return out;
   }
 
-  getRollData(): Record<string, number | string> {
+  override getRollData(): Record<string, number | string> {
     const retVal = this.getRollShortcuts();
     retVal['wounds'] = this.data.data.wounds.value || 0;
 
@@ -769,7 +763,7 @@ export default class SwadeActor extends Actor {
     return driver;
   }
 
-  protected _handleComplexSkill(
+  private _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
   ): [Roll, TraitRollModifier[]] {
@@ -1049,7 +1043,7 @@ export default class SwadeActor extends Actor {
     this.overrides = foundry.utils.expandObject(overrides);
   }
 
-  async _preCreate(
+  override async _preCreate(
     createData: ActorDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
@@ -1122,7 +1116,7 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  async _onUpdate(
+  override async _onUpdate(
     changed: DeepPartial<SwadeActorDataSource> & Record<string, unknown>,
     options: DocumentModificationOptions,
     user: string,
@@ -1136,5 +1130,6 @@ export default class SwadeActor extends Actor {
     }
   }
 }
+
 type ArmorLocation = ValueOf<typeof SWADE.CONST.ARMOR_LOCATIONS>;
 type ArmorPerLocation = Record<ArmorLocation, number>;
