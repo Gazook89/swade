@@ -19,10 +19,6 @@ declare global {
   }
 }
 
-/**
- * Override and extend the basic :class:`Item` implementation
- * @noInheritDoc
- */
 export default class SwadeItem extends Item {
   overrides: DeepPartial<Record<string, string | number | boolean>> = {};
 
@@ -65,7 +61,7 @@ export default class SwadeItem extends Item {
     return ['gear', 'armor', 'shield', 'weapon'].includes(this.type);
   }
 
-  prepareBaseData() {
+  override prepareBaseData() {
     super.prepareBaseData();
     if (!this.overrides) this.overrides = {};
   }
@@ -394,9 +390,7 @@ export default class SwadeItem extends Item {
     return expresion;
   }
 
-  /**
-   * @returns the power points for the AB that this power belongs to or null when the item is not a power
-   */
+  /** @returns the power points for the AB that this power belongs to or null when the item is not a power */
   private _getPowerPoints(): { current: number; max: number } | null {
     if (this.type !== 'power') return null;
 
@@ -416,7 +410,7 @@ export default class SwadeItem extends Item {
     return { current, max };
   }
 
-  async _preCreate(data, options, user: User) {
+  override async _preCreate(data, options, user: User) {
     await super._preCreate(data, options, user);
     //Set default image if no image already exists
     if (!data.img) {
@@ -436,13 +430,12 @@ export default class SwadeItem extends Item {
     }
   }
 
-  async _preDelete(options, user: User) {
+  override async _preDelete(options, user: User) {
     await super._preDelete(options, user);
-    //delete all transfered active effects from the actor
-
+    //delete all transferred active effects from the actor
     if (this.parent) {
       const updates = new Array<string>();
-      for (const ae of this.parent.effects.values()!) {
+      for (const ae of this.parent.effects.values()) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push(ae.id!);
       }
@@ -450,17 +443,16 @@ export default class SwadeItem extends Item {
     }
   }
 
-  async _preUpdate(changed, options, user) {
+  override async _preUpdate(changed, options, user) {
     await super._preUpdate(changed, options, user);
 
     if (this.parent && hasProperty(changed, 'data.equipped')) {
       const updates = new Array<Record<string, unknown>>();
-      for (const ae of this.parent.effects.values()!) {
+      for (const ae of this.parent.effects.values()) {
         if (ae.data.origin !== this.uuid) continue;
         updates.push({ _id: ae.id, disabled: !changed.data.equipped });
       }
-
-      await this.actor!.updateEmbeddedDocuments('ActiveEffect', updates);
+      await this.parent.updateEmbeddedDocuments('ActiveEffect', updates);
     }
   }
 }
