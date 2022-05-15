@@ -33,20 +33,29 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value
 - _Bound_ and _Entangled_ now also apply all other conditions as, as described in the rules.
 - Added some informative to system documentation links to the settings tab, under the system version.
-- Added the ability to favorite Edges, Hindrances, Special Abilities, Active Effects, Weapons, Armor, Shields and Gear
-- Added `SwadeActor#rollWealthDie` function
+- Added the ability to favorite the following item types, as well as Active Effects:
+  - Edges
+  - Hindrances
+  - Special Abilities
+  - Weapons
+  - Armor
+  - Shields
+  - Gear
+- Added `SwadeActor#rollWealthDie()` function
 - Added the currency controls on NPC sheet
 - Powers can now record an AP value
 - Added new Keybindings, all of which are editable
   - You can now select a favorite card hand in the user config and open it with the `H` keybinding
   - You can now spend a Benny by pressing `B` and receive a Benny by pressing `Alt+H`
+- Added new expanded Advancement tracking. This new system is on by default. If you want to switch back to the legacy way of recording advances you can do so in the actor tweaks. In the new Advancement tab you can add advances which are counted up and displayed in the header. Advances are also used to calculate the rank. Each advance can be set to be planned, in which case it won't be used to calculate the rank. Planned Advances are shown in the list with faded colors. To delete or edit and advance you can use the buttons on the right side, similar to how the inventory works.
 - Added addition translation strings
 
 ### Changed
 
 - Changed the way the system is delivered. The system is now bundled as a singular JS file, reducing the number of JS files from 44 to 1. In addition to that we're no delivering sourcemaps which should help with troubleshooting. For more information please visit [ticket #464] (https://gitlab.com/peginc/swade/-/issues/464). All in all this should not have any noticeable drawbacks for end users and should slightly increase the responsiveness of the system on world load.
-- Changed the way the Quick Access behaves. Instead of automatically displaying all equipped items it now only displays favorited items. See `Added` for the list of document types that can be favorited. Status Effects are automatically shown in the Quick Access
+- Changed the way the Quick Access behaves. Instead of automatically displaying all equipped items it now only displays favored items. See `Added` for the list of document types that can be favored. Status Effects are automatically shown in the Quick Access
 - The inputs for the Crew and Passengers on Vehicles now safe as numbers instead of strings
+- Split up the `About` tab into an advancement, one biography and one notes tab.
 
 ### Deprecated
 
