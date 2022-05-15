@@ -26,10 +26,10 @@ export default class SwadeItem extends Item {
   static RANGE_REGEX = /[0-9]+\/*/g;
 
   get isMeleeWeapon(): boolean {
-    if (this.type !== 'weapon') return false;
-    const shots = getProperty(this.data, 'data.shots');
-    const currentShots = getProperty(this.data, 'data.currentShots');
-    return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
+    if (this.data.type !== 'weapon') return false;
+    const shots = this.data.data.shots;
+    const currentShots = this.data.data.currentShots;
+    return (!shots && !currentShots) || (shots === 0 && currentShots === 0);
   }
 
   get range() {
