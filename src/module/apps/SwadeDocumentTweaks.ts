@@ -2,7 +2,7 @@ import { AdditionalStat } from '../../interfaces/additional';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 
-export default class SwadeEntityTweaks extends FormApplication<
+export default class SwadeDocumentTweaks extends FormApplication<
   FormApplicationOptions,
   Record<string, unknown>,
   SwadeActor | SwadeItem

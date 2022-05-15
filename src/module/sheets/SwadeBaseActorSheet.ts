@@ -1,5 +1,5 @@
 import { AdditionalStat, TraitRollModifier } from '../../interfaces/additional';
-import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
+import SwadeDocumentTweaks from '../apps/SwadeDocumentTweaks';
 import * as chat from '../chat';
 import { SWADE } from '../config';
 import SwadeItem from '../documents/item/SwadeItem';
@@ -329,7 +329,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: JQuery.ClickEvent) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.actor).render(true);
+    new SwadeDocumentTweaks(this.actor).render(true);
   }
 
   protected async _chooseItemType(

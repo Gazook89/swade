@@ -7,7 +7,7 @@
 
 import { AdvanceEditor } from './module/apps/AdvanceEditor';
 import RollDialog from './module/apps/RollDialog';
-import SwadeEntityTweaks from './module/apps/SwadeEntityTweaks';
+import SwadeDocumentTweaks from './module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
 import SwadeActor from './module/documents/actor/SwadeActor';
@@ -60,7 +60,7 @@ Hooks.once('init', () => {
       SwadeVehicleSheet,
     },
     apps: {
-      SwadeEntityTweaks,
+      SwadeDocumentTweaks,
       AdvanceEditor,
     },
     rollItemMacro,
@@ -71,9 +71,9 @@ Hooks.once('init', () => {
     RollDialog,
     get SwadeEntityTweaks() {
       console.warn(
-        'Please use `game.swade.apps.SwadeEntityTweaks` instead. This accessor is getting deprecated and removed with system version 1.2.0',
+        'Please use `game.swade.apps.SwadeDocumentTweaks` instead. This accessor is getting deprecated and removed with system version 1.2.0',
       );
-      return SwadeEntityTweaks;
+      return SwadeDocumentTweaks;
     },
   };
 

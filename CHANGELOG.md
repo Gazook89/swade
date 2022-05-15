@@ -50,7 +50,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Deprecated
 
-- Started deprecation of `game.swade.SwadeEntityTweaks`. The class has been moved to `game.swade.apps.SwadeEntityTweaks` and the old accessor will be removed with v1.2.0
+- Started deprecation of `game.swade.SwadeEntityTweaks`. The class has been moved to `game.swade.apps.SwadeDocumentTweaks` and the old accessor will be removed with v1.2.0
 - Started deprecation of `ArmorLocation` enum. This enum has been moved to `CONFIG.SWADE.CONST.ARMOR_LOCATIONS` and the old enum will be removed with v1.2.0
 - Started deprecation of `TemplatePreset` enum. This enum has been moved to `CONFIG.SWADE.CONST.TEMPLATE_PRESET` and the old enum will be removed with v1.2.0
 - Started deprecation of `StatusEffectExpiration` enum. This enum has been moved to `CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION` and the old enum will be removed with v1.2.0

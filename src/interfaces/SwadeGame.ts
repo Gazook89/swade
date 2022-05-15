@@ -1,6 +1,6 @@
 import { AdvanceEditor } from '../module/apps/AdvanceEditor';
 import RollDialog from '../module/apps/RollDialog';
-import SwadeEntityTweaks from '../module/apps/SwadeEntityTweaks';
+import SwadeDocumentTweaks from '../module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from '../module/CharacterSummarizer';
 import ItemChatCardHelper from '../module/ItemChatCardHelper';
 import * as migrations from '../module/migration';
@@ -19,7 +19,7 @@ export default interface SwadeGame {
     SwadeItemSheet: typeof SwadeItemSheet;
   };
   apps: {
-    SwadeEntityTweaks: typeof SwadeEntityTweaks;
+    SwadeDocumentTweaks: typeof SwadeDocumentTweaks;
     AdvanceEditor: typeof AdvanceEditor;
   };
   CharacterSummarizer: typeof CharacterSummarizer;
@@ -32,5 +32,5 @@ export default interface SwadeGame {
    * @deprecated use game.swade.apps.SwadeEntityTweaks instead
    * @since v1.1.0
    */
-  SwadeEntityTweaks: typeof SwadeEntityTweaks;
+  SwadeEntityTweaks: typeof SwadeDocumentTweaks;
 }

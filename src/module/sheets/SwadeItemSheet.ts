@@ -1,6 +1,6 @@
 import { ItemMetadata } from '../../globals';
 import { AdditionalStat } from '../../interfaces/additional';
-import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
+import SwadeDocumentTweaks from '../apps/SwadeDocumentTweaks';
 import { SWADE } from '../config';
 import SwadeItem from '../documents/item/SwadeItem';
 
@@ -54,7 +54,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   protected _onConfigureEntity(event) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.item).render(true);
+    new SwadeDocumentTweaks(this.item).render(true);
   }
 
   activateListeners(html) {

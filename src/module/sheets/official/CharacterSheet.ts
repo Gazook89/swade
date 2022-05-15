@@ -735,7 +735,7 @@ export default class CharacterSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new game.swade.apps.SwadeEntityTweaks(this.actor).render(true);
+    new game.swade.apps.SwadeDocumentTweaks(this.actor).render(true);
   }
 
   protected _toggleItem(
