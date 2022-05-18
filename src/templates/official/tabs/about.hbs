@@ -53,7 +53,6 @@
       </button>
       </span>
       {{#each advances.list}}
-      {{!-- <div class="section-header">{{rank}}</div> --}}
       <h2>{{rank}}</h2>
       <ol class="advance-track">
           {{#each list}}
@@ -79,7 +78,7 @@
       {{editor
         content=data.data.advances.details
         target='data.advances.details'
-        button=true
+        button=owner
         owner=owner
         editable=editable
       }}
@@ -89,12 +88,32 @@
     {{editor
       content=data.data.details.biography.value
       target='data.details.biography.value'
-      button=true
+      button=owner
       owner=owner
       editable=editable
     }}
   </section>
   <section class='tab notes' data-group='about' data-tab='notes'>
-    <p>Notes</p>
+    <span class='flexrow'>
+      <div class='char-img-container'>
+        <img
+          class='profile-img'
+          src='{{actor.img}}'
+          data-edit='img'
+          alt='{{actor.name}}'
+        />
+      </div>
+      <div class='notes-container'>
+        <header class='section-header'>{{localize 'SWADE.Notes'}}</header>
+        <textarea name="data.details.notes"  cols="30" rows="10">{{data.data.details.notes}}</textarea>
+        {{!-- {{editor
+          content=data.data.details.notes
+          target='data.details.notes'
+          button=owner
+          owner=owner
+          editable=editable
+        }} --}}
+      </div>
+    </span>
   </section>
 </section>
