@@ -436,12 +436,10 @@ export default class SwadeItem extends Item {
     await super._preDelete(options, user);
     //delete all transferred active effects from the actor
     if (this.parent) {
-      const updates = new Array<string>();
-      for (const ae of this.parent.effects.values()) {
-        if (ae.data.origin !== this.uuid) continue;
-        updates.push(ae.id!);
-      }
-      await this.parent.deleteEmbeddedDocuments('ActiveEffect', updates);
+      const toDelete = this.parent.effects
+        .filter((e) => e.data.origin === this.uuid)
+        .map((ae) => ae.id!);
+      await this.parent.deleteEmbeddedDocuments('ActiveEffect', toDelete);
     }
   }
 
@@ -449,11 +447,12 @@ export default class SwadeItem extends Item {
     await super._preUpdate(changed, options, user);
 
     if (this.parent && hasProperty(changed, 'data.equipped')) {
-      const updates = new Array<Record<string, unknown>>();
-      for (const ae of this.parent.effects.values()) {
-        if (ae.data.origin !== this.uuid) continue;
-        updates.push({ _id: ae.id, disabled: !changed.data.equipped });
-      }
+      //toggle all active effects when an item equip status changes
+      const updates = this.parent.effects
+        .filter((ae) => ae.data.origin === this.uuid)
+        .map((ae) => {
+          return { _id: ae.id, disabled: !changed.data.equipped };
+        });
       await this.parent.updateEmbeddedDocuments('ActiveEffect', updates);
     }
   }
