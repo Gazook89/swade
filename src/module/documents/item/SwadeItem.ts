@@ -1,8 +1,11 @@
+import { Context } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
+import { ItemDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData';
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import * as util from '../../util';
+import SwadeActor from '../actor/SwadeActor';
 
 declare global {
   interface DocumentClassConfig {
@@ -22,8 +25,12 @@ declare global {
 export default class SwadeItem extends Item {
   overrides: DeepPartial<Record<string, string | number | boolean>> = {};
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   static RANGE_REGEX = /[0-9]+\/*/g;
+
+  constructor(data?: ItemDataConstructorData, context?: Context<SwadeActor>) {
+    super(data, context);
+    this.overrides = this.overrides ?? {};
+  }
 
   get isMeleeWeapon(): boolean {
     if (this.data.type !== 'weapon') return false;
@@ -59,11 +66,6 @@ export default class SwadeItem extends Item {
    */
   get canBeArcaneDevice(): boolean {
     return ['gear', 'armor', 'shield', 'weapon'].includes(this.type);
-  }
-
-  override prepareBaseData() {
-    super.prepareBaseData();
-    if (!this.overrides) this.overrides = {};
   }
 
   rollDamage(options: IRollOptions = {}) {
