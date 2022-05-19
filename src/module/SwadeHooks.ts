@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { DropData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/abstract/client-document';
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import { ConfiguredDocumentClass } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
@@ -836,6 +838,31 @@ export default class SwadeHooks {
     chat.chatListeners(html);
   }
 
+  public static async onHotbarDrop(
+    hotbar: Hotbar,
+    data: DropData<InstanceType<ConfiguredDocumentClass<typeof Macro>>>,
+    slot: number,
+  ) {
+    /**
+     * Create a Macro from an Item drop.
+     * Get an existing item macro if one exists, otherwise create a new one.
+     */
+    if (data['type'] !== 'Item' || !('data' in data)) {
+      return ui.notifications.warn(
+        'You can only create macro buttons for owned Items',
+      );
+    }
+    const item = data.data;
+    // Create the macro command
+    const macro = await Macro.create({
+      name: item?.name,
+      type: CONST.MACRO_TYPES.SCRIPT,
+      img: item?.img,
+      command: `game.swade.rollItemMacro("${item?.name}");`,
+    });
+    await game.user?.assignHotbarMacro(macro!, slot);
+  }
+
   public static onGetUserContextOptions(
     html: JQuery<HTMLElement>,
     context: ContextMenuEntry[],
@@ -848,22 +875,19 @@ export default class SwadeHooks {
         icon: '<i class="fas fa-plus"></i>',
         condition: (li) =>
           game.user!.isGM && game.users?.get(li[0].dataset.userId!)!.isGM!,
-        callback: (li) => {
+        callback: async (li) => {
           const selectedUser = game.users?.get(li[0].dataset.userId!)!;
-          selectedUser
-            .setFlag(
-              'swade',
-              'bennies',
-              (selectedUser.getFlag('swade', 'bennies') as number) + 1,
-            )
-            .then(async () => {
-              ui.players?.render(true);
-              if (game.settings.get('swade', 'notifyBennies')) {
-                //In case one GM gives another GM a benny a different message should be displayed
-                const givenEvent = selectedUser !== game.user;
-                chat.createGmBennyAddMessage(selectedUser, givenEvent);
-              }
-            });
+          await selectedUser.setFlag(
+            'swade',
+            'bennies',
+            (selectedUser.getFlag('swade', 'bennies') ?? 0) + 1,
+          );
+          ui.players?.render(true);
+          if (game.settings.get('swade', 'notifyBennies')) {
+            //In case one GM gives another GM a benny a different message should be displayed
+            const givenEvent = selectedUser !== game.user;
+            chat.createGmBennyAddMessage(selectedUser, givenEvent);
+          }
         },
       },
       {

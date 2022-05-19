@@ -37,7 +37,7 @@ import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import { createSwadeMacro, rollItemMacro } from './module/util';
+import { rollItemMacro } from './module/util';
 import './swade.scss';
 
 /* ------------------------------------ */
@@ -164,7 +164,7 @@ Hooks.once('ready', SwadeHooks.onReady);
 Hooks.on('preCreateItem', SwadeHooks.onPreCreateItem);
 Hooks.on('getSceneControlButtons', SwadeHooks.onGetSceneControlButtons);
 Hooks.on('dropActorSheetData', SwadeHooks.onDropActorSheetData);
-Hooks.on('hotbarDrop', createSwadeMacro);
+Hooks.on('hotbarDrop', SwadeHooks.onHotbarDrop);
 
 /* ------------------------------------ */
 /* Application Render					          */
