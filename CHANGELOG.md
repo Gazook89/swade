@@ -55,7 +55,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Changed the way the system is delivered. The system is now bundled as a singular JS file, reducing the number of JS files from 44 to 1. In addition to that we're no delivering sourcemaps which should help with troubleshooting. For more information please visit [ticket #464] (https://gitlab.com/peginc/swade/-/issues/464). All in all this should not have any noticeable drawbacks for end users and should slightly increase the responsiveness of the system on world load.
 - Changed the way the Quick Access behaves. Instead of automatically displaying all equipped items it now only displays favored items. See `Added` for the list of document types that can be favored. Status Effects are automatically shown in the Quick Access
 - The inputs for the Crew and Passengers on Vehicles now safe as numbers instead of strings
-- Split up the `About` tab into an advancement, one biography and one notes tab.
+- Split up the `About` tab into an `Advances`, one `Background` and one `Notes` subtabs. The Background subtab now contains the biography, along some additonal fields for character appearance and goals
 
 ### Deprecated
 
