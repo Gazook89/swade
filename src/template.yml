@@ -53,11 +53,16 @@ Actor:
           modifier: 0
         size: 0
       details:
+        autoCalcToughness: true
+        autoCalcParry: true
+        archetype: ''
+        appearance: ''
+        notes: ''
+        goals: ''
         biography:
           value: ''
         species:
           name: ''
-        archetype: ''
         currency: 500
         wealth:
           die: 6
@@ -66,8 +71,7 @@ Actor:
         conviction:
           value: 0
           active: false
-        autoCalcToughness: true
-        autoCalcParry: true
+
       powerPoints: {}
       fatigue:
         value: 0
@@ -299,12 +303,15 @@ Item:
     grantsPowers: false
 Card:
   types:
-    - 'poker'
-    - 'base'
+    - poker
+    - adventure
+    - base
   templates:
   poker:
     templates: []
     suit: 0
     isJoker: false
+  adventure:
+    templates: []
   base:
     templates: []

@@ -1,56 +1,15 @@
-{{!-- <span class='flexrow'>
-  <div class='char-img-container'>
-    <img
-      class='profile-img'
-      src='{{actor.img}}'
-      data-edit='img'
-      alt='{{actor.name}}'
-    />
-  </div>
-  <div class='advances'>
-    <header class='section-header'>{{localize 'SWADE.Adv'}}</header>
-    {{editor
-      content=data.data.advances.details
-      target='data.advances.details'
-      button=true
-      owner=owner
-      editable=editable
-    }}
-  </div>
-</span>
-<div class='biography'>
-  <header class='section-header'>{{localize 'SWADE.Biography'}}</header>
-  {{editor
-    content=data.data.details.biography.value
-    target='data.details.biography.value'
-    button=true
-    owner=owner
-    editable=editable
-  }}
-</div> --}}
-
 <nav class='about-tabs sub-tabs' data-group='about'>
-  <a
-    class='item section-header active'
-    data-tab='advances'
-    data-group='about'
-  >{{localize 'SWADE.Adv'}}</a>
-  <a
-    class='item section-header'
-    data-tab='biography'
-    data-group='about'
-  >{{localize 'SWADE.Biography'}}</a>
-  <a class='item section-header' data-tab='notes' data-group='about'>{{localize
-      'SWADE.Notes'
-    }}</a>
+  <a class='item section-header active' data-tab='advances' data-group='about'>{{localize 'SWADE.Adv'}}</a>
+  <a class='item section-header' data-tab='background' data-group='about'>{{localize 'SWADE.Background'}}</a>
+  <a class='item section-header' data-tab='notes' data-group='about'>{{localize 'SWADE.Notes'}}</a>
 </nav>
 <section class='about-body'>
   <section class='tab advances active' data-group='about' data-tab='advances'>
     {{#if (eq data.data.advances.mode 'expanded')}}
       <span class="advance-add">
-      <button type='button' class='item-create' data-type='advance'>
-        <i class='fa fa-plus'></i>{{localize 'SWADE.AddAdvance'}}
-      </button>
+        <button type='button' class='item-create' data-type='advance'>
+          <i class='fa fa-plus'></i>{{localize 'SWADE.AddAdvance'}}
+        </button>
       </span>
       {{#each advances.list}}
       <h2>{{rank}}</h2>
@@ -84,7 +43,29 @@
       }}
     {{/if}}
   </section>
-  <section class='tab biography' data-group='about' data-tab='biography'>
+  <section class='tab background' data-group='about' data-tab='background'>
+    <div class='editor-container'>
+      <header class='section-header'>{{localize 'SWADE.Appearance'}}</header>
+      {{editor
+        content=data.data.details.appearance
+        target='data.details.appearance'
+        button=owner
+        owner=owner
+        editable=editable
+      }}
+    </div>
+    <div class='editor-container'>
+      <header class='section-header'>{{localize 'SWADE.CharacterGoals'}}</header>
+      {{editor
+        content=data.data.details.goals
+        target='data.details.goals'
+        button=owner
+        owner=owner
+        editable=editable
+      }}
+    </div>
+    <div class='editor-container'>
+      <header class='section-header'>{{localize 'SWADE.Biography'}}</header>
     {{editor
       content=data.data.details.biography.value
       target='data.details.biography.value'
@@ -92,28 +73,15 @@
       owner=owner
       editable=editable
     }}
+    </div>
   </section>
-  <section class='tab notes' data-group='about' data-tab='notes'>
-    <span class='flexrow'>
-      <div class='char-img-container'>
-        <img
-          class='profile-img'
-          src='{{actor.img}}'
-          data-edit='img'
-          alt='{{actor.name}}'
-        />
-      </div>
-      <div class='notes-container'>
-        <header class='section-header'>{{localize 'SWADE.Notes'}}</header>
-        <textarea name="data.details.notes"  cols="30" rows="10">{{data.data.details.notes}}</textarea>
-        {{!-- {{editor
-          content=data.data.details.notes
-          target='data.details.notes'
-          button=owner
-          owner=owner
-          editable=editable
-        }} --}}
-      </div>
-    </span>
+  <section class='tab actor-notes' data-group='about' data-tab='notes'>
+    {{editor
+      content=data.data.details.notes
+      target='data.details.notes'
+      button=owner
+      owner=owner
+      editable=editable
+    }}
   </section>
 </section>

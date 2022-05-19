@@ -523,3 +523,6 @@ SWADE.Advances.Types.TwoSkills: Raise Two Skills
 SWADE.Advances.Types.Attribute: Raise Attribute
 SWADE.Advances.Types.Hindrance: Decrease Hindrance
 SWADE.AddAdvance: Add Advance
+SWADE.Appearance: Appearance
+SWADE.CharacterGoals: Goals
+SWADE.Background: Background

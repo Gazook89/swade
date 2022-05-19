@@ -6,6 +6,9 @@
   <figure class="grid-under gu-2"></figure>
   <figure class="grid-under gu-3"></figure>
   <figure class="grid-under gu-4"></figure>
+  <div class="char-img-container">
+	  <img class="profile-img" src="{{actor.img}}" data-edit="img" alt="{{actor.name}}">
+	</div>
 
   {{!-- Sheet Header --}}
   <label class="gridcell charname-container">
@@ -18,18 +21,7 @@
       placeholder="{{localize 'Name'}}"
     />
   </label>
-  <figure class="gridcell branding">
-    <img
-      src="systems/swade/assets/peg_logo.webp"
-      id="peg-logo"
-      alt="{{localize 'SWADE.PEGLogo'}}"
-    />
-    <img
-      src="systems/swade/assets/swade_logo.webp"
-      id="swade-logo"
-      alt="{{localize 'SWADE.SWADELogo'}}"
-    />
-  </figure>
+  <figure class="gridcell branding"></figure>
   {{#if settingrules.conviction}}
   <div id="conviction" class="gridcell">
     <button type="button" class="conviction-toggle">
