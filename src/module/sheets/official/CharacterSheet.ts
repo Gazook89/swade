@@ -16,12 +16,13 @@ import * as util from '../../util';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
-    return {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       ...super.defaultOptions,
       classes: ['swade-official', 'sheet', 'actor'],
       width: 630,
       height: 700,
       resizable: true,
+      scrollY: ['section.tab'],
       tabs: [
         {
           navSelector: '.tabs',
@@ -34,7 +35,7 @@ export default class CharacterSheet extends ActorSheet {
           initial: 'advances',
         },
       ],
-    };
+    });
   }
 
   get template() {

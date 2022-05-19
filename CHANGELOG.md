@@ -71,6 +71,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed
 
 - Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
+- Tabs on the character sheet should now retain their scroll position again
 
 ## v1.0.10
 
