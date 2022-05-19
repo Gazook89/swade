@@ -77,9 +77,9 @@ export default class SwadeHooks {
     if (!game.user!.isGM) return;
     const currentVersion = game.settings.get('swade', 'systemMigrationVersion');
     //TODO Adjust this version every time a migration needs to be triggered
-    const needsMigrationVersion = '0.21.3';
+    const needsMigrationVersion = '1.1.0';
     //Minimal compatible version needed for the migration
-    const compatibleMigrationVersion = '0.20.0';
+    const compatibleMigrationVersion = '1.0.0';
     //If the needed migration version is newer than the old migration version then migrate the world
     const needsMigration =
       currentVersion && isNewerVersion(needsMigrationVersion, currentVersion);
@@ -388,6 +388,7 @@ export default class SwadeHooks {
             .attr('data-combatant-id')!;
 
           const leader = game.combat?.combatants.get(leaderId)!;
+          if (!leader.canUserModify(game.user!, 'update')) return;
           // If a follower, set as group leader
           if (draggedCombatant.id !== leaderId) {
             if (!leader.isGroupLeader) {

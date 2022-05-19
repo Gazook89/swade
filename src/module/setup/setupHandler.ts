@@ -30,7 +30,7 @@ async function setupDiscardPile() {
   });
   const cardsCls = getDocumentClass('Cards');
   const newDiscardPile = await cardsCls.create({
-    name: 'Discard Pile',
+    name: 'Action Cards Discard Pile',
     type: 'pile',
   });
   await game.settings.set(

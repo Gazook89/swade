@@ -57,6 +57,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - The inputs for the Crew and Passengers on Vehicles now safe as numbers instead of strings
 - Split up the `About` tab into an `Advances`, one `Background` and one `Notes` subtabs. The Background subtab now contains the biography, along some additonal fields for character appearance and goals
 - Changed the way the skill dice look in the skill list
+- Changed the name of the Discard Pile that is created by default by the system to make the name more clear
 
 ### Deprecated
 
@@ -73,6 +74,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
 - Tabs on the character sheet should now retain their scroll position again
+- Users can no longer drop combatants onto combatants they cannot modify in the combat tracker
 
 ## v1.0.10
 
