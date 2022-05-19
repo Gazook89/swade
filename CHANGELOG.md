@@ -56,6 +56,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Changed the way the Quick Access behaves. Instead of automatically displaying all equipped items it now only displays favored items. See `Added` for the list of document types that can be favored. Status Effects are automatically shown in the Quick Access
 - The inputs for the Crew and Passengers on Vehicles now safe as numbers instead of strings
 - Split up the `About` tab into an `Advances`, one `Background` and one `Notes` subtabs. The Background subtab now contains the biography, along some additonal fields for character appearance and goals
+- Changed the way the skill dice look in the skill list
 
 ### Deprecated
 
