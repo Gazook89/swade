@@ -49,6 +49,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
   - You can now select a favorite card hand in the user config and open it with the `H` keybinding
   - You can now spend a Benny by pressing `B` and receive a Benny by pressing `Alt+H`
 - Added new expanded Advancement tracking. This new system is on by default. If you want to switch back to the legacy way of recording advances you can do so in the actor tweaks. In the new Advancement tab you can add advances which are counted up and displayed in the header. Advances are also used to calculate the rank. Each advance can be set to be planned, in which case it won't be used to calculate the rank. Planned Advances are shown in the list with faded colors. To delete or edit and advance you can use the buttons on the right side, similar to how the inventory works.
+- Active Effects now record the world time (`game.time.worldTime`) as their start time on creation.
 - Added addition translation strings
 
 ### Changed

@@ -153,6 +153,7 @@ export default class SwadeCombat extends Combat {
         initiative: initiative,
         'flags.swade': newflags,
       });
+
       if (c.isGroupLeader) {
         await c.setSuitValue(c.suitValue ?? 0 + 0.9);
         const followers =

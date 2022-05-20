@@ -225,13 +225,19 @@ export default class SwadeActiveEffect extends ActiveEffect {
     if (!data.duration?.combat && game.combat) {
       this.data.update({ 'duration.combat': game.combat.id });
     }
+
+    //set the world time at creation
+    this.data.update({ duration: { startTime: game.time.worldTime } });
+
     if (this.getFlag('swade', 'loseTurnOnHold')) {
       const combatant = game.combat?.combatants.find(
         (c) => c.actor?.id === this.parent?.id,
       );
       if (combatant?.getFlag('swade', 'roundHeld')) {
-        await combatant?.setFlag('swade', 'turnLost', true);
-        await combatant?.unsetFlag('swade', 'roundHeld');
+        await Promise.all([
+          combatant?.setFlag('swade', 'turnLost', true),
+          combatant?.unsetFlag('swade', 'roundHeld'),
+        ]);
       }
     }
   }
