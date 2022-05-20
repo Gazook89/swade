@@ -16,9 +16,9 @@
       <ol class="advance-track">
           {{#each list}}
           <li class='form-group advance {{#if planned}}planned{{/if}}' data-advance-id='{{id}}'>
-            <div>{{advanceType type}}</div>
-            <div>{{enrich notes}}</div>
-            <div class="item-controls">
+            <span class="advance-name">{{advanceType type}}</span>
+            <span class="advance-notes">{{enrich notes}}</span>
+            <span class="item-controls">
               <button type="button" class='advance-action' data-action='toggle-planned' title='{{localize "SWADE.Advances.Toggle"}}'>
                 <i class='fas fa-hourglass'></i>
               </button>
