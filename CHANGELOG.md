@@ -79,6 +79,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Tabs on the character sheet should now retain their scroll position again
 - Users can no longer drop combatants onto combatants they cannot modify in the combat tracker
 - Fixed a stylesheet issue that would cause lists not to render properly in edge/hindrance/ability descriptions
+- Fixed a potential issue which could allow the action deck to run out of cards when multiple cards are drawn but none selected. If a joker has been drawn but no card was selected then the joker is automatically picked.
+- Fixed a potential issue where no new combat rounds where started if multiple GMs are logged in
 
 ## v1.0.10
 
