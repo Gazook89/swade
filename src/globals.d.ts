@@ -31,3 +31,4 @@ export type JournalMetadata = CompendiumCollection.Metadata & {
 };
 
 export type Attribute = keyof typeof SWADE.attributes;
+export type LinkedAttribute = Attribute | '';

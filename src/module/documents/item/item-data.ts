@@ -1,4 +1,4 @@
-import { AbilitySubType, Attribute } from '../../../globals';
+import { AbilitySubType, LinkedAttribute } from '../../../globals';
 import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
 import { TraitDie, WildDie } from '../actor/actor-data-source';
 
@@ -153,7 +153,7 @@ interface AbilityData extends ItemDescription, Favorite {
 }
 
 interface SkillData extends ItemDescription {
-  attribute: Attribute | '';
+  attribute: LinkedAttribute;
   isCoreSkill: boolean;
   die: TraitDie;
   'wild-die': WildDie;
