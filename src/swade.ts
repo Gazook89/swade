@@ -94,14 +94,13 @@ Hooks.once('init', () => {
   CONFIG.time.roundTime = 6;
 
   //register card presets
-  //@ts-ignore
   CONFIG.Cards.presets = {
-    actionDeckLight: {
+    pokerLight: {
       label: 'SWADE.ActionDeckPresetLight',
       src: 'systems/swade/cards/action-deck-light.json',
       type: 'deck',
     },
-    actionDeckDark: {
+    pokerDark: {
       label: 'SWADE.ActionDeckPresetDark',
       src: 'systems/swade/cards/action-deck-dark.json',
       type: 'deck',

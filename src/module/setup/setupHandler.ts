@@ -11,8 +11,8 @@ async function setupActionDeck() {
   //return early if both the deck and the ID exist in the world
   if (actionDeckId && actionDeck) return;
   ui.notifications.info('SWADE.NoActionDeckFound', { localize: true });
-  const preset = CONFIG.Cards.presets['actionDeckLight'];
-  const data = await fetch(preset.src).then((r) => r.json());
+  const preset = CONFIG.Cards.presets.pokerLight;
+  const data = foundry.utils.fetchJsonWithTimeout(preset.src) as any;
   const cardsCls = getDocumentClass('Cards');
   const newActionDeck = await cardsCls.create(data);
   await game.settings.set('swade', 'actionDeck', newActionDeck?.id!);

@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Changed the way the skill dice look in the skill list
 - Changed the name of the Discard Pile that is created by default by the system to make the name more clear
 - Changed the way disabled inputs look on the character sheet to make them more distinctive
+- The system now overrides the builtin card presets instead of removing them.
 
 ### Deprecated
 
