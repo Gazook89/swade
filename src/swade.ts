@@ -1,12 +1,6 @@
-/**
- * This is the TypeScript entry file for Foundry VTT.
- * Author: FloRad
- * Content License: All Rights Reserved Pinnacle Entertainment, Inc
- * Software License: Apache License, Version 2.0
- */
-
 import { AdvanceEditor } from './module/apps/AdvanceEditor';
 import RollDialog from './module/apps/RollDialog';
+import SettingConfigurator from './module/apps/SettingConfigurator';
 import SwadeDocumentTweaks from './module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
@@ -48,7 +42,7 @@ Hooks.once('init', () => {
     `SWADE | Initializing Savage Worlds Adventure Edition\n${SWADE.ASCII}`,
   );
 
-  // Record Configuration Values
+  //Record Configuration Values
   CONFIG.SWADE = SWADE;
 
   //set up global game object
@@ -62,6 +56,7 @@ Hooks.once('init', () => {
     apps: {
       SwadeDocumentTweaks,
       AdvanceEditor,
+      SettingConfigurator,
     },
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
@@ -88,8 +83,10 @@ Hooks.once('init', () => {
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
   CONFIG.User.documentClass = SwadeUser;
   CONFIG.Cards.documentClass = SwadeCards;
+
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
+
   //register custom sidebar tabs
   CONFIG.ui.combat = SwadeCombatTracker;
 

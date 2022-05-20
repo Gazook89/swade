@@ -1,10 +1,9 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/naming-convention */
 import copy from '@guanghechen/rollup-plugin-copy';
 import typescript from '@rollup/plugin-typescript';
 import * as yaml from 'js-yaml';
 import livereload from 'rollup-plugin-livereload';
 import styles from 'rollup-plugin-styles';
+import { defineConfig } from 'rollup';
 
 const name = 'swade';
 const distDirectory = 'dist';
@@ -14,6 +13,12 @@ const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
+
+const banner = `/**
+* Author: FloRad
+* Content License: All Rights Reserved Pinnacle Entertainment, Inc
+* Software License: Apache License, Version 2.0
+*/`;
 
 /**
  * this simple plugin displays which environment we're in when rollup starts
@@ -30,14 +35,14 @@ const environment = (environment) => {
   return plugin;
 };
 
-/** @type {import('rollup').RollupOptions} */
-const config = {
+export default defineConfig({
   input: { [`${name}`]: `${srcDirectory}/${name}.ts` },
   output: {
     dir: distDirectory,
     format: 'es',
     sourcemap: true,
     assetFileNames: '[name].[ext]',
+    banner: banner,
   },
   plugins: [
     environment(process.env.NODE_ENV),
@@ -82,6 +87,4 @@ const config = {
     }),
     isDev && livereload(distDirectory),
   ],
-};
-
-export default config;
+});
