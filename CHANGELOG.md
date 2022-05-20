@@ -76,6 +76,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM
 - Tabs on the character sheet should now retain their scroll position again
 - Users can no longer drop combatants onto combatants they cannot modify in the combat tracker
+- Fixed a stylesheet issue that would cause lists not to render properly in edge/hindrance/ability descriptions
 
 ## v1.0.10
 
