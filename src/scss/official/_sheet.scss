@@ -1274,9 +1274,13 @@
     .tab {
       padding: 0;
     }
-    .advances.active,
+
     .actor-notes.active {
       overflow: hidden;
+      max-height: 100%;
+    }
+    .advances.active {
+      overflow: scroll;
       max-height: 100%;
     }
     .advance-track {
