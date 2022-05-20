@@ -159,6 +159,9 @@
     border-bottom: $solid-line;
     input[type] {
       background: transparent;
+      &:disabled {
+        border: none;
+      }
     }
   }
 
@@ -261,6 +264,13 @@
     &:hover,
     :focus {
       box-shadow: var(--input-box-shadow);
+    }
+    &:disabled {
+      background: transparent;
+      border: 1px solid var(--input-background);
+      &:hover {
+        box-shadow: none;
+      }
     }
   }
 

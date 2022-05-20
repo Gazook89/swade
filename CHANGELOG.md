@@ -60,6 +60,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Split up the `About` tab into an `Advances`, one `Background` and one `Notes` subtabs. The Background subtab now contains the biography, along some additonal fields for character appearance and goals
 - Changed the way the skill dice look in the skill list
 - Changed the name of the Discard Pile that is created by default by the system to make the name more clear
+- Changed the way disabled inputs look on the character sheet to make them more distinctive
 
 ### Deprecated
 
