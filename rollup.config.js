@@ -14,11 +14,13 @@ const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
 
-const banner = `/**
+const banner = `
+/**
 * Author: FloRad
 * Content License: All Rights Reserved Pinnacle Entertainment, Inc
 * Software License: Apache License, Version 2.0
-*/`;
+*/
+`;
 
 /**
  * this simple plugin displays which environment we're in when rollup starts
