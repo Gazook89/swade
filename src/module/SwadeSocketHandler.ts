@@ -68,11 +68,10 @@ export default class SwadeSocketHandler {
     }
   }
 
+  //advance round
   private async _onNewRound(data: NewRoundEvent) {
-    if (util.isFirstGM()) return;
-
-    //advance round
-    game.combats!.get(data.combatId)!.nextRound();
+    if (!util.isFirstGM()) return;
+    game.combats?.get(data.combatId, { strict: true }).nextRound();
   }
 
   private _onUnknownSocket(type: string) {
