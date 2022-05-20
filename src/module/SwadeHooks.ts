@@ -330,54 +330,20 @@ export default class SwadeHooks {
     html: JQuery<HTMLElement>,
     data: any,
   ) {
-    const currentCombat: Combat =
-      data.combats[data.currentIndex - 1] || data.combat;
-    if (currentCombat) {
-      currentCombat.setupTurns();
-    }
-
     let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
-      const combId = el.getAttribute('data-combatant-id') as string;
-      const combatant = currentCombat.combatants.get(combId, { strict: true });
-      const initdiv = el.getElementsByClassName('token-initiative');
-
-      if (combatant.groupId || combatant.data.defeated) {
-        initdiv[0].innerHTML = '';
-      } else if (combatant.roundHeld) {
-        initdiv[0].innerHTML =
-          '<span class="initiative"><i class="fas fa-hand-rock"></span>';
-      } else if (combatant.turnLost) {
-        initdiv[0].innerHTML =
-          '<span class="initiative"><i class="fas fa-ban"></span>';
-      } else if (combatant.cardString) {
-        const cardString = combatant.cardString;
-        initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
-      }
-
       // Drag and drop listeners
       // On dragstart
       el.addEventListener(
         'dragstart',
-        function (e) {
+        (e) => {
           // store the dragged item
-          draggedEl = e.target;
-          draggedId = draggedEl.getAttribute('data-combatant-id');
-
+          draggedEl = e.target as HTMLLIElement;
+          draggedId = draggedEl.dataset.combatantId;
           draggedCombatant = game.combat?.combatants.get(draggedId);
         },
         false,
       );
-
-      // On dragOver
-      el.addEventListener('dragover', (e) => {
-        $(e.target!).closest('li.combatant').addClass('dropTarget');
-      });
-
-      // On dragleave
-      el.addEventListener('dragleave', (e) => {
-        $(e.target!).closest('li.combatant').removeClass('dropTarget');
-      });
 
       // On drop
       el.addEventListener(

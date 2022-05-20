@@ -11,28 +11,53 @@ export default class SwadeCombatTracker extends CombatTracker {
       template: 'systems/swade/templates/sidebar/combat-tracker.hbs',
     };
   }
-  activateListeners(html) {
+  activateListeners(html: JQuery<HTMLElement>) {
     super.activateListeners(html);
 
     //make combatants draggable for GMs
     html
       .find('#combat-tracker li.combatant')
-      .each((i: number, li: HTMLElement) => {
+      .each((i: number, li: HTMLLIElement) => {
         const id = li.dataset.combatantId!;
-        const comb = this.viewed!.combatants.get(id, { strict: true });
-        if (comb.actor?.isOwner || game.user?.isGM) {
+        const comb = this.viewed?.combatants.get(id, { strict: true });
+        if (comb?.actor?.isOwner || game.user?.isGM) {
           // Add draggable attribute and dragstart listener.
           li.setAttribute('draggable', 'true');
           li.classList.add('draggable');
+          //On dragStart
           li.addEventListener('dragstart', this._onDragStart, false);
+          // On dragOver
+          li.addEventListener('dragover', (e) =>
+            $(e.target!).closest('li.combatant').addClass('dropTarget'),
+          );
+          // On dragleave
+          li.addEventListener('dragleave', (e) =>
+            $(e.target!).closest('li.combatant').removeClass('dropTarget'),
+          );
         }
       });
 
-    html.find('.combatant-control').click(this._onCombatantControl.bind(this));
+    html
+      .find('.combatant-control')
+      .on('click', this._onCombatantControl.bind(this));
     html
       .find('.combat-control[data-control=resetDeck]')
-      .click(this._onResetActionDeck.bind(this));
+      .on('click', this._onResetActionDeck.bind(this));
   }
+
+  async getData(): Promise<CombatTracker.Data> {
+    const data = await super.getData();
+    for (const turn of data.turns as CombatTracker.Turn[]) {
+      const combatant = this.viewed?.combatants.get(turn.id, { strict: true });
+      foundry.utils.setProperty(turn, 'cardString', combatant?.cardString);
+      foundry.utils.setProperty(turn, 'roundHeld', combatant?.roundHeld);
+      foundry.utils.setProperty(turn, 'turnLost', combatant?.turnLost);
+      const dontShow = !!combatant?.groupId || combatant?.data.defeated;
+      foundry.utils.setProperty(turn, 'emptyInit', dontShow);
+    }
+    return data;
+  }
+
   // Reset the Action Deck
   async _onResetActionDeck(event) {
     event.stopImmediatePropagation();

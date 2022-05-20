@@ -541,7 +541,6 @@ export default class SwadeCombat extends Combat {
       return;
     } else {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker);
-
       if (jokerDrawn) {
         await utils.resetActionDeck();
         ui.notifications.info('SWADE.DeckShuffled', { localize: true });
