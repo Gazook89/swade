@@ -365,7 +365,9 @@ export default class SwadeCombat extends Combat {
 
     return new Promise((resolve) => {
       new Dialog({
-        title: `${game.i18n.localize('SWADE.PickACard')} ${combatantName}`,
+        title: game.i18n.format('SWADE.PickACard', {
+          name: combatantName,
+        }),
         content: html,
         buttons: buttons,
         default: 'ok',
@@ -380,13 +382,18 @@ export default class SwadeCombat extends Combat {
               isQuickDraw,
             });
           }
-          //if no card has been chosen then choose first in array
+          //if no card has been chosen then choose first in array, unless there was a joker in which case that is chosen
           if (!card) {
             if (oldCardId) {
               card = cards.find((c) => c.id === oldCardId);
             } else {
               console.log('No card was selected');
-              card = cards[0]; //If no card was selected, assign the first card that was drawn
+              const thereIsAJoker = cards.some((c) => c.data.data['isJoker']);
+              if (thereIsAJoker) {
+                card = cards.find((c) => c.data.data['isJoker']);
+              } else {
+                card = cards[0]; //If no card was selected, assign the first card that was drawn
+              }
             }
           }
           resolve(card);

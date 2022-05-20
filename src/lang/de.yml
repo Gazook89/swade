@@ -229,7 +229,7 @@ SWADE.ConfigInit: Initiative konfigurieren
 SWADE.IgnWounds: Wunden ignorieren
 SWADE.Size: Größe
 SWADE.Scale: Größenkategorie
-SWADE.PickACard: Wähle eine Karte für
+SWADE.PickACard: Wähle eine Karte für {name}
 SWADE.NoCardsLeft: >-
   Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed}
   benötigten Karten verfügbar

@@ -293,7 +293,7 @@ SWADE.ConfigInit: Configure Initiative
 SWADE.IgnWounds: Ignore Wounds
 SWADE.Size: Size
 SWADE.Scale: Scale
-SWADE.PickACard: Pick a card for
+SWADE.PickACard: Pick a card for {name}
 SWADE.NoCardsLeft: >-
   There are not enough cards left in the deck! Only {current} of {needed} needed
   cards are available
