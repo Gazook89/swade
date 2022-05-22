@@ -24,7 +24,7 @@ const newManifestData = {
 console.log(chalk.blue.bold('Updating system.json with following data:'));
 console.table(newManifestData);
 
-manifest.version = newManifestData.systemVersion;
+manifest.version = newManifestData.version;
 manifest.manifest = newManifestData.manifest;
 manifest.download = newManifestData.download;
 
