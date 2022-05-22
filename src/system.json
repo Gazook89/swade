@@ -54,7 +54,7 @@
   "socket": true,
   "gridDistance": 1,
   "gridUnits": "in",
-  "manifest": "This is auto replaced",
+  "manifest": "https://gitlab.com/api/v4/projects/16269883/packages/generic/swade/latest/system.json",
   "download": "This is auto replaced",
   "url": "https://gitlab.com/peginc/swade",
   "readme": "https://gitlab.com/peginc/swade/-/wikis/home",
