@@ -24,6 +24,8 @@
   --input-box-shadow: 0 0 5px red;
   --input-text-shadow: 0 0 10px red;
 
+  --add-button-color: #{$input-bg-dark};
+
   //default font of the sheet
   font-family: var(--default-font);
   font-weight: normal;
@@ -328,7 +330,7 @@
   }
 
   .item-create {
-    color: $input-bg-dark;
+    color: var(--add-button-color);
     &:hover,
     :focus {
       color: $dark-grey;
@@ -1114,6 +1116,10 @@
     .effects-list {
       list-style: none;
       margin-bottom: 1em;
+    }
+    .effect-add {
+      display: flex;
+      justify-content: flex-end;
     }
     .effect,
     .effect-header {
