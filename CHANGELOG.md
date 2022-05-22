@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Changed the name of the Discard Pile that is created by default by the system to make the name more clear.
 - Changed the way disabled inputs look on the character sheet to make them more distinctive.
 - The system now overrides the builtin card presets instead of removing them.
+- Changed the sheet header on the character sheet. Now you can look at your character portrait everywhere. Please keep in mind that this may break the other official character sheets slightly.
 
 ### Deprecated
 
