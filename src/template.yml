@@ -53,11 +53,16 @@ Actor:
           modifier: 0
         size: 0
       details:
+        autoCalcToughness: true
+        autoCalcParry: true
+        archetype: ''
+        appearance: ''
+        notes: ''
+        goals: ''
         biography:
           value: ''
         species:
           name: ''
-        archetype: ''
         currency: 500
         wealth:
           die: 6
@@ -66,8 +71,7 @@ Actor:
         conviction:
           value: 0
           active: false
-        autoCalcToughness: true
-        autoCalcParry: true
+
       powerPoints: {}
       fatigue:
         value: 0
@@ -79,9 +83,11 @@ Actor:
         max: 3
         ignored: 0
       advances:
+        mode: expanded
         value: 0
         rank: Novice
         details: ''
+        list: []
       bennies:
         value: 3
         max: 3
@@ -191,6 +197,8 @@ Item:
         additional: {}
     bonusDamage:
       bonusDamageDie: 6
+    favorite:
+      favorite: false
   gear:
     templates:
       - itemDescription
@@ -199,6 +207,7 @@ Item:
       - arcaneDevice
       - vehicular
       - actions
+      - favorite
   weapon:
     templates:
       - itemDescription
@@ -208,6 +217,7 @@ Item:
       - vehicular
       - actions
       - bonusDamage
+      - favorite
     damage: ''
     range: ''
     rof: 1
@@ -225,6 +235,7 @@ Item:
       - equipable
       - arcaneDevice
       - actions
+      - favorite
     minStr: ''
     armor: 0
     toughness: 0
@@ -242,25 +253,28 @@ Item:
       - arcaneDevice
       - actions
       - bonusDamage
+      - favorite
     minStr: ''
     parry: 0
     cover: 0
   edge:
     templates:
       - itemDescription
+      - favorite
     isArcaneBackground: false
     requirements:
       value: ''
   hindrance:
     templates:
       - itemDescription
+      - favorite
     major: false
   power:
     templates:
       - itemDescription
-      - equipable
       - actions
       - bonusDamage
+      - favorite
     rank: ''
     pp: 0
     damage: ''
@@ -269,6 +283,7 @@ Item:
     trapping: ''
     arcane: ''
     skill: ''
+    ap: 0
     modifiers: []
   skill:
     templates:
@@ -283,16 +298,20 @@ Item:
   ability:
     templates:
       - itemDescription
+      - favorite
     subtype: special
     grantsPowers: false
 Card:
   types:
-    - 'poker'
-    - 'base'
+    - poker
+    - adventure
+    - base
   templates:
   poker:
     templates: []
     suit: 0
     isJoker: false
+  adventure:
+    templates: []
   base:
     templates: []

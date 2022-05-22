@@ -1,7 +1,8 @@
+import { Attribute } from '../globals';
 import { ItemAction, TraitRollModifier } from '../interfaces/additional';
 import IRollOptions from '../interfaces/IRollOptions';
 import { SWADE } from './config';
-import SwadeActor, { Attribute } from './documents/actor/SwadeActor';
+import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import { getTrait, notificationExists } from './util';
 

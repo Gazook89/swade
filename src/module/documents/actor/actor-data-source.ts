@@ -80,20 +80,23 @@ export interface CharacterDataSourceData {
   };
   details: {
     currency: number;
+    autoCalcToughness: boolean;
+    autoCalcParry: boolean;
+    archetype: string;
+    notes: string;
+    goals: string;
+    appearance: string;
     wealth: {
       die: number;
       modifier: number;
       'wild-die': number;
     };
-    autoCalcToughness: boolean;
-    autoCalcParry: boolean;
     biography: {
       value: string;
     };
     species: {
       name: string;
     };
-    archetype: string;
     conviction: {
       value: number;
       active: boolean;
@@ -111,9 +114,11 @@ export interface CharacterDataSourceData {
     ignored: number;
   };
   advances: {
+    mode: 'legacy' | 'expanded';
     value: number;
     rank: string;
     details: string;
+    // list: Array<Advance>;
   };
   bennies: {
     value: number;

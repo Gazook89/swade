@@ -1,6 +1,6 @@
 import { ItemMetadata } from '../../globals';
 import { AdditionalStat } from '../../interfaces/additional';
-import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
+import SwadeDocumentTweaks from '../apps/SwadeDocumentTweaks';
 import { SWADE } from '../config';
 import SwadeItem from '../documents/item/SwadeItem';
 
@@ -54,7 +54,7 @@ export default class SwadeItemSheet extends ItemSheet {
 
   protected _onConfigureEntity(event) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.item).render(true);
+    new SwadeDocumentTweaks(this.item).render(true);
   }
 
   activateListeners(html) {
@@ -126,7 +126,7 @@ export default class SwadeItemSheet extends ItemSheet {
       const action = a.dataset.action;
       switch (action) {
         case 'edit':
-          return effect.sheet.render(true);
+          return effect.sheet?.render(true);
         case 'delete':
           return effect.delete();
         case 'toggle':
@@ -146,7 +146,7 @@ export default class SwadeItemSheet extends ItemSheet {
         },
         { parent: this.item },
       );
-      newEffect?.sheet.render(true);
+      newEffect?.sheet?.render(true);
     });
 
     html.find('.delete-embedded').on('click', (ev) => {

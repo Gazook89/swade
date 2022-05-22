@@ -1,12 +1,7 @@
-/**
- * This is the TypeScript entry file for Foundry VTT.
- * Author: FloRad
- * Content License: All Rights Reserved Pinnacle Entertainment, Inc
- * Software License: Apache License, Version 2.0
- */
-
+import { AdvanceEditor } from './module/apps/AdvanceEditor';
 import RollDialog from './module/apps/RollDialog';
-import SwadeEntityTweaks from './module/apps/SwadeEntityTweaks';
+import SettingConfigurator from './module/apps/SettingConfigurator';
+import SwadeDocumentTweaks from './module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
 import SwadeActor from './module/documents/actor/SwadeActor';
@@ -21,6 +16,7 @@ import SwadeUser from './module/documents/SwadeUser';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
+import { registerKeybindings } from './module/keybindings';
 import * as migrations from './module/migration';
 import { preloadHandlebarsTemplates } from './module/preloadTemplates';
 import {
@@ -35,7 +31,8 @@ import SwadeVehicleSheet from './module/sheets/SwadeVehicleSheet';
 import SwadeCombatTracker from './module/sidebar/SwadeCombatTracker';
 import SwadeHooks from './module/SwadeHooks';
 import SwadeSocketHandler from './module/SwadeSocketHandler';
-import { createSwadeMacro, rollItemMacro } from './module/util';
+import { rollItemMacro } from './module/util';
+import './swade.scss';
 
 /* ------------------------------------ */
 /* Initialize system					          */
@@ -45,7 +42,7 @@ Hooks.once('init', () => {
     `SWADE | Initializing Savage Worlds Adventure Edition\n${SWADE.ASCII}`,
   );
 
-  // Record Configuration Values
+  //Record Configuration Values
   CONFIG.SWADE = SWADE;
 
   //set up global game object
@@ -57,15 +54,22 @@ Hooks.once('init', () => {
       SwadeVehicleSheet,
     },
     apps: {
-      SwadeEntityTweaks,
+      SwadeDocumentTweaks,
+      AdvanceEditor,
+      SettingConfigurator,
     },
-    SwadeEntityTweaks,
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
-    itemChatCardHelper: ItemChatCardHelper,
     migrations: migrations,
+    itemChatCardHelper: ItemChatCardHelper,
     CharacterSummarizer,
     RollDialog,
+    get SwadeEntityTweaks() {
+      console.warn(
+        'Please use `game.swade.apps.SwadeDocumentTweaks` instead. This accessor is getting deprecated and removed with system version 1.2.0',
+      );
+      return SwadeDocumentTweaks;
+    },
   };
 
   //register custom Handlebars helpers
@@ -79,20 +83,24 @@ Hooks.once('init', () => {
   CONFIG.ActiveEffect.documentClass = SwadeActiveEffect;
   CONFIG.User.documentClass = SwadeUser;
   CONFIG.Cards.documentClass = SwadeCards;
+
   //register custom object classes
   CONFIG.MeasuredTemplate.objectClass = SwadeMeasuredTemplate;
+
   //register custom sidebar tabs
   CONFIG.ui.combat = SwadeCombatTracker;
 
+  //set up round timers to 6 seconds
+  CONFIG.time.roundTime = 6;
+
   //register card presets
-  //@ts-ignore
   CONFIG.Cards.presets = {
-    actionDeckLight: {
+    pokerLight: {
       label: 'SWADE.ActionDeckPresetLight',
       src: 'systems/swade/cards/action-deck-light.json',
       type: 'deck',
     },
-    actionDeckDark: {
+    pokerDark: {
       label: 'SWADE.ActionDeckPresetDark',
       src: 'systems/swade/cards/action-deck-dark.json',
       type: 'deck',
@@ -113,6 +121,9 @@ Hooks.once('init', () => {
   registerSettings();
   registerSettingRules();
   register3DBennySettings();
+
+  //register keyboard shortcuts
+  registerKeybindings();
 
   // Register sheets
   Actors.unregisterSheet('core', ActorSheet);
@@ -144,25 +155,31 @@ Hooks.once('init', () => {
   listenJournalDrop();
 });
 
-Hooks.once('ready', SwadeHooks.onReady);
 Hooks.once('setup', SwadeHooks.onSetup);
+Hooks.once('ready', SwadeHooks.onReady);
 Hooks.on('preCreateItem', SwadeHooks.onPreCreateItem);
 Hooks.on('getSceneControlButtons', SwadeHooks.onGetSceneControlButtons);
 Hooks.on('dropActorSheetData', SwadeHooks.onDropActorSheetData);
-Hooks.on('hotbarDrop', createSwadeMacro);
+Hooks.on('hotbarDrop', SwadeHooks.onHotbarDrop);
 
 /* ------------------------------------ */
 /* Application Render					          */
 /* ------------------------------------ */
 Hooks.on('renderCombatantConfig', SwadeHooks.onRenderCombatantConfig);
 Hooks.on('renderActiveEffectConfig', SwadeHooks.onRenderActiveEffectConfig);
-Hooks.on('renderActorDirectory', SwadeHooks.onRenderActorDirectory);
 Hooks.on('renderCompendium', SwadeHooks.onRenderCompendium);
-Hooks.on('renderCombatTracker', SwadeHooks.onRenderCombatTracker);
 Hooks.on('renderChatMessage', SwadeHooks.onRenderChatMessage);
+Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
+Hooks.on('renderUserConfig', SwadeHooks.onRenderUserConfig);
+
+/* ------------------------------------ */
+/* Sidebar Tab Render					          */
+/* ------------------------------------ */
+Hooks.on('renderActorDirectory', SwadeHooks.onRenderActorDirectory);
+Hooks.on('renderSettings', SwadeHooks.onRenderSettings);
+Hooks.on('renderCombatTracker', SwadeHooks.onRenderCombatTracker);
 Hooks.on('renderChatLog', SwadeHooks.onRenderChatLog);
 Hooks.on('renderChatPopout', SwadeHooks.onRenderChatLog);
-Hooks.on('renderPlayerList', SwadeHooks.onRenderPlayerList);
 
 /* ------------------------------------ */
 /* Context Options    				          */

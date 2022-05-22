@@ -31,3 +31,13 @@
 #combat li.combatant .token-initiative .initiative {
   font-size: 20px;
 }
+
+// Settings sidebar
+#game-details > li.system-links {
+  margin: 3px 0;
+  a {
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+}

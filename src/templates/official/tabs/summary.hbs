@@ -97,7 +97,7 @@
   <span
     title="{{localize 'SWADE.BenniesSpend'}}"
     class="benny spend-benny"
-    style="z-index: {{@index}}; grid-column: {{benny}} / span 8; background-image: url({{../bennyImageURL}});"
+    style="z-index: {{@index}}; grid-column: {{benny}} / span 8; background-image: url({{@root.bennyImageURL}});"
   ></span>
   {{/unless}} {{/each}}
   <button type="button" class="add-benny" title="{{localize 'SWADE.AddBenny'}}">
@@ -227,62 +227,66 @@
         <i class="fa fa-plus"></i>{{localize "SWADE.Add"}}
       </button>
     </header>
-    <ul class="effects-list">
-      {{#each actor.effects}}
-      <li
-        class="flexrow {{#unless data.origin}}active-effect{{/unless}} {{#if data.disabled}}disabled-effect{{/if}}"
-        data-effect-id="{{id}}"
-      >
-        <img src="{{data.icon}}" alt="{{data.label}}" class="effect-icon" />
-        {{#if origin}}
-        <button
-          type="button"
-          class="effect-label {{#if data.origin}}effect-action{{/if}}"
-          data-action="open-origin"
-        >
-          {{label}}
-        </button>
-        {{else}}
-        <span class="effect-label">{{data.label}}</span>
-        {{/if}}
-        <span class="effect-controls">
-          <button type="button" class="effect-action" data-action="toggle">
-            <i class="fas fa-power-off"></i>
-          </button>
-          <button type="button" class="effect-action" data-action="edit">
-            <i class="fas fa-edit"></i>
-          </button>
-          <a class="effect-action" data-action="delete">
-            <i class="fas fa-trash"></i>
-          </a>
-        </span>
-      </li>
-      {{/each}}
-    </ul>
     <ol class="quick-list">
-      {{#each actor.itemTypes.weapon}} {{#if data.data.equipped}} {{>
+      {{#each actor.effects}}
+        {{#if data.flags.swade.favorite}}
+          <li class="gear-card item {{#if data.disabled}}disabled-effect{{/if}}" data-effect-id="{{id}}">
+            <div class="card-header flexrow">
+              <div class="item-image" style="background-image: url('{{data.icon}}')"></div>
+              {{#if data.origin}}
+                <button type="button" class="item-name effect-action" data-action="open-origin" title="{{localize "SWADE.OpenOrigin"}}">{{data.label}}</button>
+              {{else}}
+                <div class="item-name">{{data.label}}</div>
+              {{/if}}
+              <div class="item-controls">
+                <button type="button" class="item-control effect-action" data-action="toggle" data-toggle="disabled">
+                  <i class="fas fa-power-off"></i>
+                </button>
+              </div>
+            </div>
+          </li>
+        {{/if}}
+      {{/each}}
+    </ol>
+    <ol class="quick-list">
+      {{#each actor.itemTypes.weapon}} {{#if data.data.favorite}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     {{#if actor.hasArcaneBackground}}
     <ol class="quick-list">
-      {{#each actor.itemTypes.power}} {{#if data.data.equipped}} {{>
+      {{#each actor.itemTypes.power}} {{#if data.data.favorite}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     {{/if}}
     <ol class="quick-list">
-      {{#each actor.itemTypes.armor}} {{#if data.data.equipped}} {{>
+      {{#each actor.itemTypes.armor}} {{#if data.data.favorite}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     <ol class="quick-list">
-      {{#each actor.itemTypes.shield}} {{#if data.data.equipped}} {{>
+      {{#each actor.itemTypes.shield}} {{#if data.data.favorite}} {{>
       "systems/swade/templates/official/partials/item-card.hbs"}} {{/if}}
       {{/each}}
     </ol>
     <ol class="quick-list">
-      {{#each actor.itemTypes.gear}}{{#if data.data.equipped}}{{>
+      {{#each actor.itemTypes.gear}}{{#if data.data.favorite}}{{>
+      "systems/swade/templates/official/partials/item-card.hbs"}}
+      {{/if}}{{/each}}
+    </ol>
+    <ol class="quick-list">
+      {{#each actor.itemTypes.edge}}{{#if data.data.favorite}}{{>
+      "systems/swade/templates/official/partials/item-card.hbs"}}
+      {{/if}}{{/each}}
+    </ol>
+    <ol class="quick-list">
+      {{#each actor.itemTypes.hindrance}}{{#if data.data.favorite}}{{>
+      "systems/swade/templates/official/partials/item-card.hbs"}}
+      {{/if}}{{/each}}
+    </ol>
+    <ol class="quick-list">
+      {{#each actor.itemTypes.ability}}{{#if data.data.favorite}}{{>
       "systems/swade/templates/official/partials/item-card.hbs"}}
       {{/if}}{{/each}}
     </ol>

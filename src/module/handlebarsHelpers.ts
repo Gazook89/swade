@@ -1,4 +1,5 @@
 import { SWADE } from './config';
+import { constants } from './constants';
 import SwadeItem from './documents/item/SwadeItem';
 
 export const registerCustomHelpers = function () {
@@ -13,7 +14,7 @@ export const registerCustomHelpers = function () {
     return result.signedString();
   });
 
-  Handlebars.registerHelper('times', function (a, b) {
+  Handlebars.registerHelper('times', function (a: number, b: number) {
     return a * b;
   });
 
@@ -40,13 +41,30 @@ export const registerCustomHelpers = function () {
     },
   );
 
-  Handlebars.registerHelper('modifier', (str) => {
+  Handlebars.registerHelper('advanceType', (type: number) => {
+    switch (type) {
+      case constants.ADVANCE_TYPE.EDGE:
+        return game.i18n.localize('SWADE.Advances.Types.Edge');
+      case constants.ADVANCE_TYPE.SINGLE_SKILL:
+        return game.i18n.localize('SWADE.Advances.Types.SingleSkill');
+      case constants.ADVANCE_TYPE.TWO_SKILLS:
+        return game.i18n.localize('SWADE.Advances.Types.TwoSkills');
+      case constants.ADVANCE_TYPE.ATTRIBUTE:
+        return game.i18n.localize('SWADE.Advances.Types.Attribute');
+      case constants.ADVANCE_TYPE.HINDRANCE:
+        return game.i18n.localize('SWADE.Advances.Types.Hindrance');
+      default:
+        return 'Unknown';
+    }
+  });
+
+  Handlebars.registerHelper('modifier', (str: string) => {
     str = str === '' || str === null ? '0' : str;
-    const value = typeof str == 'string' ? parseInt(str) : str;
+    const value = typeof str == 'string' ? Number(str) : str;
     return value == 0 ? '' : value > 0 ? ` + ${value}` : ` - ${-value}`;
   });
 
-  Handlebars.registerHelper('enrich', (content) => {
+  Handlebars.registerHelper('enrich', (content: string) => {
     return new Handlebars.SafeString(TextEditor.enrichHTML(content));
   });
 
@@ -91,17 +109,17 @@ export const registerCustomHelpers = function () {
     return `<ul class="effects-list">${entities.join('\n')}</ul>`;
   });
 
-  Handlebars.registerHelper('capitalize', (str) => {
+  Handlebars.registerHelper('capitalize', (str: string) => {
     if (typeof str !== 'string') return '';
     return str.charAt(0).toUpperCase() + str.slice(1);
   });
 
-  Handlebars.registerHelper('isOnHold', (id) => {
+  Handlebars.registerHelper('isOnHold', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     return c.roundHeld;
   });
 
-  Handlebars.registerHelper('isNotOnHold', (id) => {
+  Handlebars.registerHelper('isNotOnHold', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     if (!c.roundHeld) {
       return true;
@@ -110,27 +128,27 @@ export const registerCustomHelpers = function () {
     }
   });
 
-  Handlebars.registerHelper('turnLost', (id) => {
+  Handlebars.registerHelper('turnLost', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     return c.turnLost;
   });
 
-  Handlebars.registerHelper('isGroupLeader', (id) => {
+  Handlebars.registerHelper('isGroupLeader', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     return c.isGroupLeader;
   });
 
-  Handlebars.registerHelper('isInGroup', (id) => {
+  Handlebars.registerHelper('isInGroup', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     return c.groupId!;
   });
 
-  Handlebars.registerHelper('roundHeld', (id) => {
+  Handlebars.registerHelper('roundHeld', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     return c.roundHeld;
   });
 
-  Handlebars.registerHelper('leaderColor', (id) => {
+  Handlebars.registerHelper('leaderColor', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     const leaderId = c.groupId!;
 
@@ -147,7 +165,7 @@ export const registerCustomHelpers = function () {
     }
   });
 
-  Handlebars.registerHelper('groupColor', (id) => {
+  Handlebars.registerHelper('groupColor', (id: string) => {
     const c = game.combat?.combatants.get(id)!;
     const groupColor = c.getFlag('swade', 'groupColor');
     if (groupColor) {

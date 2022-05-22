@@ -4,22 +4,30 @@
     <button type='button' class='skill-name item-name' title='{{name}}'>
       {{#if data.data.isCoreSkill}}★ {{/if}}{{name}}
       {{#if data.data.attribute}}
-          ({{localizeSkillAttribute data.data.attribute @root.useAttributeShorts}})
+        ({{localizeSkillAttribute
+          data.data.attribute
+          @root.useAttributeShorts
+        }})
       {{/if}}
     </button>
     <button
       type='button'
-      class='skill-die'
-      title='{{localize 'SWADE.Roll'}} {{name}}'
+      class='skill-die rollable'
+      title='{{localize "SWADE.Roll"}} {{name}}'
     >
-      d{{data.data.die.sides}}{{modifier data.data.die.modifier}}
+      <img
+        class='skill-die-icon'
+        src='systems/swade/assets/official/dice/d{{data.data.die.sides}}.svg'
+        alt='d{{data.data.die.sides}}{{modifier data.data.die.modifier}}'
+      />
+      {{modifier data.data.die.modifier}}
     </button>
     <div class='item-controls'>
       {{#if isOwner}}
         <button
           type='button'
           class='item-control item-edit'
-          title='{{localize 'SWADE.Ed'}} {{name}}'
+          title='{{localize "SWADE.Ed"}} {{name}}'
         >
           <i class='fas fa-edit'></i>
         </button>

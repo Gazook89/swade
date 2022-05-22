@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { DropData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/abstract/client-document';
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
+import { ConfiguredDocumentClass } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
@@ -17,7 +19,6 @@ import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeCombatant from './documents/SwadeCombatant';
-import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
 import * as migrations from './migration';
 import * as setup from './setup/setupHandler';
 import SwadeVehicleSheet from './sheets/SwadeVehicleSheet';
@@ -26,13 +27,18 @@ import SwadeCombatTracker from './sidebar/SwadeCombatTracker';
 export default class SwadeHooks {
   static onSetup() {
     //localize the prototype modifiers
-    for (const group of CONFIG.SWADE.prototypeRollGroups) {
+    for (const group of SWADE.prototypeRollGroups) {
       group.name = game.i18n.localize(group.name);
       for (const modifier of group.modifiers) {
         modifier.label = game.i18n.localize(modifier.label);
       }
     }
+    for (let i = 0; i < SWADE.ranks.length; i++) {
+      const element = SWADE.ranks[i];
+      SWADE.ranks[i] = game.i18n.localize(element);
+    }
   }
+
   public static async onReady() {
     //set up the world if needed
     await setup.setupWorld();
@@ -73,9 +79,9 @@ export default class SwadeHooks {
     if (!game.user!.isGM) return;
     const currentVersion = game.settings.get('swade', 'systemMigrationVersion');
     //TODO Adjust this version every time a migration needs to be triggered
-    const needsMigrationVersion = '0.21.3';
+    const needsMigrationVersion = '1.1.0';
     //Minimal compatible version needed for the migration
-    const compatibleMigrationVersion = '0.20.0';
+    const compatibleMigrationVersion = '1.0.0';
     //If the needed migration version is newer than the old migration version then migrate the world
     const needsMigration =
       currentVersion && isNewerVersion(needsMigrationVersion, currentVersion);
@@ -127,11 +133,40 @@ export default class SwadeHooks {
     }
   }
 
+  public static onRenderSettings(app: Settings, html: JQuery<HTMLElement>) {
+    //get system info
+    const systemInfo = html.find('#game-details li.system');
+
+    //create system links
+    const systemLinks = $('<li>').addClass('system-links');
+    const links: Array<{ label: string; url: string }> = [
+      {
+        label: game.i18n.localize('SWADE.SystemLinks.ReportAnIssue'),
+        url: 'https://gitlab.com/peginc/swade/-/issues/new',
+      },
+      {
+        label: game.i18n.localize('SWADE.SystemLinks.Changelog'),
+        url: game.system.data.changelog as string,
+      },
+      {
+        label: game.i18n.localize('SWADE.SystemLinks.Wiki'),
+        url: game.system.data.readme as string,
+      },
+    ];
+
+    //insert links links
+    links.forEach((link) =>
+      systemLinks.append(`<a href="${link.url}">${link.label}</a>`),
+    );
+
+    systemInfo.after(systemLinks);
+  }
+
   public static async onGetActorDirectoryEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
-    const newOptions: ContextMenu.Item[] = [];
+    const newOptions: ContextMenuEntry[] = [];
 
     // Invoke character summarizer on selected character
     newOptions.push({
@@ -158,7 +193,7 @@ export default class SwadeHooks {
     if (game.settings.get('swade', 'hideNPCWildcards') && !game.user?.isGM)
       return;
     //Mark Wildcards in the compendium
-    if (app.metadata['type'] === 'Actor') {
+    if (app.metadata.type === 'Actor') {
       const content = data.index;
       const ids: string[] = content
         .filter(
@@ -183,9 +218,9 @@ export default class SwadeHooks {
 
   public static onGetCardsDirectoryEntryContext(
     html: JQuery,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
-    const actionCardEditor: ContextMenu.Item = {
+    const actionCardEditor: ContextMenuEntry = {
       name: 'SWADE.OpenACEditor',
       icon: '<i class="fas fa-edit"></i>',
       condition: (li) => {
@@ -203,7 +238,7 @@ export default class SwadeHooks {
         new ActionCardEditor(deck).render(true);
       },
     };
-    const chaseLayout: ContextMenu.Item = {
+    const chaseLayout: ContextMenuEntry = {
       name: 'SWADE.LayOutChaseWithDeck',
       icon: '<i class="fas fa-shipping-fast"></i>',
       condition: (li) => {
@@ -220,14 +255,14 @@ export default class SwadeHooks {
 
   public static onGetCompendiumDirectoryEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
     options.push({
       name: 'SWADE.ConvertToDeck',
       icon: '<i class="fas fa-file-export"></i>',
       condition: (li) => {
         const pack = game.packs.get(li.data('pack'), { strict: true });
-        return pack.metadata['type'] === 'JournalEntry';
+        return pack.metadata.type === 'JournalEntry';
       },
       callback: async (li) => {
         const pack = game.packs.get(li.data('pack'), {
@@ -295,54 +330,20 @@ export default class SwadeHooks {
     html: JQuery<HTMLElement>,
     data: any,
   ) {
-    const currentCombat: Combat =
-      data.combats[data.currentIndex - 1] || data.combat;
-    if (currentCombat) {
-      currentCombat.setupTurns();
-    }
-
     let draggedEl, draggedId, draggedCombatant;
     html.find('.combatant').each((i, el) => {
-      const combId = el.getAttribute('data-combatant-id') as string;
-      const combatant = currentCombat.combatants.get(combId, { strict: true });
-      const initdiv = el.getElementsByClassName('token-initiative');
-
-      if (combatant.groupId || combatant.data.defeated) {
-        initdiv[0].innerHTML = '';
-      } else if (combatant.roundHeld) {
-        initdiv[0].innerHTML =
-          '<span class="initiative"><i class="fas fa-hand-rock"></span>';
-      } else if (combatant.turnLost) {
-        initdiv[0].innerHTML =
-          '<span class="initiative"><i class="fas fa-ban"></span>';
-      } else if (combatant.cardString) {
-        const cardString = combatant.cardString;
-        initdiv[0].innerHTML = `<span class="initiative">${cardString}</span>`;
-      }
-
       // Drag and drop listeners
       // On dragstart
       el.addEventListener(
         'dragstart',
-        function (e) {
+        (e) => {
           // store the dragged item
-          draggedEl = e.target;
-          draggedId = draggedEl.getAttribute('data-combatant-id');
-
+          draggedEl = e.target as HTMLLIElement;
+          draggedId = draggedEl.dataset.combatantId;
           draggedCombatant = game.combat?.combatants.get(draggedId);
         },
         false,
       );
-
-      // On dragOver
-      el.addEventListener('dragover', (e) => {
-        $(e.target!).closest('li.combatant').addClass('dropTarget');
-      });
-
-      // On dragleave
-      el.addEventListener('dragleave', (e) => {
-        $(e.target!).closest('li.combatant').removeClass('dropTarget');
-      });
 
       // On drop
       el.addEventListener(
@@ -355,6 +356,7 @@ export default class SwadeHooks {
             .attr('data-combatant-id')!;
 
           const leader = game.combat?.combatants.get(leaderId)!;
+          if (!leader.canUserModify(game.user!, 'update')) return;
           // If a follower, set as group leader
           if (draggedCombatant.id !== leaderId) {
             if (!leader.isGroupLeader) {
@@ -428,7 +430,7 @@ export default class SwadeHooks {
 
   public static onGetChatLogEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
     const canApply = (li: JQuery<HTMLElement>) => {
       const message = game.messages?.get(li.data('messageId'))!;
@@ -459,7 +461,7 @@ export default class SwadeHooks {
 
   public static async onGetCombatTrackerEntryContext(
     html: JQuery<HTMLElement>,
-    options: ContextMenu.Item[],
+    options: ContextMenuEntry[],
   ) {
     const index = options.findIndex((v) => v.name === 'COMBAT.CombatantReroll');
     if (index !== -1) {
@@ -467,7 +469,7 @@ export default class SwadeHooks {
       options[index].icon = '<i class="fas fa-sync-alt"></i>';
     }
 
-    const newOptions = new Array<ContextMenu.Item>();
+    const newOptions = new Array<ContextMenuEntry>();
 
     // Set as group leader
     newOptions.push({
@@ -754,6 +756,46 @@ export default class SwadeHooks {
     });
   }
 
+  public static onRenderUserConfig(
+    app: UserConfig,
+    html: JQuery<HTMLElement>,
+    data: Record<string, unknown>,
+  ) {
+    // resize the element so it'll fit the new stuff
+    html.css({ height: 'auto' });
+
+    //get possible
+    const possibleCardsDocs = game.cards!.filter(
+      (c) =>
+        c.type === 'hand' &&
+        c.permission === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER,
+    );
+
+    const actorDirectory = html.find('div.stacked.directory');
+
+    //return early to avoid double rendering
+    if (html.find('div.swade-favorite-cards').length) return;
+
+    const userConfigLabel = game.i18n.localize(
+      'SWADE.Keybindings.OpenFavoriteCards.UserConfigLabel',
+    );
+    const options = possibleCardsDocs.map((c) => {
+      const favoriteCards = game.user?.getFlag('swade', 'favoriteCardsDoc');
+      const sel = c.id === favoriteCards ? 'selected' : '';
+      return `<option value="${c.id}" ${sel}>${c.name}</option>`;
+    });
+
+    const template = `
+    <div class="form-group swade-favorite-cards">
+      <label>${userConfigLabel}</label>
+      <select name="flags.swade.favoriteCardsDoc">
+      <option value="">None</option>
+      ${options.join('\n')}
+      </select>
+    </div>`;
+    actorDirectory.before(template);
+  }
+
   public static onRenderChatLog(
     app: ChatLog,
     html: JQuery<HTMLElement>,
@@ -762,9 +804,34 @@ export default class SwadeHooks {
     chat.chatListeners(html);
   }
 
+  public static async onHotbarDrop(
+    hotbar: Hotbar,
+    data: DropData<InstanceType<ConfiguredDocumentClass<typeof Macro>>>,
+    slot: number,
+  ) {
+    /**
+     * Create a Macro from an Item drop.
+     * Get an existing item macro if one exists, otherwise create a new one.
+     */
+    if (data['type'] !== 'Item' || !('data' in data)) {
+      return ui.notifications.warn(
+        'You can only create macro buttons for owned Items',
+      );
+    }
+    const item = data.data;
+    // Create the macro command
+    const macro = await Macro.create({
+      name: item?.name,
+      type: CONST.MACRO_TYPES.SCRIPT,
+      img: item?.img,
+      command: `game.swade.rollItemMacro("${item?.name}");`,
+    });
+    await game.user?.assignHotbarMacro(macro!, slot);
+  }
+
   public static onGetUserContextOptions(
     html: JQuery<HTMLElement>,
-    context: ContextMenu.Item[],
+    context: ContextMenuEntry[],
   ) {
     const players = html.find('#players');
     if (!players) return;
@@ -774,22 +841,19 @@ export default class SwadeHooks {
         icon: '<i class="fas fa-plus"></i>',
         condition: (li) =>
           game.user!.isGM && game.users?.get(li[0].dataset.userId!)!.isGM!,
-        callback: (li) => {
+        callback: async (li) => {
           const selectedUser = game.users?.get(li[0].dataset.userId!)!;
-          selectedUser
-            .setFlag(
-              'swade',
-              'bennies',
-              (selectedUser.getFlag('swade', 'bennies') as number) + 1,
-            )
-            .then(async () => {
-              ui.players?.render(true);
-              if (game.settings.get('swade', 'notifyBennies')) {
-                //In case one GM gives another GM a benny a different message should be displayed
-                const givenEvent = selectedUser !== game.user;
-                chat.createGmBennyAddMessage(selectedUser, givenEvent);
-              }
-            });
+          await selectedUser.setFlag(
+            'swade',
+            'bennies',
+            (selectedUser.getFlag('swade', 'bennies') ?? 0) + 1,
+          );
+          ui.players?.render(true);
+          if (game.settings.get('swade', 'notifyBennies')) {
+            //In case one GM gives another GM a benny a different message should be displayed
+            const givenEvent = selectedUser !== game.user;
+            chat.createGmBennyAddMessage(selectedUser, givenEvent);
+          }
         },
       },
       {
@@ -815,7 +879,7 @@ export default class SwadeHooks {
     //get the measured template tools
     const measure = sceneControlButtons.find((a) => a.name === 'measure')!;
     //add buttons
-    const newTemplateButtons = CONFIG.SWADE.measuredTemplatePresets.map(
+    const newTemplateButtons = SWADE.measuredTemplatePresets.map(
       (t) => t.button,
     );
     measure.tools.splice(measure.tools.length - 1, 0, ...newTemplateButtons);
@@ -1054,7 +1118,7 @@ export default class SwadeHooks {
     const expiration = app.document.getFlag('swade', 'expiration');
     const loseTurnOnHold = app.document.getFlag('swade', 'loseTurnOnHold');
     const createOption = (
-      exp: StatusEffectExpiration | undefined,
+      exp: ValueOf<typeof SWADE.CONST.STATUS_EFFECT_EXPIRATION> | undefined,
       label: string,
     ) => {
       return `<option value="${exp}" ${
@@ -1064,19 +1128,19 @@ export default class SwadeHooks {
     const expirationOpt = [
       createOption(undefined, game.i18n.localize('SWADE.Expiration.None')),
       createOption(
-        StatusEffectExpiration.StartOfTurnAuto,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
         game.i18n.localize('SWADE.Expiration.BeginAuto'),
       ),
       createOption(
-        StatusEffectExpiration.StartOfTurnPrompt,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
         game.i18n.localize('SWADE.Expiration.BeginPrompt'),
       ),
       createOption(
-        StatusEffectExpiration.EndOfTurnAuto,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         game.i18n.localize('SWADE.Expiration.EndAuto'),
       ),
       createOption(
-        StatusEffectExpiration.EndOfTurnPrompt,
+        SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         game.i18n.localize('SWADE.Expiration.EndPrompt'),
       ),
     ];

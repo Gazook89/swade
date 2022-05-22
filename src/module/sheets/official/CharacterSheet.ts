@@ -1,45 +1,73 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
-import { StatusEffect } from '../../../globals';
+import { Attribute, StatusEffect } from '../../../globals';
 import {
   AdditionalStat,
   ItemAction,
   TraitRollModifier,
 } from '../../../interfaces/additional';
+import { Advance } from '../../../interfaces/Advance';
+import { AdvanceEditor } from '../../apps/AdvanceEditor';
 import { SWADE } from '../../config';
-import { Attribute } from '../../documents/actor/SwadeActor';
+import { constants } from '../../constants';
 import SwadeItem from '../../documents/item/SwadeItem';
+import SwadeActiveEffect from '../../documents/SwadeActiveEffect';
 import ItemChatCardHelper from '../../ItemChatCardHelper';
+import * as util from '../../util';
 
 export default class CharacterSheet extends ActorSheet {
   static get defaultOptions() {
-    return {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       ...super.defaultOptions,
       classes: ['swade-official', 'sheet', 'actor'],
       width: 630,
       height: 700,
       resizable: true,
+      scrollY: ['section.tab'],
       tabs: [
         {
           navSelector: '.tabs',
           contentSelector: '.sheet-body',
           initial: 'summary',
         },
+        {
+          navSelector: '.about-tabs',
+          contentSelector: '.about-body',
+          initial: 'advances',
+        },
       ],
-    };
+    });
   }
 
   get template() {
     return 'systems/swade/templates/official/sheet.hbs';
   }
 
-  activateListeners(html: JQuery): void {
+  activateListeners(html: JQuery<HTMLFormElement>): void {
     super.activateListeners(html);
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
 
-    // Drag events for macros.
+    this.form!.addEventListener('keypress', (ev: KeyboardEvent) => {
+      const target = ev.target as HTMLButtonElement;
+      const targetIsButton = 'button' === target?.type;
+      if (!targetIsButton && ev.key === 'Enter') {
+        ev.preventDefault();
+        this.submit({ preventClose: true });
+        return false;
+      }
+    });
 
+    // Input focus and update
+    const inputs = html.find('input');
+    inputs.on('focus', (ev) => ev.currentTarget.select());
+
+    inputs
+      .addBack()
+      .find('[data-dtype="Number"]')
+      .on('change', this._onChangeInputDelta.bind(this));
+
+    // Drag events for macros.
     if (this.actor.isOwner) {
       const handler = (ev) => this._onDragStart(ev);
       // Find all items on the character sheet.
@@ -83,6 +111,7 @@ export default class CharacterSheet extends ActorSheet {
         li.setAttribute('draggable', 'true');
         li.addEventListener('dragstart', handler, false);
       });
+
       html
         .find('.status input[type="checkbox"]')
         .on('change', async (event) => {
@@ -103,20 +132,15 @@ export default class CharacterSheet extends ActorSheet {
 
     //Display Advances on About tab
     html.find('label.advances').on('click', async () => {
-      this._tabs[0].activate('description');
+      this._tabs[1].activate('advances');
+      this._tabs[0].activate('about');
     });
 
     //Toggle Conviction
     html.find('.conviction-toggle').on('click', async () => {
-      const current = getProperty(
-        this.actor.data,
-        'data.details.conviction.value',
-      ) as number;
-      const active = getProperty(
-        this.actor.data,
-        'data.details.conviction.active',
-      ) as boolean;
-
+      if (this.actor.data.type === 'vehicle') return;
+      const current = this.actor.data.data.details.conviction.value;
+      const active = this.actor.data.data.details.conviction.active;
       if (current > 0 && !active) {
         await this.actor.update({
           'data.details.conviction.value': current - 1,
@@ -275,72 +299,34 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     html.find('.item-create').on('click', async (ev) => {
-      const header = ev.currentTarget;
-      const type = header.dataset.type!;
-
-      // item creation helper func
-      const createItem = function (
-        type: string,
-        name: string = `New ${type.capitalize()}`,
-      ): any {
-        const itemData = {
-          name: name ? name : `New ${type.capitalize()}`,
-          type: type,
-          data: header.dataset,
-        };
-        delete itemData.data['type'];
-        return itemData;
-      };
-      switch (type) {
-        case 'choice':
-          this._chooseItemType().then(async (dialogInput: any) => {
-            if (dialogInput.type !== 'effect') {
-              const itemData = createItem(dialogInput.type, dialogInput.name);
-              await Item.create(itemData, {
-                renderSheet: true,
-                parent: this.actor,
-              });
-            } else {
-              this._createActiveEffect(dialogInput.name);
-            }
-          });
-          break;
-        case 'effect':
-          this._createActiveEffect();
-          break;
-        default:
-          await Item.create(createItem(type), {
-            renderSheet: true,
-            parent: this.actor,
-          });
-          break;
-      }
+      this._inlineItemCreate(ev.currentTarget as HTMLButtonElement);
     });
 
     //Toggle Equipment Status
     html.find('.item-toggle').on('click', async (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
+      const target = ev.currentTarget;
+      const li = $(target).parents('.item');
       const itemID = li.data('itemId');
-      const item = this.actor.items.get(itemID);
-      await this.actor.updateEmbeddedDocuments('Item', [
-        this._toggleEquipped(itemID, item),
-      ]);
+      const item = this.actor.items.get(itemID, { strict: true });
+      const toggle = target.dataset.toggle as string;
+      await item.update(this._toggleItem(item, toggle));
     });
 
     html.find('.effect-action').on('click', async (ev) => {
       const a = ev.currentTarget;
-      const effectId = a.closest('li')!.dataset.effectId!;
-      const effect = this.actor.effects.get(effectId)!;
-      const action = a.dataset.action;
+      const effectId = a.closest('li')!.dataset.effectId as string;
+      const effect = this.actor.effects.get(effectId, { strict: true });
+      const action = a.dataset.action as string;
+      const toggle = a.dataset.toggle as string;
       let item: SwadeItem | null = null;
 
       switch (action) {
         case 'edit':
-          return effect.sheet.render(true);
+          return effect.sheet?.render(true);
         case 'delete':
           return effect.delete();
         case 'toggle':
-          return effect.update({ disabled: !effect.data.disabled });
+          return effect.update(this._toggleItem(effect, toggle));
         case 'open-origin':
           item = (await fromUuid(effect.data.origin!)) as SwadeItem;
           if (item) item?.sheet?.render(true);
@@ -521,28 +507,37 @@ export default class CharacterSheet extends ActorSheet {
     });
 
     //Wealth Die Roll
-    html.find('.currency .roll').on('click', () => {
-      if (this.actor.data.type === 'vehicle') return;
-      const die = this.actor.data.data.details.wealth.die ?? 6;
-      const mod = this.actor.data.data.details.wealth.modifier ?? 0;
-      const wildDie = this.actor.data.data.details.wealth['wild-die'] ?? 6;
-      const dieLabel = game.i18n.localize('SWADE.WealthDie');
-      const wildDieLabel = game.i18n.localize('SWADE.WildDie');
-      const formula = `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh`;
+    html.find('.currency .roll').on('click', () => this.actor.rollWealthDie());
 
-      game.swade.RollDialog.asPromise({
-        roll: new Roll(formula),
-        mods: [{ label: 'Modifier', value: mod }],
-        speaker: ChatMessage.getSpeaker(),
-        actor: this.actor,
-        flavor: game.i18n.localize('SWADE.WealthDie'),
-        title: game.i18n.localize('SWADE.WealthDie'),
-      });
+    //Advances
+    html.find('.advance-action').on('click', (ev) => {
+      if (this.actor.data.type === 'vehicle') return;
+      const button = ev.currentTarget;
+      const id = $(button).parents('li.advance').data().advanceId;
+      switch (button.dataset.action) {
+        case 'edit':
+          new AdvanceEditor({
+            advance: this.actor.data.data.advances.list.get(id, {
+              strict: true,
+            }),
+            actor: this.actor,
+          }).render(true);
+          break;
+        case 'delete':
+          this._deleteAdvance(id);
+          break;
+        case 'toggle-planned':
+          this._toggleAdvancePlanned(id);
+          break;
+        default:
+          throw new Error(`Action ${button.dataset.action} not supported`);
+      }
     });
   }
 
-  getData() {
+  async getData() {
     const data: any = super.getData();
+    if (this.actor.data.type === 'vehicle') return data;
 
     //retrieve the items and sort them by their sort value
     const items = Array.from(this.actor.items.values()).sort(
@@ -580,7 +575,7 @@ export default class CharacterSheet extends ActorSheet {
       item.hasReloadButton =
         ammoManagement && data.data.shots > 0 && !data.data.autoReload;
 
-      item.powerPoints = this.getPowerPoints(data);
+      item.powerPoints = this._getPowerPoints(data);
     }
 
     const itemTypes: Record<string, SwadeItem[]> = {};
@@ -591,6 +586,7 @@ export default class CharacterSheet extends ActorSheet {
     }
 
     data.itemTypes = itemTypes;
+    data.effects = await this._getEffects();
 
     //sort skills alphabetically
     data.sortedSkills = this.actor.itemTypes.skill.sort((a, b) =>
@@ -669,6 +665,11 @@ export default class CharacterSheet extends ActorSheet {
         game.settings.get('swade', 'weightUnit') === 'imperial' ? 'lbs' : 'kg',
     };
 
+    data.advances = {
+      expanded: this.actor.data.data.advances.mode === 'expanded',
+      list: this._getAdvances(),
+    };
+
     //add benny image URI
     data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
 
@@ -678,10 +679,29 @@ export default class CharacterSheet extends ActorSheet {
     return data;
   }
 
-  getPowerPoints(item: SwadeItem) {
+  private _getAdvances() {
+    if (this.actor.data.type === 'vehicle') return [];
+    const retVal = new Array<{ rank: string; list: Advance[] }>();
+    const advances = this.actor.data.data.advances.list;
+    for (const advance of advances) {
+      const sort = advance.sort;
+      const rankIndex = util.getRankFromAdvance(advance.sort);
+      const rank = util.getRankFromAdvanceAsString(sort);
+      if (!retVal[rankIndex]) {
+        retVal.push({
+          rank: rank,
+          list: [],
+        });
+      }
+      retVal[rankIndex].list.push(advance);
+    }
+    return retVal;
+  }
+
+  protected _getPowerPoints(item: SwadeItem) {
     if (item.data.type !== 'power') return {};
     const arcane = item.data.data.arcane;
-    let current = getProperty(item.actor!, 'data.data.data.powerPoints.value');
+    let current = getProperty(item.actor!, 'data.data.powerPoints.value');
     let max = getProperty(item.actor!, 'data.data.powerPoints.max');
     if (arcane) {
       current = getProperty(
@@ -716,16 +736,15 @@ export default class CharacterSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: Event) {
     event.preventDefault();
-    new game.swade.SwadeEntityTweaks(this.actor).render(true);
+    new game.swade.apps.SwadeDocumentTweaks(this.actor).render(true);
   }
 
-  protected _toggleEquipped(id: string, item: any): any {
-    return {
-      _id: id,
-      data: {
-        equipped: !item.data.data.equipped,
-      },
-    };
+  protected _toggleItem(
+    doc: SwadeItem | SwadeActiveEffect,
+    toggle: string,
+  ): Record<string, unknown> {
+    const oldVal = !!getProperty(doc.data, toggle);
+    return { _id: doc.id, [toggle]: !oldVal };
   }
 
   protected async _chooseItemType(choices?: any) {
@@ -786,13 +805,13 @@ export default class CharacterSheet extends ActorSheet {
     },
     renderSheet = true,
   ) {
-    let possibleName = game.i18n.format('DOCUMENT.New', {
-      type: game.i18n.localize('DOCUMENT.ActiveEffect'),
-    });
-
     //Modify the data based on parameters passed in
-    if (name) possibleName = name;
-    data.label = possibleName;
+    if (!name) {
+      name = game.i18n.format('DOCUMENT.New', {
+        type: game.i18n.localize('DOCUMENT.ActiveEffect'),
+      });
+    }
+    data.label = name;
 
     // Set default icon if none provided.
     if (!data.icon) {
@@ -810,4 +829,159 @@ export default class CharacterSheet extends ActorSheet {
       parent: this.actor,
     });
   }
+
+  protected async _getEffects() {
+    const temporary = new Array<Effect>();
+    const permanent = new Array<Effect>();
+    for (const effect of this.actor.effects) {
+      const val: Effect = {
+        id: effect.id!,
+        label: effect.data.label,
+        icon: effect.data.icon,
+        disabled: effect.data.disabled,
+        favorite: effect.getFlag('swade', 'favorite'),
+      };
+      if (effect.data.origin) {
+        const origin = await fromUuid(effect.data.origin);
+        val.origin = origin?.name;
+      }
+      if (effect.isTemporary) {
+        temporary.push(val);
+      } else {
+        permanent.push(val);
+      }
+    }
+    return { temporary, permanent };
+  }
+
+  protected async _inlineItemCreate(button: HTMLButtonElement) {
+    const type = button.dataset.type!;
+    // item creation helper func
+    const createItem = function (
+      type: string,
+      name: string = `New ${type.capitalize()}`,
+    ): any {
+      const itemData = {
+        name: name ? name : `New ${type.capitalize()}`,
+        type: type,
+        data: button.dataset,
+      };
+      delete itemData.data['type'];
+      return itemData;
+    };
+    switch (type) {
+      case 'choice':
+        this._chooseItemType().then(async (dialogInput: any) => {
+          if (dialogInput.type !== 'effect') {
+            const itemData = createItem(dialogInput.type, dialogInput.name);
+            await Item.create(itemData, {
+              renderSheet: true,
+              parent: this.actor,
+            });
+          } else {
+            this._createActiveEffect(dialogInput.name);
+          }
+        });
+        break;
+      case 'effect':
+        this._createActiveEffect();
+        break;
+      case 'advance':
+        this._addAdvance();
+        break;
+      default:
+        await Item.create(createItem(type), {
+          renderSheet: true,
+          parent: this.actor,
+        });
+        break;
+    }
+  }
+
+  private async _addAdvance() {
+    if (this.actor.data.type === 'vehicle') return;
+    const advances = this.actor.data.data.advances.list;
+    const newAdvance: Advance = {
+      id: foundry.utils.randomID(8),
+      type: constants.ADVANCE_TYPE.EDGE,
+      sort: advances.size + 1,
+      planned: false,
+      notes: '',
+    };
+    advances.set(newAdvance.id, newAdvance);
+    await this.actor.update({ 'data.advances.list': advances.toJSON() });
+    new AdvanceEditor({
+      advance: newAdvance,
+      actor: this.actor,
+    }).render(true);
+  }
+
+  private async _deleteAdvance(id: string) {
+    if (this.actor.data.type === 'vehicle') return;
+    Dialog.confirm({
+      title: game.i18n.localize('SWADE.Advances.Delete'),
+      content: `<form>
+      <div style="text-align: center;">
+        <p>Are you sure?</p>
+      </div>
+    </form>`,
+      defaultYes: false,
+      yes: () => {
+        if (this.actor.data.type === 'vehicle') return;
+        const advances = this.actor.data.data.advances.list;
+        advances.delete(id);
+        const arr = advances.toJSON();
+        arr.forEach((a, i) => (a.sort = i + 1));
+        this.actor.update({ 'data.advances.list': arr });
+      },
+    });
+  }
+
+  private async _toggleAdvancePlanned(id: string) {
+    if (this.actor.data.type === 'vehicle') return;
+    Dialog.confirm({
+      title: game.i18n.localize('SWADE.Advances.Toggle'),
+      content: `<form>
+        <div style="text-align: center;">
+          <p>Are you sure?</p>
+        </div>
+      </form>`,
+      defaultYes: false,
+      yes: () => {
+        if (this.actor.data.type === 'vehicle') return;
+        const advances = this.actor.data.data.advances.list;
+        const advance = advances.get(id, { strict: true });
+        advance.planned = !advance.planned;
+        advances.set(id, advance);
+        this.actor.update(
+          { 'data.advances.list': advances.toJSON() },
+          { diff: false },
+        );
+      },
+    });
+  }
+
+  /**
+   * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
+   * @param {Event} event  Triggering event.
+   */
+  protected _onChangeInputDelta(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    if (['+', '-'].includes(value[0])) {
+      const delta = parseInt(value, 10);
+      input.value = getProperty(this.actor.data, input.name) + delta;
+    } else if (value[0] === '=') {
+      input.value = value.slice(1);
+    }
+  }
+}
+
+interface Effect {
+  id: string;
+  icon: string | undefined | null;
+  disabled: boolean;
+  favorite?: boolean;
+  origin?: string | undefined | null;
+  label?: string;
 }

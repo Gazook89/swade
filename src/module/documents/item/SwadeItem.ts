@@ -1,8 +1,11 @@
+import { Context } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
+import { ItemDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData';
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
 import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import * as util from '../../util';
+import SwadeActor from '../actor/SwadeActor';
 
 declare global {
   interface DocumentClassConfig {
@@ -19,21 +22,21 @@ declare global {
   }
 }
 
-/**
- * Override and extend the basic :class:`Item` implementation
- * @noInheritDoc
- */
 export default class SwadeItem extends Item {
   overrides: DeepPartial<Record<string, string | number | boolean>> = {};
 
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   static RANGE_REGEX = /[0-9]+\/*/g;
 
+  constructor(data?: ItemDataConstructorData, context?: Context<SwadeActor>) {
+    super(data, context);
+    this.overrides = this.overrides ?? {};
+  }
+
   get isMeleeWeapon(): boolean {
-    if (this.type !== 'weapon') return false;
-    const shots = getProperty(this.data, 'data.shots');
-    const currentShots = getProperty(this.data, 'data.currentShots');
-    return (!shots && !currentShots) || (shots === '0' && currentShots === '0');
+    if (this.data.type !== 'weapon') return false;
+    const shots = this.data.data.shots;
+    const currentShots = this.data.data.currentShots;
+    return (!shots && !currentShots) || (shots === 0 && currentShots === 0);
   }
 
   get range() {
@@ -63,11 +66,6 @@ export default class SwadeItem extends Item {
    */
   get canBeArcaneDevice(): boolean {
     return ['gear', 'armor', 'shield', 'weapon'].includes(this.type);
-  }
-
-  prepareBaseData() {
-    super.prepareBaseData();
-    if (!this.overrides) this.overrides = {};
   }
 
   rollDamage(options: IRollOptions = {}) {
@@ -181,7 +179,7 @@ export default class SwadeItem extends Item {
     });
   }
 
-  getChatData(htmlOptions) {
+  getChatData(htmlOptions = {}) {
     const data = deepClone(this.data.data) as any;
 
     // Rich text description
@@ -227,21 +225,19 @@ export default class SwadeItem extends Item {
         );
         props.push(data.locations.arms ? game.i18n.localize('SWADE.Arms') : '');
         props.push(data.locations.legs ? game.i18n.localize('SWADE.Legs') : '');
-
         break;
       case 'edge':
         props.push(data.requirements.value);
         props.push(data.isArcaneBackground ? 'Arcane' : '');
         break;
       case 'power':
-        props.push(
-          data.rank,
-          data.arcane,
-          `${data.pp}PP`,
-          `<i class="fas fa-ruler"></i> ${data.range}`,
-          `<i class='fas fa-hourglass-half'></i> ${data.duration}`,
-          data.trapping,
-        );
+        props.push(data.rank);
+        props.push(data.arcane);
+        props.push(`${data.pp} ${game.i18n.localize('SWADE.PPAbbreviation')}`);
+        props.push(`<i class="fas fa-ruler"></i> ${data.range}`);
+        props.push(`<i class='fas fa-shield-alt'></i> ${data.ap}`);
+        props.push(`<i class='fas fa-hourglass-half'></i> ${data.duration}`);
+        props.push(data.trapping);
         break;
       case 'weapon':
         props.push(
@@ -323,7 +319,7 @@ export default class SwadeItem extends Item {
       actor: this.actor,
       tokenId: tokenId,
       item: this.data,
-      data: this.getChatData({}),
+      data: this.getChatData(),
       hasAmmoManagement: hasAmmoManagement,
       hasReloadButton: hasReloadButton,
       hasDamage: hasDamage,
@@ -396,9 +392,7 @@ export default class SwadeItem extends Item {
     return expresion;
   }
 
-  /**
-   * @returns the power points for the AB that this power belongs to or null when the item is not a power
-   */
+  /** @returns the power points for the AB that this power belongs to or null when the item is not a power */
   private _getPowerPoints(): { current: number; max: number } | null {
     if (this.type !== 'power') return null;
 
@@ -418,7 +412,7 @@ export default class SwadeItem extends Item {
     return { current, max };
   }
 
-  async _preCreate(data, options, user: User) {
+  override async _preCreate(data, options, user: User) {
     await super._preCreate(data, options, user);
     //Set default image if no image already exists
     if (!data.img) {
@@ -438,31 +432,28 @@ export default class SwadeItem extends Item {
     }
   }
 
-  async _preDelete(options, user: User) {
+  override async _preDelete(options, user: User) {
     await super._preDelete(options, user);
-    //delete all transfered active effects from the actor
-
+    //delete all transferred active effects from the actor
     if (this.parent) {
-      const updates = new Array<string>();
-      for (const ae of this.parent.effects.values()!) {
-        if (ae.data.origin !== this.uuid) continue;
-        updates.push(ae.id!);
-      }
-      await this.parent.deleteEmbeddedDocuments('ActiveEffect', updates);
+      const toDelete = this.parent.effects
+        .filter((e) => e.data.origin === this.uuid)
+        .map((ae) => ae.id!);
+      await this.parent.deleteEmbeddedDocuments('ActiveEffect', toDelete);
     }
   }
 
-  async _preUpdate(changed, options, user) {
+  override async _preUpdate(changed, options, user) {
     await super._preUpdate(changed, options, user);
 
     if (this.parent && hasProperty(changed, 'data.equipped')) {
-      const updates = new Array<Record<string, unknown>>();
-      for (const ae of this.parent.effects.values()!) {
-        if (ae.data.origin !== this.uuid) continue;
-        updates.push({ _id: ae.id, disabled: !changed.data.equipped });
-      }
-
-      await this.actor!.updateEmbeddedDocuments('ActiveEffect', updates);
+      //toggle all active effects when an item equip status changes
+      const updates = this.parent.effects
+        .filter((ae) => ae.data.origin === this.uuid)
+        .map((ae) => {
+          return { _id: ae.id, disabled: !changed.data.equipped };
+        });
+      await this.parent.updateEmbeddedDocuments('ActiveEffect', updates);
     }
   }
 }

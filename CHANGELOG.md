@@ -22,6 +22,69 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.0
+
+### Added
+
+- Added default duration of 10 rounds to Berserk status effect template.
+- Added End of Turn prompt expiration to Berserk status effect template.
+- Added Start of Turn auto expiration to Defending status effect template.
+- Added `CONFIG.SWADE.CONST` object which will contain constants and enums
+- Numerical inputs on the character sheet now accept delta inputs such as `-20` and will save the calculated value.
+- _Bound_ and _Entangled_ now also apply all other conditions as described in the rules.
+- Added some informative links to system documentation links to the settings tab, under the system version.
+- Added the ability to favorite the following item types, as well as Active Effects:
+  - Edges
+  - Hindrances
+  - Special Abilities
+  - Powers
+  - Weapons
+  - Armor
+  - Shields
+  - Gear
+- Added `SwadeActor#rollWealthDie()` function.
+- Added the currency controls on NPC sheet.
+- Powers can now record an AP value.
+- Added new Keybindings, all of which are editable.
+  - You can now select a favorite card hand in the user config and open it with the `H` keybinding.
+  - You can now spend a Benny by pressing `B` and receive a Benny by pressing `Alt+B`.
+- Added new expanded Advancement tracking. In the new Advancement tab you can add advances which are counted up and displayed in the header. Advances are also used to calculate the rank. Each advance can be set to be planned, in which case it won't be used to calculate the rank. Planned Advances are shown in the list with faded colors. To delete or edit and advance you can use the buttons on the right side, similar to how the inventory works.
+  - This new system is on by default. If you want to switch back to the legacy way of recording advances you can do so in the actor tweaks
+  - All actors have the new Expanded advances activated, though only the Official Sheet for player characters currently supports this.
+- Active Effects now record the world time (`game.time.worldTime`) as their start time on creation.
+- Added additional translation strings
+
+### Changed
+
+- Changed the way the system is delivered. The system is now bundled as a singular JS file, reducing the number of JS files from 44 to 1. In addition to that we're now delivering sourcemaps which should help with troubleshooting. For more information please visit [ticket #464] (https://gitlab.com/peginc/swade/-/issues/464). All in all this should not have any noticeable drawbacks for end users and should slightly increase the responsiveness of the system on world load.
+- Changed the way the Quick Access behaves. Instead of automatically displaying all equipped items it now only displays favored items. See `Added` for the list of document types that can be favored. Status Effects are automatically shown in the Quick Access.
+- The inputs for the Crew and Passengers on Vehicles now are now saved as numbers instead of strings.
+- Split up the About tab into subsections: `Advances`,`Background` and `Notes`. The `Background` subsection now contains the biography, along some additional fields for character appearance and goals.
+- Changed the way the skill dice look in the skill list.
+- Changed the name of the Discard Pile that is created by default by the system to make the name more clear.
+- Changed the way disabled inputs look on the character sheet to make them more distinctive.
+- The system now overrides the builtin card presets instead of removing them.
+
+### Deprecated
+
+- Started deprecation of `game.swade.SwadeEntityTweaks`. The class has been moved to `game.swade.apps.SwadeDocumentTweaks` and the old accessor will be removed with v1.2.0.
+- Started deprecation of `ArmorLocation` enum. This enum has been moved to `CONFIG.SWADE.CONST.ARMOR_LOCATIONS` and the old enum will be removed with v1.2.0.
+- Started deprecation of `TemplatePreset` enum. This enum has been moved to `CONFIG.SWADE.CONST.TEMPLATE_PRESET` and the old enum will be removed with v1.2.0.
+- Started deprecation of `StatusEffectExpiration` enum. This enum has been moved to `CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION` and the old enum will be removed with v1.2.0.
+
+### Removed
+
+- Removed the Basic Action Cards compendium. Please be aware that only the compendium is removed. The image files for existing decks are still in the system assets.
+
+### Fixed
+
+- Fixed the longstanding issue of pressing enter on the character sheet would trigger the first button in the sheet's DOM.
+- Tabs on the character sheet should now retain their scroll position again.
+- Users can no longer create initiative groups with combatants they can not edit in the combat tracker.
+- Fixed a stylesheet issue that would cause lists not to render properly in edge/hindrance/ability descriptions.
+- Fixed a potential issue which could allow the action deck to run out of cards when multiple cards are drawn but none selected. If a joker has been drawn but no card was selected then the joker is automatically picked.
+- Fixed a potential issue where no new combat rounds would be started if multiple GMs are logged in.
+
 ## v1.0.10
 
 ### Removed

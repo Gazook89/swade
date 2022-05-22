@@ -337,7 +337,7 @@ interface RollDialogContext {
   item?: SwadeItem;
   actor?: SwadeActor;
   allowGroup?: boolean;
-  flags?: object;
+  flags?: Record<string, unknown>;
 }
 
 interface RollDialogFormData {

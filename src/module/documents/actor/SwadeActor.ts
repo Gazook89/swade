@@ -1,10 +1,10 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
-import { ItemMetadata, StatusEffect } from '../../../globals';
+import { Attribute, ItemMetadata, StatusEffect } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
+import { Advance } from '../../../interfaces/Advance';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
-import { ArmorLocation } from '../../enums/ArmorLocationsEnum';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
@@ -16,9 +16,6 @@ declare global {
   }
 }
 
-/**
- * @noInheritDoc
- */
 export default class SwadeActor extends Actor {
   /**
    * @returns true when the actor is a Wild Card
@@ -74,28 +71,26 @@ export default class SwadeActor extends Actor {
 
   get armorPerLocation(): ArmorPerLocation {
     return {
-      head: this._getArmorForLocation(ArmorLocation.Head),
-      torso: this._getArmorForLocation(ArmorLocation.Torso),
-      arms: this._getArmorForLocation(ArmorLocation.Arms),
-      legs: this._getArmorForLocation(ArmorLocation.Legs),
+      head: this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Head),
+      torso: this._getArmorForLocation(
+        CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Torso,
+      ),
+      arms: this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Arms),
+      legs: this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Legs),
     };
   }
 
-  /**
-   * Returns whether this character is currently encumbered, factoring in whether the rule is even enforced
-   */
+  /** @return whether this character is currently encumbered, factoring in whether the rule is even enforced */
   get isEncumbered(): boolean {
     const applyEncumbrance = game.settings.get('swade', 'applyEncumbrance');
-    if (!applyEncumbrance) return false;
-    if (this.data.type === 'vehicle') {
+    if (this.data.type === 'vehicle' || !applyEncumbrance) {
       return false;
     }
     const encumbrance = this.data.data.details.encumbrance;
     return encumbrance.value > encumbrance.max;
   }
 
-  /** @override */
-  prepareBaseData() {
+  override prepareBaseData() {
     if (this.data.type === 'vehicle') return;
     //auto calculations
     if (this.data.data.details.autoCalcToughness) {
@@ -103,15 +98,13 @@ export default class SwadeActor extends Actor {
       this.data.data.stats.toughness.value = 0;
       this.data.data.stats.toughness.armor = 0;
     }
-
     if (this.data.data.details.autoCalcParry) {
       //same procedure as with Toughness
       this.data.data.stats.parry.value = 0;
     }
   }
 
-  /** @override */
-  prepareDerivedData() {
+  override prepareDerivedData() {
     this._filterOverrides();
     //return early for Vehicles
     if (this.data.type === 'vehicle') return;
@@ -127,12 +120,25 @@ export default class SwadeActor extends Actor {
       value: this.calcInventoryWeight(),
     };
 
+    //handle advances
+    const advances = this.data.data.advances;
+    if (advances.mode === 'expanded') {
+      const advRaw = getProperty(
+        this.data._source,
+        'data.advances.list',
+      ) as Advance[];
+      const list = new Collection<Advance>();
+      advRaw.forEach((adv) => list.set(adv.id, adv));
+      const activeAdvances = list.filter((a) => !a.planned).length;
+      advances.list = list;
+      advances.value = activeAdvances;
+      advances.rank = util.getRankFromAdvanceAsString(activeAdvances);
+    }
+
     let pace = this.data.data.stats.speed.value;
 
     //subtract encumbrance, if necessary
-    if (this.isEncumbered) {
-      pace -= 2;
-    }
+    if (this.isEncumbered) pace -= 2;
 
     //modify pace with wounds
     if (game.settings.get('swade', 'enableWoundPace')) {
@@ -141,7 +147,6 @@ export default class SwadeActor extends Actor {
       //subtract wounds
       pace -= wounds;
     }
-
     //make sure the pace doesn't go below 1
     this.data.data.stats.speed.adjusted = Math.max(pace, 1);
 
@@ -316,6 +321,27 @@ export default class SwadeActor extends Actor {
     });
   }
 
+  rollWealthDie() {
+    if (this.data.type === 'vehicle') return;
+    const die = this.data.data.details.wealth.die ?? 6;
+    const mod = this.data.data.details.wealth.modifier ?? 0;
+    const wildDie = this.data.data.details.wealth['wild-die'] ?? 6;
+    const dieLabel = game.i18n.localize('SWADE.WealthDie');
+    const wildDieLabel = game.i18n.localize('SWADE.WildDie');
+    const formula = this.isWildcard
+      ? `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh`
+      : `{1d${die}x[${dieLabel}]}`;
+
+    return game.swade.RollDialog.asPromise({
+      roll: new Roll(formula),
+      mods: [{ label: 'Modifier', value: mod }],
+      speaker: ChatMessage.getSpeaker(),
+      actor: this,
+      flavor: game.i18n.localize('SWADE.WealthDie'),
+      title: game.i18n.localize('SWADE.WealthDie'),
+    });
+  }
+
   async makeUnskilledAttempt(options: IRollOptions = {}) {
     const tempSkill = new SwadeItem({
       name: game.i18n.localize('SWADE.Unskilled'),
@@ -435,14 +461,12 @@ export default class SwadeActor extends Actor {
       const createData = foundry.utils.deepClone(
         effectData,
       ) as Partial<StatusEffect>;
-      //localize the label
-      createData.label = game.i18n.localize(effectData.label as string);
+      //set the status id
       setProperty(createData, 'flags.core.statusId', effectData.id);
       if (options.overlay) setProperty(createData, 'flags.core.overlay', true);
       //remove id property to not violate validation
       delete createData.id;
-      const cls = getDocumentClass('ActiveEffect');
-      await cls.create(createData, { parent: this });
+      await this.createEmbeddedDocuments('ActiveEffect', [createData]);
     }
   }
 
@@ -549,8 +573,7 @@ export default class SwadeActor extends Actor {
     return out;
   }
 
-  //@ts-expect-error The definition in the types is too strict so I opted to override it here
-  getRollData(): Record<string, number | string> {
+  override getRollData(): Record<string, number | string> {
     const retVal = this.getRollShortcuts();
     retVal['wounds'] = this.data.data.wounds.value || 0;
 
@@ -575,7 +598,7 @@ export default class SwadeActor extends Actor {
 
   /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
   calcArmor(): number {
-    return this._getArmorForLocation(ArmorLocation.Torso);
+    return this._getArmorForLocation(CONFIG.SWADE.CONST.ARMOR_LOCATIONS.Torso);
   }
 
   /**
@@ -740,7 +763,7 @@ export default class SwadeActor extends Actor {
     return driver;
   }
 
-  protected _handleComplexSkill(
+  private _handleComplexSkill(
     skill: SwadeItem,
     options: IRollOptions,
   ): [Roll, TraitRollModifier[]] {
@@ -962,7 +985,9 @@ export default class SwadeActor extends Actor {
    * @param location The location of the armor such as head, torso, arms or legs
    * @returns The total amount of armor for that location
    */
-  private _getArmorForLocation(location: ArmorLocation): number {
+  private _getArmorForLocation(
+    location: ValueOf<typeof SWADE.CONST.ARMOR_LOCATIONS>,
+  ): number {
     if (this.data.type === 'vehicle') return 0;
 
     let totalArmorVal = 0;
@@ -1018,7 +1043,7 @@ export default class SwadeActor extends Actor {
     this.overrides = foundry.utils.expandObject(overrides);
   }
 
-  async _preCreate(
+  override async _preCreate(
     createData: ActorDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
@@ -1091,7 +1116,7 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  async _onUpdate(
+  override async _onUpdate(
     changed: DeepPartial<SwadeActorDataSource> & Record<string, unknown>,
     options: DocumentModificationOptions,
     user: string,
@@ -1106,11 +1131,5 @@ export default class SwadeActor extends Actor {
   }
 }
 
-export interface ArmorPerLocation {
-  head: number;
-  arms: number;
-  torso: number;
-  legs: number;
-}
-
-export type Attribute = keyof typeof SWADE.attributes;
+type ArmorLocation = ValueOf<typeof SWADE.CONST.ARMOR_LOCATIONS>;
+type ArmorPerLocation = Record<ArmorLocation, number>;

@@ -1,7 +1,7 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
 import { Dice3D } from './interfaces/DiceSoNice';
 import SwadeGame from './interfaces/SwadeGame';
-import { SwadeConfig } from './module/config';
+import { SWADE, SwadeConfig } from './module/config';
 
 declare global {
   interface Game {
@@ -23,9 +23,12 @@ declare global {
 export type AbilitySubType = 'special' | 'race' | 'archetype';
 export type StatusEffect = ActiveEffectDataConstructorData & { id: string };
 
-export type ActorMetadata = CompendiumCollection.Metadata & { entity: 'Actor' };
-export type ItemMetadata = CompendiumCollection.Metadata & { entity: 'Item' };
-export type CardMetadata = CompendiumCollection.Metadata & { entity: 'Card' };
+export type ActorMetadata = CompendiumCollection.Metadata & { type: 'Actor' };
+export type ItemMetadata = CompendiumCollection.Metadata & { type: 'Item' };
+export type CardMetadata = CompendiumCollection.Metadata & { type: 'Card' };
 export type JournalMetadata = CompendiumCollection.Metadata & {
-  entity: 'JournalEntry';
+  type: 'JournalEntry';
 };
+
+export type Attribute = keyof typeof SWADE.attributes;
+export type LinkedAttribute = Attribute | '';

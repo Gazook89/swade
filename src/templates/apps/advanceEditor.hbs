@@ -1,0 +1,38 @@
+<form autocomplete='off'>
+  <div class='form-group'>
+    <label>Type</label>
+    <span class='form-fields'>
+      <select name='type' data-dtype='Number'>
+        {{#select advance.type}}
+          {{selectOptions advanceTypes selected=advance.type localize=true}}
+        {{/select}}
+      </select>
+    </span>
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'SWADE.Rank'}}</label>
+    <span><input type='text' value='{{rank}}' disabled /></span>
+  </div>
+  <div class='form-group'>
+    <label>Advance number</label>
+    <span class='form-fields'>
+      <input type='number' name='sort' value='{{advance.sort}}' />
+    </span>
+  </div>
+  <div class='form-group'>
+    <label>{{localize 'SWADE.Advances.Planned'}}</label>
+    <span class='form-fields'>
+      <input type='checkbox' name='planned' {{checked advance.planned}} />
+    </span>
+  </div>
+  <div>
+    <div>{{localize 'SWADE.Notes'}}</div>
+    <textarea
+      name='notes'
+      rows='4'
+      maxlength='200'
+      style='resize: none;'
+    >{{advance.notes}}</textarea>
+  </div>
+  <button type='submit'><i class='far fa-save'></i>{{localize 'Save'}}</button>
+</form>

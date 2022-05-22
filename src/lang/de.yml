@@ -123,7 +123,7 @@ SWADE.Equippable: Ausrüstbar
 SWADE.ArcaneDevice: Arkanes Gerät
 SWADE.Misc: Sonstiges
 SWADE.QuickAccess: Schnellzugriff
-SWADE.Effects: Aktive Effekte
+SWADE.Effects: Effekte
 SWADE.Hindrances: Handicaps
 SWADE.MajHind: Schweres Handicap
 SWADE.Major: (Schwer)
@@ -229,7 +229,7 @@ SWADE.ConfigInit: Initiative konfigurieren
 SWADE.IgnWounds: Wunden ignorieren
 SWADE.Size: Größe
 SWADE.Scale: Größenkategorie
-SWADE.PickACard: Wähle eine Karte für
+SWADE.PickACard: Wähle eine Karte für {name}
 SWADE.NoCardsLeft: >-
   Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed}
   benötigten Karten verfügbar
@@ -340,8 +340,8 @@ SWADE.SpecialAbility: Spezialfähigkeit
 SWADE.SpecialAbilities: Spezialfähigkeiten
 SWADE.RacialAbilities: Volkseigenschaften
 SWADE.ArchetypeAbilities: Archetypeigenschaften
-SWADE.About: Beschreibung
-SWADE.EdgesHindrances: Talente & Handicaps
+SWADE.About: Über
+SWADE.EdgesHindrances: Talente
 SWADE.GrantsPowers: Gewährt Mächte
 SWADE.Passengers: Passagiere
 SWADE.Crew: Besatzung
@@ -457,3 +457,26 @@ SWADE.SetUpChase: Verfolgungsjagd erstellen
 SWADE.NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
 SWADE.ConvertToDeck: Zu Deck konvertieren
 SWADE.PPAbbreviation: MP
+SWADE.ShowInChat: Im Chat anzeigen
+SWADE.ExpandDescription: Beschreibung anzeigen
+SWADE.Favorite: Favorisieren
+SWADE.Equip: Ausrüsten
+SWADE.RollDamage: Schaden würfeln
+SWADE.SystemLinks.Changelog: Changelog
+SWADE.SystemLinks.Wiki: Wiki
+SWADE.SystemLinks.ReportAnIssue: Ein Problem melden
+SWADE.Biography: Biografie
+SWADE.OpenOrigin: Urpsrung öffnen
+SWADE.EffectsTemporary: Temporäre Effekte
+SWADE.EffectsPermanent: Permanente Effecte
+SWADE.Ranks.Novice: Anfänger
+SWADE.Ranks.Seasoned: Fortgeschritten
+SWADE.Ranks.Veteran: Veteran
+SWADE.Ranks.Heroic: Heroisch
+SWADE.Ranks.Legendary: Legendär
+SWADE.Advances.Planned: Geplant
+SWADE.Appearance: Erscheinungsbild
+SWADE.CharacterGoals: Ziele
+SWADE.Background: Hintergrund
+SWADE.ActiveEffects.Add: Active Effect Hinzufügen
+SWADE.ActiveEffects.Source: Quelle

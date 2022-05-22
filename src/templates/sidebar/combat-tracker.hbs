@@ -66,10 +66,18 @@
         {{#each turns}}
         <li class="combatant actor directory-item flexrow {{this.css}}" data-combatant-id="{{this.id}}">
             <div class="token-initiative" style="border-right-color: {{#if (isInGroup this.id)}}{{leaderColor this.id}}{{else if this.defeated}}#fff{{else}}{{groupColor this.id}}{{/if}}; {{#if this.defeated}}opacity: 0.3;{{/if}}">
-                {{#if this.hasRolled}}
-                <span class="initiative">{{this.initiative}}</span>
+                {{#if this.emptyInit}}
+                <span class="initiative"></span>
+                {{else if this.roundHeld}}
+                <span class="initiative"><i class="fas fa-hand-rock"></i></span>
+                {{else if this.turnLost}}
+                <span class="initiative"><i class="fas fa-ban"></i></span>
+                {{else if this.hasRolled}}
+                <span class="initiative">{{this.cardString}}</span>
                 {{else if this.owner}}
                 <a class="combatant-control roll" title="{{localize 'SWADE.DrawInit'}}" data-control="rollInitiative"></a>
+                {{else}}
+                <span class="initiative"></span>
                 {{/if}}
             </div>
             <img class="token-image" data-src="{{this.img}}" title="{{this.name}}"/>

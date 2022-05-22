@@ -1,5 +1,4 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
-import { StatusEffectExpiration } from '../enums/StatusEffectExpirationsEnums';
 import * as utils from '../util';
 import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
@@ -154,6 +153,7 @@ export default class SwadeCombat extends Combat {
         initiative: initiative,
         'flags.swade': newflags,
       });
+
       if (c.isGroupLeader) {
         await c.setSuitValue(c.suitValue ?? 0 + 0.9);
         const followers =
@@ -365,7 +365,9 @@ export default class SwadeCombat extends Combat {
 
     return new Promise((resolve) => {
       new Dialog({
-        title: `${game.i18n.localize('SWADE.PickACard')} ${combatantName}`,
+        title: game.i18n.format('SWADE.PickACard', {
+          name: combatantName,
+        }),
         content: html,
         buttons: buttons,
         default: 'ok',
@@ -380,13 +382,18 @@ export default class SwadeCombat extends Combat {
               isQuickDraw,
             });
           }
-          //if no card has been chosen then choose first in array
+          //if no card has been chosen then choose first in array, unless there was a joker in which case that is chosen
           if (!card) {
             if (oldCardId) {
               card = cards.find((c) => c.id === oldCardId);
             } else {
               console.log('No card was selected');
-              card = cards[0]; //If no card was selected, assign the first card that was drawn
+              const thereIsAJoker = cards.some((c) => c.data.data['isJoker']);
+              if (thereIsAJoker) {
+                card = cards.find((c) => c.data.data['isJoker']);
+              } else {
+                card = cards[0]; //If no card was selected, assign the first card that was drawn
+              }
             }
           }
           resolve(card);
@@ -437,9 +444,12 @@ export default class SwadeCombat extends Combat {
     const currentTurnEndExpirations = new Array<SwadeActiveEffect>();
     for (const fx of currentTurnEffects ?? []) {
       const expiration = fx.getFlag('swade', 'expiration');
-      const endAutoExpire = expiration === StatusEffectExpiration.EndOfTurnAuto;
+      const endAutoExpire =
+        expiration ===
+        CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
       const endPromptExpire =
-        expiration === StatusEffectExpiration.EndOfTurnPrompt;
+        expiration ===
+        CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
       const expiresAtEndOfTurn = endAutoExpire || endPromptExpire;
       const startRound = getProperty(fx, 'data.duration.startRound');
       const startTurn = getProperty(fx, 'data.duration.startTurn');
@@ -471,9 +481,11 @@ export default class SwadeCombat extends Combat {
       for (const fx of nextTurnEffects ?? []) {
         const expiration = fx.getFlag('swade', 'expiration');
         const startAutoExpire =
-          expiration === StatusEffectExpiration.StartOfTurnAuto;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
         const startPromptExpire =
-          expiration === StatusEffectExpiration.StartOfTurnPrompt;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = getProperty(fx, 'data.duration.startRound');
         const startTurn = getProperty(fx, 'data.duration.startTurn');
@@ -514,12 +526,17 @@ export default class SwadeCombat extends Combat {
     if (this.round === 0 || next === null || next >= this.turns.length) {
       return this.nextRound();
     }
+
+    //update time
+    let advanceTime =
+      Math.max(this.turns.length - this.turn!, 0) * CONFIG.time.turnTime;
+    advanceTime += CONFIG.time.roundTime;
     // Update the encounter
     return this.update(
       { round: round, turn: next },
       //FIXME return once types are updated
       //@ts-expect-error The property doesn't seem to be defined in the types
-      { advanceTime: CONFIG.time.turnTime },
+      { advanceTime },
     );
   }
 
@@ -531,7 +548,6 @@ export default class SwadeCombat extends Combat {
       return;
     } else {
       const jokerDrawn = this.combatants.some((c) => c.hasJoker);
-
       if (jokerDrawn) {
         await utils.resetActionDeck();
         ui.notifications.info('SWADE.DeckShuffled', { localize: true });
@@ -552,9 +568,11 @@ export default class SwadeCombat extends Combat {
       for (const fx of turnZeroEffects) {
         const expiration = fx.getFlag('swade', 'expiration');
         const startAutoExpire =
-          expiration === StatusEffectExpiration.StartOfTurnAuto;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
         const startPromptExpire =
-          expiration === StatusEffectExpiration.StartOfTurnPrompt;
+          expiration ===
+          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = getProperty(fx, 'data.duration.startRound');
         const startTurn = getProperty(fx, 'data.duration.startTurn');

@@ -1,42 +1,8 @@
-import { DropData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/foundry.js/clientDocumentMixin';
-import { ConfiguredDocumentClass } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
 import { TraitRollModifier } from '../interfaces/additional';
 import { SWADE } from './config';
+import { constants } from './constants';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
-
-/* -------------------------------------------- */
-/*  Hotbar Macros                               */
-/* -------------------------------------------- */
-
-/**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
- * @param {Object} data     The dropped data
- * @param {number} slot     The hotbar slot to use
- * @returns {Promise}
- */
-export async function createSwadeMacro(
-  hotbar: Hotbar,
-  data: DropData<InstanceType<ConfiguredDocumentClass<typeof Macro>>>,
-  slot: number,
-) {
-  if (data['type'] !== 'Item') return;
-  if (!('data' in data))
-    return ui.notifications.warn(
-      'You can only create macro buttons for owned Items',
-    );
-  const item = data.data;
-  // Create the macro command
-  const command = `game.swade.rollItemMacro("${item?.name}");`;
-  const macro = (await Macro.create({
-    name: item?.name!,
-    type: 'script',
-    img: item?.img!,
-    command: command,
-  })) as Macro;
-  await game.user?.assignHotbarMacro(macro, slot);
-}
 
 /**
  * A simple function to allow quick access to an item such as a skill or weapon. Skills are rolled while other items are posted to the chat as a chatcard
@@ -174,6 +140,24 @@ export function firstGM() {
 
 export function isFirstGM() {
   return game.userId !== firstGM()?.id;
+}
+
+export function getRankFromAdvance(advance: number): number {
+  if (advance <= 3) {
+    return constants.RANK.NOVICE;
+  } else if (advance.between(4, 7)) {
+    return constants.RANK.SEASONED;
+  } else if (advance.between(8, 11)) {
+    return constants.RANK.VETERAN;
+  } else if (advance.between(12, 15)) {
+    return constants.RANK.HEROIC;
+  } else {
+    return constants.RANK.LEGENDARY;
+  }
+}
+
+export function getRankFromAdvanceAsString(advance: number): string {
+  return SWADE.ranks[getRankFromAdvance(advance)];
 }
 
 type Permissions = Record<string, number>;

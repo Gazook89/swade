@@ -1,5 +1,5 @@
 import { AdditionalStat, TraitRollModifier } from '../../interfaces/additional';
-import SwadeEntityTweaks from '../apps/SwadeEntityTweaks';
+import SwadeDocumentTweaks from '../apps/SwadeDocumentTweaks';
 import * as chat from '../chat';
 import { SWADE } from '../config';
 import SwadeItem from '../documents/item/SwadeItem';
@@ -12,6 +12,13 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     // Everything below here is only needed if the sheet is editable
     if (!this.options.editable) return;
+
+    const inputs = html.find('input');
+    inputs.on('focus', (ev) => ev.currentTarget.select());
+    inputs
+      .addBack()
+      .find('[data-dtype="Number"]')
+      .on('change', this._onChangeInputDelta.bind(this));
 
     if (this.actor.isOwner) {
       const handler = (ev: DragEvent) => this._onDragStart(ev);
@@ -164,16 +171,16 @@ export default class SwadeBaseActorSheet extends ActorSheet {
     html.find('.effect-action').on('click', (ev) => {
       const a = ev.currentTarget;
       const effectId = a.closest('li')!.dataset.effectId!;
-      const effect = this.actor.effects.get(effectId);
+      const effect = this.actor.effects.get(effectId, { strict: true });
       const action = a.dataset.action;
 
       switch (action) {
         case 'edit':
-          return effect!.sheet.render(true);
+          return effect.sheet?.render(true);
         case 'delete':
-          return effect!.delete();
+          return effect.delete();
         case 'toggle':
-          return effect!.update({ disabled: !effect?.data.disabled });
+          return effect.update({ disabled: !effect?.data.disabled });
         case 'open-origin':
           fromUuid(effect!.data?.origin!).then((item: SwadeItem) => {
             if (item) this.actor.items.get(item.id!)!.sheet?.render(true);
@@ -197,7 +204,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         },
         { renderSheet: true, parent: this.actor },
       );
-      this.actor.effects.get(effect?.id!)?.sheet.render(true);
+      this.actor.effects.get(effect?.id!, { strict: true }).sheet?.render(true);
     });
 
     html.find('.additional-stats .roll').on('click', async (ev) => {
@@ -221,6 +228,9 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         flavor: statData.label,
       });
     });
+
+    //Wealth Die Roll
+    html.find('.currency .roll').on('click', () => this.actor.rollWealthDie());
   }
 
   getData() {
@@ -281,6 +291,8 @@ export default class SwadeBaseActorSheet extends ActorSheet {
       data.settingrules = {
         conviction: game.settings.get('swade', 'enableConviction'),
         noPowerPoints: game.settings.get('swade', 'noPowerPoints'),
+        wealthType: game.settings.get('swade', 'wealthType'),
+        currencyName: game.settings.get('swade', 'currencyName'),
       };
     }
 
@@ -317,7 +329,7 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
   protected _onConfigureEntity(event: JQuery.ClickEvent) {
     event.preventDefault();
-    new SwadeEntityTweaks(this.actor).render(true);
+    new SwadeDocumentTweaks(this.actor).render(true);
   }
 
   protected async _chooseItemType(
@@ -481,5 +493,20 @@ export default class SwadeBaseActorSheet extends ActorSheet {
         ct.classList.remove('active');
       }
     });
+  }
+
+  /**
+   * Handle input changes to numeric form fields, allowing them to accept delta-typed inputs
+   * @param {Event} event  Triggering event.
+   */
+  protected _onChangeInputDelta(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+    if (['+', '-'].includes(value[0])) {
+      const delta = parseInt(value, 10);
+      input.value = getProperty(this.actor.data, input.name) + delta;
+    } else if (value[0] === '=') {
+      input.value = value.slice(1);
+    }
   }
 }

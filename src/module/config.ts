@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { AbilitySubType, StatusEffect } from '../globals';
 import { TraitRollModifierGroup } from '../interfaces/additional';
 import { TemplateConfig } from '../interfaces/TemplateConfig';
+import { constants } from './constants';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
-import { StatusEffectExpiration } from './enums/StatusEffectExpirationsEnums';
-import { TemplatePreset } from './enums/TemplatePresetEnum';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SWADE: SwadeConfig = {
   ASCII: `
   ███████╗██╗    ██╗ █████╗ ██████╗ ███████╗
@@ -113,7 +112,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -132,6 +131,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_enraged.svg',
       id: 'berserk',
       label: 'SWADE.Berserk',
+      duration: {
+        rounds: 10,
+      },
       changes: [
         {
           key: 'data.attributes.strength.die.sides',
@@ -149,6 +151,11 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      flags: {
+        swade: {
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_defending.svg',
@@ -161,6 +168,11 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
+      flags: {
+        swade: {
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
+        },
+      },
     },
     {
       icon: 'systems/swade/assets/icons/status/status_flying.svg',
@@ -182,6 +194,16 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
+        {
+          key: 'data.status.isDistracted',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+        {
+          key: 'data.status.isVulnerable',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
       ],
     },
     {
@@ -191,6 +213,11 @@ export const SWADE: SwadeConfig = {
       changes: [
         {
           key: 'data.status.isEntangled',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+        {
+          key: 'data.status.isDistracted',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -214,7 +241,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnAuto,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         },
       },
     },
@@ -241,7 +268,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
           loseTurnOnHold: true,
         },
       },
@@ -259,7 +286,7 @@ export const SWADE: SwadeConfig = {
       ],
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnAuto,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
         },
       },
     },
@@ -269,7 +296,7 @@ export const SWADE: SwadeConfig = {
       label: 'SWADE.BleedingOut',
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.StartOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
         },
       },
     },
@@ -344,7 +371,7 @@ export const SWADE: SwadeConfig = {
       },
       flags: {
         swade: {
-          expiration: StatusEffectExpiration.EndOfTurnPrompt,
+          expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
         },
       },
     },
@@ -359,52 +386,52 @@ export const SWADE: SwadeConfig = {
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CONE, distance: 9 },
       button: {
-        name: TemplatePreset.CONE,
+        name: constants.TEMPLATE_PRESET.CONE,
         title: 'SWADE.Cone',
         icon: 'text-icon cone',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.CONE);
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.CONE);
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 1 },
       button: {
-        name: TemplatePreset.SBT,
+        name: constants.TEMPLATE_PRESET.SBT,
         title: 'SWADE.SBT',
         icon: 'text-icon sbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.SBT);
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.SBT);
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 2 },
       button: {
-        name: TemplatePreset.MBT,
+        name: constants.TEMPLATE_PRESET.MBT,
         title: 'SWADE.MBT',
         icon: 'text-icon mbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.MBT);
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.MBT);
         },
       },
     },
     {
       data: { t: CONST.MEASURED_TEMPLATE_TYPES.CIRCLE, distance: 3 },
       button: {
-        name: TemplatePreset.LBT,
+        name: constants.TEMPLATE_PRESET.LBT,
         title: 'SWADE.LBT',
         icon: 'text-icon lbt',
         visible: true,
         button: true,
         onClick: () => {
-          SwadeMeasuredTemplate.fromPreset(TemplatePreset.LBT);
+          SwadeMeasuredTemplate.fromPreset(constants.TEMPLATE_PRESET.LBT);
         },
       },
     },
@@ -466,11 +493,24 @@ export const SWADE: SwadeConfig = {
       ],
     },
   ],
+
+  CONST: constants,
+
+  ranks: [
+    'SWADE.Ranks.Novice',
+    'SWADE.Ranks.Seasoned',
+    'SWADE.Ranks.Veteran',
+    'SWADE.Ranks.Heroic',
+    'SWADE.Ranks.Legendary',
+  ],
 };
 
 export interface SwadeConfig {
   //a piece of ASCII art for the init log message
   ASCII: string;
+
+  CONST: typeof constants;
+
   //An object to store localization strings
   attributes: {
     agility: {
@@ -548,4 +588,6 @@ export interface SwadeConfig {
   abilitySheet: Record<AbilitySubType, { dropdown: string; abilities: string }>;
 
   prototypeRollGroups: TraitRollModifierGroup[];
+
+  ranks: string[];
 }
