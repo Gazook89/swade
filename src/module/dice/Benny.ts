@@ -5,15 +5,15 @@ export default class Benny extends DiceTerm {
   }
 
   /** @override */
-  static DENOMINATION = 'b';
+  static override DENOMINATION = 'b';
 
   /** @override */
-  get isDeterministic(): boolean {
+  override get isDeterministic(): boolean {
     return true;
   }
 
   /** @override */
-  getResultLabel(_result: DiceTerm.Result): string {
+  override getResultLabel(_result: DiceTerm.Result): string {
     return 'b';
   }
 }

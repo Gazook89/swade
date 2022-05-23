@@ -13,6 +13,7 @@ declare global {
         dsnCustomWildDieColors: DsnCustomWildDieColors;
         dsnCustomWildDieOptions: DsnCustomWildDieOptions;
         dsnShowBennyAnimation: boolean;
+        dsnWildDie?: string;
         favoriteCardsDoc?: string;
         [key: string]: unknown;
       };

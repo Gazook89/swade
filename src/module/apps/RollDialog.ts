@@ -1,4 +1,5 @@
 import { TraitRollModifier } from '../../interfaces/additional';
+import WildDie from '../dice/WildDie';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
 import * as util from '../util';
@@ -174,11 +175,7 @@ export default class RollDialog extends FormApplication<
     ) {
       const traitPool = terms[0];
       if (traitPool instanceof PoolTerm) {
-        const wildDie = new Die({
-          faces: 6,
-          modifiers: ['x'],
-          options: { flavor: game.i18n.localize('SWADE.WildDie') },
-        });
+        const wildDie = new WildDie();
         const wildRoll = Roll.fromTerms([wildDie]);
         traitPool.rolls.push(wildRoll);
         traitPool.terms.push(wildRoll.formula);
@@ -229,14 +226,11 @@ export default class RollDialog extends FormApplication<
       if (term instanceof PoolTerm) {
         for (const roll of term.rolls) {
           for (const term of roll.terms) {
-            if (
-              term instanceof Die &&
-              term.flavor === game.i18n.localize('SWADE.WildDie')
-            ) {
+            if (term instanceof WildDie) {
               const colorPreset =
                 game.user?.getFlag('swade', 'dsnWildDie') ?? 'none';
               if (colorPreset !== 'none') {
-                term.options['colorset'] = colorPreset;
+                setProperty(term.options, 'colorset', colorPreset);
               }
             }
           }

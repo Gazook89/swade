@@ -4,8 +4,9 @@ import SettingConfigurator from './module/apps/SettingConfigurator';
 import SwadeDocumentTweaks from './module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from './module/CharacterSummarizer';
 import { SWADE } from './module/config';
+import Benny from './module/dice/Benny';
+import WildDie from './module/dice/WildDie';
 import SwadeActor from './module/documents/actor/SwadeActor';
-import Benny from './module/documents/Benny';
 import SwadeItem from './module/documents/item/SwadeItem';
 import SwadeActiveEffect from './module/documents/SwadeActiveEffect';
 import SwadeCards from './module/documents/SwadeCards';
@@ -57,6 +58,10 @@ Hooks.once('init', () => {
       SwadeDocumentTweaks,
       AdvanceEditor,
       SettingConfigurator,
+    },
+    dice: {
+      Benny,
+      WildDie,
     },
     rollItemMacro,
     sockets: new SwadeSocketHandler(),
@@ -143,7 +148,7 @@ Hooks.once('init', () => {
     label: 'SWADE.CommunityItemSheet',
   });
 
-  CONFIG.Dice.terms['b'] = Benny;
+  CONFIG.Dice.terms.b = Benny;
 
   // Drop a journal image to a tile (for cards)
   listenJournalDrop();

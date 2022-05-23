@@ -22,6 +22,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.2.0
+
+### Added
+
+- Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die
+- Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object
+
 ## v1.1.1
 
 ### Fixed

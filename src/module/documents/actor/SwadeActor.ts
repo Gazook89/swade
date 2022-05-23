@@ -5,6 +5,7 @@ import { TraitRollModifier } from '../../../interfaces/additional';
 import { Advance } from '../../../interfaces/Advance';
 import IRollOptions from '../../../interfaces/IRollOptions';
 import { SWADE } from '../../config';
+import WildDie from '../../dice/WildDie';
 import * as util from '../../util';
 import SwadeItem from '../item/SwadeItem';
 import SwadeCombatant from '../SwadeCombatant';
@@ -820,16 +821,10 @@ export default class SwadeActor extends Actor {
    * @param modifiers modifiers to the die
    * @returns a Die instance that already has the exploding modifier by default
    */
-  private _buildTraitDie(
-    sides: number,
-    flavor: string,
-    modifiers: string[] = [],
-  ): Die {
+  private _buildTraitDie(sides: number, flavor: string): Die {
     return new Die({
       faces: sides,
-      //FIXME revisit once types are updated
-      //@ts-expect-error Types are too strict here
-      modifiers: ['x', ...modifiers],
+      modifiers: ['x'],
       options: { flavor: flavor.replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '') },
     });
   }
@@ -851,29 +846,8 @@ export default class SwadeActor extends Actor {
     return die;
   }
 
-  private _buildWildDie(sides = 6, modifiers: string[] = []): Die {
-    const die = new Die({
-      faces: sides,
-      //FIXME revisit once types are updated
-      //@ts-expect-error Types are too strict here
-      modifiers: ['x', ...modifiers],
-      options: {
-        flavor: game.i18n.localize('SWADE.WildDie'),
-      },
-    });
-    if (game.dice3d) {
-      /**
-       * TODO
-       * This doesn't seem to currently work due to an apparent bug in the Foundry roll API
-       * which removes property from the options object during the roll evaluation
-       * I'll keep it here anyway so we have it ready when the bug is fixed
-       */
-      const colorPreset = game.user?.getFlag('swade', 'dsnWildDie') || 'none';
-      if (colorPreset !== 'none') {
-        die.options['colorset'] = colorPreset;
-      }
-    }
-    return die;
+  private _buildWildDie(sides = 6): Die {
+    return new WildDie({ faces: sides });
   }
 
   private _buildTraitRollModifiers(
