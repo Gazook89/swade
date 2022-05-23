@@ -109,7 +109,9 @@ export default class SwadeItem extends Item {
     const baseRoll = new Array<String>();
     for (const term of terms) {
       if (term instanceof Die) {
-        if (!term.modifiers.includes('x')) term.modifiers.push('x');
+        if (!term.modifiers.includes('x') && !term.options.flavor) {
+          term.modifiers.push('x');
+        }
         baseRoll.push(term.formula);
       } else if (term instanceof StringTerm) {
         baseRoll.push(this._makeExplodable(term.term));

@@ -553,14 +553,25 @@ export default class SwadeActor extends Actor {
     return scale;
   }
 
+  /** @deprecated */
+  getRollShortcuts(): Record<string, number | string> {
+    console.warn('Please use SwadeActor#getRollData() instead!');
+    return this.getRollData();
+  }
   /**
-   * Function for shorcut roll in item (@str + 1d6)
+   * Function for shortcut roll in item (@str + 1d6)
    * return something like : {agi: "1d8x+1", sma: "1d6x", spi: "1d6x", str: "1d6x-1", vig: "1d6x"}
    */
-  getRollShortcuts(): Record<string, number | string> {
-    const out: Record<string, any> = {};
+  override getRollData(): Record<string, number | string> {
+    const out: Record<string, any> = {
+      wounds: this.data.data.wounds.value || 0,
+    };
+
     //return early if the actor is a vehicle
-    if (this.data.type === 'vehicle') return out;
+    if (this.data.type === 'vehicle') {
+      out.topspeed = this.data.data.topspeed || 0;
+      return out;
+    }
 
     // Attributes
     const attributes = this.data.data.attributes;
@@ -569,32 +580,25 @@ export default class SwadeActor extends Actor {
       const name = game.i18n.localize(SWADE.attributes[key].long);
       const die = attribute.die.sides;
       const mod = attribute.die.modifier || 0;
-      out[short] = `1d${die}x[${name}]${mod ? mod.signedString() : ''}`;
+      const modString = mod !== 0 ? mod.signedString() : '';
+      let val = `1d${die}x[${name}]${modString}`;
+      if (die <= 1) val = `1d${die}[${name}]${modString}`;
+      out[short] = val;
     }
+
+    const skills = this.itemTypes.skill;
+    for (const skill of skills) {
+      if (skill.data.type !== 'skill') continue;
+      const skillDie = Number(skill.data.data.die.sides);
+      const skillMod = Number(skill.data.data.die.modifier);
+      const name = skill.name!.slugify({ strict: true });
+      const skillModString = skillMod !== 0 ? skillMod.signedString() : '';
+      out[name] = `1d${skillDie}[${skill.name}]${skillModString}`;
+    }
+    out.fatigue = this.data.data.fatigue.value || 0;
+    out.pace = this.data.data.stats.speed.adjusted || 0;
+
     return out;
-  }
-
-  override getRollData(): Record<string, number | string> {
-    const retVal = this.getRollShortcuts();
-    retVal['wounds'] = this.data.data.wounds.value || 0;
-
-    if (this.data.type === 'vehicle') {
-      retVal['topspeed'] = this.data.data.topspeed || 0;
-    } else {
-      const skills = this.itemTypes.skill;
-      for (const skill of skills) {
-        if (skill.data.type !== 'skill') continue;
-        const skillDie = Number(skill.data.data.die.sides);
-        const skillMod = Number(skill.data.data.die.modifier);
-        const name = skill.name!.slugify({ strict: true });
-        retVal[name] = `1d${skillDie}x[${skill.name}]${
-          skillMod !== 0 ? skillMod.signedString() : ''
-        }`;
-      }
-      retVal['fatigue'] = this.data.data.fatigue.value || 0;
-      retVal['pace'] = this.data.data.stats.speed.adjusted || 0;
-    }
-    return retVal;
   }
 
   /** Calculates the correct armor value based on SWADE v5.5 and returns that value */
@@ -822,9 +826,11 @@ export default class SwadeActor extends Actor {
    * @returns a Die instance that already has the exploding modifier by default
    */
   private _buildTraitDie(sides: number, flavor: string): Die {
+    const modifiers: (keyof Die.Modifiers)[] = [];
+    if (sides > 1) modifiers.push('x');
     return new Die({
       faces: sides,
-      modifiers: ['x'],
+      modifiers: modifiers,
       options: { flavor: flavor.replace(/[^a-zA-Z\d\s:\u00C0-\u00FF]/g, '') },
     });
   }
