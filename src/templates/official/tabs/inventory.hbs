@@ -17,11 +17,14 @@
     </span>
     {{else if (eq settingrules.wealthType "wealthDie")}}
     <label>
-      <button class="roll">{{localize "SWADE.WealthDie"}}</button>
+      <button class="roll">{{localize "SWADE.WealthDie.Label"}}</button>
     </label>
     <span class="form-fields">
       <select data-dtype="Number" name="data.details.wealth.die">
-        {{#select data.data.details.wealth.die}} {{> "systems/swade/templates/die-sides-options.hbs"}} {{/select}}
+        {{#select data.data.details.wealth.die}}
+        <option value="0">{{localize "SWADE.WealthDie.Broke.Label"}}</option>
+        {{> "systems/swade/templates/die-sides-options.hbs"}}
+        {{/select}}
       </select>
       <input
         type="text"

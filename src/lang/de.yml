@@ -354,6 +354,9 @@ SWADE.NoPowerPointsDesc: >-
   ausgeblendet
 SWADE.WealthType: Kapitalsystem
 SWADE.WealthDie: Wohlstandswürfel
+SWADE.WealthDie.Label: Wohlstandswürfel
+SWADE.WealthDie.Broke.Label: Pleite
+SWADE.WealthDie.Broke.Hint: Du bist pleite!
 SWADE.WealthSelectionNoneOther: Keines / Anderes
 SWADE.WealthTypeDesc: >-
   Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden

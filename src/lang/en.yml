@@ -355,7 +355,9 @@ SWADE.Ace: Acing
 SWADE.NoPowerPoints: No Power Points
 SWADE.NoPowerPointsDesc: When enabled this option hides all Power Point interactions
 SWADE.WealthType: Wealth Type
-SWADE.WealthDie: Wealth Die
+SWADE.WealthDie.Label: Wealth Die
+SWADE.WealthDie.Broke.Label: Broke
+SWADE.WealthDie.Broke.Hint: You are Broke!
 SWADE.WealthTypeDesc: Choose how to track character wealth and currency
 SWADE.CurrencyName: Currency Name
 SWADE.CurrencyNameDesc: Name your currency

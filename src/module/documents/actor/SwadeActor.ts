@@ -4,6 +4,7 @@ import { Attribute, ItemMetadata, StatusEffect } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
 import { Advance } from '../../../interfaces/Advance';
 import IRollOptions from '../../../interfaces/IRollOptions';
+import RollDialog from '../../apps/RollDialog';
 import { SWADE } from '../../config';
 import WildDie from '../../dice/WildDie';
 import * as util from '../../util';
@@ -178,8 +179,8 @@ export default class SwadeActor extends Actor {
     }
   }
 
-  rollAttribute(attribute: Attribute, options: IRollOptions = {}) {
-    if (this.data.type === 'vehicle') return;
+  async rollAttribute(attribute: Attribute, options: IRollOptions = {}) {
+    if (this.data.type === 'vehicle') return null;
     if (options.rof && options.rof > 1) {
       ui.notifications.warn(
         'Attribute Rolls with RoF greater than 1 are not currently supported',
@@ -260,11 +261,11 @@ export default class SwadeActor extends Actor {
     });
   }
 
-  rollSkill(
+  async rollSkill(
     skillId: string | null | undefined,
     options: IRollOptions = { rof: 1 },
     tempSkill?: SwadeItem,
-  ): Promise<Roll | null> | Roll {
+  ): Promise<Roll | null> {
     let skill: SwadeItem | undefined;
     skill = this.items.find((i) => i.id == skillId);
     if (tempSkill) {
@@ -322,24 +323,34 @@ export default class SwadeActor extends Actor {
     });
   }
 
-  rollWealthDie() {
+  async rollWealthDie() {
     if (this.data.type === 'vehicle') return;
     const die = this.data.data.details.wealth.die ?? 6;
     const mod = this.data.data.details.wealth.modifier ?? 0;
     const wildDie = this.data.data.details.wealth['wild-die'] ?? 6;
-    const dieLabel = game.i18n.localize('SWADE.WealthDie');
-    const wildDieLabel = game.i18n.localize('SWADE.WildDie');
-    const formula = this.isWildcard
-      ? `{1d${die}x[${dieLabel}], 1d${wildDie}x[${wildDieLabel}]}kh`
-      : `{1d${die}x[${dieLabel}]}`;
+    if (die < 4) {
+      ui.notifications.warn('SWADE.WealthDie.Broke.Hint', { localize: true });
+      return null;
+    }
+    const rolls = [
+      Roll.fromTerms([
+        this._buildTraitDie(die, game.i18n.localize('SWADE.WealthDie.Label')),
+      ]),
+    ];
+    if (this.isWildcard) {
+      rolls.push(Roll.fromTerms([this._buildWildDie(wildDie)]));
+    }
 
-    return game.swade.RollDialog.asPromise({
-      roll: new Roll(formula),
+    const pool = PoolTerm.fromRolls(rolls);
+    pool.modifiers.push('kh');
+
+    return RollDialog.asPromise({
+      roll: Roll.fromTerms([pool]),
       mods: [{ label: 'Modifier', value: mod }],
       speaker: ChatMessage.getSpeaker(),
       actor: this,
-      flavor: game.i18n.localize('SWADE.WealthDie'),
-      title: game.i18n.localize('SWADE.WealthDie'),
+      flavor: game.i18n.localize('SWADE.WealthDie.Label'),
+      title: game.i18n.localize('SWADE.WealthDie.Label'),
     });
   }
 

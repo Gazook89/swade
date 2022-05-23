@@ -26,16 +26,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die
-- Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object
+- Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die. It is also being used for all trait rolls.
+- Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object.
+- Added additional translation strings.
+
+### Changed
+
+- You can now no longer roll your Wealth Die if you are broke.
+- Changed some translation strings, see the list below:
+  - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
 
 ### Deprecated
 
-- Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0
+- Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0.
 
 ### Fixed
 
-- Rolling damage and Trait rolls with a Strength of 1 no longer results in an error
+- Rolling damage and Trait rolls with a Strength of 1 no longer results in an error.
 
 ## v1.1.1
 

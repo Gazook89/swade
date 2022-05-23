@@ -189,7 +189,7 @@ export function registerSettingRules() {
     type: String,
     choices: {
       currency: 'SWADE.Currency',
-      wealthDie: 'SWADE.WealthDie',
+      wealthDie: 'SWADE.WealthDie.Label',
       none: 'SWADE.WealthSelectionNoneOther',
     },
     default: 'currency',
