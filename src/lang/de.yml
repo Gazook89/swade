@@ -373,7 +373,7 @@ SWADE.CoreSkills: Grundfertigkeiten
 SWADE.CoreSkillsDesc: >-
   Gib hier die Namen der Grundfertigkeiten deines Settings an. Zum Beispiel so:
   Allgemeinwissen, Athletik, Heimlichkeit, Überreden, Wahrnehmung
-SWADE.CoreSkillsPackDesc: Wähle aus, aus welchem ​​Kompendium die Grundfertigkeiten bezogen werden
+SWADE.CoreSkillsPackDesc: Wähle aus, aus welchem Kompendium die Grundfertigkeiten bezogen werden
 SWADE.Joker: Joker
 SWADE.DmgRolls: Schadenswürfe
 SWADE.SubtractPPDesc: MP-Kosten von den verfügbaren MP abziehen

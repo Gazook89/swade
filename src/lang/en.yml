@@ -427,7 +427,7 @@ SWADE.Modifiers: Modifiers
 SWADE.ActionTraitMod: Action Trait Modifier
 SWADE.ActionDmgMod: Action Damage Modifier
 SWADE.ItemTraitMod: Item Trait Modifier
-SWADE.ItemDmgMod: Item Damage Modifer
+SWADE.ItemDmgMod: Item Damage Modifier
 SWADE.Duplicates: Duplicates Found
 SWADE.DuplicateItemsBodyText: >-
   While adding the {type} <strong>{name}</strong> to the Actor {target} the
