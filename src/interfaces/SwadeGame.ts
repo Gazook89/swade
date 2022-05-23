@@ -30,9 +30,4 @@ export default interface SwadeGame {
   rollItemMacro: typeof rollItemMacro;
   migrations: typeof migrations;
   itemChatCardHelper: typeof ItemChatCardHelper;
-  /**
-   * @deprecated use game.swade.apps.SwadeEntityTweaks instead
-   * @since v1.1.0
-   */
-  SwadeEntityTweaks: typeof SwadeDocumentTweaks;
 }

@@ -64,12 +64,6 @@ Hooks.once('init', () => {
     itemChatCardHelper: ItemChatCardHelper,
     CharacterSummarizer,
     RollDialog,
-    get SwadeEntityTweaks() {
-      console.warn(
-        'Please use `game.swade.apps.SwadeDocumentTweaks` instead. This accessor is getting deprecated and removed with system version 1.2.0',
-      );
-      return SwadeDocumentTweaks;
-    },
   };
 
   //register custom Handlebars helpers
