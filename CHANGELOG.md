@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.1
+
+### Fixed
+
+- Fixed a small bug that would prevent automatic creation of an action deck in a world
+
 ## v1.1.0
 
 ### Added

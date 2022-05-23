@@ -12,9 +12,9 @@ async function setupActionDeck() {
   if (actionDeckId && actionDeck) return;
   ui.notifications.info('SWADE.NoActionDeckFound', { localize: true });
   const preset = CONFIG.Cards.presets.pokerLight;
-  const data = foundry.utils.fetchJsonWithTimeout(preset.src) as any;
+  const data = await foundry.utils.fetchJsonWithTimeout(preset.src);
   const cardsCls = getDocumentClass('Cards');
-  const newActionDeck = await cardsCls.create(data);
+  const newActionDeck = await cardsCls.create(data as any);
   await game.settings.set('swade', 'actionDeck', newActionDeck?.id!);
   await newActionDeck?.shuffle({ chatNotification: false });
 }
