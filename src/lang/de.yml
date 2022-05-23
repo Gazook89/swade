@@ -353,7 +353,6 @@ SWADE.NoPowerPointsDesc: >-
   Wenn diese Option aktiviert ist, werden alle Machtpunkt-Interaktionen
   ausgeblendet
 SWADE.WealthType: Kapitalsystem
-SWADE.WealthDie: Wohlstandswürfel
 SWADE.WealthDie.Label: Wohlstandswürfel
 SWADE.WealthDie.Broke.Label: Pleite
 SWADE.WealthDie.Broke.Hint: Du bist pleite!
