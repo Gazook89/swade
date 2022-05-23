@@ -530,3 +530,7 @@ SWADE.CharacterGoals: Goals
 SWADE.Background: Background
 SWADE.ActiveEffects.Add: Add Active Effect
 SWADE.ActiveEffects.Source: Source
+SWADE.Settings.HighlightTemplate.Name: Always Highlight Templates
+SWADE.Settings.HighlightTemplate.Hint: >-
+  When enabled, Measured Templates alway highlight themselves instead of the
+  grid.

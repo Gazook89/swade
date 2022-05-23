@@ -38,6 +38,7 @@ declare global {
       'swade.3dBennyBackBump': string;
       'swade.hardChoices': boolean;
       'swade.applyEncumbrance': boolean;
+      'swade.highlightTemplate': boolean;
       'swade.settingFields': {
         actor: Record<string, AdditionalStat>;
         item: Record<string, AdditionalStat>;
@@ -160,6 +161,15 @@ export function registerSettings() {
     scope: 'world',
     type: String,
     config: false,
+  });
+
+  game.settings.register('swade', 'highlightTemplate', {
+    name: game.i18n.localize('SWADE.Settings.HighlightTemplate.Name'),
+    hint: game.i18n.localize('SWADE.Settings.HighlightTemplate.Hint'),
+    scope: 'world',
+    type: Boolean,
+    default: true,
+    config: true,
   });
 }
 

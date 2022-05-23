@@ -25,7 +25,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       CONFIG.SWADE.activeMeasuredTemplatePreview.drawPreview();
   }
 
-  private static _constructPreset(preset: string) {
+  protected static _constructPreset(preset: string) {
     // Prepare template data
     const templateBaseData: MeasuredTemplateConstructorDataData = {
       user: game.user?.id,
@@ -117,23 +117,21 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     canvas.app!.view.onwheel = this.handlers.mw;
   }
 
-  /** @override */
-  destroy(...args) {
+  override destroy(...args) {
     CONFIG.SWADE.activeMeasuredTemplatePreview = null;
     this._removeListenersFromCanvas();
     return super.destroy(...args);
   }
 
-  /** remove the mouse Listeners from the canvas */
-  _removeListenersFromCanvas() {
+  /** Remove the mouse listeners from the canvas */
+  protected _removeListenersFromCanvas() {
     canvas.stage!.off('mousemove', this.handlers.mm);
     canvas.stage!.off('mousedown', this.handlers.lc);
     canvas.app!.view.oncontextmenu = null;
     canvas.app!.view.onwheel = null;
   }
 
-  /** @override */
-  protected _getConeShape(
+  protected override _getConeShape(
     direction: number,
     angle: number,
     distance: number,
@@ -186,4 +184,57 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     }
     return new PIXI.Polygon(points);
   }
+
+  override highlightGrid() {
+    //return early if te object doesn't actually exist yet
+    if (!this.id || !this.shape) return;
+
+    const highlightRAW = game.settings.get('swade', 'highlightTemplate');
+    if (!highlightRAW) return super.highlightGrid();
+
+    const grid = canvas.grid!;
+    const color = Number(this.fillColor);
+    const border = Number(this.borderColor);
+
+    //get the highlight layer and prep it
+    const layer = grid.getHighlightLayer(`Template.${this.id}`)!;
+    layer.clear();
+
+    //get the shape of the template and prep it
+    const shape = this.shape.clone();
+    if ('points' in shape) {
+      shape.points = shape.points.map((p, i) => {
+        if (i % 2) return this.y + p;
+        else return this.x + p;
+      });
+    } else {
+      shape.x += this.x;
+      shape.y += this.y;
+    }
+
+    //draw the actual shape
+    this._highlightGridArea(layer, { color, border, shape });
+  }
+
+  /** A re-implementation of `BaseGrid#highlightGridPosition()` to force gridless behavior */
+  private _highlightGridArea(
+    layer: GridHighlight,
+    { color, border, alpha = 0.25, shape }: IGridHighLightOptions,
+  ) {
+    layer.beginFill(color, alpha);
+    if (border) layer.lineStyle(2, border, Math.min(alpha * 1.5, 1.0));
+    layer.drawShape(shape).endFill();
+  }
+}
+
+interface IGridHighLightOptions {
+  color: number;
+  border?: number;
+  alpha?: number;
+  shape:
+    | PIXI.Circle
+    | PIXI.Ellipse
+    | PIXI.Polygon
+    | PIXI.Rectangle
+    | PIXI.RoundedRectangle;
 }
