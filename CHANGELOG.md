@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die. It is also being used for all trait rolls.
 - Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object.
+- Added an option to force Measured Templates highlighting to act like it is on a gridless scene even if it is not. This can be toggled via the `Always Highlight Templates` option in the System Settings and defaults to on.
 - Added additional translation strings.
 
 ### Changed
