@@ -533,6 +533,14 @@ export default class CharacterSheet extends ActorSheet {
           throw new Error(`Action ${button.dataset.action} not supported`);
       }
     });
+
+    html.find('.profile-img').on('contextmenu', () => {
+      if (!this.actor.img) return;
+      new ImagePopout(this.actor.img, {
+        title: this.actor.name!,
+        shareable: this.actor.isOwner ?? game.user?.isGM ?? false,
+      }).render(true);
+    });
   }
 
   async getData() {
