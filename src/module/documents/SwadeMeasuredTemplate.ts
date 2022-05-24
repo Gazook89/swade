@@ -190,6 +190,7 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
     if (!this.id || !this.shape) return;
 
     const highlightRAW = game.settings.get('swade', 'highlightTemplate');
+    //defer to the core highlighting if the setting is off
     if (!highlightRAW) return super.highlightGrid();
 
     const grid = canvas.grid!;
