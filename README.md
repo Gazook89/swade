@@ -4,13 +4,15 @@ _by Pinnacle Entertainment Group, Inc._
 
 <div align="center">
 
-![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://gitlab.com/peginc/swade/-/raw/develop/src/system.json)
-![Current system version](https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=version&query=version&color=success)
-![Build Status](https://img.shields.io/gitlab/pipeline-status/peginc/swade?branch=master)
+[![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://gitlab.com/peginc/swade/-/raw/develop/src/system.json)](https://foundryvtt.com/releases/)
+[![Latest Release](https://gitlab.com/peginc/swade/-/badges/release.svg)](https://gitlab.com/peginc/swade/-/releases)
+[![Build Status](https://img.shields.io/gitlab/pipeline-status/peginc/swade?branch=master)](https://gitlab.com/peginc/swade/-/commits/master)
 
-![Savage Worlds Adventure Edition for Foundry Virtual Tabletop](https://gitlab.com/peginc/swade/-/raw/master/images/logos/SWADE_FVTT.png)
+[![Savage Worlds Adventure Edition for Foundry Virtual Tabletop](https://gitlab.com/peginc/swade/-/raw/master/images/logos/SWADE_FVTT.png)](https://foundryvtt.com/packages/swade)
 
 </div>
+
+The SWADE System for Savage Worlds is an official product of Pinnacle Entertainment Group. It’s lead developer and maintainer is FloRad who can be supported at https://ko-fi.com/florad
 
 This game system supports and enhances the play experience of _Savage Worlds Adventure Edition_ in [Foundry VTT](https://foundryvtt.com/).
 
@@ -42,11 +44,7 @@ Full documentation on how to use the system and sheets as well as a collection o
 
 ## Installation Instructions
 
-To install the SWADE system for Foundry Virtual Tabletop, simply paste the following URL into the **Install System** dialog on the Setup menu of the application.
-
-```
-https://gitlab.com/peginc/swade/-/raw/master/src/system.json
-```
+To install the SWADE system for Foundry Virtual Tabletop, navigate to the **Install System** dialog on the Setup menu and install it from there!
 
 If you wish to manually install the system, extract it into the `Data/systems/swade` folder. You may do this by downloading a zip archive from the [Releases Page](https://gitlab.com/peginc/swade/-/releases).
 
@@ -55,10 +53,11 @@ If you wish to manually install the system, extract it into the `Data/systems/sw
 To create a local build of the SWADE system for Foundry VTT, follow these steps:
 
 1. If you don't Node.js installed, be sure to install the [latest Node.js LTS version](https://nodejs.org/).
-1. Clone the repository and open a commandline/terminal window in the cloned the directory.
-1. Run the `npm install` command to install all the required node modules, including the type definitions.
+1. [Clone](https://git-scm.com/docs/git-clone) the repository and open a commandline or terminal window in the cloned the directory.
+1. Run the `npm ci` command to install all the required node modules, including the type definitions.
 1. Set the `dataPath` in `foundryconfig.json` to your FoundryVTT data folder.
-1. Either run `npm run build` in a shell in your cloned directory or run the npm script `build` directly from your IDE, such as VS Code. **Note:** you might need to run this command as admin. To do this open your terminal or IDE as admin
+1. Run the `link-project` script to link the build artifacts with your foundry install. **Note:** If you use Windows you will need to run this command with admin rights. Don't worry though as it only needs to be run once.
+1. Either run `npm run build:watch` in a shell in your cloned directory or run the npm script `build:watch` directly from your IDE, such as [Visual Studio Code](https://code.visualstudio.com/).
 
 _Savage Worlds Adventure Edition_ should now show up in Foundry VTT as an installed game system.
 
@@ -68,7 +67,10 @@ _Savage Worlds Adventure Edition_ should now show up in Foundry VTT as an instal
 
 Code and content contributions are accepted. Please feel free to submit issues to the issue tracker or submit merge requests for code changes. Approval for such requests involves code and design review by the VTT Team. **Any merge requests submitted must be submitted with `develop` as the target branch. Merge requests that target the `master` branch will be rejected or ignored.**
 
-Please reach out in the `#swade` channel on the [Foundry VTT Discord server](https://discord.gg/foundryvtt) with any questions.
+If you have any qustions please feel free to reach out to us here:
+
+- The `#swade` channel on the [Foundry VTT Discord server](https://discord.gg/foundryvtt)
+- The `#swade-dev` channel on the [League of Extraordinary FVTT Developers](https://discord.gg/fvttdevleague)
 
 ## FAQ
 
