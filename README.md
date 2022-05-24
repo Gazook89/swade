@@ -57,7 +57,7 @@ To create a local build of the SWADE system for Foundry VTT, follow these steps:
 1. Run the `npm ci` command to install all the required node modules, including the type definitions.
 1. Set the `dataPath` in `foundryconfig.json` to your FoundryVTT data folder.
 1. Run the `link-project` script to link the build artifacts with your foundry install. **Note:** If you use Windows you will need to run this command with admin rights. Don't worry though as it only needs to be run once.
-1. Either run `npm run build:watch` in a shell in your cloned directory or run the npm script `build:watch` directly from your IDE, such as [Visual Studio Code](https://code.visualstudio.com/).
+1. Run the `build:watch` script directly from your IDE, such as [Visual Studio Code](https://code.visualstudio.com/).
 
 _Savage Worlds Adventure Edition_ should now show up in Foundry VTT as an installed game system.
 
