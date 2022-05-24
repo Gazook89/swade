@@ -4,11 +4,11 @@ _by Pinnacle Entertainment Group, Inc._
 
 <div align="center">
 
-![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://gitlab.com/peginc/swade/-/raw/develop/src/system.json)
-![Current system version](https://img.shields.io/badge/dynamic/json?url=https://gitlab.com/peginc/swade/-/raw/master/src/system.json&label=version&query=version&color=success)
-![Build Status](https://img.shields.io/gitlab/pipeline-status/peginc/swade?branch=master)
+[![Supported Foundry VTT versions](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https://gitlab.com/peginc/swade/-/raw/develop/src/system.json)](https://foundryvtt.com/releases/)
+[![Latest Release](https://gitlab.com/peginc/swade/-/badges/release.svg)](https://gitlab.com/peginc/swade/-/releases)
+[![Build Status](https://img.shields.io/gitlab/pipeline-status/peginc/swade?branch=master)](https://gitlab.com/peginc/swade/-/commits/master)
 
-![Savage Worlds Adventure Edition for Foundry Virtual Tabletop](https://gitlab.com/peginc/swade/-/raw/master/images/logos/SWADE_FVTT.png)
+[![Savage Worlds Adventure Edition for Foundry Virtual Tabletop](https://gitlab.com/peginc/swade/-/raw/master/images/logos/SWADE_FVTT.png)](https://foundryvtt.com/packages/swade)
 
 </div>
 
