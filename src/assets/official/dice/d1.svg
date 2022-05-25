@@ -1,0 +1,11 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200px"
+	height="200px" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
+	<g>
+		<circle cx="100" cy="100" r="70" stroke="black" stroke-width="12" fill="transparent" />
+	</g>
+	<g transform="translate(-8,220) scale(0.12,-0.12)" fill="#000000" stroke="none">
+		<path d="M801 1293 l-63 -36 6 -41 c4 -22 9 -42 11 -44 2 -2 23 8 48 22 24 14
+47 26 50 26 4 0 8 -120 9 -267 l3 -268 53 -3 52 -3 0 325 0 326 -52 -1 c-41 0
+-67 -8 -117 -36z" />
+	</g>
+</svg>

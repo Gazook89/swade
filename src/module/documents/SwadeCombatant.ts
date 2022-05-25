@@ -1,6 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
-import { createGmBennyAddMessage } from '../chat';
 import { SWADE } from '../config';
 import { getCanvas } from '../util';
 import SwadeUser from './SwadeUser';
@@ -162,7 +161,6 @@ export default class SwadeCombatant extends Combatant {
         const gmUsers = game.users?.filter((u) => u.active && u.isGM)!;
         for (const gm of gmUsers) {
           await gm.getBenny();
-          await createGmBennyAddMessage(gm, true);
         }
 
         //give all enemy wildcards a benny
