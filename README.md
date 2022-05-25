@@ -82,6 +82,7 @@ _Savage Worlds_, all unique characters, creatures, and locations, artwork, logos
 
 Pinnacle Entertainment Group, Inc. reserves the rights for the following assets in this repository and any game system built from it. The assets are only to be used in Foundry VTT for the purpose of playing _Savage Worlds Adventure Edition_. Any removal, alteration, or additions to any logos or other trademarked images or materials is prohibited.
 
+- d1.svg
 - d4.svg
 - d6.svg
 - d8.svg
