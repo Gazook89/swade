@@ -45,6 +45,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Rolling damage and Trait rolls with a Strength of 1 no longer results in an error.
 
+## v1.1.2
+
+### Added
+
+- Added proper symbol for Strength 1 on the character sheet
+- Added some hover styles to the attribute dropdown on the character sheet
+
+### Fixed
+
+- Fixed duplicate messages when a gamemaster gets a Benny
+- Fixed equip toggle accidentally showing up for all gear items, even if they're not equippable
+
 ## v1.1.1
 
 ### Fixed

@@ -248,6 +248,7 @@
       <span class="weight">{{formatNumber (times data.data.weight data.data.quantity)}}</span>
       <span class="item-controls">
         {{#if isOwner}}
+        {{#if data.data.equippable}}
         <button
           type="button"
           class="item-toggle {{#unless data.data.equipped}}item-unequipped{{/unless}}"
@@ -256,6 +257,7 @@
         >
           <i class="fas fa-tshirt"></i>
         </button>
+        {{/if}}
         <button
             type="button"
             class="item-toggle {{#unless data.data.favorite}}item-unequipped{{/unless}}"
