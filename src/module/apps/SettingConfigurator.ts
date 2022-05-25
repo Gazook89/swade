@@ -189,8 +189,7 @@ export default class SettingConfigurator extends FormApplication<
           //remove the CF entities
           (e) => e.name !== '#[CF_tempEntity]',
         );
-        const isItem =
-          p.metadata.type === 'Item' || p.metadata.entity === 'Item';
+        const isItem = p.metadata.type === 'Item';
         return isItem && index.every((v) => v['type'] === 'skill');
       })
       .forEach((p) => {
