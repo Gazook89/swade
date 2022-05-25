@@ -231,6 +231,14 @@ export default class SwadeBaseActorSheet extends ActorSheet {
 
     //Wealth Die Roll
     html.find('.currency .roll').on('click', () => this.actor.rollWealthDie());
+
+    html.find('.profile-img').on('contextmenu', () => {
+      if (!this.actor.img) return;
+      new ImagePopout(this.actor.img, {
+        title: this.actor.name!,
+        shareable: this.actor.isOwner ?? game.user?.isGM ?? false,
+      }).render(true);
+    });
   }
 
   getData() {
