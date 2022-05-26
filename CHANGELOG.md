@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.3
+
+### Removed
+
+- Removed some unnecessary in the character sheet styles. This is a necessary step towards fixing the setting-specific character sheets
+
 ## v1.1.2
 
 ### Added
