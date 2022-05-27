@@ -107,10 +107,9 @@ Hooks.once('init', () => {
   };
 
   //register custom status effects
-  //@ts-ignore
   CONFIG.statusEffects = SWADE.statusEffects;
 
-  //@ts-expect-error Types don't properly recognized dotnotation
+  //@ts-expect-error Types don't properly recognize dotnotation
   CompendiumCollection.INDEX_FIELDS.Actor.push('data.wildcard');
 
   //Preload Handlebars templates
