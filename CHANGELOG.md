@@ -22,6 +22,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.4
+
+### Added
+
+- Added the number of the advance to the list of advances. (#524)
+- Added more clear styling to advance planning toggle (#525)
+- Added additional translation keys
+
 ## v1.1.3
 
 ### Removed
