@@ -1276,12 +1276,13 @@
     }
     .advance-track {
       list-style: none;
+      padding: 0 0 0 1em;
       .advance {
         display: grid;
-        grid-template-columns: 25% auto 80px;
+        grid-template-columns: 1.5em 25% auto 80px;
         text-align: left;
       }
-      .planned {
+      .faded {
         font-style: italic;
         color: $input-bg-dark;
       }

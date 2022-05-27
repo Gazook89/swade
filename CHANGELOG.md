@@ -46,6 +46,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Rolling damage and Trait rolls with a Strength of 1 no longer results in an error.
 
+## v1.1.4
+
+### Added
+
+- Added the number of the advance to the list of advances. (#524)
+- Added more clear styling to advance planning toggle (#525)
+- Added additional translation keys
+
+## v1.1.3
+
+### Removed
+
+- Removed some unnecessary in the character sheet styles. This is a necessary step towards fixing the setting-specific character sheets
+
 ## v1.1.2
 
 ### Added

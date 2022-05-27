@@ -534,3 +534,4 @@ SWADE.Settings.HighlightTemplate.Name: Always Highlight Templates
 SWADE.Settings.HighlightTemplate.Hint: >-
   When enabled, Measured Templates alway highlight themselves instead of the
   grid.
+SWADE.Advances.Number: Advance number
