@@ -66,9 +66,8 @@ export default defineConfig({
           src: [`${srcDirectory}/template.yml`],
           dest: distDirectory,
           transform: (content, src, _dst) => {
-            return JSON.stringify(
-              yaml.load(content.toString(), { filename: src }),
-            );
+            const data = yaml.load(content.toString(), { filename: src });
+            return JSON.stringify(data, null, 2);
           },
           rename: (name, _ext) => `${name}.json`,
         },
@@ -77,11 +76,8 @@ export default defineConfig({
           src: [`${srcDirectory}/lang/*.yml`],
           dest: `${distDirectory}/lang`,
           transform: (content, src, _dst) => {
-            return JSON.stringify(
-              yaml.load(content.toString(), { filename: src }),
-              null,
-              2,
-            );
+            const data = yaml.load(content.toString(), { filename: src });
+            return JSON.stringify(data, null, 2);
           },
           rename: (name, _ext) => `${name}.json`,
         },
