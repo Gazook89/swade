@@ -1,6 +1,7 @@
+import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/token';
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
-import { Attribute, ItemMetadata, StatusEffect } from '../../../globals';
+import { Attribute, ItemMetadata } from '../../../globals';
 import { TraitRollModifier } from '../../../interfaces/additional';
 import { Advance } from '../../../interfaces/Advance';
 import IRollOptions from '../../../interfaces/IRollOptions';
@@ -454,7 +455,6 @@ export default class SwadeActor extends Actor {
     //if there's tokens, iterate over them to toggle the effect directly
     if (tokens.length > 0) {
       for (const token of tokens) {
-        //@ts-ignore TokenDocument.toggleActiveEffect is documented in the API: https://foundryvtt.com/api/TokenDocument.html#toggleActiveEffect
         await token.document.toggleActiveEffect(effectData, options);
       }
       return;

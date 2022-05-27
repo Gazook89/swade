@@ -1,5 +1,4 @@
 import { ActiveEffectDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/activeEffectData';
-import { StatusEffect } from '../../globals';
 import { SWADE } from '../config';
 import SwadeBaseActorSheet from './SwadeBaseActorSheet';
 
@@ -177,21 +176,7 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
     // Active Effects
     html
       .find('.status-container input[type="checkbox"]')
-      .on('change', async (event) => {
-        // Get the key from the target name
-        const id = event.target.dataset.id as string;
-        const key = event.target.dataset.key as string;
-        const statusConfigData = SWADE.statusEffects.find(
-          (effect) => effect.id === id,
-        ) as StatusEffect;
-        // this is just to make sure the status is false in the source data
-        await this.actor.update({
-          'data.status': {
-            [key]: false,
-          },
-        });
-        this.actor.toggleActiveEffect(statusConfigData);
-      });
+      .on('change', this._toggleStatusEffect.bind(this));
   }
 
   getData() {
@@ -246,5 +231,17 @@ export default class SwadeNPCSheet extends SwadeBaseActorSheet {
       renderSheet: renderSheet,
       parent: this.actor,
     });
+  }
+
+  protected async _toggleStatusEffect(ev: JQuery.ChangeEvent) {
+    // Get the key from the target name
+    const id = ev.target.dataset.id as string;
+    const key = ev.target.dataset.key as string;
+    let data = CONFIG.SWADE.statusEffects.find((e) => e.id === id);
+    //fallback for when the effect doesn't exist in the global object
+    if (!data) data = SWADE.statusEffects.find((e) => e.id === id)!;
+    // this is just to make sure the status is false in the source data
+    await this.actor.update({ [`data.status.${key}`]: false });
+    this.actor.toggleActiveEffect(data);
   }
 }

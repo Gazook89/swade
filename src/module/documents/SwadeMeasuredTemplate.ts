@@ -36,14 +36,14 @@ export default class SwadeMeasuredTemplate extends MeasuredTemplate {
       fillColor: game.user!.data.color,
     };
 
-    const presetProtype = CONFIG.SWADE.measuredTemplatePresets.find(
+    const presetPrototype = CONFIG.SWADE.measuredTemplatePresets.find(
       (c) => c.button.name === preset,
     );
-    if (!presetProtype) return null;
+    if (!presetPrototype) return null;
 
     //Set template data based on preset option
     const template = new CONFIG.MeasuredTemplate.documentClass(
-      foundry.utils.mergeObject(templateBaseData, presetProtype.data),
+      foundry.utils.mergeObject(templateBaseData, presetPrototype.data),
       {
         parent: canvas.scene ?? undefined,
       },
