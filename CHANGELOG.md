@@ -26,16 +26,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Added
 
-- Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die. It is also being used for all trait rolls.
-- Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object.
-- Added an option to force Measured Templates highlighting to act like it is on a gridless scene even if it is not. This can be toggled via the `Always Highlight Templates` option in the System Settings and defaults to on.
+- Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die. It is also being used for all trait rolls. (#529)
+- Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object. (#529)
+- Added an option to force Measured Templates highlighting to act like it is on a gridless scene even if it is not. This can be toggled via the `Always Highlight Templates` option in the System Settings and defaults to on (#516).
 - You can now right click an actor's portrait on all actor sheets to enlarge it
 - Added additional translation strings.
 
 ### Changed
 
-- You can now no longer roll your Wealth Die if you are broke.
-- Changed some translation strings, see the list below:
+- You can now no longer roll your Wealth Die if you are broke. (#275)
+- Changed some translation strings, see the list below: (528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
 
 ### Deprecated
@@ -44,7 +44,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Fixed
 
-- Rolling damage and Trait rolls with a Strength of 1 no longer results in an error.
+- Rolling damage and Trait rolls with a Strength of 1 no longer results in an error. (#308)
 
 ## v1.1.4
 
