@@ -1,4 +1,6 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
+import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
+import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
 import * as utils from '../util';
 import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
@@ -28,13 +30,14 @@ export default class SwadeCombat extends Combat {
    */
   async rollInitiative(
     ids: string | string[],
-    options?: InitiativeOptions,
+    options: InitiativeOptions = {},
   ): Promise<this> {
+    const { messageOptions } = options;
     // Structure input data
     ids = typeof ids === 'string' ? [ids] : ids;
 
-    const combatantUpdates: Record<string, unknown>[] = [];
-    const initMessages: Record<string, unknown>[] = [];
+    const updates: CombatantDataConstructorData[] = [];
+    const messages: ChatMessageDataConstructorData[] = [];
     let isRedraw = false;
     let skipMessage = false;
     const actionCardDeck = game.cards!.get(
@@ -139,7 +142,7 @@ export default class SwadeCombat extends Combat {
         card = cards[0];
       }
 
-      const newflags = {
+      const newFlags = {
         cardValue: card?.data.value!,
         suitValue: card?.data.data['suit'],
         hasJoker: card?.data.data['isJoker'],
@@ -148,26 +151,24 @@ export default class SwadeCombat extends Combat {
 
       const initiative = card?.data.data['suit'] + card?.data.value!;
 
-      combatantUpdates.push({
+      updates.push({
         _id: c.id,
         initiative: initiative,
-        'flags.swade': newflags,
+        flags: { swade: newFlags },
       });
 
       if (c.isGroupLeader) {
         await c.setSuitValue(c.suitValue ?? 0 + 0.9);
         const followers =
-          game.combats?.viewed?.combatants.filter((f) => f.groupId === c.id) ??
-          [];
-        let s = newflags.suitValue;
-        for await (const f of followers) {
-          s -= 0.02;
-          combatantUpdates.push({
+          this.combatants.filter((f) => f.groupId === c.id) ?? [];
+        for (const f of followers) {
+          const update = {
             _id: f.id,
             initiative: initiative,
-            'flags.swade': newflags,
-            'flags.swade.suitValue': s,
-          });
+            flags: { swade: newFlags },
+          };
+          update.flags.swade.suitValue -= 0.02;
+          updates.push(update);
         }
       }
 
@@ -186,23 +187,26 @@ export default class SwadeCombat extends Combat {
           speaker: {
             scene: game.scenes?.active?.id,
             actor: c.actor ? c.actor.id : null,
-            token: c.token!.id,
+            token: c.token?.id,
             alias: `${c.token!.name} ${game.i18n.localize('SWADE.InitDraw')}`,
           },
           whisper:
-            c.token!.data.hidden || c.hidden
-              ? game!.users!.filter((u: User) => u.isGM)
+            c.token?.data.hidden || c.hidden
+              ? game?.users?.filter((u) => u.isGM)
               : [],
           content: template,
         },
-        options?.messageOptions,
+        messageOptions,
       );
-      initMessages.push(messageData);
+      messages.push(messageData);
     }
-    if (!combatantUpdates.length) return this;
+    if (!updates.length) return this;
 
     // Update multiple combatants
-    await this.updateEmbeddedDocuments('Combatant', combatantUpdates);
+    await this.updateEmbeddedDocuments(
+      'Combatant',
+      updates as Record<string, unknown>[],
+    );
 
     if (game.settings.get('swade', 'initiativeSound') && !skipMessage) {
       AudioHelper.play(
@@ -218,7 +222,7 @@ export default class SwadeCombat extends Combat {
 
     // Create multiple chat messages
     if (game.settings.get('swade', 'initMessage') && !skipMessage) {
-      await ChatMessage.createDocuments(initMessages);
+      await CONFIG.ChatMessage.documentClass.createDocuments(messages);
     }
 
     // Return the updated Combat

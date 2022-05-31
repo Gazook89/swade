@@ -67,7 +67,6 @@ export default class SwadeCombatTracker extends CombatTracker {
     });
   }
   async _onCombatantControl(event) {
-    super._onCombatantControl(event);
     event.preventDefault();
     event.stopImmediatePropagation();
     const btn = event.currentTarget;
@@ -90,6 +89,8 @@ export default class SwadeCombatTracker extends CombatTracker {
       // Toggle combatant turnLost flag
       case 'actAfter':
         return this._onActAfterCurrentCombatant(c);
+      default:
+        return super._onCombatantControl(event);
     }
   }
   // Toggle Defeated and reallocate followers
@@ -165,12 +166,12 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
   }
   // Act Now
-  async _onActNow(c: SwadeCombatant) {
+  async _onActNow(combatant: SwadeCombatant) {
     let targetCombatant = this.viewed!.combatant;
-    if (c.id === targetCombatant?.id) {
+    if (combatant.id === targetCombatant?.id) {
       targetCombatant = this.viewed!.turns.find((c) => !c.roundHeld)!;
     }
-    await c.update({
+    await combatant.update({
       flags: {
         swade: {
           cardValue: targetCombatant?.cardValue,
@@ -179,15 +180,15 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       },
     });
-    if (c.isGroupLeader) {
-      const followers = await this._getFollowers(c);
-      let s = c.suitValue!;
+    if (combatant.isGroupLeader) {
+      const followers = await this._getFollowers(combatant);
+      let s = combatant.suitValue!;
       for await (const f of followers) {
         s -= 0.001;
         await f.update({
           flags: {
             swade: {
-              cardValue: c.cardValue,
+              cardValue: combatant.cardValue,
               suitValue: s,
               '-=roundHeld': null,
             },
@@ -197,13 +198,13 @@ export default class SwadeCombatTracker extends CombatTracker {
     }
 
     await this.viewed?.update({
-      turn: await this.viewed.turns.indexOf(c),
+      turn: this.viewed.turns.findIndex((c) => c.id === combatant.id),
     });
   }
   // Act After Current Combatant
-  async _onActAfterCurrentCombatant(c: SwadeCombatant) {
+  async _onActAfterCurrentCombatant(combatant: SwadeCombatant) {
     const currentCombatant = this.viewed!.combatant;
-    await c.update({
+    await combatant.update({
       flags: {
         swade: {
           cardValue: currentCombatant?.cardValue,
@@ -212,15 +213,15 @@ export default class SwadeCombatTracker extends CombatTracker {
         },
       },
     });
-    if (c.isGroupLeader) {
-      const followers = await this._getFollowers(c);
-      let s = c.suitValue!;
+    if (combatant.isGroupLeader) {
+      const followers = await this._getFollowers(combatant);
+      let s = combatant.suitValue!;
       for await (const f of followers) {
         s -= 0.001;
         await f.update({
           flags: {
             swade: {
-              cardValue: c.cardValue,
+              cardValue: combatant.cardValue,
               suitValue: s,
               '-=roundHeld': null,
             },
@@ -229,8 +230,8 @@ export default class SwadeCombatTracker extends CombatTracker {
       }
     }
 
-    this.viewed?.update({
-      turn: await this.viewed.turns.indexOf(currentCombatant!),
+    await this.viewed?.update({
+      turn: this.viewed.turns.findIndex((c) => c.id === currentCombatant?.id),
     });
   }
   async _getFollowers(c: SwadeCombatant) {

@@ -150,10 +150,10 @@ export default class SwadeCombatant extends Combatant {
         //filter combatants for PCs and give them bennies
         const combatants =
           game.combat?.combatants.filter(
-            (c) => c.actor!.type === 'character',
+            (c) => c.actor?.type === 'character',
           ) ?? [];
         for (const combatant of combatants) {
-          combatant.actor?.getBenny();
+          await combatant.actor?.getBenny();
         }
       } else if (this.actor?.type === 'npc' && isCombHostile) {
         await ChatMessage.create({ user: game.user?.id!, content: template });
@@ -172,7 +172,7 @@ export default class SwadeCombatant extends Combatant {
             return a.type === 'npc' && hostile && a.isWildcard;
           }) ?? [];
         for (const enemy of enemyWCs) {
-          enemy.actor?.getBenny();
+          await enemy.actor?.getBenny();
         }
       }
     }
