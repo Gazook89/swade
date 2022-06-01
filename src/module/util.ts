@@ -109,7 +109,10 @@ export function modifierReducer(acc: string, cur: TraitRollModifier): string {
 export function firstOwner(doc) {
   /* null docs could mean an empty lookup, null docs are not owned by anyone */
   if (!doc) return null;
-  const permissions: Permissions = doc.data.permission ?? {};
+  const permissions: Permissions =
+    (doc instanceof TokenDocument
+      ? doc.actor?.data.permission
+      : doc.data.permission) ?? {};
   const playerOwners = Object.entries(permissions)
     .filter(([id, level]) => {
       const user = game.users?.get(id);
