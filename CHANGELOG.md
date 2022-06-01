@@ -40,11 +40,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Deprecated
 
-- Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0.
+- Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0. (#530)
 
 ### Fixed
 
 - Rolling damage and Trait rolls with a Strength of 1 no longer results in an error. (#308)
+
+## v1.1.5
+
+### Added
+
+- Added `SwadeCombatant.handOutBennies()` function which deals out bennies in case of Joker's wild, if applicable. This function is automatically called when dealing action cards.
+
+### Changed
+
+- Changed the way action card dealing is handled in the codebase, drastically reducing the number of update calls. This should make the whole process snappier.
 
 ## v1.1.4
 

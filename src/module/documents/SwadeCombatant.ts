@@ -132,49 +132,48 @@ export default class SwadeCombatant extends Combatant {
 
     //return early if there's no flag updates
     if (!hasProperty(changed, 'flags.swade')) return;
+    await this.handOutBennies();
+  }
 
+  async handOutBennies() {
     if (
-      game.settings.get('swade', 'jokersWild') &&
-      getProperty(changed, 'flags.swade.hasJoker') &&
-      !hasProperty(this, 'data.flags.swade.groupId')
-    ) {
-      const template = await renderTemplate(SWADE.bennies.templates.joker, {
-        speaker: game.user,
+      !game.settings.get('swade', 'jokersWild') ||
+      this.groupId ||
+      !this.hasJoker
+    )
+      return;
+    const template = await renderTemplate(SWADE.bennies.templates.joker, {
+      speaker: game.user,
+    });
+    const isTokenHostile =
+      this.token?.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
+    //Give bennies to PCs
+    if (this.actor?.type === 'character') {
+      await CONFIG.ChatMessage.documentClass.create({
+        user: game.userId,
+        content: template,
       });
-      const isCombHostile =
-        this.token &&
-        this.token.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-      //Give bennies to PCs
-      if (this.actor?.type === 'character') {
-        await ChatMessage.create({ user: game.userId, content: template });
-        //filter combatants for PCs and give them bennies
-        const combatants =
-          game.combat?.combatants.filter(
-            (c) => c.actor?.type === 'character',
-          ) ?? [];
-        for (const combatant of combatants) {
-          await combatant.actor?.getBenny();
-        }
-      } else if (this.actor?.type === 'npc' && isCombHostile) {
-        await ChatMessage.create({ user: game.user?.id!, content: template });
-        //give all GMs a benny
-        const gmUsers = game.users?.filter((u) => u.active && u.isGM)!;
-        for (const gm of gmUsers) {
-          await gm.getBenny();
-        }
-
-        //give all enemy wildcards a benny
-        const enemyWCs =
-          game.combat?.combatants.filter((c) => {
-            const a = c.actor!;
-            const hostile =
-              c.token!.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-            return a.type === 'npc' && hostile && a.isWildcard;
-          }) ?? [];
-        for (const enemy of enemyWCs) {
-          await enemy.actor?.getBenny();
-        }
-      }
+      //filter combatants for PCs and give them bennies
+      game.combat?.combatants
+        .filter((c) => c.actor!.type === 'character')
+        .forEach((c) => c.actor?.getBenny());
+    } else if (this.actor?.type === 'npc' && isTokenHostile) {
+      await CONFIG.ChatMessage.documentClass.create({
+        user: game.user?.id!,
+        content: template,
+      });
+      //give all GMs a benny
+      game.users
+        ?.filter((u) => u.active && u.isGM)
+        .forEach((gm) => gm.getBenny());
+      //give all enemy wildcards a benny
+      game.combat?.combatants
+        .filter((c) => {
+          const isHostile =
+            c.token?.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
+          return c.actor?.type === 'npc' && isHostile && c.actor?.isWildcard;
+        })
+        .forEach((c) => c.actor?.getBenny());
     }
   }
 }
