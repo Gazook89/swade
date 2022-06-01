@@ -1,6 +1,7 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
 import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
+import { constants } from '../constants';
 import * as utils from '../util';
 import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
@@ -444,16 +445,14 @@ export default class SwadeCombat extends Combat {
   async nextTurn() {
     const currentTurn = this.turn as number;
     const nextTurn = currentTurn + 1;
-    const currentTurnEffects = this.turns[currentTurn].actor?.effects.values();
+    const currentTurnEffects = this.turns[currentTurn].actor?.effects;
     const currentTurnEndExpirations = new Array<SwadeActiveEffect>();
     for (const fx of currentTurnEffects ?? []) {
       const expiration = fx.getFlag('swade', 'expiration');
       const endAutoExpire =
-        expiration ===
-        CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
+        expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
       const endPromptExpire =
-        expiration ===
-        CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
+        expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
       const expiresAtEndOfTurn = endAutoExpire || endPromptExpire;
       const startRound = getProperty(fx, 'data.duration.startRound');
       const startTurn = getProperty(fx, 'data.duration.startTurn');
@@ -480,16 +479,14 @@ export default class SwadeCombat extends Combat {
     }
 
     if (nextTurn < this.turns.length) {
-      const nextTurnEffects = this.turns[nextTurn].actor?.effects.values();
+      const nextTurnEffects = this.turns[nextTurn].actor?.effects;
       const nextTurnStartExpirations = new Array<SwadeActiveEffect>();
       for (const fx of nextTurnEffects ?? []) {
         const expiration = fx.getFlag('swade', 'expiration');
         const startAutoExpire =
-          expiration ===
-          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
+          expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
         const startPromptExpire =
-          expiration ===
-          CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
+          expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
         const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
         const startRound = getProperty(fx, 'data.duration.startRound');
         const startTurn = getProperty(fx, 'data.duration.startTurn');
@@ -500,7 +497,6 @@ export default class SwadeCombat extends Combat {
         const roundsPassed = this.round >= startRound + durationRounds;
         const durationEnds = !durationRounds || roundsPassed;
         const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
-
         if (expired) nextTurnStartExpirations.push(fx);
       }
 

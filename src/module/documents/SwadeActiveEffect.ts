@@ -122,6 +122,12 @@ export default class SwadeActiveEffect extends ActiveEffect {
 
   /** This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion */
   async removeEffect() {
+    const statusId = this.getFlag('core', 'statusId') ?? '';
+    if (game.swade.effectCallbacks.has(statusId)) {
+      const callbackFn = game.swade.effectCallbacks.get(statusId)!;
+      return callbackFn(this);
+    }
+
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
       expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
@@ -133,12 +139,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
       expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
     const auto = startOfTurnAuto || endOfTurnAuto;
     const prompt = startOfTurnPrompt || endOfTurnPrompt;
-
-    const statusId = this.getFlag('core', 'statusId') ?? '';
-    if (game.swade.effectCallbacks.has(statusId)) {
-      const callbackFn = game.swade.effectCallbacks.get(statusId)!;
-      return callbackFn(this);
-    }
 
     if (auto) {
       await this.delete();
