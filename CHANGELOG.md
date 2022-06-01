@@ -22,6 +22,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.5
+
+### Added
+
+- Added `SwadeCombatant.handOutBennies()` function which deals out bennies in case of Joker's wild, if applicable. This function is automatically called when dealing action cards.
+
+### Changed
+
+- Changed the way action card dealing is handled in the codebase, drastically reducing the number of update calls. This should make the whole process snappier.
+
 ## v1.1.4
 
 ### Added
