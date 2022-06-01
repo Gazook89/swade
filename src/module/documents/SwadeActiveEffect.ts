@@ -124,7 +124,9 @@ export default class SwadeActiveEffect extends ActiveEffect {
   async removeEffect() {
     const statusId = this.getFlag('core', 'statusId') ?? '';
     if (game.swade.effectCallbacks.has(statusId)) {
-      const callbackFn = game.swade.effectCallbacks.get(statusId)!;
+      const callbackFn = game.swade.effectCallbacks.get(statusId, {
+        strict: true,
+      });
       return callbackFn(this);
     }
 
@@ -152,28 +154,41 @@ export default class SwadeActiveEffect extends ActiveEffect {
     //const combat = game.combat;
   }
 
-  /**
-   * //TODO: trigger prompt based on effect
-   * This function creates a dialog for status effect deletion
-   */
   promptEffectDeletion() {
-    if (isFirstOwner(this.parent)) {
-      Dialog.confirm({
-        title: game.i18n.format('SWADE.RemoveEffectTitle', {
-          label: this.data.label,
-        }),
-        content: game.i18n.format('SWADE.RemoveEffectBody', {
-          label: this.data.label,
-          parent: this.parent?.name,
-        }),
-        defaultYes: false,
-        yes: () => {
-          this.delete();
-        },
-      });
-    } else {
-      game.swade.sockets.removeStatusEffect(this.uuid);
+    if (!isFirstOwner(this.parent)) {
+      return game.swade.sockets.removeStatusEffect(this.uuid);
     }
+
+    const title = game.i18n.format('SWADE.RemoveEffectTitle', {
+      label: this.data.label,
+    });
+    const content = game.i18n.format('SWADE.RemoveEffectBody', {
+      label: this.data.label,
+      parent: this.parent?.name,
+    });
+    new Dialog({
+      title,
+      content,
+      buttons: {
+        yes: {
+          label: game.i18n.localize('Yes'),
+          icon: '<i class="fas fa-check"></i>',
+          callback: () => this.delete(),
+        },
+        no: {
+          label: game.i18n.localize('No'),
+          icon: '<i class="fas fa-times"></i>',
+        },
+        reset: {
+          label: game.i18n.localize('SWADE.ActiveEffects.ResetDuration'),
+          icon: '<i class="fas fa-repeat"></i>',
+          callback: () => {
+            const currentRound = game.combat?.round ?? 1;
+            this.update({ 'duration.startRound': currentRound });
+          },
+        },
+      },
+    }).render(true);
   }
 
   protected async _onUpdate(

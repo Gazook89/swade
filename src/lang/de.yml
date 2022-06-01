@@ -482,4 +482,5 @@ SWADE.CharacterGoals: Ziele
 SWADE.Background: Hintergrund
 SWADE.ActiveEffects.Add: Active Effect Hinzufügen
 SWADE.ActiveEffects.Source: Quelle
+SWADE.ActiveEffects.ResetDuration: Dauer Zurücksetzen
 SWADE.Advances.Number: Steigerung Nummer
