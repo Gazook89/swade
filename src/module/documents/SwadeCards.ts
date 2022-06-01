@@ -37,7 +37,7 @@ export default class SwadeCards extends Cards {
     number = 1,
     how: foundry.CONST.CARD_DRAW_MODES = foundry.CONST.CARD_DRAW_MODES.TOP,
   ): Promise<Card[]> {
-    //validate
+    // validate
     if (this.data.type !== 'deck') {
       throw new Error('You can only deal cards for Initiative from a Deck');
     }
@@ -59,9 +59,7 @@ export default class SwadeCards extends Cards {
 
     // yeet the data
     await Promise.all([
-      to.createEmbeddedDocuments('Card', toCreate, {
-        keepId: true,
-      }),
+      to.createEmbeddedDocuments('Card', toCreate, { keepId: true }),
       this.deleteEmbeddedDocuments('Card', toDelete),
     ]);
     const updated = await this.updateEmbeddedDocuments('Card', toUpdate);
