@@ -5,6 +5,7 @@ import SwadeDocumentTweaks from '../module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from '../module/CharacterSummarizer';
 import Benny from '../module/dice/Benny';
 import WildDie from '../module/dice/WildDie';
+import SwadeActiveEffect from '../module/documents/SwadeActiveEffect';
 import ItemChatCardHelper from '../module/ItemChatCardHelper';
 import * as migrations from '../module/migration';
 import CharacterSheet from '../module/sheets/official/CharacterSheet';
@@ -36,4 +37,5 @@ export default interface SwadeGame {
   rollItemMacro: typeof rollItemMacro;
   migrations: typeof migrations;
   itemChatCardHelper: typeof ItemChatCardHelper;
+  effectCallbacks: Collection<(effect: SwadeActiveEffect) => Promise<void>>;
 }

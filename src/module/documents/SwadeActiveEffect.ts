@@ -6,6 +6,7 @@ import {
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
+import { constants } from '../constants';
 import { isFirstOwner } from '../util';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
@@ -42,6 +43,11 @@ export default class SwadeActiveEffect extends ActiveEffect {
       return affectedItems.length > 0;
     }
     return false;
+  }
+
+  //TODO implement further
+  get isExpired() {
+    if (!this.isTemporary || !game.combat) return false;
   }
 
   static ITEM_REGEXP = /@([a-zA-Z0-9]+)\{(.+)\}\[([\S.]+)\]/;
@@ -114,30 +120,36 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  /**
-   * This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion
-   */
+  /** This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion */
   async removeEffect() {
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
-      expiration ===
-      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
     const startOfTurnPrompt =
-      expiration ===
-      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
     const endOfTurnAuto =
-      expiration === CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
     const endOfTurnPrompt =
-      expiration ===
-      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
     const auto = startOfTurnAuto || endOfTurnAuto;
     const prompt = startOfTurnPrompt || endOfTurnPrompt;
+
+    const statusId = this.getFlag('core', 'statusId') ?? '';
+    if (game.swade.effectCallbacks.has(statusId)) {
+      const callbackFn = game.swade.effectCallbacks.get(statusId)!;
+      return callbackFn(this);
+    }
 
     if (auto) {
       await this.delete();
     } else if (prompt) {
       this.promptEffectDeletion();
     }
+  }
+
+  async expire() {
+    if (!this.isExpired) return;
+    //const combat = game.combat;
   }
 
   /**
@@ -165,7 +177,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   protected async _onUpdate(
-    changed: DeepPartial<PropertiesToSource<ActiveEffectDataProperties>>,
+    changed: PropertiesToSource<ActiveEffectDataProperties>,
     options: DocumentModificationOptions,
     userId: string,
   ) {
@@ -182,7 +194,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   protected async _preUpdate(
-    changed: DeepPartial<ActiveEffectDataConstructorData>,
+    changed: ActiveEffectDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
   ) {
