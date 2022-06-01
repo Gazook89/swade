@@ -15,7 +15,7 @@ import SwadeVehicleSheet from '../module/sheets/SwadeVehicleSheet';
 import SwadeSocketHandler from '../module/SwadeSocketHandler';
 import { rollItemMacro } from '../module/util';
 
-export default interface SwadeGame {
+export interface SwadeGame {
   sheets: {
     CharacterSheet: typeof CharacterSheet;
     SwadeNPCSheet: typeof SwadeNPCSheet;
@@ -37,5 +37,7 @@ export default interface SwadeGame {
   rollItemMacro: typeof rollItemMacro;
   migrations: typeof migrations;
   itemChatCardHelper: typeof ItemChatCardHelper;
-  effectCallbacks: Collection<(effect: SwadeActiveEffect) => Promise<void>>;
+  effectCallbacks: Collection<StatusEffectCallback>;
 }
+
+export type StatusEffectCallback = (effect: SwadeActiveEffect) => Promise<void>;

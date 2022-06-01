@@ -1,4 +1,4 @@
-import { TraitRollModifier } from '../interfaces/additional';
+import { TraitRollModifier } from '../interfaces/additional.interface';
 import { SWADE } from './config';
 import { constants } from './constants';
 import SwadeActor from './documents/actor/SwadeActor';

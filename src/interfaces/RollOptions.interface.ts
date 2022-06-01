@@ -1,4 +1,4 @@
-import { TraitRollModifier } from './additional';
+import { TraitRollModifier } from './additional.interface';
 
 export default interface IRollOptions {
   rof?: number;

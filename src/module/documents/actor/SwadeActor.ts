@@ -2,9 +2,9 @@ import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/sr
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { Attribute, ItemMetadata } from '../../../globals';
-import { TraitRollModifier } from '../../../interfaces/additional';
-import { Advance } from '../../../interfaces/Advance';
-import IRollOptions from '../../../interfaces/IRollOptions';
+import { TraitRollModifier } from '../../../interfaces/additional.interface';
+import { Advance } from '../../../interfaces/Advance.interface';
+import IRollOptions from '../../../interfaces/RollOptions.interface';
 import RollDialog from '../../apps/RollDialog';
 import { SWADE } from '../../config';
 import WildDie from '../../dice/WildDie';

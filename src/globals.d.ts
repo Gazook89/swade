@@ -1,5 +1,5 @@
-import { Dice3D } from './interfaces/DiceSoNice';
-import SwadeGame from './interfaces/SwadeGame';
+import { Dice3D } from './interfaces/DiceSoNice.interface';
+import { SwadeGame } from './interfaces/SwadeGame.interface';
 import { SWADE, SwadeConfig } from './module/config';
 
 declare global {

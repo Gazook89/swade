@@ -1,5 +1,8 @@
 import { AbilitySubType, LinkedAttribute } from '../../../globals';
-import { AdditionalStat, ItemAction } from '../../../interfaces/additional';
+import {
+  AdditionalStat,
+  ItemAction,
+} from '../../../interfaces/additional.interface';
 import { TraitDie, WildDie } from '../actor/actor-data-source';
 
 declare global {

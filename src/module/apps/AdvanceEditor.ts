@@ -1,4 +1,4 @@
-import { Advance } from '../../interfaces/Advance';
+import { Advance } from '../../interfaces/Advance.interface';
 import { constants } from '../constants';
 import SwadeActor from '../documents/actor/SwadeActor';
 import { getRankFromAdvanceAsString } from '../util';

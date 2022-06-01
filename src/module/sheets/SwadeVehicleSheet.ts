@@ -1,4 +1,4 @@
-import IDriverData from '../../interfaces/IDriverData';
+import IDriverData from '../../interfaces/DriverData.interface';
 import { SWADE } from '../config';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';

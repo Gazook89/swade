@@ -1,4 +1,4 @@
-import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateConfig';
+import { MeasuredTemplateConstructorDataData } from '../../interfaces/TemplateConfig.interface';
 
 declare global {
   interface PlaceableObjectClassConfig {

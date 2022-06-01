@@ -1,4 +1,4 @@
-import { Advance } from '../../../interfaces/Advance';
+import { Advance } from '../../../interfaces/Advance.interface';
 import {
   CharacterDataSourceData,
   VehicleDataSourceData,

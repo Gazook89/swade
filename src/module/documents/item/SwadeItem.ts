@@ -2,8 +2,11 @@ import { Context } from '@league-of-foundry-developers/foundry-vtt-types/src/fou
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
 import { ItemDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData';
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
-import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
-import IRollOptions from '../../../interfaces/IRollOptions';
+import {
+  ItemAction,
+  TraitRollModifier,
+} from '../../../interfaces/additional.interface';
+import IRollOptions from '../../../interfaces/RollOptions.interface';
 import * as util from '../../util';
 import SwadeActor from '../actor/SwadeActor';
 

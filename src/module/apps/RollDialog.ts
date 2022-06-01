@@ -1,4 +1,4 @@
-import { TraitRollModifier } from '../../interfaces/additional';
+import { TraitRollModifier } from '../../interfaces/additional.interface';
 import WildDie from '../dice/WildDie';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';

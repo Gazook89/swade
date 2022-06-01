@@ -4,8 +4,8 @@ import {
   AdditionalStat,
   ItemAction,
   TraitRollModifier,
-} from '../../../interfaces/additional';
-import { Advance } from '../../../interfaces/Advance';
+} from '../../../interfaces/additional.interface';
+import { Advance } from '../../../interfaces/Advance.interface';
 import { AdvanceEditor } from '../../apps/AdvanceEditor';
 import { SWADE } from '../../config';
 import { constants } from '../../constants';

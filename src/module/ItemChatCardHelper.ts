@@ -1,6 +1,9 @@
 import { Attribute } from '../globals';
-import { ItemAction, TraitRollModifier } from '../interfaces/additional';
-import IRollOptions from '../interfaces/IRollOptions';
+import {
+  ItemAction,
+  TraitRollModifier,
+} from '../interfaces/additional.interface';
+import IRollOptions from '../interfaces/RollOptions.interface';
 import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';

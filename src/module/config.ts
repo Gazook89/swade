@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/token';
 import { AbilitySubType } from '../globals';
-import { TraitRollModifierGroup } from '../interfaces/additional';
-import { TemplateConfig } from '../interfaces/TemplateConfig';
+import { TraitRollModifierGroup } from '../interfaces/additional.interface';
+import { TemplateConfig } from '../interfaces/TemplateConfig.interface';
 import { constants } from './constants';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 
