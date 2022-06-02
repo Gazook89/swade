@@ -543,6 +543,11 @@ SWADE:
       Hint: >-
         When enabled, Measured Templates alway highlight themselves instead of
         the grid.
+  EffectCallbacks:
+    Shaken:
+      RollSpirit: Roll Spirit
+      Title: Remove Shaken
+  BenniesSpendGM: Spend a GM Benny
 ACTOR:
   TypeCharacter: Player Character
   TypeNpc: NPC

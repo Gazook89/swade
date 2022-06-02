@@ -56,7 +56,7 @@ SWADE:
   Die: Würfel
   WildDie: Wildcard-Würfel
   Modifier: Modifikator
-  BenniesSpend: Setze einen Benny ein
+  BenniesSpend: Gib einen Benny aus
   BenniesGive: Einen Benny geben
   BenniesRefresh: Bennys auffrischen
   AllBenniesRefresh: Alle Bennys auffrischen
@@ -485,6 +485,11 @@ SWADE:
     Add: Active Effect Hinzufügen
     Source: Quelle
     ResetDuration: Dauer zurücksetzen
+  EffectCallbacks:
+    Shaken:
+      RollSpirit: Willenskraft würfeln
+      Title: Angeschlagen entfernen
+  BenniesSpendGM: Gib einen SL Benny aus
 ACTOR:
   TypeCharacter: Charakter
   TypeNpc: NSC

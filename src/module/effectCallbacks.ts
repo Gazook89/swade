@@ -3,15 +3,15 @@ import SwadeItem from './documents/item/SwadeItem';
 import SwadeActiveEffect from './documents/SwadeActiveEffect';
 
 export function registerEffectCallbacks() {
-  game.swade.effectCallbacks.set('shaken', unshakeCallback);
+  game.swade.effectCallbacks.set('shaken', removeShaken);
 }
 
-async function unshakeCallback(effect: SwadeActiveEffect) {
+async function removeShaken(effect: SwadeActiveEffect) {
   await new Promise((resolve) => {
     let roll: Roll<{}> | null | undefined;
     const buttons: Record<string, Dialog.Button> = {
       roll: {
-        label: 'Roll to Unshake',
+        label: game.i18n.localize('SWADE.EffectCallbacks.Shaken.RollSpirit'),
         icon: '<i class="fas fa-dice"></i>',
         callback: async () => {
           const parent = effect.parent;
@@ -38,7 +38,7 @@ async function unshakeCallback(effect: SwadeActiveEffect) {
         },
       },
       benny: {
-        label: 'Spend a Benny',
+        label: game.i18n.localize('SWADE.BenniesSpend'),
         icon: '<i class="fas fa-coins"></i>',
         callback: async () => {
           const parent = effect.parent;
@@ -49,7 +49,7 @@ async function unshakeCallback(effect: SwadeActiveEffect) {
         },
       },
       gmBenny: {
-        label: 'Spend a GM Benny',
+        label: game.i18n.localize('SWADE.BenniesSpendGM'),
         icon: '<i class="fas fa-coins"></i>',
         callback: async () => {
           const parent = effect.parent;
@@ -64,7 +64,7 @@ async function unshakeCallback(effect: SwadeActiveEffect) {
       delete buttons.gmBenny;
     }
     const data: Dialog.Data = {
-      title: 'Unshake',
+      title: game.i18n.localize('SWADE.EffectCallbacks.Shaken.Title'),
       content: '<p>What do you want to do?</p>',
       buttons,
       render: (html: JQuery<HTMLElement>) => {
