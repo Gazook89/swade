@@ -1,485 +1,459 @@
-SWADE.ButtonReset: Zurücksetzen
-SWADE.ButtonSubmit: Einreichen
-SWADE.CommunityCharSheet: Legacy Charakterbogen
-SWADE.CommunityNPCSheet: Community NSC-Bogen
-SWADE.CommunityVicSheet: Community Fahrzeugbogen
-SWADE.CommunityItemSheet: Community Gegenstandsbogen
-SWADE.ModHint: Bitte stell sicher das alle Modifikatoren ein + oder - enthalten
-ACTOR.TypeCharacter: Charakter
-ACTOR.TypeNpc: NSC
-ACTOR.TypeVehicle: Fahrzeug
-ITEM.TypeWeapon: Waffe
-ITEM.TypeArmor: Rüstung
-ITEM.TypeShield: Schild
-ITEM.TypeGear: Ausrüstung
-ITEM.TypeEdge: Talent
-ITEM.TypeHindrance: Handicap
-ITEM.TypeSkill: Fertigkeit
-ITEM.TypePower: Macht
-CARD.TypeAdventure: Abenteuerkarte
-CARD.TypePoker: Pokerkarte
-SWADE.ActionDeckPresetLight: Aktionskarten (Hell)
-SWADE.ActionDeckPresetDark: Aktionskarten (Dunkel)
-SWADE.Name: Name
-SWADE.Tough: Robustheit
-SWADE.Race: Volk
-SWADE.Archetype: Archetyp
-SWADE.Pace: Bew.
-SWADE.Running: Sprinten
-SWADE.RunningDie: Sprintwürfel
-SWADE.RollRun: Klicke zum Sprinten
-SWADE.Adv: Aufstiege
-SWADE.Rank: Rang
-SWADE.Inv: Ausrüstung
-SWADE.Summary: Eigenschaften
-SWADE.Pow: Mächte
-SWADE.WildCard: Wildcard
-SWADE.Extra: Statist
-SWADE.Bennies: Bennys
-SWADE.Shaken: Angeschl.
-SWADE.Distr: Abgelenkt
-SWADE.Vuln: Verwundbar
-SWADE.Stunned: Betäubt
-SWADE.Entangled: Festgehalten
-SWADE.Bound: Gebunden
-SWADE.TraitMod: Eigenschaftsmodifikator
-SWADE.SkillTest: Fertigkeitsprobe
-SWADE.AttributeTest: Attributssprobe
-SWADE.Attributes: Attribute
-SWADE.Derived: Abgeleitete Werte
-SWADE.AttrAgi: Geschick
-SWADE.AttrSma: Verstand
-SWADE.AnimalSmarts: Tierische Intelligenz
-SWADE.AnimalSmartsMarker: T
-SWADE.AttrSpr: Willenskraft
-SWADE.AttrStr: Stärke
-SWADE.AttrVig: Konstitution
-SWADE.Tweaks: Einstellungen
-SWADE.AttrAgiShort: Ges
-SWADE.AttrSmaShort: Ver
-SWADE.AttrSprShort: Wil
-SWADE.AttrStrShort: Str
-SWADE.AttrVigShort: Kon
-SWADE.Skills: Fertigkeiten
-SWADE.Unskilled: Ungeübt
-SWADE.LinkAttr: Verbundenes Attribut
-SWADE.ArcaneSkill: NEEDS TRANSLATION
-SWADE.ActivateArcaneDevice: NEEDS TRANSLATION
-SWADE.Die: Würfel
-SWADE.WildDie: Wildcard-Würfel
-SWADE.Modifier: Modifikator
-SWADE.BenniesSpend: Setze einen Benny ein
-SWADE.BenniesGive: Einen Benny geben
-SWADE.BenniesRefresh: Bennys auffrischen
-SWADE.AllBenniesRefresh: Alle Bennys auffrischen
-SWADE.BenniesRefreshMessage: Bennys wurden aufgefrischt!
-SWADE.BenniesRefreshAllMessage: Alle Bennys wurden aufgefrischt!
-SWADE.BenniesGMRefreshMessage: SL Bennys wurden aufgefrischt!
-SWADE.BenniesAddMessage: hat einen Benny erhalten!
-SWADE.BenniesGMAddMessage: hat einen Benny genommen!
-SWADE.BenniesSpendMessage: setzt einen Benny ein!
-SWADE.BenniesMax: Maximale Bennys
-SWADE.EditSkill: Fertigkeit ändern
-SWADE.EdEdge: Talent ändern
-SWADE.EdHind: Handicap ändern
-SWADE.Ed: Ändern
-SWADE.Del: Löschen
-SWADE.Arcane: Arkan
-SWADE.All: Alle
-SWADE.HasPowers: hat Mächte
-SWADE.Weapons: Waffen
-SWADE.MeleeWeapons: Nahkampfwaffen
-SWADE.RangedWeapons: Fernkampfwaffen
-SWADE.Armors: Rüstungen
-SWADE.Shields: Schilde
-SWADE.Armor: Rüstung
-SWADE.WeaponsAndArmor: Waffen & Rüstungen
-SWADE.Dmg: Schaden
-SWADE.DmgOver: Schaden überschreiben
-SWADE.Ap: Pzbr
-SWADE.APLong: Panzerbrechend
-SWADE.RoF: Feuerrate
-SWADE.Mag: Schuss
-SWADE.Parry: Parade
-SWADE.Notes: Notizen
-SWADE.ActionsEffects: Aktionen & Effekte
-SWADE.Actions: Aktionen
-SWADE.DmgModUni: Schadensmodifikator (universell)
-SWADE.SkillModUni: Eigenschaftsmodifikator (universell)
-SWADE.ShotsUsed: Schuss verbraucht
-SWADE.NaturalArmor: Natürliche Rüstung
-SWADE.HitLocations: Trefferzonen
-SWADE.Head: Kopf
-SWADE.Torso: Torso
-SWADE.Arms: Arme
-SWADE.Legs: Beine
-SWADE.MinStrLong: Mindeststärke
-SWADE.MinStr: Min. Stärke
-SWADE.MinStrShort: Min.Str
-SWADE.Desc: Beschreibung
-SWADE.Special: Spezialfähigkeiten
-SWADE.Details: Details
-SWADE.Equippable: Ausrüstbar
-SWADE.ArcaneDevice: Arkanes Gerät
-SWADE.Misc: Sonstiges
-SWADE.QuickAccess: Schnellzugriff
-SWADE.Effects: Effekte
-SWADE.Hindrances: Handicaps
-SWADE.MajHind: Schweres Handicap
-SWADE.Major: (Schwer)
-SWADE.Minor: (Leicht)
-SWADE.Edges: Talente
-SWADE.ArcBack: Arkaner Hintergrund
-SWADE.Req: Voraussetzungen
-SWADE.Conv: Entschlossenheit
-SWADE.UseConv: ist fest entschlossen!
-SWADE.Hesitant: Zögerlich
-SWADE.LevelHeaded: Kühler Kopf
-SWADE.ImprovedLevelHeaded: Sehr kühler Kopf
-SWADE.AutoCalc: Automatische Berechnungen
-SWADE.InclArmor: Automatisch Robustheit und Rüstung berechnen
-SWADE.Label: Etikett
-SWADE.HasMaxValue: Hat Maximalwert
-SWADE.Enabled: aktiviert
-SWADE.Currency: Währung
-SWADE.CarryWeight: Belastung
-SWADE.Eqd: Ausger.
-SWADE.Equipped: Ausgerüstet
-SWADE.Unequipped: Getragen
-SWADE.Quantity: Anzahl
-SWADE.Weight: Gewicht
-SWADE.Price: Kosten
-SWADE.PP: Machtpunkte
-SWADE.PPShort: Machtp.
-SWADE.PPCost: MP Kosten
-SWADE.CurPP: Aktuelle Machtpunkte
-SWADE.MaxPP: Maximum Machtpunkte
-SWADE.Dur: Dauer
-SWADE.Trap: Ausprägung
-SWADE.Wound: Wunde
-SWADE.Wounds: Wunden
-SWADE.WoundsMax: Maximale Wunden
-SWADE.Fatigue: Erschöpfung
-SWADE.FatigueMax: Maximale Erschöpfung
-SWADE.Incap: Ausgeschaltet!
-SWADE.Init: Initiative
-SWADE.ResetActionDeck: Aktionsdeck zurücksetzen
-SWADE.ActionDeckResetNotification: Aktionsdeck wurde zurückgesetzt
-SWADE.InitDraw: zog...
-SWADE.JokersWild: Bennys für Joker
-SWADE.Addi: Zusätzlich
-SWADE.Status: Status
-SWADE.Handling: Manövrierf.
-SWADE.Topspeed: Höchstgeschw.
-SWADE.OutOfControl: Außer Kontrolle
-SWADE.Wrecked: Zerstört
-SWADE.Item: Gegenstand
-SWADE.Cargo: Fracht
-SWADE.MaxCargo: Maximales Fracht-Gewicht
-SWADE.CargoWeight: Fracht-Gewicht
-SWADE.Mods: Mods
-SWADE.ModSlots: Mod-Plätze
-SWADE.MaxMods: Maximum Mods
-SWADE.Operator: Operator
-SWADE.ManCheck: Manöver-Probe
-SWADE.AltSkill: Fertigkeitsname
-SWADE.Class: Klassifikation
-SWADE.Vehicular: Fahrzeugwaffe
-SWADE.VehicleMod: Fahrzeugmod
-SWADE.CardSound: Kartengeräusch
-SWADE.CardSoundDesc: Kurzen Ton beim Ziehen der Aktionskarten abspielen
-SWADE.AutoInit: Automatische Initiative
-SWADE.AutoInitDesc: Aktionskarten jede Runde automatisch ziehen
-SWADE.CreateInitChat: Chatnachrichten für Initiative
-SWADE.HideWC: NSC Wildcards verstecken
-SWADE.HideWCDesc: Spielern nicht anzeigen, welche NSCs Wildcards sind
-SWADE.EnableConv: Entschlossenheit
-SWADE.EnableConvDesc: Settingregel "Entschlossenheit" verwenden
-SWADE.EnableWoundPace: Wunden beeinflussen Bewegung
-SWADE.EnableWoundPaceDesc: Wenn aktiviert, wird die Bewegung automatisch durch Wunden angepasst
-SWADE.AutoLink: NSC Wildcards mit Token verbinden
-SWADE.AutoLinkDesc: >-
-  NSC Wildcards beim Umschalten zwischen Statist und Wildcard mit Token
-  verbinden
-SWADE.GmBennies: Spielleiter Bennys
-SWADE.GmBenniesDesc: Anzahl Bennys die du als SL beim auffrischen selbiger erhälst
-SWADE.EnableBennyNotify: Nachrichten zu Bennys
-SWADE.EnableBennyNotifyDesc: Zeige Chatnachricht beim Nehmen, Einsetzen oder Auffrischen von Bennys
-SWADE.VehicleMods: Fahrzeug-Modifikationen
-SWADE.VehicleModsDesc: Fahrzeuge nutzen Modifikations-Plätze
-SWADE.VehicleEdges: Fahrzeug-Talente
-SWADE.VehicleEdgesDesc: Fahrzeuge nutzen Talente und Handicaps
-SWADE.SettingConf: Setting-Konfigurator
-SWADE.SettingConfLabel: Öffne Setting-Konfigurator
-SWADE.SettingConfDesc: >-
-  Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten,
-  Settingregeln, usw. einstellen.
-SWADE.Formula: Formel
-SWADE.SitMod: Situativer Mod
-SWADE.RollMode: Wurfmodus
-SWADE.RollExample: z.B. +1d6x= oder -2
-SWADE.Roll: Probe auf
-SWADE.RollRaise: Steigerungswurf
-SWADE.GroupRoll: Gruppenprobe
-SWADE.Ok: OK
-SWADE.Cancel: Abbruch
-SWADE.Redraw: Karte ziehen
-SWADE.Add: ' '
-SWADE.ConfigInit: Initiative konfigurieren
-SWADE.IgnWounds: Wunden ignorieren
-SWADE.Size: Größe
-SWADE.Scale: Größenkategorie
-SWADE.PickACard: Wähle eine Karte für {name}
-SWADE.NoCardsLeft: >-
-  Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed}
-  benötigten Karten verfügbar
-SWADE.OldCard: Alte Karte
-SWADE.ActionCard: Aktionskarte
-SWADE.ConvictionActivate: aktiviert Entschlossenheit!
-SWADE.ConvictionExtend: Entschlossenheit einsetzen?
-SWADE.ConvictionEnd: schwankt in der Entschlossenheit
-SWADE.NoBennies: Du hast nicht genug Bennys!
-SWADE.SBT: Kleine Flächenschablone
-SWADE.MBT: Mittlere Flächenschablone
-SWADE.LBT: Große Flächenschablone
-SWADE.Cone: Kegelschablone
-SWADE.GM: Spielleiter
-SWADE.Vehicles: Fahrzeuge
-SWADE.AddStats: Weitere Werte
-SWADE.Actors: Akteur
-SWADE.Items: Items
-SWADE.Max: Max
-SWADE.Curr: Aktuell
-SWADE.Aiming: Zielen
-SWADE.Ammo: Munition
-SWADE.AmmoManagement: Munitionsmanagement
-SWADE.AmmoManagementDesc: >-
-  Wenn diese Option aktiviert (und anwendbar) ist, wird die Munition vom Magazin
-  der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem eine
-  Schaltfläche zum nachladen und du kannst die Waffe nicht verwenden wenn nicht
-  genügend Munition verfügbar ist
-SWADE.AutoReload: Braucht keine Aktion zum nachladen
-SWADE.Berserk: Berserkerrausch
-SWADE.BleedingOut: Verblutend
-SWADE.DSNNone: '- Kein -'
-SWADE.Defending: Verteidigend
-SWADE.DiceConf: Würfel Konfiguration
-SWADE.DiceConfDesc: Verwalte Einstellungen der SWADE/Dice So Nice integration
-SWADE.DiceConfLabel: Würfel Konfiguration Öffnen
-SWADE.Diseased: Erkrankt
-SWADE.Encumbered: Überladen
-SWADE.Flying: Fliegend
-SWADE.Frightened: Veränstigt
-SWADE.General: Generell
-SWADE.HeartAttack: Herzinfarkt
-SWADE.Follow: Folge {name}
-SWADE.Unfollow: Folge {name} nicht
-SWADE.MakeGroupLeader: Gruppenleiter machen
-SWADE.RemoveGroupLeader: Gruppenleiter entfernen
-SWADE.AddTokenFollowers: Ausgewählte Tokens als Follower hinzufügen
-SWADE.GroupByName: Nach Namen gruppieren
-SWADE.SetGroupColor: Gruppenfarbe einstellen
-SWADE.SelectColor: Wähle eine Farbe
-SWADE.Holding: Aufgespart
-SWADE.Invisible: Unsichtbar
-SWADE.Hold: Abwarten
-SWADE.ActBeforeCurrentCombatant: Jetzt handeln
-SWADE.ActAfterCurrentCombatant: Nach aktuellem Teilnehmer handeln
-SWADE.LoseTurn: Zug aussetzen umschalten
-SWADE.NPCAmmoFromInventory: NSCs laden Munition aus ihrem Inventar nach
-SWADE.NoAmmoSet: Keine Munition ausgewählt
-SWADE.NotEnoughAmmo: Du hast nicht genug Munition für diese Aktion
-SWADE.NotEnoughAmmoToReload: Es gibt nicht genug Munition zum nachladen
-SWADE.OfficialSheet: Offizieller Charakterbogen
-SWADE.OnFire: Brennend
-SWADE.OpSkill: Manöverfertigkeit
-SWADE.PCAmmoFromInventory: SCs laden Munition aus ihrem Inventar nach
-SWADE.PCAmmoFromInventoryDesc: >-
-  Wenn diese Option aktiviert ist, kann die Option zum Einstellen eines
-  "Ausrüstung" gegenstands als Munition festgelegt werden und wird beim
-  Nachladen der Waffe verwendet
-SWADE.Poisoned: Vergiftet
-SWADE.Prone: Liegend
-SWADE.Reach: Reichweite
-SWADE.Refresh: Aktualisiere diese Karte
-SWADE.Reload: Nachladen
-SWADE.ReloadSuccess: Die Waffe wurde erfolgreich nachgeladen
-SWADE.ReloadUnneeded: Die Waffe ist bereits voll geladen
-SWADE.ShowBennyAnimation: Zeige die Benny Animation
-SWADE.ShowBennyAnimationDesc: Spielt eine 3D Animation ab wenn ein Benny ausgegeben wird
-SWADE.Smite: Waffe verbessert
-SWADE.Protection: Schutz
-SWADE.Torch: Lichtquelle
-SWADE.VehicleAmmoFromInventory: Fahrzeuge nutzen Munition aus ihrem Inventar
-SWADE.WildDiePreset: Wildcard Würfel Voreinstellung
-SWADE.WildDiePresetDesc: >-
-  Wähle ein DSN-Theme für den Wildcard-Würfel. Wähle "Custom", wenn ein eigener
-  erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht anders
-  aussehen soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel derzeit
-  nur von dir selber gesehen werden können. Andere Spieler werden diese anders
-  sehen.
-SWADE.Trapping: Ausprägung
-SWADE.AddBenny: Einen Benny hinzufügen
-SWADE.CurrentBennies: Derzeitige Bennys
-SWADE.RerollWithBenny: Mit Benny nochmal würfeln
-SWADE.FreeReroll: Freier Neuwurf
-SWADE.HideNpcItemChatCards: Verstecke NSC Item Chat Karten
-SWADE.HideNpcItemChatCardsDesc: >-
-  Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch
-  als Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
-SWADE.JokersWildDesc: >-
-  Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein Joker als
-  Aktionskarte gezogen wird.
-SWADE.ParryBase: Parade-Fertigkeit
-SWADE.ParryBaseDesc: >-
-  Der Name der Fertigkeit die zur Berechnung des Paradewerts benutzt wird
-  (Normalerweise Kämpfen)
-SWADE.AutoCalcParry: Automatisch Parade berechnen, inklusive Schilde
-SWADE.Subtype: Unterkategorie
-SWADE.SpecialAbility: Spezialfähigkeit
-SWADE.SpecialAbilities: Spezialfähigkeiten
-SWADE.RacialAbilities: Volkseigenschaften
-SWADE.ArchetypeAbilities: Archetypeigenschaften
-SWADE.About: Über
-SWADE.EdgesHindrances: Talente
-SWADE.GrantsPowers: Gewährt Mächte
-SWADE.Passengers: Passagiere
-SWADE.Crew: Besatzung
-SWADE.String: Text
-SWADE.Number: Nummer
-SWADE.Checkbox: Checkbox
-SWADE.NoPowerPoints: Keine Machtpunkte
-SWADE.NoPowerPointsDesc: >-
-  Wenn diese Option aktiviert ist, werden alle Machtpunkt-Interaktionen
-  ausgeblendet
-SWADE.WealthType: Kapitalsystem
-SWADE.WealthDie.Label: Wohlstandswürfel
-SWADE.WealthDie.Broke.Label: Pleite
-SWADE.WealthDie.Broke.Hint: Du bist pleite!
-SWADE.WealthSelectionNoneOther: Keines / Anderes
-SWADE.WealthTypeDesc: >-
-  Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden
-  soll
-SWADE.CurrencyName: Währungsname
-SWADE.CurrencyNameDesc: Benenne die gängigste Währung deines Settings
-SWADE.TraitRolls: Eigenschaftswürfe
-SWADE.Trait: Eigenschaft
-SWADE.AltTrait: Alternative Eigenschaft
-SWADE.ClickSuggestions: Klicke hier für Vorschläge
-SWADE.Quick: Schnell
-SWADE.BonusDamage: Bonusschaden
-SWADE.CoreSkill: Grundfertigkeit
-SWADE.CoreSkills: Grundfertigkeiten
-SWADE.CoreSkillsDesc: >-
-  Gib hier die Namen der Grundfertigkeiten deines Settings an. Zum Beispiel so:
-  Allgemeinwissen, Athletik, Heimlichkeit, Überreden, Wahrnehmung
-SWADE.CoreSkillsPackDesc: Wähle aus, aus welchem Kompendium die Grundfertigkeiten bezogen werden
-SWADE.Joker: Joker
-SWADE.DmgRolls: Schadenswürfe
-SWADE.SubtractPPDesc: MP-Kosten von den verfügbaren MP abziehen
-SWADE.AddPPDesc: MP-Kosten zu den verfügbaren MP hinzurechnen
-SWADE.RightClickZoom: Für eine größere Ansicht rechtsklicken
-SWADE.SysMigrationWarning: >-
-  Deine SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können
-  nicht zuverlässig auf die neueste Version migriert werden.
-
-  Der Vorgang wird versucht, es können jedoch Fehler auftreten.
-SWADE.DeckShuffled: Kartens automatisch gemischt
-SWADE.BasePace: Basisbewegung
-SWADE.WarningPackLocked: >-
-  Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium
-  entsperren.
-SWADE.ActionCardEditor: Aktionskarteneditor
-SWADE.CardFace: Kartenillustration
-SWADE.CardValue: Wert
-SWADE.IsJoker: Ist ein Joker
-SWADE.CardSuit: Symbol
-SWADE.OpenACEditor: Im Aktionskarteneditor öffnen
-SWADE.Yes: Ja
-SWADE.No: Nein
-SWADE.ShowCharacterSummary: Charakterzusammenfassung Anzeigen
-SWADE.CharacterSummary: Charakterzusammenfassung
-SWADE.CopyHtml: HTML Kopieren
-SWADE.CopyMarkdown: Markdown kopieren
-SWADE.InitCardDeck: Aktionskartendeck
-SWADE.Metric: Metrisch
-SWADE.Imperial: Imperial
-SWADE.WeightUnitLabel: Gewichtseinheit
-SWADE.WeightUnitDesc: >-
-  Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch)
-  gerechnet werden
-SWADE.UseAttributeShorts: Attributsnamen abkürzen
-SWADE.UseAttributeShortsDesc: >-
-  Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen
-  als Abkürzungen angegeben, also Ges statt Geschicklichkeit, Ver statt
-  Verstand, etc. Schließe und öffne alle offenen Bögen wenn du diese Einstellung
-  änderst.
-SWADE.3DBennies: 3D Bennies
-SWADE.Benny3DFrontBump: Bump Map Vorderseite
-SWADE.Benny3DBackBump: Bump Map Rückseite
-SWADE.Benny3DFrontDesc: Vordere Textur des Bennys
-SWADE.Benny3DBackDesc: Hintere Textur des Bennys
-SWADE.Benny3DFrontBumpDesc: Bump Map der Vorderseite
-SWADE.Benny3DBackBumpDesc: Bump Map der Rückseite
-SWADE.Modifiers: Modifikatoren
-SWADE.Duplicates: Duplikate Gefunden
-SWADE.InitDiscardPile: Initiative-Ablagestapel
-SWADE.Wealth: Vermögen
-SWADE.BennyImageSheet: Benny
-SWADE.Characters: Charaktere
-SWADE.CoreSkillsList: Liste der Grundfertigkeiten
-SWADE.MAPenalty: Mehrfachaktionsabzug
-SWADE.Mod.Custom.Add: Eigenen Modifikator hinzufügen
-SWADE.Mod.Support: Unterstützung
-SWADE.Mod.Preset.Choose: Voreinstellung auswählen...
-SWADE.Mod.Preset.Add: Voreinstellung hinzufügen
-SWADE.Illumination._name: Beleuchtung
-SWADE.Illumination.Dim: Düster
-SWADE.Illumination.Dark: Dunkel
-SWADE.Illumination.Pitch: Finsternis
-SWADE.Cover._name: Deckung
-SWADE.Cover.Shield: Deckung - Schild
-SWADE.Cover.Light: Leichte Deckung
-SWADE.Cover.Medium: Mittlere Deckung
-SWADE.Cover.Heavy: Schwere Deckung
-SWADE.Cover.Total: Vollständige Deckung
-SWADE.Range._name: Reichweite
-SWADE.Range.Medium: Reichweite, Mittel
-SWADE.Range.Long: Reichweite, Weit
-SWADE.Range.Extreme: Reichweite, Extrem
-SWADE.ModOther: Andere Modifikatioren
-SWADE.Snapfire: Schnellschuss
-SWADE.UnstablePlatform: Unsicheren Grund
-SWADE.ApplyEncumbrance: Belastungsabzüge anwenden
-SWADE.ApplyEncumbraceHint: >-
-  Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand
-  gegen {fatigue} derzeit NICHT unterstüzt sind
-SWADE.NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
-SWADE.SetUpChase: Verfolgungsjagd erstellen
-SWADE.NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
-SWADE.ConvertToDeck: Zu Deck konvertieren
-SWADE.PPAbbreviation: MP
-SWADE.ShowInChat: Im Chat anzeigen
-SWADE.ExpandDescription: Beschreibung anzeigen
-SWADE.Favorite: Favorisieren
-SWADE.Equip: Ausrüsten
-SWADE.RollDamage: Schaden würfeln
-SWADE.SystemLinks.Changelog: Changelog
-SWADE.SystemLinks.Wiki: Wiki
-SWADE.SystemLinks.ReportAnIssue: Ein Problem melden
-SWADE.Biography: Biografie
-SWADE.OpenOrigin: Urpsrung öffnen
-SWADE.EffectsTemporary: Temporäre Effekte
-SWADE.EffectsPermanent: Permanente Effecte
-SWADE.Ranks.Novice: Anfänger
-SWADE.Ranks.Seasoned: Fortgeschritten
-SWADE.Ranks.Veteran: Veteran
-SWADE.Ranks.Heroic: Heroisch
-SWADE.Ranks.Legendary: Legendär
-SWADE.Advances.Planned: Geplant
-SWADE.Appearance: Erscheinungsbild
-SWADE.CharacterGoals: Ziele
-SWADE.Background: Hintergrund
-SWADE.ActiveEffects.Add: Active Effect Hinzufügen
-SWADE.ActiveEffects.Source: Quelle
-SWADE.Advances.Number: Steigerung Nummer
+SWADE:
+  ButtonReset: Zurücksetzen
+  ButtonSubmit: Einreichen
+  CommunityCharSheet: Legacy Charakterbogen
+  CommunityNPCSheet: Community NSC-Bogen
+  CommunityVicSheet: Community Fahrzeugbogen
+  CommunityItemSheet: Community Gegenstandsbogen
+  ModHint: Bitte stell sicher das alle Modifikatoren ein + oder - enthalten
+  ActionDeckPresetLight: Aktionskarten (Hell)
+  ActionDeckPresetDark: Aktionskarten (Dunkel)
+  Name: Name
+  Tough: Robustheit
+  Race: Volk
+  Archetype: Archetyp
+  Pace: Bew.
+  Running: Sprinten
+  RunningDie: Sprintwürfel
+  RollRun: Klicke zum Sprinten
+  Adv: Aufstiege
+  Rank: Rang
+  Inv: Ausrüstung
+  Summary: Eigenschaften
+  Pow: Mächte
+  WildCard: Wildcard
+  Extra: Statist
+  Bennies: Bennys
+  Shaken: Angeschl.
+  Distr: Abgelenkt
+  Vuln: Verwundbar
+  Stunned: Betäubt
+  Entangled: Festgehalten
+  Bound: Gebunden
+  TraitMod: Eigenschaftsmodifikator
+  SkillTest: Fertigkeitsprobe
+  AttributeTest: Attributssprobe
+  Attributes: Attribute
+  Derived: Abgeleitete Werte
+  AttrAgi: Geschick
+  AttrSma: Verstand
+  AnimalSmarts: Tierische Intelligenz
+  AnimalSmartsMarker: T
+  AttrSpr: Willenskraft
+  AttrStr: Stärke
+  AttrVig: Konstitution
+  Tweaks: Einstellungen
+  AttrAgiShort: Ges
+  AttrSmaShort: Ver
+  AttrSprShort: Wil
+  AttrStrShort: Str
+  AttrVigShort: Kon
+  Skills: Fertigkeiten
+  Unskilled: Ungeübt
+  LinkAttr: Verbundenes Attribut
+  ArcaneSkill: NEEDS TRANSLATION
+  ActivateArcaneDevice: NEEDS TRANSLATION
+  Die: Würfel
+  WildDie: Wildcard-Würfel
+  Modifier: Modifikator
+  BenniesSpend: Setze einen Benny ein
+  BenniesGive: Einen Benny geben
+  BenniesRefresh: Bennys auffrischen
+  AllBenniesRefresh: Alle Bennys auffrischen
+  BenniesRefreshMessage: Bennys wurden aufgefrischt!
+  BenniesRefreshAllMessage: Alle Bennys wurden aufgefrischt!
+  BenniesGMRefreshMessage: SL Bennys wurden aufgefrischt!
+  BenniesAddMessage: hat einen Benny erhalten!
+  BenniesGMAddMessage: hat einen Benny genommen!
+  BenniesSpendMessage: setzt einen Benny ein!
+  BenniesMax: Maximale Bennys
+  EditSkill: Fertigkeit ändern
+  EdEdge: Talent ändern
+  EdHind: Handicap ändern
+  Ed: Ändern
+  Del: Löschen
+  Arcane: Arkan
+  All: Alle
+  HasPowers: hat Mächte
+  Weapons: Waffen
+  MeleeWeapons: Nahkampfwaffen
+  RangedWeapons: Fernkampfwaffen
+  Armors: Rüstungen
+  Shields: Schilde
+  Armor: Rüstung
+  WeaponsAndArmor: Waffen & Rüstungen
+  Dmg: Schaden
+  DmgOver: Schaden überschreiben
+  Ap: Pzbr
+  APLong: Panzerbrechend
+  RoF: Feuerrate
+  Mag: Schuss
+  Parry: Parade
+  Notes: Notizen
+  ActionsEffects: Aktionen & Effekte
+  Actions: Aktionen
+  DmgModUni: Schadensmodifikator (universell)
+  SkillModUni: Eigenschaftsmodifikator (universell)
+  ShotsUsed: Schuss verbraucht
+  NaturalArmor: Natürliche Rüstung
+  HitLocations: Trefferzonen
+  Head: Kopf
+  Torso: Torso
+  Arms: Arme
+  Legs: Beine
+  MinStrLong: Mindeststärke
+  MinStr: Min. Stärke
+  MinStrShort: Min.Str
+  Desc: Beschreibung
+  Special: Spezialfähigkeiten
+  Details: Details
+  Equippable: Ausrüstbar
+  ArcaneDevice: Arkanes Gerät
+  Misc: Sonstiges
+  QuickAccess: Schnellzugriff
+  Effects: Effekte
+  Hindrances: Handicaps
+  MajHind: Schweres Handicap
+  Major: (Schwer)
+  Minor: (Leicht)
+  Edges: Talente
+  ArcBack: Arkaner Hintergrund
+  Req: Voraussetzungen
+  Conv: Entschlossenheit
+  UseConv: ist fest entschlossen!
+  Hesitant: Zögerlich
+  LevelHeaded: Kühler Kopf
+  ImprovedLevelHeaded: Sehr kühler Kopf
+  AutoCalc: Automatische Berechnungen
+  InclArmor: Automatisch Robustheit und Rüstung berechnen
+  Label: Etikett
+  HasMaxValue: Hat Maximalwert
+  Enabled: aktiviert
+  Currency: Währung
+  CarryWeight: Belastung
+  Eqd: Ausger.
+  Equipped: Ausgerüstet
+  Unequipped: Getragen
+  Quantity: Anzahl
+  Weight: Gewicht
+  Price: Kosten
+  PP: Machtpunkte
+  PPShort: Machtp.
+  PPCost: MP Kosten
+  CurPP: Aktuelle Machtpunkte
+  MaxPP: Maximum Machtpunkte
+  Dur: Dauer
+  Trap: Ausprägung
+  Wound: Wunde
+  Wounds: Wunden
+  WoundsMax: Maximale Wunden
+  Fatigue: Erschöpfung
+  FatigueMax: Maximale Erschöpfung
+  Incap: Ausgeschaltet!
+  Init: Initiative
+  ResetActionDeck: Aktionsdeck zurücksetzen
+  ActionDeckResetNotification: Aktionsdeck wurde zurückgesetzt
+  InitDraw: zog...
+  JokersWild: Bennys für Joker
+  Addi: Zusätzlich
+  Status: Status
+  Handling: Manövrierf.
+  Topspeed: Höchstgeschw.
+  OutOfControl: Außer Kontrolle
+  Wrecked: Zerstört
+  Item: Gegenstand
+  Cargo: Fracht
+  MaxCargo: Maximales Fracht-Gewicht
+  CargoWeight: Fracht-Gewicht
+  Mods: Mods
+  ModSlots: Mod-Plätze
+  MaxMods: Maximum Mods
+  Operator: Operator
+  ManCheck: Manöver-Probe
+  AltSkill: Fertigkeitsname
+  Class: Klassifikation
+  Vehicular: Fahrzeugwaffe
+  VehicleMod: Fahrzeugmod
+  CardSound: Kartengeräusch
+  CardSoundDesc: Kurzen Ton beim Ziehen der Aktionskarten abspielen
+  AutoInit: Automatische Initiative
+  AutoInitDesc: Aktionskarten jede Runde automatisch ziehen
+  CreateInitChat: Chatnachrichten für Initiative
+  HideWC: NSC Wildcards verstecken
+  HideWCDesc: Spielern nicht anzeigen, welche NSCs Wildcards sind
+  EnableConv: Entschlossenheit
+  EnableConvDesc: Settingregel "Entschlossenheit" verwenden
+  EnableWoundPace: Wunden beeinflussen Bewegung
+  EnableWoundPaceDesc: Wenn aktiviert, wird die Bewegung automatisch durch Wunden angepasst
+  AutoLink: NSC Wildcards mit Token verbinden
+  AutoLinkDesc: NSC Wildcards beim Umschalten zwischen Statist und Wildcard mit Token verbinden
+  GmBennies: Spielleiter Bennys
+  GmBenniesDesc: Anzahl Bennys die du als SL beim auffrischen selbiger erhälst
+  EnableBennyNotify: Nachrichten zu Bennys
+  EnableBennyNotifyDesc: Zeige Chatnachricht beim Nehmen, Einsetzen oder Auffrischen von Bennys
+  VehicleMods: Fahrzeug-Modifikationen
+  VehicleModsDesc: Fahrzeuge nutzen Modifikations-Plätze
+  VehicleEdges: Fahrzeug-Talente
+  VehicleEdgesDesc: Fahrzeuge nutzen Talente und Handicaps
+  SettingConf: Setting-Konfigurator
+  SettingConfLabel: Öffne Setting-Konfigurator
+  SettingConfDesc: Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten, Settingregeln, usw. einstellen.
+  Formula: Formel
+  SitMod: Situativer Mod
+  RollMode: Wurfmodus
+  RollExample: z.B. +1d6x= oder -2
+  Roll: Probe auf
+  RollRaise: Steigerungswurf
+  GroupRoll: Gruppenprobe
+  Ok: OK
+  Cancel: Abbruch
+  Redraw: Karte ziehen
+  Add: ' '
+  ConfigInit: Initiative konfigurieren
+  IgnWounds: Wunden ignorieren
+  Size: Größe
+  Scale: Größenkategorie
+  PickACard: Wähle eine Karte für {name}
+  NoCardsLeft: Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed} benötigten Karten verfügbar
+  OldCard: Alte Karte
+  ActionCard: Aktionskarte
+  ConvictionActivate: aktiviert Entschlossenheit!
+  ConvictionExtend: Entschlossenheit einsetzen?
+  ConvictionEnd: schwankt in der Entschlossenheit
+  NoBennies: Du hast nicht genug Bennys!
+  SBT: Kleine Flächenschablone
+  MBT: Mittlere Flächenschablone
+  LBT: Große Flächenschablone
+  Cone: Kegelschablone
+  GM: Spielleiter
+  Vehicles: Fahrzeuge
+  AddStats: Weitere Werte
+  Actors: Akteur
+  Items: Items
+  Max: Max
+  Curr: Aktuell
+  Aiming: Zielen
+  Ammo: Munition
+  AmmoManagement: Munitionsmanagement
+  AmmoManagementDesc: Wenn diese Option aktiviert (und anwendbar) ist, wird die Munition vom Magazin der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem eine Schaltfläche zum nachladen und du kannst die Waffe nicht verwenden wenn nicht genügend Munition verfügbar ist
+  AutoReload: Braucht keine Aktion zum nachladen
+  Berserk: Berserkerrausch
+  BleedingOut: Verblutend
+  DSNNone: '- Kein -'
+  Defending: Verteidigend
+  DiceConf: Würfel Konfiguration
+  DiceConfDesc: Verwalte Einstellungen der SWADE/Dice So Nice integration
+  DiceConfLabel: Würfel Konfiguration Öffnen
+  Diseased: Erkrankt
+  Encumbered: Überladen
+  Flying: Fliegend
+  Frightened: Veränstigt
+  General: Generell
+  HeartAttack: Herzinfarkt
+  Follow: Folge {name}
+  Unfollow: Folge {name} nicht
+  MakeGroupLeader: Gruppenleiter machen
+  RemoveGroupLeader: Gruppenleiter entfernen
+  AddTokenFollowers: Ausgewählte Tokens als Follower hinzufügen
+  GroupByName: Nach Namen gruppieren
+  SetGroupColor: Gruppenfarbe einstellen
+  SelectColor: Wähle eine Farbe
+  Holding: Aufgespart
+  Invisible: Unsichtbar
+  Hold: Abwarten
+  ActBeforeCurrentCombatant: Jetzt handeln
+  ActAfterCurrentCombatant: Nach aktuellem Teilnehmer handeln
+  LoseTurn: Zug aussetzen umschalten
+  NPCAmmoFromInventory: NSCs laden Munition aus ihrem Inventar nach
+  NoAmmoSet: Keine Munition ausgewählt
+  NotEnoughAmmo: Du hast nicht genug Munition für diese Aktion
+  NotEnoughAmmoToReload: Es gibt nicht genug Munition zum nachladen
+  OfficialSheet: Offizieller Charakterbogen
+  OnFire: Brennend
+  OpSkill: Manöverfertigkeit
+  PCAmmoFromInventory: SCs laden Munition aus ihrem Inventar nach
+  PCAmmoFromInventoryDesc: Wenn diese Option aktiviert ist, kann die Option zum Einstellen eines "Ausrüstung" gegenstands als Munition festgelegt werden und wird beim Nachladen der Waffe verwendet
+  Poisoned: Vergiftet
+  Prone: Liegend
+  Reach: Reichweite
+  Refresh: Aktualisiere diese Karte
+  Reload: Nachladen
+  ReloadSuccess: Die Waffe wurde erfolgreich nachgeladen
+  ReloadUnneeded: Die Waffe ist bereits voll geladen
+  ShowBennyAnimation: Zeige die Benny Animation
+  ShowBennyAnimationDesc: Spielt eine 3D Animation ab wenn ein Benny ausgegeben wird
+  Smite: Waffe verbessert
+  Protection: Schutz
+  Torch: Lichtquelle
+  VehicleAmmoFromInventory: Fahrzeuge nutzen Munition aus ihrem Inventar
+  WildDiePreset: Wildcard Würfel Voreinstellung
+  WildDiePresetDesc: Wähle ein DSN-Theme für den Wildcard-Würfel. Wähle "Custom", wenn ein eigener erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht anders aussehen soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel derzeit nur von dir selber gesehen werden können. Andere Spieler werden diese anders sehen.
+  Trapping: Ausprägung
+  AddBenny: Einen Benny hinzufügen
+  CurrentBennies: Derzeitige Bennys
+  RerollWithBenny: Mit Benny nochmal würfeln
+  FreeReroll: Freier Neuwurf
+  HideNpcItemChatCards: Verstecke NSC Item Chat Karten
+  HideNpcItemChatCardsDesc: Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch als Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
+  JokersWildDesc: Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein Joker als Aktionskarte gezogen wird.
+  ParryBase: Parade-Fertigkeit
+  ParryBaseDesc: Der Name der Fertigkeit die zur Berechnung des Paradewerts benutzt wird (Normalerweise Kämpfen)
+  AutoCalcParry: Automatisch Parade berechnen, inklusive Schilde
+  Subtype: Unterkategorie
+  SpecialAbility: Spezialfähigkeit
+  SpecialAbilities: Spezialfähigkeiten
+  RacialAbilities: Volkseigenschaften
+  ArchetypeAbilities: Archetypeigenschaften
+  About: Über
+  EdgesHindrances: Talente
+  GrantsPowers: Gewährt Mächte
+  Passengers: Passagiere
+  Crew: Besatzung
+  String: Text
+  Number: Nummer
+  Checkbox: Checkbox
+  NoPowerPoints: Keine Machtpunkte
+  NoPowerPointsDesc: Wenn diese Option aktiviert ist, werden alle Machtpunkt-Interaktionen ausgeblendet
+  WealthType: Kapitalsystem
+  WealthDie:
+    Label: Wohlstandswürfel
+    Broke:
+      Label: Pleite
+      Hint: Du bist pleite!
+  WealthSelectionNoneOther: Keines / Anderes
+  WealthTypeDesc: Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden soll
+  CurrencyName: Währungsname
+  CurrencyNameDesc: Benenne die gängigste Währung deines Settings
+  TraitRolls: Eigenschaftswürfe
+  Trait: Eigenschaft
+  AltTrait: Alternative Eigenschaft
+  ClickSuggestions: Klicke hier für Vorschläge
+  Quick: Schnell
+  BonusDamage: Bonusschaden
+  CoreSkill: Grundfertigkeit
+  CoreSkills: Grundfertigkeiten
+  CoreSkillsDesc: 'Gib hier die Namen der Grundfertigkeiten deines Settings an. Zum Beispiel so: Allgemeinwissen, Athletik, Heimlichkeit, Überreden, Wahrnehmung'
+  CoreSkillsPackDesc: Wähle aus, aus welchem Kompendium die Grundfertigkeiten bezogen werden
+  Joker: Joker
+  DmgRolls: Schadenswürfe
+  SubtractPPDesc: MP-Kosten von den verfügbaren MP abziehen
+  AddPPDesc: MP-Kosten zu den verfügbaren MP hinzurechnen
+  RightClickZoom: Für eine größere Ansicht rechtsklicken
+  SysMigrationWarning: |-
+    Deine SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können nicht zuverlässig auf die neueste Version migriert werden.
+    Der Vorgang wird versucht, es können jedoch Fehler auftreten.
+  DeckShuffled: Kartens automatisch gemischt
+  BasePace: Basisbewegung
+  WarningPackLocked: Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium entsperren.
+  ActionCardEditor: Aktionskarteneditor
+  CardFace: Kartenillustration
+  CardValue: Wert
+  IsJoker: Ist ein Joker
+  CardSuit: Symbol
+  OpenACEditor: Im Aktionskarteneditor öffnen
+  'Yes': Ja
+  'No': Nein
+  ShowCharacterSummary: Charakterzusammenfassung Anzeigen
+  CharacterSummary: Charakterzusammenfassung
+  CopyHtml: HTML Kopieren
+  CopyMarkdown: Markdown kopieren
+  InitCardDeck: Aktionskartendeck
+  Metric: Metrisch
+  Imperial: Imperial
+  WeightUnitLabel: Gewichtseinheit
+  WeightUnitDesc: Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch) gerechnet werden
+  UseAttributeShorts: Attributsnamen abkürzen
+  UseAttributeShortsDesc: Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen als Abkürzungen angegeben, also Ges statt Geschicklichkeit, Ver statt Verstand, etc. Schließe und öffne alle offenen Bögen wenn du diese Einstellung änderst.
+  3DBennies: 3D Bennies
+  Benny3DFrontBump: Bump Map Vorderseite
+  Benny3DBackBump: Bump Map Rückseite
+  Benny3DFrontDesc: Vordere Textur des Bennys
+  Benny3DBackDesc: Hintere Textur des Bennys
+  Benny3DFrontBumpDesc: Bump Map der Vorderseite
+  Benny3DBackBumpDesc: Bump Map der Rückseite
+  Modifiers: Modifikatoren
+  Duplicates: Duplikate Gefunden
+  InitDiscardPile: Initiative-Ablagestapel
+  Wealth: Vermögen
+  BennyImageSheet: Benny
+  Characters: Charaktere
+  CoreSkillsList: Liste der Grundfertigkeiten
+  MAPenalty: Mehrfachaktionsabzug
+  Mod:
+    Custom:
+      Add: Eigenen Modifikator hinzufügen
+    Support: Unterstützung
+    Preset:
+      Choose: Voreinstellung auswählen...
+      Add: Voreinstellung hinzufügen
+  Illumination:
+    _name: Beleuchtung
+    Dim: Düster
+    Dark: Dunkel
+    Pitch: Finsternis
+  Cover:
+    _name: Deckung
+    Shield: Deckung - Schild
+    Light: Leichte Deckung
+    Medium: Mittlere Deckung
+    Heavy: Schwere Deckung
+    Total: Vollständige Deckung
+  Range:
+    _name: Reichweite
+    Medium: Reichweite, Mittel
+    Long: Reichweite, Weit
+    Extreme: Reichweite, Extrem
+  ModOther: Andere Modifikatioren
+  Snapfire: Schnellschuss
+  UnstablePlatform: Unsicheren Grund
+  ApplyEncumbrance: Belastungsabzüge anwenden
+  ApplyEncumbraceHint: Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand gegen {fatigue} derzeit NICHT unterstüzt sind
+  NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
+  SetUpChase: Verfolgungsjagd erstellen
+  NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
+  ConvertToDeck: Zu Deck konvertieren
+  PPAbbreviation: MP
+  ShowInChat: Im Chat anzeigen
+  ExpandDescription: Beschreibung anzeigen
+  Favorite: Favorisieren
+  Equip: Ausrüsten
+  RollDamage: Schaden würfeln
+  SystemLinks:
+    Changelog: Changelog
+    Wiki: Wiki
+    ReportAnIssue: Ein Problem melden
+  Biography: Biografie
+  OpenOrigin: Urpsrung öffnen
+  EffectsTemporary: Temporäre Effekte
+  EffectsPermanent: Permanente Effecte
+  Ranks:
+    Novice: Anfänger
+    Seasoned: Fortgeschritten
+    Veteran: Veteran
+    Heroic: Heroisch
+    Legendary: Legendär
+  Advances:
+    Planned: Geplant
+    Number: Steigerung Nummer
+  Appearance: Erscheinungsbild
+  CharacterGoals: Ziele
+  Background: Hintergrund
+  ActiveEffects:
+    Add: Active Effect Hinzufügen
+    Source: Quelle
+ACTOR:
+  TypeCharacter: Charakter
+  TypeNpc: NSC
+  TypeVehicle: Fahrzeug
+ITEM:
+  TypeWeapon: Waffe
+  TypeArmor: Rüstung
+  TypeShield: Schild
+  TypeGear: Ausrüstung
+  TypeEdge: Talent
+  TypeHindrance: Handicap
+  TypeSkill: Fertigkeit
+  TypePower: Macht
+CARD:
+  TypeAdventure: Abenteuerkarte
+  TypePoker: Pokerkarte
