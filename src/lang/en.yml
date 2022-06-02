@@ -48,7 +48,9 @@ SWADE:
   Unskilled: Unskilled
   CoreSkill: Core Skill
   CoreSkills: Core Skills
-  CoreSkillsDesc: Enter a comma-separated list of skill names to be defined as core skills for all actors
+  CoreSkillsDesc: >-
+    Enter a comma-separated list of skill names to be defined as core skills for
+    all actors
   LinkAttr: Linked Attribute
   ArcaneSkill: Arcane Skill
   ActivateArcaneDevice: Activate Device
@@ -225,7 +227,9 @@ SWADE:
   EnableWoundPace: Adjust Pace with Wounds
   EnableWoundPaceDesc: When enabled, Pace is automatically affected by Wounds
   AutoLink: Automatically Link Wild Cards
-  AutoLinkDesc: When enabled, NPC Wild Cards will have their tokens linked when you toggle them between Extra and Wild Card
+  AutoLinkDesc: >-
+    When enabled, NPC Wild Cards will have their tokens linked when you toggle
+    them between Extra and Wild Card
   GmBennies: Gamemaster Bennies
   GmBenniesDesc: Sets how many Bennies the GM recieves on a refresh
   EnableBennyNotify: Benny notifications
@@ -235,13 +239,24 @@ SWADE:
   VehicleEdges: Vehicle Edges
   VehicleEdgesDesc: Vehicles use Edges and Hindrances
   ShowBennyAnimation: Show Benny Animation
-  ShowBennyAnimationDesc: Play an animation when spending a Benny. Only available if Dice So Nice! is installed
+  ShowBennyAnimationDesc: >-
+    Play an animation when spending a Benny. Only available if Dice So Nice! is
+    installed
   WildDiePreset: Wild Die Theme
-  WildDiePresetDesc: Select a DSN Theme for your Wild Die. Select 'Custom' if you want to create your own or 'None' if you don't want your Wild Die to look differently. Please keep in mind that self-created Wild Dies currently can only be seen by you. Other players will see them differently.
+  WildDiePresetDesc: >-
+    Select a DSN Theme for your Wild Die. Select 'Custom' if you want to create
+    your own or 'None' if you don't want your Wild Die to look differently.
+    Please keep in mind that self-created Wild Dies currently can only be seen
+    by you. Other players will see them differently.
   AmmoManagement: Ammunition Management
-  AmmoManagementDesc: When turned on, and applicable, actions subtract ammunition from the magazine of the weapon. Item cards also gain a new reload button and you will not be able to roll an attack if not enough ammunition is available
+  AmmoManagementDesc: >-
+    When turned on, and applicable, actions subtract ammunition from the
+    magazine of the weapon. Item cards also gain a new reload button and you
+    will not be able to roll an attack if not enough ammunition is available
   PCAmmoFromInventory: PCs use Ammunition from Inventory
-  PCAmmoFromInventoryDesc: When activated the option to set a `Gear` Item can be set to be used as ammunition and will be used when reloading the weapon
+  PCAmmoFromInventoryDesc: >-
+    When activated the option to set a `Gear` Item can be set to be used as
+    ammunition and will be used when reloading the weapon
   NPCAmmoFromInventory: NPCs use ammunition from their inventory
   VehicleAmmoFromInventory: Vehicles use ammunition from their inventory
   SettingConf: Setting Configurator
@@ -266,7 +281,9 @@ SWADE:
   Size: Size
   Scale: Scale
   PickACard: Pick a card for {name}
-  NoCardsLeft: There are not enough cards left in the deck! Only {current} of {needed} needed cards are available
+  NoCardsLeft: >-
+    There are not enough cards left in the deck! Only {current} of {needed}
+    needed cards are available
   OldCard: Old card
   ActionCard: Action Card
   ConvictionActive: Conviction Active
@@ -301,7 +318,9 @@ SWADE:
   RerollWithBenny: Reroll with Benny
   FreeReroll: Free Reroll
   HideNpcItemChatCards: Hide NPC Item Chat Cards
-  HideNpcItemChatCardsDesc: When enabled, NPC Item Chat Cards are automatically sent as a whisper to all Gamemasters instead of being posted for all to see
+  HideNpcItemChatCardsDesc: >-
+    When enabled, NPC Item Chat Cards are automatically sent as a whisper to all
+    Gamemasters instead of being posted for all to see
   JokersWildDesc: Gives a Benny to every player character when one of them is dealt a Joker
   ParryBase: Localized Fighting Skill Name
   ParryBaseDesc: The name of the skill which will be used to calculate a characters Parry
@@ -345,7 +364,10 @@ SWADE:
   SubtractPPDesc: Subtract PP Cost from the available PP
   AddPPDesc: Add PP Cost to the available PP
   RightClickZoom: Right-Click to Zoom
-  SysMigrationWarning: Your SWADE system data is from too old a Foundry version and cannot be reliably migrated to the latest version. The process will be attempted, but errors may occur.
+  SysMigrationWarning: >-
+    Your SWADE system data is from too old a Foundry version and cannot be
+    reliably migrated to the latest version. The process will be attempted, but
+    errors may occur.
   SomethingWrongWithCardComp: Something went wrong with the card compendium, switching back to default
   DeckShuffled: Card Deck automatically shuffled
   BasePace: Base Pace
@@ -366,9 +388,15 @@ SWADE:
   Imperial: Imperial
   Metric: Metric
   WeightUnitLabel: Unit of weight
-  WeightUnitDesc: Sets whether weights are measured in pounds or kilogramms. Changing this will NOT change the weights on items, only how the encumbrance is calculated
+  WeightUnitDesc: >-
+    Sets whether weights are measured in pounds or kilogramms. Changing this
+    will NOT change the weights on items, only how the encumbrance is calculated
   UseAttributeShorts: Use shortened attribute names
-  UseAttributeShortsDesc: Activate this option if you want to see abbreviated attribute names on the pc and npc sheets, i.e. Agi instead of Agility, Sma instead of Smarts, etc. You'll need to close and reopen all open sheets for this option to take effect.
+  UseAttributeShortsDesc: >-
+    Activate this option if you want to see abbreviated attribute names on the
+    pc and npc sheets, i.e. Agi instead of Agility, Sma instead of Smarts, etc.
+    You'll need to close and reopen all open sheets for this option to take
+    effect.
   BennyImageSheet: Benny
   BennyImageSheetDesc: Select which image to use for Bennies on the Character Sheet
   Benny3DFront: Front Texture
@@ -390,7 +418,10 @@ SWADE:
   ItemTraitMod: Item Trait Modifier
   ItemDmgMod: Item Damage Modifier
   Duplicates: Duplicates Found
-  DuplicateItemsBodyText: While adding the {type} <strong>{name}</strong> to the Actor {target} the following duplicates (by name and type) have been found. The new items  have been renamed to reflect their source.
+  DuplicateItemsBodyText: >-
+    While adding the {type} <strong>{name}</strong> to the Actor {target} the
+    following duplicates (by name and type) have been found. The new items  have
+    been renamed to reflect their source.
   NoActionDeckFound: No Action Deck found, creating one
   NoActionDeckDiscardPileFound: No Action Deck Discard Pile found, creating one
   InitDiscardPile: Initiative Discard Pile
@@ -429,7 +460,9 @@ SWADE:
   UnstablePlatform: Unstable Platform
   CannotAddRaceToRace: You cannot add a race/archetype to a race/archetype!
   ApplyEncumbrance: Apply Encumbrance Penalties
-  ApplyEncumbranceHint: Apply encumbrance penalties. Please keep in mind that this currently does NOT SUPPORT {vigor} tests to resist {fatigue}!
+  ApplyEncumbranceHint: >-
+    Apply encumbrance penalties. Please keep in mind that this currently does
+    NOT SUPPORT {vigor} tests to resist {fatigue}!
   LayOutChaseWithDeck: Use Deck to lay out Chase
   ClearChaseCards: Clear Chase cards from Scene
   NoSceneAvailable: There is no scene available or you've disabled the canvas
@@ -448,7 +481,9 @@ SWADE:
     None: None
     LooseTurnOnHold: Lose Turn on Hold
   RemoveEffectTitle: Remove {label} ?
-  RemoveEffectBody: '<p style="text-align: center;">Remove <strong>{label}</strong> from <strong>{parent}</strong>?</p>'
+  RemoveEffectBody: >-
+    <p style="text-align: center;">Remove <strong>{label}</strong> from
+    <strong>{parent}</strong>?</p>
   PPAbbreviation: PP
   ShowInChat: Show in chat
   ExpandDescription: Expand to show description
@@ -467,7 +502,9 @@ SWADE:
       NoCardsWarning: You don't have a favorite card hand set!
     Bennies:
       Name: Spend/Receive a Benny
-      Hint: Press to spend a Benny, hold down Alt while you press the key to receive a Benny instead
+      Hint: >-
+        Press to spend a Benny, hold down Alt while you press the key to receive
+        a Benny instead
   OpenOrigin: Open origin
   EffectsTemporary: Temporary Effects
   EffectsPermanent: Permanent Effects
@@ -499,10 +536,13 @@ SWADE:
   ActiveEffects:
     Add: Add Active Effect
     Source: Source
+    ResetDuration: Reset Duration
   Settings:
     HighlightTemplate:
       Name: Always Highlight Templates
-      Hint: When enabled, Measured Templates alway highlight themselves instead of the grid.
+      Hint: >-
+        When enabled, Measured Templates alway highlight themselves instead of
+        the grid.
 ACTOR:
   TypeCharacter: Player Character
   TypeNpc: NPC
