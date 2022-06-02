@@ -35,7 +35,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - You can now no longer roll your Wealth Die if you are broke. (#275)
-- Changed some translation strings, see the list below: (528)
+- Converted language files from flat to nested keys for better organization
+- Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
 
 ### Deprecated
