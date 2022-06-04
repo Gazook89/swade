@@ -226,10 +226,6 @@ SWADE:
   EnableConvDesc: Enable the Conviction setting rule
   EnableWoundPace: Adjust Pace with Wounds
   EnableWoundPaceDesc: When enabled, Pace is automatically affected by Wounds
-  AutoLink: Automatically Link Wild Cards
-  AutoLinkDesc: >-
-    When enabled, NPC Wild Cards will have their tokens linked when you toggle
-    them between Extra and Wild Card
   GmBennies: Gamemaster Bennies
   GmBenniesDesc: Sets how many Bennies the GM recieves on a refresh
   EnableBennyNotify: Benny notifications

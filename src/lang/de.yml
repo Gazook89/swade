@@ -185,8 +185,6 @@ SWADE:
   EnableConvDesc: Settingregel "Entschlossenheit" verwenden
   EnableWoundPace: Wunden beeinflussen Bewegung
   EnableWoundPaceDesc: Wenn aktiviert, wird die Bewegung automatisch durch Wunden angepasst
-  AutoLink: NSC Wildcards mit Token verbinden
-  AutoLinkDesc: NSC Wildcards beim Umschalten zwischen Statist und Wildcard mit Token verbinden
   GmBennies: Spielleiter Bennys
   GmBenniesDesc: Anzahl Bennys die du als SL beim auffrischen selbiger erhälst
   EnableBennyNotify: Nachrichten zu Bennys

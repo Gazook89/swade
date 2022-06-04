@@ -44,6 +44,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0. (#530)
 
+### Removed
+
+- Removed following Translation keys (#528)
+  - `SWADE.AutoLinkDesc`
+  - `SWADE.AutoLink`
+
 ### Fixed
 
 - Rolling damage and Trait rolls with a Strength of 1 no longer results in an error. (#308)
