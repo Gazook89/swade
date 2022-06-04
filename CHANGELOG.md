@@ -49,6 +49,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Removed following Translation keys (#528)
   - `SWADE.AutoLinkDesc`
   - `SWADE.AutoLink`
+  - `SWADE.Ace`
+  - `SWADE.SomethingWrongWithCardComp`
 
 ### Fixed
 

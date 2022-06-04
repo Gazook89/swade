@@ -195,7 +195,9 @@ SWADE:
   VehicleEdgesDesc: Fahrzeuge nutzen Talente und Handicaps
   SettingConf: Setting-Konfigurator
   SettingConfLabel: Öffne Setting-Konfigurator
-  SettingConfDesc: Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten, Settingregeln, usw. einstellen.
+  SettingConfDesc: >-
+    Hier kannst du dein Setting definieren und Dinge wie z.B. Grundfertigkeiten,
+    Settingregeln, usw. einstellen.
   Formula: Formel
   SitMod: Situativer Mod
   RollMode: Wurfmodus
@@ -212,7 +214,9 @@ SWADE:
   Size: Größe
   Scale: Größenkategorie
   PickACard: Wähle eine Karte für {name}
-  NoCardsLeft: Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed} benötigten Karten verfügbar
+  NoCardsLeft: >-
+    Es sind nicht genug Karten im Deck! Es sind nur {current] von {needed}
+    benötigten Karten verfügbar
   OldCard: Alte Karte
   ActionCard: Aktionskarte
   ConvictionActivate: aktiviert Entschlossenheit!
@@ -233,7 +237,11 @@ SWADE:
   Aiming: Zielen
   Ammo: Munition
   AmmoManagement: Munitionsmanagement
-  AmmoManagementDesc: Wenn diese Option aktiviert (und anwendbar) ist, wird die Munition vom Magazin der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem eine Schaltfläche zum nachladen und du kannst die Waffe nicht verwenden wenn nicht genügend Munition verfügbar ist
+  AmmoManagementDesc: >-
+    Wenn diese Option aktiviert (und anwendbar) ist, wird die Munition vom
+    Magazin der Waffe abgezogen. Gegenstandskarten im Chat erhalten außerdem
+    eine Schaltfläche zum nachladen und du kannst die Waffe nicht verwenden wenn
+    nicht genügend Munition verfügbar ist
   AutoReload: Braucht keine Aktion zum nachladen
   Berserk: Berserkerrausch
   BleedingOut: Verblutend
@@ -270,7 +278,10 @@ SWADE:
   OnFire: Brennend
   OpSkill: Manöverfertigkeit
   PCAmmoFromInventory: SCs laden Munition aus ihrem Inventar nach
-  PCAmmoFromInventoryDesc: Wenn diese Option aktiviert ist, kann die Option zum Einstellen eines "Ausrüstung" gegenstands als Munition festgelegt werden und wird beim Nachladen der Waffe verwendet
+  PCAmmoFromInventoryDesc: >-
+    Wenn diese Option aktiviert ist, kann die Option zum Einstellen eines
+    "Ausrüstung" gegenstands als Munition festgelegt werden und wird beim
+    Nachladen der Waffe verwendet
   Poisoned: Vergiftet
   Prone: Liegend
   Reach: Reichweite
@@ -285,17 +296,29 @@ SWADE:
   Torch: Lichtquelle
   VehicleAmmoFromInventory: Fahrzeuge nutzen Munition aus ihrem Inventar
   WildDiePreset: Wildcard Würfel Voreinstellung
-  WildDiePresetDesc: Wähle ein DSN-Theme für den Wildcard-Würfel. Wähle "Custom", wenn ein eigener erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht anders aussehen soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel derzeit nur von dir selber gesehen werden können. Andere Spieler werden diese anders sehen.
+  WildDiePresetDesc: >-
+    Wähle ein DSN-Theme für den Wildcard-Würfel. Wähle "Custom", wenn ein
+    eigener erstellt werden soll, oder "Kein" wenn der Wildcard-Würfel nicht
+    anders aussehen soll. Bitte beachte, dass selbst erstellte Wildcard-Würfel
+    derzeit nur von dir selber gesehen werden können. Andere Spieler werden
+    diese anders sehen.
   Trapping: Ausprägung
   AddBenny: Einen Benny hinzufügen
   CurrentBennies: Derzeitige Bennys
   RerollWithBenny: Mit Benny nochmal würfeln
   FreeReroll: Freier Neuwurf
   HideNpcItemChatCards: Verstecke NSC Item Chat Karten
-  HideNpcItemChatCardsDesc: Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items automatisch als Flüstern an alle Spielleiter gesendet, anstatt für alle sichtbar zu sein
-  JokersWildDesc: Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein Joker als Aktionskarte gezogen wird.
+  HideNpcItemChatCardsDesc: >-
+    Wenn diese Option aktiviert ist, werden Chat-Karten für NSC-Items
+    automatisch als Flüstern an alle Spielleiter gesendet, anstatt für alle
+    sichtbar zu sein
+  JokersWildDesc: >-
+    Wenn diese Option aktiviert ist, werden Bennys verteilt wenn ein Joker als
+    Aktionskarte gezogen wird.
   ParryBase: Parade-Fertigkeit
-  ParryBaseDesc: Der Name der Fertigkeit die zur Berechnung des Paradewerts benutzt wird (Normalerweise Kämpfen)
+  ParryBaseDesc: >-
+    Der Name der Fertigkeit die zur Berechnung des Paradewerts benutzt wird
+    (Normalerweise Kämpfen)
   AutoCalcParry: Automatisch Parade berechnen, inklusive Schilde
   Subtype: Unterkategorie
   SpecialAbility: Spezialfähigkeit
@@ -311,7 +334,9 @@ SWADE:
   Number: Nummer
   Checkbox: Checkbox
   NoPowerPoints: Keine Machtpunkte
-  NoPowerPointsDesc: Wenn diese Option aktiviert ist, werden alle Machtpunkt-Interaktionen ausgeblendet
+  NoPowerPointsDesc: >-
+    Wenn diese Option aktiviert ist, werden alle Machtpunkt-Interaktionen
+    ausgeblendet
   WealthType: Kapitalsystem
   WealthDie:
     Label: Wohlstandswürfel
@@ -319,7 +344,9 @@ SWADE:
       Label: Pleite
       Hint: Du bist pleite!
   WealthSelectionNoneOther: Keines / Anderes
-  WealthTypeDesc: Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt werden soll
+  WealthTypeDesc: >-
+    Wähle aus welches System zur Buchführung auf dem Charakterbogen genutzt
+    werden soll
   CurrencyName: Währungsname
   CurrencyNameDesc: Benenne die gängigste Währung deines Settings
   TraitRolls: Eigenschaftswürfe
@@ -330,19 +357,25 @@ SWADE:
   BonusDamage: Bonusschaden
   CoreSkill: Grundfertigkeit
   CoreSkills: Grundfertigkeiten
-  CoreSkillsDesc: 'Gib hier die Namen der Grundfertigkeiten deines Settings an. Zum Beispiel so: Allgemeinwissen, Athletik, Heimlichkeit, Überreden, Wahrnehmung'
+  CoreSkillsDesc: >-
+    Gib hier die Namen der Grundfertigkeiten deines Settings an. Zum Beispiel
+    so: Allgemeinwissen, Athletik, Heimlichkeit, Überreden, Wahrnehmung
   CoreSkillsPackDesc: Wähle aus, aus welchem Kompendium die Grundfertigkeiten bezogen werden
   Joker: Joker
   DmgRolls: Schadenswürfe
   SubtractPPDesc: MP-Kosten von den verfügbaren MP abziehen
   AddPPDesc: MP-Kosten zu den verfügbaren MP hinzurechnen
   RightClickZoom: Für eine größere Ansicht rechtsklicken
-  SysMigrationWarning: |-
-    Deine SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und können nicht zuverlässig auf die neueste Version migriert werden.
+  SysMigrationWarning: >-
+    Deine SWADE-Systemdaten stammen aus einer zu alten Foundry-Version und
+    können nicht zuverlässig auf die neueste Version migriert werden.
+
     Der Vorgang wird versucht, es können jedoch Fehler auftreten.
   DeckShuffled: Kartens automatisch gemischt
   BasePace: Basisbewegung
-  WarningPackLocked: Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium entsperren.
+  WarningPackLocked: >-
+    Dieses Kompendium ist gesperrt. Zum bearbeiten bitte das Kompendium
+    entsperren.
   ActionCardEditor: Aktionskarteneditor
   CardFace: Kartenillustration
   CardValue: Wert
@@ -359,9 +392,15 @@ SWADE:
   Metric: Metrisch
   Imperial: Imperial
   WeightUnitLabel: Gewichtseinheit
-  WeightUnitDesc: Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch) gerechnet werden
+  WeightUnitDesc: >-
+    Gib an ob Gewichtsangaben in Pfund (Imperial) oder Kilogramm (Metrisch)
+    gerechnet werden
   UseAttributeShorts: Attributsnamen abkürzen
-  UseAttributeShortsDesc: Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC Bogen als Abkürzungen angegeben, also Ges statt Geschicklichkeit, Ver statt Verstand, etc. Schließe und öffne alle offenen Bögen wenn du diese Einstellung änderst.
+  UseAttributeShortsDesc: >-
+    Wenn du diese Option aktivierst, werden die Attribute auf dem SC und NSC
+    Bogen als Abkürzungen angegeben, also Ges statt Geschicklichkeit, Ver statt
+    Verstand, etc. Schließe und öffne alle offenen Bögen wenn du diese
+    Einstellung änderst.
   3DBennies: 3D Bennies
   Benny3DFrontBump: Bump Map Vorderseite
   Benny3DBackBump: Bump Map Rückseite
@@ -405,7 +444,9 @@ SWADE:
   Snapfire: Schnellschuss
   UnstablePlatform: Unsicheren Grund
   ApplyEncumbrance: Belastungsabzüge anwenden
-  ApplyEncumbranceHint: Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand gegen {fatigue} derzeit NICHT unterstüzt sind
+  ApplyEncumbranceHint: >-
+    Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand
+    gegen {fatigue} derzeit NICHT unterstüzt sind
   NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
   SetUpChase: Verfolgungsjagd erstellen
   NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
@@ -433,12 +474,87 @@ SWADE:
   Advances:
     Planned: Geplant
     Number: Steigerung Nummer
+    Toggle: Plannung ein/ausschalten
+    Types:
+      Attribute: Attribut erhöhen
+      Edge: Neues Talent
+      Hindrance: Handicap ablegen
+      TwoSkills: Zwei Fertigkeiten
+      SingleSkill: Eine Fertigkeit
+    Delete: Aufstieg Löschen
+    EditorTitle: Aufsteigseditor
+    Modes:
+      Legacy: Legacy
+      Expanded: Erweitert
   Appearance: Erscheinungsbild
   CharacterGoals: Ziele
   Background: Hintergrund
   ActiveEffects:
     Add: Active Effect Hinzufügen
     Source: Quelle
+  ActionDmgMod: Akionsschadensmodifikator
+  AddAdvance: Aufstieg hinzufügen
+  ConvictionActive: Entschlossen
+  DrawInit: Initiative ziehen
+  Expand: Ausklappen
+  CoreSkillsPack: Kompendium mit Grundfertigkeiten
+  Expiration:
+    BeginAuto: Automatisch am Anfang des Zuges
+    BeginPrompt: Am Anfang des Zuges mit Nachfrage
+    Behavior: Verhalten bei Ablauf
+    EndAuto: Automatisch am Ende des Zuges
+    EndPrompt: Am Anfang des Zuges, mit Nachfrage
+    None: Keins
+    TabLabel: Verhalten
+    Description: >-
+      </p>Effekte laufen währen des <em>nächsten Zuges (oder später)</em> des
+      Zieles aus</p>
+    LooseTurnOnHold: Verliere Zug wenn dieser Aufgespart wurde
+  ClearChaseCards: Verfolgungsjagdkarten von der Szene entfernen
+  ChaseCardsCleared: Alle Verfolgungsjagtkarten wurden von der Szene entfernt
+  ItemDmgMod: Schadensmodifikator
+  RemoveEffectTitle: '{label} entfernen?'
+  RemoveEffectBody: >-
+    <p style="text-align: center;"><strong>{label}</strong> von
+    <strong>{parent}</strong>entfernen?</p>
+  WorldBasics: Basiseinstellungen
+  NoActionDeckFound: Kein Aktionskartendeck gefunden, es wird eines erstellt
+  NoActionDeckDiscardPileFound: Kein Aktionskarten Ablagestapel gefunden. Es wird einer erstellt
+  Subtract: Abziehen
+  HardChoices: Schwere Entscheidungen
+  HardChoicesDesc: Schaltet die Schwere Entscheidungen Regel ein
+  ChangeBennyWarning: Die Seite muss neu geladen werden damit diese Einstellungen in Kraft treten
+  CannotAddRaceToRace: Ein Volk/Archetyp kann nicht zu einem Volk/Archetyp hinzugefügt werden
+  BennyImageSheetDesc: >-
+    Wählt welches Bild verwendet wird um den Benny am Charakterbogen
+    darzustellen
+  Benny3DBack: Hintere Textur
+  Benny3DFront: Vordere Textur
+  Keybindings:
+    Bennies:
+      Name: Benny bekommen oder Ausgeben
+      Hint: >-
+        Drücke diese Taste(n) um einen Benny auszugeben. Halte dabei ALT
+        gedrückt um statdessen einen Benny zu bekommen
+    OpenFavoriteCards:
+      Hint: Die favorisierte Kartenhand kann in der Userkonfiguration gesetzt werden
+      Name: Favorisierte Kartenhand öffnen
+      NoCardsWarning: Es wurde keine favorisierte Kartenhand gesetzt!
+      UserConfigLabel: Favorisierte Kartenhand
+  SettingRules: Settingregeln
+  DuplicateItemsBodyText: >-
+    Während <strong>({type}) {name}</strong> zum Akteur {target} hinzugefügt
+    wurde sind die folgenden Duplikate festgestellt worde. Diese Duplikaten
+    wurden umbennant um ihre Herkunft zu zeigen.
+  LayOutChaseWithDeck: Deck für Verfolgungsjagd verwenden
+  Settings:
+    HighlightTemplate:
+      Name: Schablonen immer ausmalen
+      Hint: >-
+        Wenn diese Einstellung eingeschaltet ist werden Schablonen immer voll
+        ausgemalt anstatt nur das Raster
+  ActionTraitMod: Aktionseigenschaftsmodifikator
+  ItemTraitMod: Eigenschaftsmodifikator
 ACTOR:
   TypeCharacter: Charakter
   TypeNpc: NSC
@@ -452,6 +568,7 @@ ITEM:
   TypeHindrance: Handicap
   TypeSkill: Fertigkeit
   TypePower: Macht
+  TypeAbility: Eigenschaft
 CARD:
   TypeAdventure: Abenteuerkarte
   TypePoker: Pokerkarte

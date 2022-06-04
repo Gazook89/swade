@@ -334,7 +334,6 @@ SWADE:
   String: Text
   Number: Number
   Checkbox: Checkbox
-  Ace: Acing
   NoPowerPoints: No Power Points
   NoPowerPointsDesc: When enabled this option hides all Power Point interactions
   WealthType: Wealth Type
@@ -364,7 +363,6 @@ SWADE:
     Your SWADE system data is from too old a Foundry version and cannot be
     reliably migrated to the latest version. The process will be attempted, but
     errors may occur.
-  SomethingWrongWithCardComp: Something went wrong with the card compendium, switching back to default
   DeckShuffled: Card Deck automatically shuffled
   BasePace: Base Pace
   WarningPackLocked: You cannot edit a locked Compendium. Please unlock it first
