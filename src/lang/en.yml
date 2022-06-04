@@ -103,8 +103,8 @@ SWADE:
   SelectColor: Select a color
   Holding: Holding
   Hold: Hold
-  ActNow: Act Now
   ActAfterCurrentCombatant: Act After Current Combatant
+  ActBeforeCurrentCombatant: Act now
   LoseTurn: Toggle Lose Turn
   Frightened: Frightened
   Encumbered: Encumbered
@@ -226,12 +226,8 @@ SWADE:
   EnableConvDesc: Enable the Conviction setting rule
   EnableWoundPace: Adjust Pace with Wounds
   EnableWoundPaceDesc: When enabled, Pace is automatically affected by Wounds
-  AutoLink: Automatically Link Wild Cards
-  AutoLinkDesc: >-
-    When enabled, NPC Wild Cards will have their tokens linked when you toggle
-    them between Extra and Wild Card
   GmBennies: Gamemaster Bennies
-  GmBenniesDesc: Sets how many Bennies the GM recieves on a refresh
+  GmBenniesDesc: Sets how many Bennies the GM receives on a refresh
   EnableBennyNotify: Benny notifications
   EnableBennyNotifyDesc: Displays chat messages when bennies are taken, given or refreshed.
   VehicleMods: Vehicles Mods
@@ -338,7 +334,6 @@ SWADE:
   String: Text
   Number: Number
   Checkbox: Checkbox
-  Ace: Acing
   NoPowerPoints: No Power Points
   NoPowerPointsDesc: When enabled this option hides all Power Point interactions
   WealthType: Wealth Type
@@ -368,7 +363,6 @@ SWADE:
     Your SWADE system data is from too old a Foundry version and cannot be
     reliably migrated to the latest version. The process will be attempted, but
     errors may occur.
-  SomethingWrongWithCardComp: Something went wrong with the card compendium, switching back to default
   DeckShuffled: Card Deck automatically shuffled
   BasePace: Base Pace
   WarningPackLocked: You cannot edit a locked Compendium. Please unlock it first
@@ -389,7 +383,7 @@ SWADE:
   Metric: Metric
   WeightUnitLabel: Unit of weight
   WeightUnitDesc: >-
-    Sets whether weights are measured in pounds or kilogramms. Changing this
+    Sets whether weights are measured in pounds or kilograms. Changing this
     will NOT change the weights on items, only how the encumbrance is calculated
   UseAttributeShorts: Use shortened attribute names
   UseAttributeShortsDesc: >-

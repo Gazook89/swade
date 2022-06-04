@@ -38,10 +38,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Converted language files from flat to nested keys for better organization
 - Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
+  - `SWADE.ActNow` -> `SWADE.ActBeforeCurrentCombatant`
 
 ### Deprecated
 
 - Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0. (#530)
+
+### Removed
+
+- Removed following Translation keys (#528)
+  - `SWADE.AutoLinkDesc`
+  - `SWADE.AutoLink`
+  - `SWADE.Ace`
+  - `SWADE.SomethingWrongWithCardComp`
 
 ### Fixed
 
