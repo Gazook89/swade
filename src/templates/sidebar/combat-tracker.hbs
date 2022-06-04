@@ -103,7 +103,7 @@
                     {{#unless (isInGroup this.id)}}
                     {{#if (isOnHold this.id)}}
                     {{#unless (and (eq ../combat.round (roundHeld this.id)) (eq ../combat.combatant.id this.id))}}
-                    <a class="combatant-control active" title="{{localize 'SWADE.ActNow'}}" data-control="actNow">
+                    <a class="combatant-control active" title="{{localize 'SWADE.ActBeforeCurrentCombatant'}}" data-control="actNow">
                         <i class="fas fa-long-arrow-alt-right"></i></a>
                     {{/unless}}
                     {{/if}}

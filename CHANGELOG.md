@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Converted language files from flat to nested keys for better organization
 - Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
+  - `SWADE.ActNow` -> `SWADE.ActBeforeCurrentCombatant`
 
 ### Deprecated
 

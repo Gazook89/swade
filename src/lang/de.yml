@@ -151,7 +151,7 @@ SWADE:
   FatigueMax: Maximale Erschöpfung
   Incap: Ausgeschaltet!
   Init: Initiative
-  ResetActionDeck: Aktionsdeck zurücksetzen
+  ActionDeckReset: Aktionsdeck zurücksetzen
   ActionDeckResetNotification: Aktionsdeck wurde zurückgesetzt
   InitDraw: zog...
   JokersWild: Bennys für Joker
@@ -407,7 +407,7 @@ SWADE:
   Snapfire: Schnellschuss
   UnstablePlatform: Unsicheren Grund
   ApplyEncumbrance: Belastungsabzüge anwenden
-  ApplyEncumbraceHint: Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand gegen {fatigue} derzeit NICHT unterstüzt sind
+  ApplyEncumbranceHint: Wende belatungsabzüge an. Bitte beachtet das {vigor}sproben zum Widerstand gegen {fatigue} derzeit NICHT unterstüzt sind
   NoSceneAvailable: Es ist keine Szene verfügbar oder der Canvas wurde ausgeschaltet
   SetUpChase: Verfolgungsjagd erstellen
   NotADeckCompendium: Bei diesem Compendium scheint es sich nicht um ein Legacy Deck zu handeln
