@@ -2,7 +2,6 @@ import { DocumentModificationOptions } from '@league-of-foundry-developers/found
 import { CombatantDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/combatantData';
 import { SWADE } from '../config';
 import { getCanvas } from '../util';
-import SwadeUser from './SwadeUser';
 
 declare global {
   interface DocumentClassConfig {
@@ -99,13 +98,13 @@ export default class SwadeCombatant extends Combatant {
     return this.setFlag('swade', 'turnLost', turnLost);
   }
 
-  async _preCreate(
+  override async _preCreate(
     data: CombatantDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
   ) {
     await super._preCreate(data, options, user);
-    const combatants = game?.combat?.combatants.size!;
+    const combatants = game?.combat?.combatants.size ?? 0;
     const tokenID =
       data.tokenId instanceof TokenDocument ? data.tokenId.id : data.tokenId;
     const tokenIndex =
@@ -123,18 +122,16 @@ export default class SwadeCombatant extends Combatant {
     });
   }
 
-  async _preUpdate(
-    changed: DeepPartial<CombatantDataConstructorData>,
+  override _onUpdate(
+    changed: DeepPartial<Combatant['data']['_source']>,
     options: DocumentModificationOptions,
-    user: SwadeUser,
+    userId: string,
   ) {
-    await super._preUpdate(changed, options, user);
-
-    //return early if there's no flag updates
-    if (!hasProperty(changed, 'flags.swade')) return;
-    await this.handOutBennies();
+    super._onUpdate(changed, options, userId);
+    this.handOutBennies();
   }
 
+  /** Checks if this combatant has a joker and hands out bennies based on the actor type and disposition */
   async handOutBennies() {
     if (
       !game.settings.get('swade', 'jokersWild') ||
@@ -159,7 +156,7 @@ export default class SwadeCombatant extends Combatant {
         .forEach((c) => c.actor?.getBenny());
     } else if (this.actor?.type === 'npc' && isTokenHostile) {
       await CONFIG.ChatMessage.documentClass.create({
-        user: game.user?.id!,
+        user: game.user?.id,
         content: template,
       });
       //give all GMs a benny

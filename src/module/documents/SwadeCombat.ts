@@ -123,7 +123,7 @@ export default class SwadeCombat extends Combat {
         card = cards[0];
       }
 
-      const newflags = {
+      const newFlags = {
         cardValue: card.data.value!,
         suitValue: card.data.data['suit'],
         hasJoker: card.data.data['isJoker'],
@@ -132,19 +132,16 @@ export default class SwadeCombat extends Combat {
 
       const initiative = card?.data.data['suit'] + card.data.value;
 
-      c.data.update({
-        initiative: initiative,
-        'flags.swade': newflags,
-      });
+      c.data.update({ initiative: initiative, 'flags.swade': newFlags });
 
       if (c.isGroupLeader) {
         await c.setSuitValue(c.suitValue ?? 0 + 0.9);
         const followers =
           game.combat?.combatants.filter((f) => f.groupId === c.id) ?? [];
-        let s = newflags.suitValue;
+        let s = newFlags.suitValue;
         for (const f of followers) {
           s -= 0.02;
-          f.data.update({ initiative: initiative, 'flags.swade': newflags });
+          f.data.update({ initiative: initiative, 'flags.swade': newFlags });
           f.data.update({ 'flags.swade.suitValue': s });
         }
       }
@@ -191,7 +188,10 @@ export default class SwadeCombat extends Combat {
       await CONFIG.ChatMessage.documentClass.createDocuments(initMessages);
     }
 
-    await Promise.all(this.combatants.map((c) => c.handOutBennies()));
+    const combatants = ids.map((id) =>
+      this.combatants.get(id, { strict: true }),
+    );
+    await Promise.all(combatants.map((c) => c.handOutBennies()));
 
     // Return the updated Combat
     return this;

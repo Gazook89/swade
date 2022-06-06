@@ -139,7 +139,7 @@ export function firstGM() {
 }
 
 export function isFirstGM() {
-  return game.userId !== firstGM()?.id;
+  return game.userId === firstGM()?.id;
 }
 
 export function getRankFromAdvance(advance: number): number {

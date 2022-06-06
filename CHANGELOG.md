@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.6
+
+### Fixed
+
+- Fixed overeager benny distribution in case of dealing a joker (#534)
+
 ## v1.1.5
 
 ### Added

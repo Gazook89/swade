@@ -1,17 +1,14 @@
 import SwadeActiveEffect from './documents/SwadeActiveEffect';
-import * as util from './util';
+import { isFirstGM, isFirstOwner } from './util';
 
 export default class SwadeSocketHandler {
   identifier = 'system.swade';
 
   constructor() {
-    //register socket listeners
     this.registerSocketListeners();
   }
 
-  /**
-   * registers all the socket listeners
-   */
+  /** registers all the socket listeners */
   registerSocketListeners(): void {
     game.socket?.on(this.identifier, (data) => {
       switch (data.type) {
@@ -55,7 +52,7 @@ export default class SwadeSocketHandler {
 
   private async _onRemoveStatusEffect(data: RemoveStatusEffectEvent) {
     const effect = (await fromUuid(data.effectUUID)) as SwadeActiveEffect;
-    if (util.isFirstOwner(effect.parent)) {
+    if (isFirstOwner(effect.parent)) {
       effect.promptEffectDeletion();
     }
   }
@@ -70,8 +67,9 @@ export default class SwadeSocketHandler {
 
   //advance round
   private async _onNewRound(data: NewRoundEvent) {
-    if (!util.isFirstGM()) return;
-    game.combats?.get(data.combatId, { strict: true }).nextRound();
+    if (isFirstGM()) {
+      game.combats?.get(data.combatId, { strict: true }).nextRound();
+    }
   }
 
   private _onUnknownSocket(type: string) {
