@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## v1.1.6
 
+### Changed
+
+- DSN integration now uses the global export object instead of a dynamic file import (#535)
+
 ### Fixed
 
 - Fixed overeager benny distribution in case of dealing a joker (#534)
