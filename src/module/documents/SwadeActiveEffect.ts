@@ -45,15 +45,27 @@ export default class SwadeActiveEffect extends ActiveEffect {
     return false;
   }
 
-  //TODO implement further
-  get isExpired() {
-    if (!this.isTemporary || !game.combat) return false;
+  get expiresAtStartOfTurn(): boolean {
+    const expiration = this.getFlag('swade', 'expiration');
+    if (expiration === undefined) return false;
+    return [
+      constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
+      constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
+    ].includes(expiration);
+  }
+
+  get expiresAtEndOfTurn(): boolean {
+    const expiration = this.getFlag('swade', 'expiration');
+    if (expiration === undefined) return false;
+    return [
+      constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
+      constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
+    ].includes(expiration);
   }
 
   static ITEM_REGEXP = /@([a-zA-Z0-9]+)\{(.+)\}\[([\S.]+)\]/;
 
-  /** @override */
-  apply(actor: SwadeActor, change: EffectChangeData) {
+  override apply(actor: SwadeActor, change: EffectChangeData) {
     const match = change.key.match(SwadeActiveEffect.ITEM_REGEXP);
     if (match) {
       //get the properties from the match
@@ -121,15 +133,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   /** This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion */
-  async removeEffect() {
-    const statusId = this.getFlag('core', 'statusId') ?? '';
-    if (game.swade.effectCallbacks.has(statusId)) {
-      const callbackFn = game.swade.effectCallbacks.get(statusId, {
-        strict: true,
-      });
-      return callbackFn(this);
-    }
-
+  async expire() {
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
       expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
@@ -149,14 +153,30 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  async expire() {
-    if (!this.isExpired) return;
-    //const combat = game.combat;
+  isExpired(pointInTurn: 'start' | 'end'): boolean {
+    const isRightPointInTurn =
+      (pointInTurn === 'start' && this.expiresAtStartOfTurn) ||
+      (pointInTurn === 'end' && this.expiresAtEndOfTurn);
+    const remaining = this.duration.remaining ?? 0;
+    return isRightPointInTurn && remaining <= 0;
   }
 
-  promptEffectDeletion() {
+  /** @deprecated */
+  async removeEffect() {
+    await this.expire();
+  }
+
+  async promptEffectDeletion() {
     if (!isFirstOwner(this.parent)) {
       return game.swade.sockets.removeStatusEffect(this.uuid);
+    }
+
+    const statusId = this.getFlag('core', 'statusId') ?? '';
+    if (game.swade.effectCallbacks.has(statusId)) {
+      const callbackFn = game.swade.effectCallbacks.get(statusId, {
+        strict: true,
+      });
+      return callbackFn(this);
     }
 
     const title = game.i18n.format('SWADE.RemoveEffectTitle', {
@@ -191,7 +211,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }).render(true);
   }
 
-  protected async _onUpdate(
+  protected override async _onUpdate(
     changed: PropertiesToSource<ActiveEffectDataProperties>,
     options: DocumentModificationOptions,
     userId: string,
@@ -208,7 +228,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async _preUpdate(
+  protected override async _preUpdate(
     changed: ActiveEffectDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
@@ -223,7 +243,10 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async _preDelete(options: DocumentModificationOptions, user: User) {
+  protected override async _preDelete(
+    options: DocumentModificationOptions,
+    user: User,
+  ) {
     super._preDelete(options, user);
     const parent = this.parent;
     //remove the effects from the item
@@ -232,7 +255,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async _preCreate(
+  protected override async _preCreate(
     data: ActiveEffectDataConstructorData,
     options: DocumentModificationOptions,
     user: BaseUser,
