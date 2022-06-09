@@ -27,6 +27,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Added
 
 - Added Item sheet header button to copy the document link for a given item to the clipboard.
+- Added an edit button to the Race and Archetype inputs on the Character sheet, which can display document links
+
+### Changed
+
+- When dropping race and archetype items onto a character sheet, the link is now set as the value for the race and archetype instead of the name
 
 ### Fixed
 

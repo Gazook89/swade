@@ -933,9 +933,9 @@ export default class SwadeHooks {
       if (subType === 'special') return;
       //set name from archetype/race
       if (subType === 'race') {
-        await actor.update({ 'data.details.species.name': item.name });
+        await actor.update({ 'data.details.species.name': item.link });
       } else if (subType === 'archetype') {
-        await actor.update({ 'data.details.archetype': item.name });
+        await actor.update({ 'data.details.archetype': item.link });
       }
       //process embedded documents
       const map = new Map<string, ItemData['_source']>(
