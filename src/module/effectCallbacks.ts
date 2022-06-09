@@ -6,15 +6,15 @@ export function registerEffectCallbacks() {
   const effectCallbacks = game.swade.effectCallbacks;
   effectCallbacks.set('shaken', removeShaken);
   effectCallbacks.set('distracted', removeEffect);
-  effectCallbacks.set('stunned', removeStunned);
   effectCallbacks.set('vulnerable', removeEffect);
-  effectCallbacks.set('bleeding-out', bleedOut);
-  effectCallbacks.set('protection', removeProtection);
+  // effectCallbacks.set('stunned', removeStunned);
+  // effectCallbacks.set('bleeding-out', bleedOut);
+  // effectCallbacks.set('protection', removeProtection);
 }
 
 async function removeShaken(effect: SwadeActiveEffect) {
   await new Promise((resolve) => {
-    let roll: Roll<{}> | null | undefined;
+    let roll: Roll<{}> | null = null;
     const buttons: Record<string, Dialog.Button> = {
       roll: {
         label: game.i18n.localize('SWADE.EffectCallbacks.Shaken.RollSpirit'),
@@ -40,7 +40,6 @@ async function removeShaken(effect: SwadeActiveEffect) {
             await effect.delete();
             ui.notifications.info('SWADE.NoLongerShaken', { localize: true });
           }
-          resolve(roll);
         },
       },
       benny: {
@@ -51,7 +50,6 @@ async function removeShaken(effect: SwadeActiveEffect) {
           if (parent instanceof SwadeItem) return;
           await parent?.spendBenny();
           await effect.delete();
-          resolve(null);
         },
       },
       gmBenny: {
@@ -62,7 +60,6 @@ async function removeShaken(effect: SwadeActiveEffect) {
           if (parent instanceof SwadeItem) return;
           await game.user?.spendBenny();
           await effect.delete();
-          resolve(null);
         },
       },
     };
@@ -70,9 +67,12 @@ async function removeShaken(effect: SwadeActiveEffect) {
       delete buttons.gmBenny;
     }
     const data: Dialog.Data = {
-      title: game.i18n.localize('SWADE.EffectCallbacks.Shaken.Title'),
+      title: game.i18n.format('SWADE.EffectCallbacks.Shaken.Title', {
+        name: effect.parent?.name,
+      }),
       content: '<p>What do you want to do?</p>',
       buttons,
+      close: () => resolve(roll),
       render: (html: JQuery<HTMLElement>) => {
         const button = html.find('button[data-button="benny"]');
         const gmButton = html.find('button[data-button="gmBenny"]');
@@ -91,14 +91,14 @@ async function removeEffect(effect: SwadeActiveEffect) {
   await effect.delete();
 }
 
-async function removeStunned(_effect: SwadeActiveEffect) {
-  throw new Error('Function not implemented.');
-}
+// async function removeStunned(_effect: SwadeActiveEffect) {
+//   throw new Error('Function not implemented.');
+// }
 
-async function bleedOut(_effect: SwadeActiveEffect) {
-  throw new Error('Function not implemented.');
-}
+// async function bleedOut(_effect: SwadeActiveEffect) {
+//   throw new Error('Function not implemented.');
+// }
 
-async function removeProtection(_effect: SwadeActiveEffect) {
-  throw new Error('Function not implemented.');
-}
+// async function removeProtection(_effect: SwadeActiveEffect) {
+//   throw new Error('Function not implemented.');
+// }

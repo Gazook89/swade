@@ -540,7 +540,7 @@ SWADE:
   EffectCallbacks:
     Shaken:
       RollSpirit: Roll Spirit
-      Title: Remove Shaken
+      Title: Remove Shaken from {name}
   BenniesSpendGM: Spend a GM Benny
   NoLongerShaken: You are no longer shaken
 ACTOR:

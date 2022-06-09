@@ -496,7 +496,7 @@ SWADE:
   EffectCallbacks:
     Shaken:
       RollSpirit: Willenskraft würfeln
-      Title: Angeschlagen entfernen
+      Title: Angeschlagen von {name} entfernen
   BenniesSpendGM: Gib einen SL Benny aus
   ActionDmgMod: Akionsschadensmodifikator
   AddAdvance: Aufstieg hinzufügen
