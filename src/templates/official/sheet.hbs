@@ -43,26 +43,18 @@
   </div>
   {{/if}}
 
-  <label class="gridcell character-detail race">
-    <span class="sr-only">{{localize 'SWADE.Race'}}</span>
-    <input
-      type="text"
-      name="data.details.species.name"
-      value="{{data.data.details.species.name}}"
-      placeholder="{{localize 'SWADE.Race'}}"
-    />
-  </label>
-    <label class="gridcell character-detail archetype">
-    <span class="sr-only">{{localize 'SWADE.Archetype'}}</span>
-    <input
-      type="text"
-      name="data.details.archetype"
-      value="{{data.data.details.archetype}}"
-      placeholder="{{localize 'SWADE.Archetype'}}"
-    />
-  </label>
-  <label class="gridcell character-detail rank">
-    <span class="sr-only">{{localize 'SWADE.Rank'}}</span>
+  <span class="gridcell character-detail race">
+    <button type="button"><i class="fas fa-edit"></i></button>
+    <label class="sr-only">{{localize species.label}}</label>
+    <span class="display" data-detail="data.details.species.name" data-label="{{species.label}}">{{species.value}}</span>
+  </span>
+  <span class="gridcell character-detail archetype">
+    <button type="button"><i class="fas fa-edit"></i></button>
+    <label class="sr-only">{{localize archetype.label}}</label>
+    <span class="display" data-detail="data.details.archetype" data-label="{{archetype.label}}">{{archetype.value}}</span>
+  </span>
+  <span class="gridcell character-detail rank">
+    <label class="sr-only">{{localize 'SWADE.Rank'}}</label>
     <input
       type="text"
       name="data.advances.rank"
@@ -70,8 +62,8 @@
       placeholder="{{localize 'SWADE.Rank'}}"
       {{disabled advances.expanded}}
     />
-  </label>
-  <label class="gridcell character-detail advances">
+  </span>
+  <span class="gridcell character-detail advances">
     <a>{{localize 'SWADE.Adv'}}</a>
     <input
       type="number"
@@ -79,7 +71,7 @@
       value="{{data.data.advances.value}}"
       {{disabled advances.expanded}}
     />
-  </label>
+  </span>
 
   {{!-- Sheet Tab Navigation --}}
   <nav class="gridcell tabs" data-group="primary">

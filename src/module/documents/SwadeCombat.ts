@@ -124,18 +124,15 @@ export default class SwadeCombat extends Combat {
       }
 
       const newFlags = {
-        cardValue: card?.data.value!,
-        suitValue: card?.data.data['suit'],
-        hasJoker: card?.data.data['isJoker'],
-        cardString: card?.data.description,
+        cardValue: card.data.value!,
+        suitValue: card.data.data['suit'],
+        hasJoker: card.data.data['isJoker'],
+        cardString: card.data.description,
       };
 
       const initiative = card?.data.data['suit'] + card.data.value;
 
-      c.data.update({
-        initiative: initiative,
-        flags: { swade: newFlags },
-      });
+      c.data.update({ initiative: initiative, 'flags.swade': newFlags });
 
       if (c.isGroupLeader) {
         await c.setSuitValue(c.suitValue ?? 0 + 0.9);
@@ -191,7 +188,13 @@ export default class SwadeCombat extends Combat {
       await CONFIG.ChatMessage.documentClass.createDocuments(messages);
     }
 
-    await Promise.all(this.combatants.map((c) => c.handOutBennies()));
+    const combatants = ids.map((id) =>
+      this.combatants.get(id, { strict: true }),
+    );
+
+    for (const c of combatants) {
+      await c.handOutBennies();
+    }
 
     // Return the updated Combat
     return this;
