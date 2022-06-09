@@ -561,6 +561,7 @@ SWADE:
         ausgemalt anstatt nur das Raster
   ActionTraitMod: Aktionseigenschaftsmodifikator
   ItemTraitMod: Eigenschaftsmodifikator
+  NoLongerShaken: Du bist nicht mehr Angeschlagen
 ACTOR:
   TypeCharacter: Charakter
   TypeNpc: NSC

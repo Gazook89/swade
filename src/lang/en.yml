@@ -383,8 +383,8 @@ SWADE:
   Metric: Metric
   WeightUnitLabel: Unit of weight
   WeightUnitDesc: >-
-    Sets whether weights are measured in pounds or kilograms. Changing this
-    will NOT change the weights on items, only how the encumbrance is calculated
+    Sets whether weights are measured in pounds or kilograms. Changing this will
+    NOT change the weights on items, only how the encumbrance is calculated
   UseAttributeShorts: Use shortened attribute names
   UseAttributeShortsDesc: >-
     Activate this option if you want to see abbreviated attribute names on the
@@ -542,6 +542,7 @@ SWADE:
       RollSpirit: Roll Spirit
       Title: Remove Shaken
   BenniesSpendGM: Spend a GM Benny
+  NoLongerShaken: You are no longer shaken
 ACTOR:
   TypeCharacter: Player Character
   TypeNpc: NPC
