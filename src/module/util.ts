@@ -142,7 +142,7 @@ export function firstGM() {
 }
 
 export function isFirstGM() {
-  return game.userId !== firstGM()?.id;
+  return game.userId === firstGM()?.id;
 }
 
 export function getRankFromAdvance(advance: number): number {
@@ -161,6 +161,30 @@ export function getRankFromAdvance(advance: number): number {
 
 export function getRankFromAdvanceAsString(advance: number): string {
   return SWADE.ranks[getRankFromAdvance(advance)];
+}
+
+// this code taken from https://stackoverflow.com/a/65996386
+export function copyToClipboard(textToCopy: string) {
+  // navigator clipboard api needs a secure context (https)
+  if (navigator.clipboard && window.isSecureContext) {
+    // navigator clipboard api method
+    return navigator.clipboard.writeText(textToCopy);
+  } else {
+    // text area method
+    const textArea = document.createElement('textarea');
+    textArea.value = textToCopy;
+    // make the textarea out of viewport
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    // eslint-disable-next-line deprecation/deprecation
+    document.execCommand('copy');
+    textArea.remove();
+  }
+  ui.notifications.info('Copied to clipboard');
 }
 
 type Permissions = Record<string, number>;

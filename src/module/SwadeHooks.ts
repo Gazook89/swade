@@ -933,9 +933,9 @@ export default class SwadeHooks {
       if (subType === 'special') return;
       //set name from archetype/race
       if (subType === 'race') {
-        await actor.update({ 'data.details.species.name': item.name });
+        await actor.update({ 'data.details.species.name': item.link });
       } else if (subType === 'archetype') {
-        await actor.update({ 'data.details.archetype': item.name });
+        await actor.update({ 'data.details.archetype': item.link });
       }
       //process embedded documents
       const map = new Map<string, ItemData['_source']>(
@@ -1198,26 +1198,29 @@ export default class SwadeHooks {
   }
 
   public static onDiceSoNiceReady(dice3d: Dice3D) {
-    import(foundry.utils.getRoute('/modules/dice-so-nice/DiceColors.js'))
-      .then((obj) => {
-        SWADE.dsnColorSets = obj.COLORSETS;
-        SWADE.dsnTextureList = obj.TEXTURELIST;
-      })
-      .catch((err) => console.error(err));
+    const currentDSNVersion = game.modules!.get('dice-so-nice')!.data.version;
+    if (isNewerVersion(currentDSNVersion, '4.5.0')) {
+      //TODO: Remove with swade v1.2
+      SWADE.dsnColorSets = game?.dice3d!.exports.COLORSETS;
+      SWADE.dsnTextureList = game?.dice3d!.exports.TEXTURELIST;
+    } else {
+      import(foundry.utils.getRoute('/modules/dice-so-nice/DiceColors.js'))
+        .then((obj) => {
+          SWADE.dsnColorSets = obj.COLORSETS;
+          SWADE.dsnTextureList = obj.TEXTURELIST;
+        })
+        .catch((err) => console.error(err));
+    }
 
     const customWilDieColors =
       game.user!.getFlag('swade', 'dsnCustomWildDieColors') ||
-      (getProperty(
-        SWADE,
-        'diceConfig.flags.dsnCustomWildDieColors.default',
-      ) as DsnCustomWildDieColors);
+      (SWADE.diceConfig.flags.dsnCustomWildDieColors
+        .default as DsnCustomWildDieColors);
 
     const customWilDieOptions =
       game.user!.getFlag('swade', 'dsnCustomWildDieOptions') ||
-      (getProperty(
-        SWADE,
-        'diceConfig.flags.dsnCustomWildDieOptions.default',
-      ) as DsnCustomWildDieOptions);
+      (SWADE.diceConfig.flags.dsnCustomWildDieOptions
+        .default as DsnCustomWildDieOptions);
 
     dice3d.addSystem(
       { id: 'swade', name: 'Savage Worlds Adventure Edition' },

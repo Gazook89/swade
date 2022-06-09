@@ -3,6 +3,7 @@ import { AdditionalStat } from '../../interfaces/additional.interface';
 import SwadeDocumentTweaks from '../apps/SwadeDocumentTweaks';
 import { SWADE } from '../config';
 import SwadeItem from '../documents/item/SwadeItem';
+import { copyToClipboard } from '../util';
 
 /**
 @noInheritDoc
@@ -31,24 +32,25 @@ export default class SwadeItemSheet extends ItemSheet {
     return `${path}/${this.item.type}.hbs`;
   }
 
-  /**
-   * Extend and override the sheet header buttons
-   * @override
-   */
-  protected _getHeaderButtons() {
+  /** Extend and override the sheet header buttons */
+  protected override _getHeaderButtons() {
     const buttons = super._getHeaderButtons();
 
-    // Token Configuration
-    const canConfigure = game.user!.isGM || this.item.isOwner;
-    if (this.options.editable && canConfigure) {
-      const button: Application.HeaderButton = {
+    if (this.isEditable) {
+      buttons.unshift({
         label: 'Tweaks',
         class: 'configure-actor',
         icon: 'fas fa-dice',
         onclick: (ev) => this._onConfigureEntity(ev),
-      };
-      return [button, ...super._getHeaderButtons()];
+      });
     }
+
+    buttons.unshift({
+      label: 'Link',
+      class: 'copy-link',
+      icon: 'fas fa-link',
+      onclick: () => copyToClipboard(this.item.link),
+    });
     return buttons;
   }
 

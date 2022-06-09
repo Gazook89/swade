@@ -1,6 +1,7 @@
 import { AdditionalStat } from '../interfaces/additional.interface';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
+import { copyToClipboard } from './util';
 
 /**
  * Produce short, plaintext summaries of the most important aspects of an Actor's character sheet.
@@ -67,7 +68,7 @@ export default class CharacterSummarizer {
   }
 
   copySummaryHtml() {
-    this._copyToClipboard(this.summary);
+    copyToClipboard(this.summary);
   }
 
   copySummaryMarkdown() {
@@ -81,30 +82,7 @@ export default class CharacterSummarizer {
       .replace(/<\/h1>/g, '\n')
       .replace(/&mdash;/g, '—');
 
-    this._copyToClipboard(markdownSummary);
-  }
-
-  // this code taken from https://stackoverflow.com/a/65996386
-  _copyToClipboard(textToCopy: string) {
-    // navigator clipboard api needs a secure context (https)
-    if (navigator.clipboard && window.isSecureContext) {
-      // navigator clipboard api method
-      return navigator.clipboard.writeText(textToCopy);
-    } else {
-      // text area method
-      const textArea = document.createElement('textarea');
-      textArea.value = textToCopy;
-      // make the textarea out of viewport
-      textArea.style.position = 'fixed';
-      textArea.style.left = '-999999px';
-      textArea.style.top = '-999999px';
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      // eslint-disable-next-line deprecation/deprecation
-      document.execCommand('copy');
-      textArea.remove();
-    }
+    copyToClipboard(markdownSummary);
   }
 
   _makeSummary() {

@@ -120,6 +120,11 @@ export default class CharacterSheet extends ActorSheet {
       this._tabs[0].activate('about');
     });
 
+    //Toggle char detail inputs
+    html
+      .find('.character-detail button')
+      .on('click', this._setupCharacterDetailInput.bind(this));
+
     //Toggle Conviction
     html.find('.conviction-toggle').on('click', async () => {
       if (this.actor.data.type === 'vehicle') return;
@@ -662,6 +667,24 @@ export default class CharacterSheet extends ActorSheet {
       list: this._getAdvances(),
     };
 
+    data.archetype = {
+      value: this.actor.data.data.details.archetype
+        ? new Handlebars.SafeString(
+            TextEditor.enrichHTML(this.actor.data.data.details.archetype),
+          )
+        : game.i18n.localize('SWADE.Archetype'),
+      label: 'SWADE.Archetype',
+    };
+
+    data.species = {
+      value: this.actor.data.data.details.species.name
+        ? new Handlebars.SafeString(
+            TextEditor.enrichHTML(this.actor.data.data.details.species.name),
+          )
+        : game.i18n.localize('SWADE.Race'),
+      label: 'SWADE.Race',
+    };
+
     //add benny image URI
     data.bennyImageURL = game.settings.get('swade', 'bennyImageSheet');
 
@@ -951,6 +974,30 @@ export default class CharacterSheet extends ActorSheet {
         );
       },
     });
+  }
+
+  private _setupCharacterDetailInput(ev: JQuery.ClickEvent) {
+    if (this.actor.data.type === 'vehicle') return;
+    //gather data
+    const display = $(ev.currentTarget).parent().find('span.display');
+    const detail = display.data().detail;
+    const label = game.i18n.localize(display.data().label);
+    const value = getProperty(this.actor.data, detail);
+    //create element
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.name = detail;
+    input.value = value;
+    input.placeholder = label;
+    input.addEventListener('focusout', () => {
+      this.actor.update({ [detail]: input.value }, { diff: false });
+    });
+    //set up the new input in the sheet
+    display.replaceWith(input);
+    //focus the input
+    input.focus();
+    //remove the button;
+    ev.currentTarget.remove();
   }
 
   /**

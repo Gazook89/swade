@@ -3,8 +3,8 @@ import { ChatSpeakerData } from '@league-of-foundry-developers/foundry-vtt-types
 export declare class Dice3D {
   //TODO type box
   box: any;
-  //TODO type array
-  queue: Array<unknown>;
+
+  exports: Dice3DExports;
 
   /**
    * Show the 3D Dice animation for the Roll made by the User.
@@ -74,6 +74,12 @@ export declare class Dice3D {
    * @param shape should be explicit when using a custom die term. Supported shapes are d2,d4,d6,d8,d10,d12,d20
    */
   addDicePreset(data: DicePresetData, shape?: string): void;
+}
+
+//TODO Type
+interface Dice3DExports {
+  COLORSETS: any;
+  TEXTURELIST: any;
 }
 
 interface Dice3DShowData {
