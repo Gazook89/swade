@@ -24,19 +24,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## v1.1.7
 
+### Added
+
+- Added Item sheet header button to copy the document link for a given item to the clipboard.
+
 ### Fixed
 
-- Fixed floating promises resulting in an irregular amount of Bennies handed out during Joker's Wild
+- Fixed floating promises resulting in an irregular amount of Bennies handed out during Joker's Wild.
 
 ## v1.1.6
 
 ### Changed
 
-- DSN integration now uses the global export object instead of a dynamic file import (#535)
+- DSN integration now uses the global export object instead of a dynamic file import (#535).
 
 ### Fixed
 
-- Fixed overeager benny distribution in case of dealing a joker (#534)
+- Fixed overeager benny distribution in case of dealing a joker (#534).
 
 ## v1.1.5
 
