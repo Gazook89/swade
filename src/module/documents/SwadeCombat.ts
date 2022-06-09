@@ -428,7 +428,7 @@ export default class SwadeCombat extends Combat {
     }
 
     for (const effect of currentTurnEndExpirations) {
-      await effect.removeEffect();
+      await effect.expire();
     }
 
     if (nextTurn < this.turns.length) {
@@ -454,7 +454,7 @@ export default class SwadeCombat extends Combat {
       }
 
       for (const effect of nextTurnStartExpirations) {
-        await effect.removeEffect();
+        await effect.expire();
       }
     }
 
@@ -544,7 +544,7 @@ export default class SwadeCombat extends Combat {
     }
 
     for (const effect of turnZeroStartExpirations) {
-      await effect.removeEffect();
+      await effect.expire();
     }
   }
 
