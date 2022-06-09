@@ -857,8 +857,8 @@ export default class CharacterSheet extends ActorSheet {
         favorite: effect.getFlag('swade', 'favorite'),
       };
       if (effect.data.origin) {
-        const origin = await fromUuid(effect.data.origin);
-        val.origin = origin?.name;
+        //@ts-expect-error calling a protected function here
+        val.origin = await effect._getSourceName();
       }
       if (effect.isTemporary) {
         temporary.push(val);
