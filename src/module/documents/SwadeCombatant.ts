@@ -139,40 +139,43 @@ export default class SwadeCombatant extends Combatant {
       !this.hasJoker
     )
       return;
-    const template = await renderTemplate(SWADE.bennies.templates.joker, {
-      speaker: game.user,
-    });
+    const combatants = game.combat?.combatants ?? [];
     const isTokenHostile =
       this.token?.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
     //Give bennies to PCs
     if (this.actor?.type === 'character') {
-      await CONFIG.ChatMessage.documentClass.create({
-        user: game.userId,
-        content: template,
-      });
+      await this._createJokersWildMessage();
       //filter combatants for PCs and give them bennies
-      game.combat?.combatants
-        .filter((c) => c.actor!.type === 'character')
-        .forEach((c) => c.actor?.getBenny());
+      const pcs = combatants.filter((c) => c.actor?.type === 'character');
+      for (const c of pcs) {
+        await c.actor?.getBenny();
+      }
     } else if (this.actor?.type === 'npc' && isTokenHostile) {
-      await CONFIG.ChatMessage.documentClass.create({
-        user: game.user?.id,
-        content: template,
-      });
+      await this._createJokersWildMessage();
       //give all GMs a benny
-      const gmUsers = game.users?.filter((u) => u.active && u.isGM)!;
+      const gmUsers = game.users?.filter((u) => u.active && u.isGM) ?? [];
       for (const gm of gmUsers) {
         await gm.getBenny();
       }
-
       //give all enemy wildcards a benny
-      game.combat?.combatants
-        .filter((c) => {
-          const isHostile =
-            c.token?.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
-          return c.actor?.type === 'npc' && isHostile && c.actor?.isWildcard;
-        })
-        .forEach((c) => c.actor?.getBenny());
+      const hostiles = combatants.filter((c) => {
+        const isHostile =
+          c.token?.data.disposition === CONST.TOKEN_DISPOSITIONS.HOSTILE;
+        return c.actor?.type === 'npc' && isHostile && c.actor?.isWildcard;
+      });
+      for (const c of hostiles ?? []) {
+        await c.actor?.getBenny();
+      }
     }
+  }
+
+  private async _createJokersWildMessage() {
+    const template = await renderTemplate(SWADE.bennies.templates.joker, {
+      speaker: game.user,
+    });
+    await CONFIG.ChatMessage.documentClass.create({
+      user: game.userId,
+      content: template,
+    });
   }
 }

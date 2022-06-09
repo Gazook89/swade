@@ -22,6 +22,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Known Issues
 -->
 
+## v1.1.7
+
+### Fixed
+
+- Fixed floating promises resulting in an irregular amount of Bennies handed out during Joker's Wild
+
 ## v1.1.6
 
 ### Changed

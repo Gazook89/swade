@@ -191,7 +191,10 @@ export default class SwadeCombat extends Combat {
     const combatants = ids.map((id) =>
       this.combatants.get(id, { strict: true }),
     );
-    await Promise.all(combatants.map((c) => c.handOutBennies()));
+
+    for (const c of combatants) {
+      await c.handOutBennies();
+    }
 
     // Return the updated Combat
     return this;
