@@ -3,7 +3,13 @@ import SwadeItem from './documents/item/SwadeItem';
 import SwadeActiveEffect from './documents/SwadeActiveEffect';
 
 export function registerEffectCallbacks() {
-  game.swade.effectCallbacks.set('shaken', removeShaken);
+  const effectCallbacks = game.swade.effectCallbacks;
+  effectCallbacks.set('shaken', removeShaken);
+  effectCallbacks.set('distracted', removeEffect);
+  effectCallbacks.set('stunned', removeStunned);
+  effectCallbacks.set('vulnerable', removeEffect);
+  effectCallbacks.set('bleeding-out', bleedOut);
+  effectCallbacks.set('protection', removeProtection);
 }
 
 async function removeShaken(effect: SwadeActiveEffect) {
@@ -32,7 +38,7 @@ async function removeShaken(effect: SwadeActiveEffect) {
           });
           if ((roll?.total as number) >= 4) {
             await effect.delete();
-            ui.notifications.info('You are no longer shaken');
+            ui.notifications.info('SWADE.NoLongerShaken', { localize: true });
           }
           resolve(roll);
         },
@@ -79,4 +85,20 @@ async function removeShaken(effect: SwadeActiveEffect) {
     };
     new Dialog(data).render(true);
   });
+}
+
+async function removeEffect(effect: SwadeActiveEffect) {
+  await effect.delete();
+}
+
+async function removeStunned(_effect: SwadeActiveEffect) {
+  throw new Error('Function not implemented.');
+}
+
+async function bleedOut(_effect: SwadeActiveEffect) {
+  throw new Error('Function not implemented.');
+}
+
+async function removeProtection(_effect: SwadeActiveEffect) {
+  throw new Error('Function not implemented.');
 }
