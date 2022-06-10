@@ -46,8 +46,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   get expiresAtStartOfTurn(): boolean {
-    const expiration = this.getFlag('swade', 'expiration');
-    if (expiration === undefined) return false;
+    const expiration = this.getFlag('swade', 'expiration') ?? -1;
     return [
       constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
       constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
@@ -55,8 +54,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   get expiresAtEndOfTurn(): boolean {
-    const expiration = this.getFlag('swade', 'expiration');
-    if (expiration === undefined) return false;
+    const expiration = this.getFlag('swade', 'expiration') ?? -1;
     return [
       constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
       constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
@@ -134,6 +132,18 @@ export default class SwadeActiveEffect extends ActiveEffect {
 
   /** This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion */
   async expire() {
+    if (!isFirstOwner(this.parent)) {
+      return game.swade.sockets.removeStatusEffect(this.uuid);
+    }
+
+    const statusId = this.getFlag('core', 'statusId') ?? '';
+    if (game.swade.effectCallbacks.has(statusId)) {
+      const callbackFn = game.swade.effectCallbacks.get(statusId, {
+        strict: true,
+      });
+      return callbackFn(this);
+    }
+
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
       expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
@@ -158,7 +168,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
       (pointInTurn === 'start' && this.expiresAtStartOfTurn) ||
       (pointInTurn === 'end' && this.expiresAtEndOfTurn);
     const remaining = this.duration.remaining ?? 0;
-    return isRightPointInTurn && remaining <= 0;
+    return isRightPointInTurn && remaining < 1;
   }
 
   /** @deprecated */
@@ -167,18 +177,6 @@ export default class SwadeActiveEffect extends ActiveEffect {
   }
 
   async promptEffectDeletion() {
-    if (!isFirstOwner(this.parent)) {
-      return game.swade.sockets.removeStatusEffect(this.uuid);
-    }
-
-    const statusId = this.getFlag('core', 'statusId') ?? '';
-    if (game.swade.effectCallbacks.has(statusId)) {
-      const callbackFn = game.swade.effectCallbacks.get(statusId, {
-        strict: true,
-      });
-      return callbackFn(this);
-    }
-
     const title = game.i18n.format('SWADE.RemoveEffectTitle', {
       label: this.data.label,
     });
@@ -186,29 +184,30 @@ export default class SwadeActiveEffect extends ActiveEffect {
       label: this.data.label,
       parent: this.parent?.name,
     });
-    new Dialog({
-      title,
-      content,
-      buttons: {
-        yes: {
-          label: game.i18n.localize('Yes'),
-          icon: '<i class="fas fa-check"></i>',
-          callback: () => this.delete(),
-        },
-        no: {
-          label: game.i18n.localize('No'),
-          icon: '<i class="fas fa-times"></i>',
-        },
-        reset: {
-          label: game.i18n.localize('SWADE.ActiveEffects.ResetDuration'),
-          icon: '<i class="fas fa-repeat"></i>',
-          callback: () => {
-            const currentRound = game.combat?.round ?? 1;
-            this.update({ 'duration.startRound': currentRound });
-          },
+    const buttons: Record<string, Dialog.Button> = {
+      yes: {
+        label: game.i18n.localize('Yes'),
+        icon: '<i class="fas fa-check"></i>',
+        callback: () => this.delete(),
+      },
+      no: {
+        label: game.i18n.localize('No'),
+        icon: '<i class="fas fa-times"></i>',
+      },
+      reset: {
+        label: game.i18n.localize('SWADE.ActiveEffects.ResetDuration'),
+        icon: '<i class="fas fa-repeat"></i>',
+        callback: async () => {
+          await this.resetDuration();
         },
       },
-    }).render(true);
+    };
+    new Dialog({ title, content, buttons }).render(true);
+  }
+
+  async resetDuration() {
+    const currentRound = game.combat?.round ?? 1;
+    await this.update({ 'duration.startRound': currentRound });
   }
 
   protected override async _onUpdate(
