@@ -53,7 +53,7 @@ export default class SwadeSocketHandler {
   private async _onRemoveStatusEffect(data: RemoveStatusEffectEvent) {
     const effect = (await fromUuid(data.effectUUID)) as SwadeActiveEffect;
     if (isFirstOwner(effect.parent)) {
-      effect.promptEffectDeletion();
+      effect.expire();
     }
   }
 
