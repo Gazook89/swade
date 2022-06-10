@@ -1,7 +1,5 @@
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
-import { constants } from '../constants';
 import * as utils from '../util';
-import SwadeActiveEffect from './SwadeActiveEffect';
 import SwadeCombatant from './SwadeCombatant';
 
 declare global {
@@ -396,68 +394,7 @@ export default class SwadeCombat extends Combat {
   }
 
   override async nextTurn() {
-    const currentTurn = this.turn as number;
-    const nextTurn = currentTurn + 1;
-    const currentTurnEffects = this.turns[currentTurn].actor?.effects ?? [];
-    const currentTurnEndExpirations = new Array<SwadeActiveEffect>();
-    for (const fx of currentTurnEffects) {
-      const expiration = fx.getFlag('swade', 'expiration');
-      const endAutoExpire =
-        expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
-      const endPromptExpire =
-        expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
-      const expiresAtEndOfTurn = endAutoExpire || endPromptExpire;
-      const startRound = getProperty(fx, 'data.duration.startRound');
-      const startTurn = getProperty(fx, 'data.duration.startTurn');
-      const isNotNew =
-        (startRound === this.round && startTurn < currentTurn) ||
-        startRound < this.round;
-      const durationRounds = getProperty(fx, 'data.duration.rounds');
-      const roundsPassed = this.round >= startRound + durationRounds;
-      const durationEnds = !durationRounds || roundsPassed;
-      const expired = expiresAtEndOfTurn && isNotNew && durationEnds;
-      /**
-       * Round durations are weird if the start round is before the target's turn
-       * as it counts from the target's turn in the next round,
-       * not the target's turn in that round.
-       */
-      if (startRound === this.round && startTurn < currentTurn) {
-        await fx.update({ 'duration.rounds': durationRounds - 1 });
-      }
-      if (expired) currentTurnEndExpirations.push(fx);
-    }
-
-    for (const effect of currentTurnEndExpirations) {
-      await effect.expire();
-    }
-
-    if (nextTurn < this.turns.length) {
-      const nextTurnEffects = this.turns[nextTurn].actor?.effects;
-      const nextTurnStartExpirations = new Array<SwadeActiveEffect>();
-      for (const fx of nextTurnEffects ?? []) {
-        const expiration = fx.getFlag('swade', 'expiration');
-        const startAutoExpire =
-          expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
-        const startPromptExpire =
-          expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
-        const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
-        const startRound = getProperty(fx, 'data.duration.startRound');
-        const startTurn = getProperty(fx, 'data.duration.startTurn');
-        const isNotNew =
-          (startRound === this.round && startTurn < nextTurn) ||
-          startRound < this.round;
-        const durationRounds = getProperty(fx, 'data.duration.rounds');
-        const roundsPassed = this.round >= startRound + durationRounds;
-        const durationEnds = !durationRounds || roundsPassed;
-        const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
-        if (expired) nextTurnStartExpirations.push(fx);
-      }
-
-      for (const effect of nextTurnStartExpirations) {
-        await effect.expire();
-      }
-    }
-
+    await this._handleEndOfTurnExpirations();
     const turn = this.turn as number;
     const skip = this.settings['skipDefeated'] as boolean;
     // Determine the next turn number
@@ -487,7 +424,8 @@ export default class SwadeCombat extends Combat {
     // Update the encounter
     //FIXME return once types are updated
     //@ts-expect-error The property doesn't seem to be defined in the types
-    return this.update({ round: round, turn: next }, { advanceTime });
+    await this.update({ round: round, turn: next }, { advanceTime });
+    await this._handleStartOfTurnExpirations();
   }
 
   override async nextRound() {
@@ -518,34 +456,7 @@ export default class SwadeCombat extends Combat {
       );
     }
     await super.nextRound();
-
-    // Process turn 0's status effects that expire at the start of the turn.
-    const turnZero = this.turns[0];
-    const turnZeroEffects = turnZero.actor?.effects ?? [];
-    const turnZeroStartExpirations = new Array<SwadeActiveEffect>();
-    for (const fx of turnZeroEffects) {
-      const expiration = fx.getFlag('swade', 'expiration');
-      const startAutoExpire =
-        expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
-      const startPromptExpire =
-        expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
-      const expiresAtStartOfTurn = startAutoExpire || startPromptExpire;
-      const startRound = getProperty(fx, 'data.duration.startRound');
-      const startTurn = getProperty(fx, 'data.duration.startTurn');
-      const isNotNew =
-        (startRound === this.round && startTurn < turnZero) ||
-        startRound < this.round;
-      const durationRounds = getProperty(fx, 'data.duration.rounds');
-      const roundsPassed = this.round >= startRound + durationRounds;
-      const durationEnds = !durationRounds || roundsPassed;
-      const expired = expiresAtStartOfTurn && isNotNew && durationEnds;
-
-      if (expired) turnZeroStartExpirations.push(fx);
-    }
-
-    for (const effect of turnZeroStartExpirations) {
-      await effect.expire();
-    }
+    await this._handleStartOfTurnExpirations();
   }
 
   protected _getInitResetUpdate(
@@ -580,6 +491,26 @@ export default class SwadeCombat extends Combat {
           turnLost: false,
         },
       };
+    }
+  }
+
+  protected async _handleStartOfTurnExpirations() {
+    const expirations =
+      this.combatant?.actor?.effects.filter(
+        (effect) => effect.isTemporary && effect.isExpired('start'),
+      ) ?? [];
+    for (const effect of expirations) {
+      await effect.expire();
+    }
+  }
+
+  protected async _handleEndOfTurnExpirations() {
+    const expirations =
+      this.combatant?.actor?.effects.filter(
+        (effect) => effect.isTemporary && effect.isExpired('end'),
+      ) ?? [];
+    for (const effect of expirations) {
+      await effect.expire();
     }
   }
 
