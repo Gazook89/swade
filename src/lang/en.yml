@@ -541,6 +541,19 @@ SWADE:
     Shaken:
       RollSpirit: Roll Spirit
       Title: Remove Shaken from {name}
+      Flavor: Spirit Test to remove Shaken
+      UnshakeModifier: Unshake Modifier
+      Question: What do you want to do?
+    Stunned:
+      Title: Vigor Test to remove Stunned
+      Fail: You remain Stunned
+      Success: You are no longer Stunned but remain Vulnerable
+      Raise: You are no longer Stunned nor Vulnerable
+    BleedingOut:
+      Title: Vigor Test to resist Bleeding Out
+      Fail: You perish
+      Success: You hang on, for now.
+      Raise: You successfully stabilize
   BenniesSpendGM: Spend a GM Benny
   NoLongerShaken: You are no longer shaken
 ACTOR:

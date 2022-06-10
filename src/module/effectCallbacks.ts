@@ -28,13 +28,17 @@ async function removeShaken(effect: SwadeActiveEffect) {
           ) {
             return;
           }
-          const flavor = 'Spirit Test to remove Shaken';
+          const flavor = game.i18n.localize(
+            'SWADE.EffectCallbacks.Shaken.Flavor',
+          );
           roll = await parent.rollAttribute('spirit', {
             title: flavor,
             flavour: flavor,
             additionalMods: [
               {
-                label: 'Unshake Modifier',
+                label: game.i18n.localize(
+                  'SWADE.EffectCallbacks.Shaken.UnshakeModifier',
+                ),
                 value: parent.data.data.attributes.spirit.unShakeBonus,
               },
             ],
@@ -74,11 +78,12 @@ async function removeShaken(effect: SwadeActiveEffect) {
 
     if (!game.user?.isGM) delete buttons.gmBenny;
 
+    const content = game.i18n.localize('SWADE.EffectCallbacks.Shaken.Question');
     const data: Dialog.Data = {
       title: game.i18n.format('SWADE.EffectCallbacks.Shaken.Title', {
         name: effect.parent?.name,
       }),
-      content: '<p>What do you want to do?</p>',
+      content: `<p><${content}/p>`,
       buttons,
       default: 'roll',
       close: async () => {
@@ -107,7 +112,7 @@ async function removeShaken(effect: SwadeActiveEffect) {
 async function removeStunned(effect: SwadeActiveEffect) {
   const parent = effect.parent;
   if (!parent || parent instanceof SwadeItem) return;
-  const flavour = 'Vigor Test to remove Stunned';
+  const flavour = game.i18n.localize('SWADE.EffectCallbacks.Stunned.Title');
   const roll = await parent.rollAttribute('vigor', {
     title: flavour,
     flavour,
@@ -115,19 +120,25 @@ async function removeStunned(effect: SwadeActiveEffect) {
   const result = roll?.total ?? 0;
   //no roll or failed
   if (result < 4) {
-    return ui.notifications.info('Still stunned');
+    return ui.notifications.info('SWADE.EffectCallbacks.Stunned.Fail', {
+      localize: true,
+    });
   }
   //normal success, still vulnerable
   if (result.between(4, 7)) {
     await effect.delete();
     const data = getStatusEffectDataById('vulnerable');
     await parent.toggleActiveEffect(data);
-    return ui.notifications.info('No Longer stunned but still Vulnerable');
+    return ui.notifications.info('SWADE.EffectCallbacks.Stunned.Success', {
+      localize: true,
+    });
   }
 
   if (result > 7) {
     await effect.delete();
-    return ui.notifications.info('Complete Recovery');
+    return ui.notifications.info('SWADE.EffectCallbacks.Stunned.Raise', {
+      localize: true,
+    });
   }
 }
 
@@ -135,7 +146,7 @@ async function bleedOut(effect: SwadeActiveEffect) {
   const parent = effect.parent;
   if (!parent || parent instanceof SwadeItem) return;
 
-  const flavor = 'Vigor Test to resist Bleeding Out';
+  const flavor = game.i18n.localize('SWADE.EffectCallbacks.BleedingOut.Title');
   const roll = await parent.rollAttribute('vigor', {
     title: flavor,
     flavour: flavor,
@@ -163,16 +174,22 @@ async function bleedOut(effect: SwadeActiveEffect) {
     if (toUpdate.length) {
       await game.combat?.updateEmbeddedDocuments('Combatant', toUpdate);
     }
-    return ui.notifications.info('You perish');
+    return ui.notifications.info('SWADE.EffectCallbacks.BleedingOut.Fail', {
+      localize: true,
+    });
   }
   //hanging on
   if (result.between(4, 7)) {
-    return ui.notifications.info('Your hang on');
+    return ui.notifications.info('SWADE.EffectCallbacks.BleedingOut.Success', {
+      localize: true,
+    });
   }
 
   //stabilizing
   if (result >= 8) {
     await effect.delete();
-    return ui.notifications.info('You stabilize');
+    return ui.notifications.info('SWADE.EffectCallbacks.BleedingOut.Raise', {
+      localize: true,
+    });
   }
 }

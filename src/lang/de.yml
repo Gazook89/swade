@@ -497,6 +497,19 @@ SWADE:
     Shaken:
       RollSpirit: Willenskraft würfeln
       Title: Angeschlagen von {name} entfernen
+      Flavor: Willenskraftsprobe zur Entfernung von Angeschlagen
+      UnshakeModifier: Angeschlagen Resistenz
+      Question: Was willst du tun?
+    Stunned:
+      Title: Konstitutionsprobe zum Entfernen von Betäubt
+      Fail: Du bleibst betäubt
+      Success: Du bist nicht mehr Betäubt aber bleibst Verwundbar
+      Raise: Du bist nicht mehr btäubt und auch nicht Verwundbar
+    BleedingOut:
+      Title: Konstitutionsprobe gegen Ausbluten
+      Fail: Du stirbst
+      Success: Du überlebst noch
+      Raise: Die Blutung stoppt
   BenniesSpendGM: Gib einen SL Benny aus
   ActionDmgMod: Akionsschadensmodifikator
   AddAdvance: Aufstieg hinzufügen
