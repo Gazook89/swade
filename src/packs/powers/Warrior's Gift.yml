@@ -1,0 +1,22 @@
+_id: R3CtmF3sFkFIh3UQ
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 170.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '4'
+  range: Sm
+  rank: Seasoned
+  trapping: Gestures, prayer, whispered words, concentration
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Warrior's Gift
+type: power

@@ -1,0 +1,22 @@
+_id: ZENjNl2yp0p6zX7C
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 170.
+  duration: One hour
+  modifiers: []
+  notes: ''
+  pp: 3*
+  range: Sm
+  rank: Veteran
+  trapping: Carving symbols on corpses, throwing bones, graveyards, "leather" books
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Zombie
+type: power

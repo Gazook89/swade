@@ -1,0 +1,22 @@
+_id: oRef4wp8YizkFo8u
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 165.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm
+  rank: Veteran
+  trapping: Glowing eyes, trance-like state, a swinging pocket watch, voodoo dolls.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Puppet
+type: power

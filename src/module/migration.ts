@@ -244,7 +244,7 @@ function _migratePowerEquipToFavorite(
   if (data.type !== 'power') return updateData;
   const isOld = foundry.utils.hasProperty(data, 'data.equipped');
   if (isOld) {
-    updateData['data.favorite'] = data.data.equipped;
+    updateData['data.favorite'] = getProperty(data, 'data.equipped');
     updateData['data.-=equipped'] = null;
     updateData['data.-=equippable'] = null;
   }

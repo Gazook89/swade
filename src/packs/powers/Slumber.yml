@@ -1,0 +1,22 @@
+_id: QElMPOZK7jJDDGCP
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 167.
+  duration: One hour
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Seasoned
+  trapping: A lullaby, blowing powder or sand at targets
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Slumber
+type: power

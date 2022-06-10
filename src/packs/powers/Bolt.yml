@@ -1,0 +1,22 @@
+_id: DmaBkW6YbpYoYBPB
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: 2d6
+  description: See SWADE page 156.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm x 2
+  rank: Novice
+  trapping: Fire, ice, light, darkness, colored bolts, a stream of insects
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Bolt
+type: power

@@ -1,0 +1,22 @@
+_id: 36FhlwJ4rGpS9rX9
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 165.
+  duration: Special
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Touch
+  rank: Seasoned
+  trapping: Touching the object, glowing hands
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Object Reading
+type: power

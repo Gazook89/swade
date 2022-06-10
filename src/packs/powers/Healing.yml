@@ -1,0 +1,22 @@
+_id: R7PJ0KAU43GgLQC9
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 162.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Touch
+  rank: Novice
+  trapping: Laying on hands, touching the victim with a holy symbol, prayer
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Healing
+type: power

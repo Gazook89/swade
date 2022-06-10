@@ -1,0 +1,22 @@
+_id: iS3duGwyTywaMOF7
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 164.
+  duration: Sm
+  modifiers: []
+  notes: ''
+  pp: '5'
+  range: Sm
+  rank: Seasoned
+  trapping: Powder, potion, iridescent lights
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Invisibility
+type: power

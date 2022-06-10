@@ -1,0 +1,22 @@
+_id: triR6qt9CpkMTJsl
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 163.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm
+  rank: Novice
+  trapping: Magical spells, holograms, "ethereal materializers"
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Illusion
+type: power

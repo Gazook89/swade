@@ -1,0 +1,22 @@
+_id: NlhNCYkXrUDrCkra
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 170.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '5'
+  range: Sm x2
+  rank: Seasoned
+  trapping: A wave of the hand, magic wand, steely gaze
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Telekinesis
+type: power

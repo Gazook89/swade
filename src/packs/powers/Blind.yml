@@ -1,0 +1,22 @@
+_id: GxPhaUI4jQtFiXIr
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 156.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Bright flash of light, sand in eyes, confusion
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Blind
+type: power

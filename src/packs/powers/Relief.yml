@@ -1,0 +1,22 @@
+_id: Gv4Koefqaap6qKbM
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 166.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Prayer, tonics
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Relief
+type: power

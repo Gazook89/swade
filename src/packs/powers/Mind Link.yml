@@ -1,0 +1,22 @@
+_id: WGoNElsK8VbvIma8
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 164.
+  duration: 30 Minutes
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Headpieces, talismans, of Tao or other gods, crystals
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Mind Link
+type: power

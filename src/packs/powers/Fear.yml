@@ -1,0 +1,22 @@
+_id: J1sBXophcEfZYrR7
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 161.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Gestures, eldritch energy, cold chills
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Fear
+type: power

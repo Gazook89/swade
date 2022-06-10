@@ -132,12 +132,7 @@ interface HindranceData extends ItemDescription, Favorite {
   major: boolean;
 }
 
-interface PowerData
-  extends ItemDescription,
-    Equipable,
-    Actions,
-    BonusDamage,
-    Favorite {
+interface PowerData extends ItemDescription, Actions, BonusDamage, Favorite {
   rank: string;
   pp: string;
   damage: string;
@@ -145,7 +140,6 @@ interface PowerData
   duration: string;
   trapping: string;
   arcane: string;
-  skill: string;
   ap: number;
   modifiers: any[];
 }

@@ -37,6 +37,13 @@
       "system": "swade",
       "path": "./packs/hindrances.db",
       "type": "Item"
+    },
+    {
+      "name": "powers",
+      "label": "Basic Powers",
+      "system": "swade",
+      "path": "./packs/powers.db",
+      "type": "Item"
     }
   ],
   "languages": [

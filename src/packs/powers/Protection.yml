@@ -1,0 +1,22 @@
+_id: 9Ia8jJNOCy0z7yXn
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 165.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: A mystical glow, hardened skin, ethereal armor, a mass of nanites
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Protection
+type: power

@@ -1,0 +1,22 @@
+_id: mrY41ijR3wZgc3sQ
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 161.
+  duration: One hour
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: A mark on the forehead, potions, gills.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Environmental Protection
+type: power

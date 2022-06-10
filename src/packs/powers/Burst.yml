@@ -1,0 +1,22 @@
+_id: oo3oR3kVNYcSNApZ
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: 2d6
+  description: See SWADE page 157.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Cone Template
+  rank: Novice
+  trapping: A shower of flames, light or other matter of energy.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Burst
+type: power

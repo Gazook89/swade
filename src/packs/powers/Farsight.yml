@@ -1,0 +1,22 @@
+_id: COGgjIqWUMnrpjv4
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 161.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Seasoned
+  trapping: Invisibly marked targets, guiding winds, eagle eyes
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Farsight
+type: power

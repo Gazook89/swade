@@ -1,0 +1,22 @@
+_id: AF3ASpvByLYRkdkh
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 159.
+  duration: A brief conversation of about five minutes
+  modifiers: []
+  notes: ''
+  pp: '5'
+  range: Self
+  rank: Heroic
+  trapping: Seances, prayers, demonic interrogation.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Divination
+type: power

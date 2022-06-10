@@ -1,0 +1,22 @@
+_id: tvkJEXvT34m8Xx9c
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 160.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: A few simple gestures
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Elemental Manipulation
+type: power

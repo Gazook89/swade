@@ -1,0 +1,22 @@
+_id: AitNGEL0f6BQxmuE
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 164.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Psionic invasion, soulsight
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Mind Reading
+type: power

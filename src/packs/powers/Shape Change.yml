@@ -1,0 +1,22 @@
+_id: IuQbYf6obG8a865u
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 166.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: Special
+  range: Self
+  rank: Novice
+  trapping: '"Morphing", talismans, tattoos'
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Shape Change
+type: power

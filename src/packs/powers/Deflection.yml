@@ -1,0 +1,22 @@
+_id: Tvr0FZJPP3ygOl94
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 158.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm
+  rank: Novice
+  trapping: Mystical shield, gust of wind, phantom servant that intercepts missiles
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Deflection
+type: power
