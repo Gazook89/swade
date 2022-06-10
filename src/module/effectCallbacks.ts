@@ -109,7 +109,6 @@ async function removeStunned(effect: SwadeActiveEffect) {
   const roll = await parent.rollAttribute('vigor', {
     flavour: 'Remove Stunned',
   });
-  console.log(roll);
   const result = roll?.total ?? 0;
   //no roll or failed
   if (!roll || result < 4) {
