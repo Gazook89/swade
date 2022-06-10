@@ -29,13 +29,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Added `Wild Die` class which extends the foundry Die class and sets some sensible defaults for the Wild Die. It is also being used for all trait rolls. (#529)
 - Added `Wild Die` and `Benny` dice classes to the global `game.swade.dice` object. (#529)
 - Added an option to force Measured Templates highlighting to act like it is on a gridless scene even if it is not. This can be toggled via the `Always Highlight Templates` option in the System Settings and defaults to on (#516).
-- You can now right click an actor's portrait on all actor sheets to enlarge it
+- You can now right-click an actor's portrait on all actor sheets to enlarge it
+- Added `flavour` option to `IRollOptions` interface.
+- Refactored the way Active Effect expiration is handled. This takes 2 main forms (#531)
+  - There is now a `Reset Duration` button for expiration Prompts.
+  - For Developers: There is now an expiration callback API Collection
+    - For Users: The `Shaken`, `Stunned` and `Bleeding Out` effects now trigger workflows and interactions to resolve them.
+    - For Developers: which you can find at `game.swade.effectCallbacks` any time during or after the `init` hook. This collection uses status effect IDs as keys and functions as values. Each function is passed the expiring Active Effect object as its sole parameter. These functions can be asynchronous and are awaited. When an effect expires the system looks for the effect's ID in the collection. If it finds one it executes it, otherwise a fallback is used. You can also delete or overwrite existing callbacks so please be mindful.
 - Added additional translation strings.
 
 ### Changed
 
 - You can now no longer roll your Wealth Die if you are broke. (#275)
 - Converted language files from flat to nested keys for better organization
+- You can now pass `title` and `flavour` overrides to skill and attribute rolls
 - Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
   - `SWADE.ActNow` -> `SWADE.ActBeforeCurrentCombatant`
@@ -43,6 +50,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Deprecated
 
 - Started depreciation of `SwadeActor#getRollShortcuts()` as it is redundant to `SwadeActor#getRollData()` and will be removed in v1.3.0. (#530)
+- Finished depreciation of string and number types in the `additionalMods` portion of `IRollOptions`
 
 ### Removed
 

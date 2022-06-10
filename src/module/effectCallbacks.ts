@@ -1,14 +1,13 @@
-import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/token';
-import { SWADE } from './config';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import SwadeActiveEffect from './documents/SwadeActiveEffect';
+import { getStatusEffectDataById } from './util';
 
 export function registerEffectCallbacks() {
   const effectCallbacks = game.swade.effectCallbacks;
   effectCallbacks.set('shaken', removeShaken);
   effectCallbacks.set('stunned', removeStunned);
-  // effectCallbacks.set('bleeding-out', bleedOut);
+  effectCallbacks.set('bleeding-out', bleedOut);
 }
 
 async function removeShaken(effect: SwadeActiveEffect) {
@@ -29,7 +28,10 @@ async function removeShaken(effect: SwadeActiveEffect) {
           ) {
             return;
           }
+          const flavor = 'Spirit Test to remove Shaken';
           roll = await parent.rollAttribute('spirit', {
+            title: flavor,
+            flavour: flavor,
             additionalMods: [
               {
                 label: 'Unshake Modifier',
@@ -105,22 +107,21 @@ async function removeShaken(effect: SwadeActiveEffect) {
 async function removeStunned(effect: SwadeActiveEffect) {
   const parent = effect.parent;
   if (!parent || parent instanceof SwadeItem) return;
-
+  const flavour = 'Vigor Test to remove Stunned';
   const roll = await parent.rollAttribute('vigor', {
-    flavour: 'Remove Stunned',
+    title: flavour,
+    flavour,
   });
   const result = roll?.total ?? 0;
   //no roll or failed
-  if (!roll || result < 4) {
+  if (result < 4) {
     return ui.notifications.info('Still stunned');
   }
   //normal success, still vulnerable
   if (result.between(4, 7)) {
     await effect.delete();
-    const filter = (e) => e.id === 'vulnerable';
-    let effectData = CONFIG.statusEffects.find(filter);
-    if (!effectData) effectData = SWADE.statusEffects.find(filter);
-    await parent.toggleActiveEffect(effectData as StatusEffect);
+    const data = getStatusEffectDataById('vulnerable');
+    await parent.toggleActiveEffect(data);
     return ui.notifications.info('No Longer stunned but still Vulnerable');
   }
 
@@ -130,6 +131,48 @@ async function removeStunned(effect: SwadeActiveEffect) {
   }
 }
 
-// async function bleedOut(_effect: SwadeActiveEffect) {
-//   throw new Error('Function not implemented.');
-// }
+async function bleedOut(effect: SwadeActiveEffect) {
+  const parent = effect.parent;
+  if (!parent || parent instanceof SwadeItem) return;
+
+  const flavor = 'Vigor Test to resist Bleeding Out';
+  const roll = await parent.rollAttribute('vigor', {
+    title: flavor,
+    flavour: flavor,
+  });
+  const result = roll?.total ?? 0;
+  //death
+  if (result < 4) {
+    //delete existing temporary effects so that they don't interfere
+    const toDelete = parent.effects
+      .filter((e) => e.isTemporary)
+      .map((e) => e.id!);
+    await parent.deleteEmbeddedDocuments('ActiveEffect', toDelete);
+
+    //set overlay
+    const data = getStatusEffectDataById('incapacitated');
+    await parent.toggleActiveEffect(data, { overlay: true });
+
+    //mark combatant defeated in turn tracker
+    const tokens = parent.getActiveTokens();
+    const toUpdate = new Array<Record<string, unknown>>();
+    for (const token of tokens) {
+      if (!token.combatant) continue;
+      toUpdate.push({ _id: token.combatant.id, defeated: true });
+    }
+    if (toUpdate.length) {
+      await game.combat?.updateEmbeddedDocuments('Combatant', toUpdate);
+    }
+    return ui.notifications.info('You perish');
+  }
+  //hanging on
+  if (result.between(4, 7)) {
+    return ui.notifications.info('Your hang on');
+  }
+
+  //stabilizing
+  if (result >= 8) {
+    await effect.delete();
+    return ui.notifications.info('You stabilize');
+  }
+}

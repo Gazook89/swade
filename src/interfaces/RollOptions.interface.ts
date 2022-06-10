@@ -3,8 +3,8 @@ import { TraitRollModifier } from './additional.interface';
 export default interface IRollOptions {
   rof?: number;
   flavour?: string;
+  title?: string;
   dmgOverride?: string;
-  //TODO remove string/number type with 1.0.0
-  additionalMods?: (string | number | TraitRollModifier)[];
+  additionalMods?: TraitRollModifier[];
   suppressChat?: boolean;
 }

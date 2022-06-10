@@ -96,16 +96,7 @@ export default class SwadeItem extends Item {
     }
     //Additional Mods
     if (options.additionalMods) {
-      options.additionalMods.forEach((v) => {
-        if (typeof v === 'string' || typeof v === 'number') {
-          console.warn(
-            'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
-          );
-          modifiers.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
-        } else {
-          modifiers.push(v);
-        }
-      });
+      modifiers.push(...options.additionalMods);
     }
 
     const terms = Roll.parse(rollParts.join(''), actor.getRollData());
