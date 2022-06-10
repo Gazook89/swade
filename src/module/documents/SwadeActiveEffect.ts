@@ -6,6 +6,7 @@ import {
 import { EffectChangeData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/effectChangeData';
 import { BaseUser } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/documents.mjs';
 import { PropertiesToSource } from '@league-of-foundry-developers/foundry-vtt-types/src/types/helperTypes';
+import { constants } from '../constants';
 import { isFirstOwner } from '../util';
 import SwadeActor from './actor/SwadeActor';
 import SwadeItem from './item/SwadeItem';
@@ -44,10 +45,25 @@ export default class SwadeActiveEffect extends ActiveEffect {
     return false;
   }
 
+  get expiresAtStartOfTurn(): boolean {
+    const expiration = this.getFlag('swade', 'expiration') ?? -1;
+    return [
+      constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto,
+      constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
+    ].includes(expiration);
+  }
+
+  get expiresAtEndOfTurn(): boolean {
+    const expiration = this.getFlag('swade', 'expiration') ?? -1;
+    return [
+      constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto,
+      constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,
+    ].includes(expiration);
+  }
+
   static ITEM_REGEXP = /@([a-zA-Z0-9]+)\{(.+)\}\[([\S.]+)\]/;
 
-  /** @override */
-  apply(actor: SwadeActor, change: EffectChangeData) {
+  override apply(actor: SwadeActor, change: EffectChangeData) {
     const match = change.key.match(SwadeActiveEffect.ITEM_REGEXP);
     if (match) {
       //get the properties from the match
@@ -114,22 +130,29 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  /**
-   * This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion
-   */
-  async removeEffect() {
+  /** This functions checks the effect expiration behavior and either auto-deletes or prompts for deletion */
+  async expire() {
+    if (!isFirstOwner(this.parent)) {
+      return game.swade.sockets.removeStatusEffect(this.uuid);
+    }
+
+    const statusId = this.getFlag('core', 'statusId') ?? '';
+    if (game.swade.effectCallbacks.has(statusId)) {
+      const callbackFn = game.swade.effectCallbacks.get(statusId, {
+        strict: true,
+      });
+      return callbackFn(this);
+    }
+
     const expiration = this.getFlag('swade', 'expiration');
     const startOfTurnAuto =
-      expiration ===
-      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnAuto;
     const startOfTurnPrompt =
-      expiration ===
-      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt;
     const endOfTurnAuto =
-      expiration === CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnAuto;
     const endOfTurnPrompt =
-      expiration ===
-      CONFIG.SWADE.CONST.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
+      expiration === constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt;
     const auto = startOfTurnAuto || endOfTurnAuto;
     const prompt = startOfTurnPrompt || endOfTurnPrompt;
 
@@ -140,32 +163,55 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  /**
-   * //TODO: trigger prompt based on effect
-   * This function creates a dialog for status effect deletion
-   */
-  promptEffectDeletion() {
-    if (isFirstOwner(this.parent)) {
-      Dialog.confirm({
-        title: game.i18n.format('SWADE.RemoveEffectTitle', {
-          label: this.data.label,
-        }),
-        content: game.i18n.format('SWADE.RemoveEffectBody', {
-          label: this.data.label,
-          parent: this.parent?.name,
-        }),
-        defaultYes: false,
-        yes: () => {
-          this.delete();
-        },
-      });
-    } else {
-      game.swade.sockets.removeStatusEffect(this.uuid);
-    }
+  isExpired(pointInTurn: 'start' | 'end'): boolean {
+    const isRightPointInTurn =
+      (pointInTurn === 'start' && this.expiresAtStartOfTurn) ||
+      (pointInTurn === 'end' && this.expiresAtEndOfTurn);
+    const remaining = this.duration.remaining ?? 0;
+    return isRightPointInTurn && remaining < 1;
   }
 
-  protected async _onUpdate(
-    changed: DeepPartial<PropertiesToSource<ActiveEffectDataProperties>>,
+  /** @deprecated */
+  async removeEffect() {
+    await this.expire();
+  }
+
+  async promptEffectDeletion() {
+    const title = game.i18n.format('SWADE.RemoveEffectTitle', {
+      label: this.data.label,
+    });
+    const content = game.i18n.format('SWADE.RemoveEffectBody', {
+      label: this.data.label,
+      parent: this.parent?.name,
+    });
+    const buttons: Record<string, Dialog.Button> = {
+      yes: {
+        label: game.i18n.localize('Yes'),
+        icon: '<i class="fas fa-check"></i>',
+        callback: () => this.delete(),
+      },
+      no: {
+        label: game.i18n.localize('No'),
+        icon: '<i class="fas fa-times"></i>',
+      },
+      reset: {
+        label: game.i18n.localize('SWADE.ActiveEffects.ResetDuration'),
+        icon: '<i class="fas fa-repeat"></i>',
+        callback: async () => {
+          await this.resetDuration();
+        },
+      },
+    };
+    new Dialog({ title, content, buttons }).render(true);
+  }
+
+  async resetDuration() {
+    const currentRound = game.combat?.round ?? 1;
+    await this.update({ 'duration.startRound': currentRound });
+  }
+
+  protected override async _onUpdate(
+    changed: PropertiesToSource<ActiveEffectDataProperties>,
     options: DocumentModificationOptions,
     userId: string,
   ) {
@@ -181,8 +227,8 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async _preUpdate(
-    changed: DeepPartial<ActiveEffectDataConstructorData>,
+  protected override async _preUpdate(
+    changed: ActiveEffectDataConstructorData,
     options: DocumentModificationOptions,
     user: User,
   ) {
@@ -196,7 +242,10 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async _preDelete(options: DocumentModificationOptions, user: User) {
+  protected override async _preDelete(
+    options: DocumentModificationOptions,
+    user: User,
+  ) {
     super._preDelete(options, user);
     const parent = this.parent;
     //remove the effects from the item
@@ -205,7 +254,7 @@ export default class SwadeActiveEffect extends ActiveEffect {
     }
   }
 
-  protected async _preCreate(
+  protected override async _preCreate(
     data: ActiveEffectDataConstructorData,
     options: DocumentModificationOptions,
     user: BaseUser,

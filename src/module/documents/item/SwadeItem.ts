@@ -2,8 +2,11 @@ import { Context } from '@league-of-foundry-developers/foundry-vtt-types/src/fou
 import { ChatMessageDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/chatMessageData';
 import { ItemDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/itemData';
 import { ItemData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/module.mjs';
-import { ItemAction, TraitRollModifier } from '../../../interfaces/additional';
-import IRollOptions from '../../../interfaces/IRollOptions';
+import {
+  ItemAction,
+  TraitRollModifier,
+} from '../../../interfaces/additional.interface';
+import IRollOptions from '../../../interfaces/RollOptions.interface';
 import * as util from '../../util';
 import SwadeActor from '../actor/SwadeActor';
 
@@ -93,16 +96,7 @@ export default class SwadeItem extends Item {
     }
     //Additional Mods
     if (options.additionalMods) {
-      options.additionalMods.forEach((v) => {
-        if (typeof v === 'string' || typeof v === 'number') {
-          console.warn(
-            'The use of bare strings and numbers will be soon depreceated, please switch over to the TraitRollModifer interface',
-          );
-          modifiers.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
-        } else {
-          modifiers.push(v);
-        }
-      });
+      modifiers.push(...options.additionalMods);
     }
 
     const terms = Roll.parse(rollParts.join(''), actor.getRollData());

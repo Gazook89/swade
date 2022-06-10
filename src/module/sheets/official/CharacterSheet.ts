@@ -4,10 +4,9 @@ import {
   AdditionalStat,
   ItemAction,
   TraitRollModifier,
-} from '../../../interfaces/additional';
-import { Advance } from '../../../interfaces/Advance';
+} from '../../../interfaces/additional.interface';
+import { Advance } from '../../../interfaces/Advance.interface';
 import { AdvanceEditor } from '../../apps/AdvanceEditor';
-import { SWADE } from '../../config';
 import { constants } from '../../constants';
 import SwadeItem from '../../documents/item/SwadeItem';
 import SwadeActiveEffect from '../../documents/SwadeActiveEffect';
@@ -857,8 +856,8 @@ export default class CharacterSheet extends ActorSheet {
         favorite: effect.getFlag('swade', 'favorite'),
       };
       if (effect.data.origin) {
-        const origin = await fromUuid(effect.data.origin);
-        val.origin = origin?.name;
+        //@ts-expect-error calling a protected function here
+        val.origin = await effect._getSourceName();
       }
       if (effect.isTemporary) {
         temporary.push(val);
@@ -1019,12 +1018,10 @@ export default class CharacterSheet extends ActorSheet {
     // Get the key from the target name
     const id = ev.target.dataset.id as string;
     const key = ev.target.dataset.key as string;
-    let data = CONFIG.SWADE.statusEffects.find((e) => e.id === id);
-    //fallback for when the effect doesn't exist in the global object
-    if (!data) data = SWADE.statusEffects.find((e) => e.id === id)!;
+    const data = util.getStatusEffectDataById(id);
     // this is just to make sure the status is false in the source data
     await this.actor.update({ [`data.status.${key}`]: false });
-    this.actor.toggleActiveEffect(data);
+    await this.actor.toggleActiveEffect(data);
   }
 }
 

@@ -41,3 +41,15 @@
     margin-right: 6px;
   }
 }
+
+.dialog-buttons-column {
+  .dialog-buttons {
+    flex-direction: column;
+  }
+  .dialog-button {
+    cursor: pointer;
+    & + .dialog-button {
+      margin-top: $small-spacing;
+    }
+  }
+}

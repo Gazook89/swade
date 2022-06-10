@@ -1,4 +1,4 @@
-import { AdditionalStat } from '../../../interfaces/additional';
+import { AdditionalStat } from '../../../interfaces/additional.interface';
 
 declare global {
   interface SourceConfig {

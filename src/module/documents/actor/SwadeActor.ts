@@ -2,9 +2,9 @@ import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/sr
 import { DocumentModificationOptions } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/abstract/document.mjs';
 import { ActorDataConstructorData } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/common/data/data.mjs/actorData';
 import { Attribute, ItemMetadata } from '../../../globals';
-import { TraitRollModifier } from '../../../interfaces/additional';
-import { Advance } from '../../../interfaces/Advance';
-import IRollOptions from '../../../interfaces/IRollOptions';
+import { TraitRollModifier } from '../../../interfaces/additional.interface';
+import { Advance } from '../../../interfaces/Advance.interface';
+import IRollOptions from '../../../interfaces/RollOptions.interface';
 import RollDialog from '../../apps/RollDialog';
 import { SWADE } from '../../config';
 import WildDie from '../../dice/WildDie';
@@ -250,12 +250,16 @@ export default class SwadeActor extends Actor {
       roll: roll,
       mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this }),
-      flavor: `${game.i18n.localize(label)} ${game.i18n.localize(
-        'SWADE.AttributeTest',
-      )}`,
-      title: `${game.i18n.localize(label)} ${game.i18n.localize(
-        'SWADE.AttributeTest',
-      )}`,
+      flavor:
+        options.flavour ??
+        `${game.i18n.localize(label)} ${game.i18n.localize(
+          'SWADE.AttributeTest',
+        )}`,
+      title:
+        options.title ??
+        `${game.i18n.localize(label)} ${game.i18n.localize(
+          'SWADE.AttributeTest',
+        )}`,
       actor: this,
       allowGroup: true,
       flags: { swade: { colorMessage: true } },
@@ -314,10 +318,12 @@ export default class SwadeActor extends Actor {
       roll: roll,
       mods: modifiers,
       speaker: ChatMessage.getSpeaker({ actor: this }),
-      flavor: `${skill.name} ${game.i18n.localize(
-        'SWADE.SkillTest',
-      )}${flavour}`,
-      title: `${skill.name} ${game.i18n.localize('SWADE.SkillTest')}`,
+      flavor:
+        options.flavour ??
+        `${skill.name} ${game.i18n.localize('SWADE.SkillTest')}${flavour}`,
+      title:
+        options.title ??
+        `${skill.name} ${game.i18n.localize('SWADE.SkillTest')}`,
       actor: this,
       allowGroup: true,
       flags: { swade: { colorMessage: true } },
@@ -905,16 +911,7 @@ export default class SwadeActor extends Actor {
 
     //Additional Mods
     if (options.additionalMods) {
-      options.additionalMods.forEach((v) => {
-        if (typeof v === 'string' || typeof v === 'number') {
-          console.warn(
-            'The use of bare strings and numbers will be soon deprecated, please switch over to the TraitRollModifier interface',
-          );
-          mods.push({ label: game.i18n.localize('SWADE.Addi'), value: v });
-        } else {
-          mods.push(v);
-        }
-      });
+      mods.push(...options.additionalMods);
     }
 
     //Joker

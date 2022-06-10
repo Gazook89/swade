@@ -5,6 +5,7 @@ import SwadeDocumentTweaks from '../module/apps/SwadeDocumentTweaks';
 import CharacterSummarizer from '../module/CharacterSummarizer';
 import Benny from '../module/dice/Benny';
 import WildDie from '../module/dice/WildDie';
+import SwadeActiveEffect from '../module/documents/SwadeActiveEffect';
 import ItemChatCardHelper from '../module/ItemChatCardHelper';
 import * as migrations from '../module/migration';
 import CharacterSheet from '../module/sheets/official/CharacterSheet';
@@ -14,7 +15,7 @@ import SwadeVehicleSheet from '../module/sheets/SwadeVehicleSheet';
 import SwadeSocketHandler from '../module/SwadeSocketHandler';
 import { rollItemMacro } from '../module/util';
 
-export default interface SwadeGame {
+export interface SwadeGame {
   sheets: {
     CharacterSheet: typeof CharacterSheet;
     SwadeNPCSheet: typeof SwadeNPCSheet;
@@ -36,4 +37,7 @@ export default interface SwadeGame {
   rollItemMacro: typeof rollItemMacro;
   migrations: typeof migrations;
   itemChatCardHelper: typeof ItemChatCardHelper;
+  effectCallbacks: Collection<StatusEffectCallback>;
 }
+
+export type StatusEffectCallback = (effect: SwadeActiveEffect) => Promise<void>;

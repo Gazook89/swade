@@ -56,7 +56,7 @@ SWADE:
   Die: Würfel
   WildDie: Wildcard-Würfel
   Modifier: Modifikator
-  BenniesSpend: Setze einen Benny ein
+  BenniesSpend: Gib einen Benny aus
   BenniesGive: Einen Benny geben
   BenniesRefresh: Bennys auffrischen
   AllBenniesRefresh: Alle Bennys auffrischen
@@ -492,6 +492,12 @@ SWADE:
   ActiveEffects:
     Add: Active Effect Hinzufügen
     Source: Quelle
+    ResetDuration: Dauer zurücksetzen
+  EffectCallbacks:
+    Shaken:
+      RollSpirit: Willenskraft würfeln
+      Title: Angeschlagen von {name} entfernen
+  BenniesSpendGM: Gib einen SL Benny aus
   ActionDmgMod: Akionsschadensmodifikator
   AddAdvance: Aufstieg hinzufügen
   ConvictionActive: Entschlossen
@@ -555,6 +561,7 @@ SWADE:
         ausgemalt anstatt nur das Raster
   ActionTraitMod: Aktionseigenschaftsmodifikator
   ItemTraitMod: Eigenschaftsmodifikator
+  NoLongerShaken: Du bist nicht mehr Angeschlagen
 ACTOR:
   TypeCharacter: Charakter
   TypeNpc: NSC

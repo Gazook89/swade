@@ -1,4 +1,7 @@
-import { AdditionalStat, TraitRollModifier } from '../../interfaces/additional';
+import {
+  AdditionalStat,
+  TraitRollModifier,
+} from '../../interfaces/additional.interface';
 import SwadeDocumentTweaks from '../apps/SwadeDocumentTweaks';
 import * as chat from '../chat';
 import { SWADE } from '../config';

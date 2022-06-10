@@ -6,8 +6,8 @@ import { ItemMetadata, JournalMetadata } from '../globals';
 import {
   DsnCustomWildDieColors,
   DsnCustomWildDieOptions,
-} from '../interfaces/DiceIntegration';
-import { Dice3D } from '../interfaces/DiceSoNice';
+} from '../interfaces/DiceIntegration interface';
+import { Dice3D } from '../interfaces/DiceSoNice.interface';
 import ActionCardEditor from './apps/ActionCardEditor';
 import DiceSettings from './apps/DiceSettings';
 import SwadeCombatGroupColor from './apps/SwadeCombatGroupColor';

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/token';
 import { AbilitySubType } from '../globals';
-import { TraitRollModifierGroup } from '../interfaces/additional';
-import { TemplateConfig } from '../interfaces/TemplateConfig';
+import { TraitRollModifierGroup } from '../interfaces/additional.interface';
+import { TemplateConfig } from '../interfaces/TemplateConfig.interface';
 import { constants } from './constants';
 import SwadeMeasuredTemplate from './documents/SwadeMeasuredTemplate';
 
@@ -104,6 +104,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_shaken.svg',
       id: 'shaken',
       label: 'SWADE.Shaken',
+      duration: {
+        rounds: 1,
+      },
       changes: [
         {
           key: 'data.status.isShaken',
@@ -162,6 +165,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_defending.svg',
       id: 'defending',
       label: 'SWADE.Defending',
+      duration: {
+        rounds: 1,
+      },
       changes: [
         {
           key: 'data.stats.parry.modifier',
@@ -233,6 +239,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_distracted.svg',
       id: 'distracted',
       label: 'SWADE.Distr',
+      duration: {
+        rounds: 1,
+      },
       changes: [
         {
           key: 'data.status.isDistracted',
@@ -260,9 +269,22 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_stunned.svg',
       id: 'stunned',
       label: 'SWADE.Stunned',
+      duration: {
+        rounds: 1,
+      },
       changes: [
         {
           key: 'data.status.isStunned',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+        {
+          key: 'data.status.isDistracted',
+          mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: 'true',
+        },
+        {
+          key: 'data.status.isVulnerable',
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: 'true',
         },
@@ -278,6 +300,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_vulnerable.svg',
       id: 'vulnerable',
       label: 'SWADE.Vuln',
+      duration: {
+        rounds: 1,
+      },
       changes: [
         {
           key: 'data.status.isVulnerable',
@@ -295,6 +320,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_bleeding_out.svg',
       id: 'bleeding-out',
       label: 'SWADE.BleedingOut',
+      duration: {
+        rounds: 1,
+      },
       flags: {
         swade: {
           expiration: constants.STATUS_EFFECT_EXPIRATION.StartOfTurnPrompt,
@@ -355,6 +383,9 @@ export const SWADE: SwadeConfig = {
       icon: 'systems/swade/assets/icons/status/status_protection.svg',
       id: 'protection',
       label: 'SWADE.Protection',
+      duration: {
+        rounds: 5,
+      },
       changes: [
         {
           key: 'data.stats.toughness.value',
@@ -367,9 +398,6 @@ export const SWADE: SwadeConfig = {
           mode: foundry.CONST.ACTIVE_EFFECT_MODES.ADD,
         },
       ],
-      duration: {
-        rounds: 5,
-      },
       flags: {
         swade: {
           expiration: constants.STATUS_EFFECT_EXPIRATION.EndOfTurnPrompt,

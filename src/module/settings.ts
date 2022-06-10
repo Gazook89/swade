@@ -1,4 +1,4 @@
-import { AdditionalStat } from '../interfaces/additional';
+import { AdditionalStat } from '../interfaces/additional.interface';
 import SettingConfigurator from './apps/SettingConfigurator';
 
 declare global {

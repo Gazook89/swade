@@ -1,4 +1,4 @@
-import { AdditionalStat } from '../interfaces/additional';
+import { AdditionalStat } from '../interfaces/additional.interface';
 import SwadeActor from './documents/actor/SwadeActor';
 import SwadeItem from './documents/item/SwadeItem';
 import { copyToClipboard } from './util';

@@ -1,4 +1,5 @@
-import { TraitRollModifier } from '../interfaces/additional';
+import { StatusEffect } from '@league-of-foundry-developers/foundry-vtt-types/src/foundry/client/data/documents/token';
+import { TraitRollModifier } from '../interfaces/additional.interface';
 import { SWADE } from './config';
 import { constants } from './constants';
 import SwadeActor from './documents/actor/SwadeActor';
@@ -185,6 +186,14 @@ export function copyToClipboard(textToCopy: string) {
     textArea.remove();
   }
   ui.notifications.info('Copied to clipboard');
+}
+
+export function getStatusEffectDataById(idToSearchFor: string) {
+  const filter = (e) => e.id === idToSearchFor;
+  let data = CONFIG.statusEffects.find(filter);
+  //fallback for when the effect doesn't exist in the global object
+  if (!data) data = SWADE.statusEffects.find(filter);
+  return data as StatusEffect;
 }
 
 type Permissions = Record<string, number>;

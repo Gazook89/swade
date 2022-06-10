@@ -14,6 +14,7 @@ import SwadeCombat from './module/documents/SwadeCombat';
 import SwadeCombatant from './module/documents/SwadeCombatant';
 import SwadeMeasuredTemplate from './module/documents/SwadeMeasuredTemplate';
 import SwadeUser from './module/documents/SwadeUser';
+import { registerEffectCallbacks } from './module/effectCallbacks';
 import { registerCustomHelpers } from './module/handlebarsHelpers';
 import ItemChatCardHelper from './module/ItemChatCardHelper';
 import { listenJournalDrop } from './module/journalDrop';
@@ -69,6 +70,7 @@ Hooks.once('init', () => {
     itemChatCardHelper: ItemChatCardHelper,
     CharacterSummarizer,
     RollDialog,
+    effectCallbacks: new Collection(),
   };
 
   //register custom Handlebars helpers
@@ -122,6 +124,8 @@ Hooks.once('init', () => {
 
   //register keyboard shortcuts
   registerKeybindings();
+
+  registerEffectCallbacks();
 
   // Register sheets
   Actors.unregisterSheet('core', ActorSheet);

@@ -227,7 +227,7 @@ SWADE:
   EnableWoundPace: Adjust Pace with Wounds
   EnableWoundPaceDesc: When enabled, Pace is automatically affected by Wounds
   GmBennies: Gamemaster Bennies
-  GmBenniesDesc: Sets how many Bennies the GM recieves on a refresh
+  GmBenniesDesc: Sets how many Bennies the GM receives on a refresh
   EnableBennyNotify: Benny notifications
   EnableBennyNotifyDesc: Displays chat messages when bennies are taken, given or refreshed.
   VehicleMods: Vehicles Mods
@@ -383,8 +383,8 @@ SWADE:
   Metric: Metric
   WeightUnitLabel: Unit of weight
   WeightUnitDesc: >-
-    Sets whether weights are measured in pounds or kilograms. Changing this
-    will NOT change the weights on items, only how the encumbrance is calculated
+    Sets whether weights are measured in pounds or kilograms. Changing this will
+    NOT change the weights on items, only how the encumbrance is calculated
   UseAttributeShorts: Use shortened attribute names
   UseAttributeShortsDesc: >-
     Activate this option if you want to see abbreviated attribute names on the
@@ -530,12 +530,19 @@ SWADE:
   ActiveEffects:
     Add: Add Active Effect
     Source: Source
+    ResetDuration: Reset Duration
   Settings:
     HighlightTemplate:
       Name: Always Highlight Templates
       Hint: >-
         When enabled, Measured Templates alway highlight themselves instead of
         the grid.
+  EffectCallbacks:
+    Shaken:
+      RollSpirit: Roll Spirit
+      Title: Remove Shaken from {name}
+  BenniesSpendGM: Spend a GM Benny
+  NoLongerShaken: You are no longer shaken
 ACTOR:
   TypeCharacter: Player Character
   TypeNpc: NPC
