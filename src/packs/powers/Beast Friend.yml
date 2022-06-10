@@ -1,0 +1,22 @@
+_id: RQPpKsLbwVEfCCSO
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 155.
+  duration: 10 minutes
+  modifiers: []
+  notes: ''
+  pp: Special
+  range: Sm
+  rank: Novice
+  trapping: The caster concentrates and gestures with his hands.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Beast Friend
+type: power

@@ -1,0 +1,22 @@
+_id: TPcYlGDTi3S42xbu
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: 2d6
+  description: See SWADE page 156.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm x 2
+  rank: Seasoned
+  trapping: Balls of fire, ice, light, darkness, colored bolts, swarm of insects
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Blast
+type: power

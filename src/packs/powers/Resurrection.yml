@@ -1,0 +1,22 @@
+_id: o4VKSTQqVmbfuND6
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 166.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '30'
+  range: Touch
+  rank: Heroic
+  trapping: Elaborate ceremonies, rare plants, magical amulets, divine intervention
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Resurrection
+type: power

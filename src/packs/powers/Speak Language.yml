@@ -1,0 +1,22 @@
+_id: BCqS75qt9fyw0JW1
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 168.
+  duration: 10 minutes
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Words, pictures, hand motions
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Speak Language
+type: power

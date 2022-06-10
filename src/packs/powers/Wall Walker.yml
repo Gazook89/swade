@@ -1,0 +1,22 @@
+_id: VExCzgzDejsraifN
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 170.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Spider-like visage, prickly hairs on hands and feet
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Wall Walker
+type: power

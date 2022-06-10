@@ -1,0 +1,22 @@
+_id: UrVLn6Ml3BtQr1bE
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 165.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm
+  rank: Veteran
+  trapping: A noxious drink, parasites, touching the target's temples
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Mind Wipe
+type: power

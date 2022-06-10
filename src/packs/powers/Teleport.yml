@@ -1,0 +1,22 @@
+_id: JM23jM4gErdmLhAp
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 170.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Seasoned
+  trapping: A cloud of smoke, "phasing" out, change into a bolt of lightning
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Teleport
+type: power

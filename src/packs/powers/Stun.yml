@@ -1,0 +1,22 @@
+_id: YqwqnsbNoQQQTLt6
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 168.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Bolts of energy, stun bombs, sonic booms, burst of blinding light
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Stun
+type: power

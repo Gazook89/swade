@@ -1,0 +1,22 @@
+_id: v1LPqc5as5XoP9cg
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 168.
+  duration: Instant (Sound); 5 (Silence)
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Smarts x5 (Sound); Smarts (Silence)
+  rank: Novice
+  trapping: Magical effects, a brief ripple in the air, a bell or chime that starts or stops ringing
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Sound/Silence
+type: power

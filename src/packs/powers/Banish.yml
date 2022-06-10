@@ -1,0 +1,22 @@
+_id: 6XHFuJRNJd8Cnmt5
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 154.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm
+  rank: Veteran
+  trapping: Holy items, arcane symbols, handful of salt
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Banish
+type: power

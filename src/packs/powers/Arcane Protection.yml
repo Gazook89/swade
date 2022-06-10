@@ -1,0 +1,22 @@
+_id: YCK7uLmPENKq0Zdb
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 154.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Concentration, a dull glow around the protected character, a fetish
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Arcane Protection
+type: power

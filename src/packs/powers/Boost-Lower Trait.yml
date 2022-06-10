@@ -1,0 +1,22 @@
+_id: FSwGNyzYvYRMhOkV
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 156.
+  duration: 5 (boost); Instant (lower)
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Physical change, glowing aura, potions
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Boost/Lower Trait
+type: power

@@ -1,0 +1,22 @@
+_id: DhwUMdLPrbUiZDwv
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 169.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: 2+
+  range: Sm
+  rank: Novice
+  trapping: Clay figure that grows into a servant, a tattoo that comes to life.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Summon Ally
+type: power

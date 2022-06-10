@@ -1,0 +1,22 @@
+_id: zCMcQuzYNvkEiw1r
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 167.
+  duration: Instant (slot); 5 (speed)
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Seasoned
+  trapping: Slowing time, blurred motion, a slippery patch of oil or ice
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Sloth/Speed
+type: power

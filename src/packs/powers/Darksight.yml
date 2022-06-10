@@ -1,0 +1,22 @@
+_id: Jtns0lIegvPI6ym7
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 157.
+  duration: One Hour
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Glowing eyes, dilated pupils, sonic sight
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Darksight
+type: power

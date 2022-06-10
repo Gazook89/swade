@@ -1,0 +1,22 @@
+_id: NJViHErRJmmNKMxC
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: 2d4
+  description: See SWADE page 157.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '4'
+  range: Sm
+  rank: Seasoned
+  trapping: Fiery aura, spikes, electrical field
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Damage Field
+type: power

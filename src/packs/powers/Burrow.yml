@@ -1,0 +1,22 @@
+_id: cLRfMRfjBZZBQmFW
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 157.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Dissolving into the earth and appearing elsewhere.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Burrow
+type: power

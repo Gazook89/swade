@@ -1,0 +1,22 @@
+_id: a4EWHMzO4vIQZpMV
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 160.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Veteran
+  trapping: Prayer, whispered words, gestures
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Drain Power Points
+type: power

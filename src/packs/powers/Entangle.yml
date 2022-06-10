@@ -1,0 +1,22 @@
+_id: iKXcfTdWNfNMX3FS
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 161.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Glue bomb, vines, handcuffs, webs.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Entangle
+type: power

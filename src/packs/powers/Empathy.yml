@@ -1,0 +1,22 @@
+_id: oKfNj3eBIdd0Z5yB
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 160.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Concentration, a warm or sympathetic smile, exchanging a pleasantry
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Empathy
+type: power

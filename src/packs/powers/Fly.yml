@@ -1,0 +1,22 @@
+_id: kTZvicSOKqEr3QOk
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 162.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '3'
+  range: Sm
+  rank: Veteran
+  trapping: Gusty winds, wings, broomsticks
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Fly
+type: power

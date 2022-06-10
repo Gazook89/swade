@@ -1,0 +1,22 @@
+_id: Uc35itYBnj3SmOde
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 162.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: 2 per point of Size change
+  range: Sm
+  rank: Seasoned
+  trapping: Gestures, words of power, potions
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Growth/Shrink
+type: power

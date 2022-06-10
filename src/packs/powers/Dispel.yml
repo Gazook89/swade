@@ -1,0 +1,22 @@
+_id: meXlKxyVpDAOJWid
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 158.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Seasoned
+  trapping: Waving hands, whispered words
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Dispel
+type: power

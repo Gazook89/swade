@@ -1,0 +1,22 @@
+_id: AkdBstIqWvUAzJbl
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 164.
+  duration: 10 minutes
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Illusionary torch, sunlight, darkness, thick fogs
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Light / Darkness
+type: power

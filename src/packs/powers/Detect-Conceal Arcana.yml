@@ -1,0 +1,22 @@
+_id: BZrNgowPgJsa2zhV
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 158.
+  duration: 5 (detect), one hour (conceal)
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Waving hands, whispered words.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Detect/Conceal Arcana
+type: power

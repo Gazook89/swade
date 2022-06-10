@@ -1,0 +1,22 @@
+_id: 2WMVbzAqJG5EO3hd
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 163.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '5'
+  range: Sm
+  rank: Heroic
+  trapping: Ghost form, body of shadow, gaseous transformation
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Intangibility
+type: power

@@ -1,0 +1,22 @@
+_id: AlGYtSZmjUDRfUGM
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 168.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: A colored glow, runes, sigils, crackling energy, barbs grow from the blade
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Smite
+type: power

@@ -1,0 +1,22 @@
+_id: 7NIb4wEEMXV5tRQd
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 155.
+  duration: '5'
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Seasoned
+  trapping: Fire, ice, thorns, force, bones, energy.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Barrier
+type: power

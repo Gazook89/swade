@@ -1,0 +1,22 @@
+_id: Ewds3tTHCxbtl6i9
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 157.
+  duration: Until the end of the victim's next turn
+  modifiers: []
+  notes: ''
+  pp: '1'
+  range: Sm
+  rank: Novice
+  trapping: Hypnotic lights, brief illusions, loud noises.
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Confusion
+type: power

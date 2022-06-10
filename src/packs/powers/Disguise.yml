@@ -1,0 +1,22 @@
+_id: WRxYTnILZKlA53ct
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 158.
+  duration: 10 minutes
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Seasoned
+  trapping: Malleable features, illusionary appearance, hair of new form
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Disguise
+type: power

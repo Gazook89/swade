@@ -1,0 +1,22 @@
+_id: PlzAtBsLefvaGE3S
+data:
+  actions:
+    additional: {}
+    dmgMod: ''
+    skill: ''
+    skillMod: ''
+  additionalStats: {}
+  arcane: ''
+  damage: ''
+  description: See SWADE page 162.
+  duration: Instant
+  modifiers: []
+  notes: ''
+  pp: '2'
+  range: Sm
+  rank: Novice
+  trapping: Whirlwind, chaotic poltergeists, repulsion field
+  favorite: false
+img: systems/swade/assets/icons/power.svg
+name: Havoc
+type: power
