@@ -5,7 +5,7 @@
   </div>
   {{#if isTraitRoll}}
     <fieldset>
-      <legend>{{localize 'SWADE.MAPenalty'}}</legend>
+      <legend>{{localize 'SWADE.MAPenalty.Label'}}</legend>
       <div class='flexrow'>
         <input
           type='radio'
@@ -14,7 +14,7 @@
           value='0'
           data-dtype='Number'
         />
-        <label for='map-none'>None</label>
+        <label for='map-none'>{{localize 'SWADE.MAPenalty.None'}}</label>
         <input
           type='radio'
           id='map-2'
@@ -38,8 +38,8 @@
     <legend>{{localize 'SWADE.Modifiers'}}</legend>
     <header class='modifier-entry header'>
       <div>{{localize 'SWADE.Name'}}</div>
-      <div>Value</div>
-      <div>Ignore?</div>
+      <div>{{localize 'SWADE.Mod.Value'}}</div>
+      <div>{{localize 'SWADE.Mod.Ignore'}}</div>
     </header>
     <ul class='modifiers'>
       {{#each modifiers}}

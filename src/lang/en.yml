@@ -424,7 +424,9 @@ SWADE:
   SettingRules: Setting Rules
   WorldBasics: World Basics
   CoreSkillsList: List of Core Skills
-  MAPenalty: Multi-Action Penalty
+  MAPenalty:
+    Label: Multi-Action Penalty
+    None: None
   Mod:
     Custom:
       Add: Add Custom Modifier
@@ -432,6 +434,8 @@ SWADE:
     Preset:
       Choose: Choose a Preset...
       Add: Add Preset
+    Value: Value
+    Ignore: Ignore?
   Illumination:
     _name: Illumination
     Dim: Dim Light

@@ -415,7 +415,9 @@ SWADE:
   BennyImageSheet: Benny
   Characters: Charaktere
   CoreSkillsList: Liste der Grundfertigkeiten
-  MAPenalty: Mehrfachaktionsabzug
+  MAPenalty:
+    Label: Mehrfachaktionsabzug
+    None: Keine
   Mod:
     Custom:
       Add: Eigenen Modifikator hinzufügen
@@ -423,6 +425,8 @@ SWADE:
     Preset:
       Choose: Voreinstellung auswählen...
       Add: Voreinstellung hinzufügen
+    Value: Wert
+    Ignore: Ignorieren?
   Illumination:
     _name: Beleuchtung
     Dim: Düster

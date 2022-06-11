@@ -47,6 +47,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 - Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
   - `SWADE.ActNow` -> `SWADE.ActBeforeCurrentCombatant`
+  - `SWADE.MAPenalty` -> `SWADE.MAPenalty.Label`
 
 ### Deprecated
 
