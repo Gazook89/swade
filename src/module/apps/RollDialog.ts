@@ -79,10 +79,11 @@ export default class RollDialog extends FormApplication<
     });
   }
 
-  async getData(): Promise<object> {
+  async getData() {
     const data = {
-      rollModes: CONFIG.Dice.rollModes,
+      baseDice: this.ctx.roll.formula,
       displayExtraButton: true,
+      rollModes: CONFIG.Dice.rollModes,
       modGroups: CONFIG.SWADE.prototypeRollGroups,
       extraButtonLabel: '',
       rollMode: game.settings.get('core', 'rollMode'),
@@ -106,7 +107,7 @@ export default class RollDialog extends FormApplication<
     return data;
   }
 
-  protected async _updateObject(ev: Event, formData: FormData) {
+  protected override async _updateObject(ev: Event, formData: FormData) {
     const expanded = foundry.utils.expandObject(formData) as RollDialogFormData;
     Object.values(expanded.modifiers ?? []).forEach(
       (v, i) => (this.ctx.mods[i].ignore = v.ignore),
@@ -183,8 +184,6 @@ export default class RollDialog extends FormApplication<
       }
     }
 
-    this._markWilDie(terms);
-
     //recreate the roll
     const finalizedRoll = Roll.fromTerms(terms, roll.options);
 
@@ -216,31 +215,9 @@ export default class RollDialog extends FormApplication<
     ]);
   }
 
-  /**
-   * This is a workaround to add the DSN Wild Die until the bug which resets the options object is resolved
-   * @param terms Array of roll terms
-   */
-  private _markWilDie(terms: RollTerm[]): void {
-    if (!game.dice3d) return;
-    for (const term of terms) {
-      if (term instanceof PoolTerm) {
-        for (const roll of term.rolls) {
-          for (const term of roll.terms) {
-            if (term instanceof WildDie) {
-              const colorPreset =
-                game.user?.getFlag('swade', 'dsnWildDie') ?? 'none';
-              if (colorPreset !== 'none') {
-                setProperty(term.options, 'colorset', colorPreset);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
   /** add a + if no +/- is present in the situational mod */
   private _sanitizeModifierInput(modifier: string): string {
+    if (modifier.startsWith('@')) return modifier;
     if (!modifier[0].match(/[+-]/)) return '+' + modifier;
     return modifier;
   }
@@ -313,8 +290,7 @@ export default class RollDialog extends FormApplication<
     });
   }
 
-  /** @override */
-  close(options?: Application.CloseOptions): Promise<void> {
+  override close(options?: Application.CloseOptions): Promise<void> {
     //fallback if the roll has not yet been resolved
     if (!this.isResolved) this.resolve(null);
     $(document).off('keydown.chooseDefault');

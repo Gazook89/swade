@@ -1,37 +1,35 @@
 <form autocomplete='off'>
-  <div class='form-group'>
-    <label>{{localize 'SWADE.Formula'}}</label>
-    <input type='text' name='formula' value='{{formula}}' disabled />
-  </div>
+  <fieldset class='formula'>
+    <legend>{{localize 'SWADE.Roll'}}</legend>
+    <span class='input' role='textbox'>{{baseDice}}</span>
+  </fieldset>
   {{#if isTraitRoll}}
-    <fieldset>
+    <fieldset class='flexrow'>
       <legend>{{localize 'SWADE.MAPenalty.Label'}}</legend>
-      <div class='flexrow'>
-        <input
-          type='radio'
-          id='map-none'
-          name='map'
-          value='0'
-          data-dtype='Number'
-        />
-        <label for='map-none'>{{localize 'SWADE.MAPenalty.None'}}</label>
-        <input
-          type='radio'
-          id='map-2'
-          name='map'
-          value='-2'
-          data-dtype='Number'
-        />
-        <label for='map-2'>-2</label>
-        <input
-          type='radio'
-          id='map-4'
-          name='map'
-          value='-4'
-          data-dtype='Number'
-        />
-        <label for='map-4'>-4</label>
-      </div>
+      <input
+        type='radio'
+        id='map-none'
+        name='map'
+        value='0'
+        data-dtype='Number'
+      />
+      <label for='map-none'>{{localize 'SWADE.MAPenalty.None'}}</label>
+      <input
+        type='radio'
+        id='map-2'
+        name='map'
+        value='-2'
+        data-dtype='Number'
+      />
+      <label for='map-2'>-2</label>
+      <input
+        type='radio'
+        id='map-4'
+        name='map'
+        value='-4'
+        data-dtype='Number'
+      />
+      <label for='map-4'>-4</label>
     </fieldset>
   {{/if}}
   <fieldset>
@@ -101,6 +99,10 @@
       </button>
     </div>
   </fieldset>
+  <fieldset class='formula'>
+    <legend>{{localize 'SWADE.Formula'}}</legend>
+    <span class='input' role='textbox'>{{formula}}</span>
+  </fieldset>
   <div class='form-group'>
     <label>{{localize 'SWADE.RollMode'}}</label>
     <select id='rollMode' name='rollMode'>
@@ -111,7 +113,7 @@
       {{/select}}
     </select>
   </div>
-  <div class='flexrow'>
+  <footer class='flexrow'>
     <button type='submit'>
       <i class='fas fa-dice'></i>
       {{localize 'SWADE.Roll'}}
@@ -126,7 +128,7 @@
       <i class='fas fa-times'></i>
       {{localize 'Close'}}
     </button>
-  </div>
+  </footer>
 </form>
 <datalist id='modifier-names'>
   <option value='{{localize "SWADE.Mod.Support"}}'></option>
