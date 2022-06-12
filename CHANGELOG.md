@@ -43,10 +43,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 - You can now no longer roll your Wealth Die if you are broke. (#275)
-- Converted language files from flat to nested keys for better organization
 - You can now pass `title` and `flavour` overrides to skill and attribute rolls
-- Restructured the UI of the Roll Dialog to have a more logical flow, guiding the User over the process of checking and constructing their roll.
-- Replaced the Preset select list with a new list that can be filtered and which adds a modifier by clicking on it in the list.
+- Restructured the UI of the Roll Dialog to have a more logical flow, guiding the User over the process of checking and constructing their roll. (#505)
+- Replaced the Preset select list with a new list that can be filtered and which adds a modifier by clicking on it in the list. (#505)
+- Converted language files from flat to nested keys for better organization (#528)
 - Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
   - `SWADE.ActNow` -> `SWADE.ActBeforeCurrentCombatant`
