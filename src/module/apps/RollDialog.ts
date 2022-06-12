@@ -22,6 +22,12 @@ export default class RollDialog extends FormApplication<
       template: 'systems/swade/templates/apps/rollDialog.hbs',
       classes: ['swade', 'roll-dialog'],
       width: 400,
+      filters: [
+        {
+          inputSelector: 'input.searchbox',
+          contentSelector: '.selections',
+        },
+      ],
       height: 'auto' as const,
       closeOnSubmit: true,
       submitOnClose: false,
@@ -63,9 +69,16 @@ export default class RollDialog extends FormApplication<
       this._addModifier();
       this.render();
     });
-    html.find('button.add-preset').on('click', () => {
-      this._addPreset();
+    html.find('.modifier button').on('click', (ev) => {
+      this._addPreset(ev);
       this.render();
+    });
+    html.find('button.toggle-list').on('click', (ev) => {
+      const target = ev.currentTarget as HTMLButtonElement;
+      const width = getComputedStyle(target).width;
+      html.find('.fas.fa-caret-right').toggleClass('rotate');
+      html.find('.searchbox').outerWidth(width, true);
+      html.find('.dropdown').outerWidth(width).slideToggle({ duration: 200 });
     });
     html.find('button[type="submit"]').on('click', (ev) => {
       this.extraButtonUsed = ev.currentTarget.dataset.type === 'extra';
@@ -202,6 +215,21 @@ export default class RollDialog extends FormApplication<
     return finalizedRoll;
   }
 
+  protected override _onSearchFilter(
+    event: KeyboardEvent,
+    query: string,
+    rgx: RegExp,
+    html: HTMLElement,
+  ) {
+    for (const li of Array.from(html.children) as HTMLLIElement[]) {
+      if (li.classList.contains('group-header')) continue;
+      const btn = li.querySelector('button');
+      const name = btn?.textContent;
+      const match = rgx.test(SearchFilter.cleanQuery(name!));
+      li.style.display = match ? 'block' : 'none';
+    }
+  }
+
   private _buildRollForEvaluation() {
     return Roll.fromTerms([
       ...this.ctx.roll.terms,
@@ -273,13 +301,11 @@ export default class RollDialog extends FormApplication<
     }
   }
 
-  private _addPreset() {
-    const select =
-      this.form!.querySelector<HTMLSelectElement>('#preset-selection')!;
-    const option = select.options[select.selectedIndex];
-    const index = Number(option.dataset.index);
+  private _addPreset(ev: JQuery.ClickEvent) {
+    const target = ev.currentTarget as HTMLButtonElement;
+    const index = Number(target.dataset.index);
     const group = CONFIG.SWADE.prototypeRollGroups.find(
-      (v) => v.name === option.dataset.group,
+      (v) => v.name === target.dataset.group,
     );
     if (!group) return;
     const modifier = group.modifiers[index];

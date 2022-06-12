@@ -74,29 +74,36 @@
         <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
       </button>
     </div>
-    <div class='modifier-presets'>
-      <select id='preset-selection'>
-        <option selected disabled>{{localize
-            'SWADE.Mod.Preset.Choose'
-          }}</option>
-        {{#each modGroups as |group|}}
-          <optgroup label='{{group.name}}'>
-            {{#each group.modifiers}}
-              <option
-                data-group='{{group.name}}'
-                data-index={{@index}}
-              >{{label}}</option>
-            {{/each}}
-          </optgroup>
-        {{/each}}
-      </select>
-      <button
-        type='button'
-        class='add-preset'
-        title='{{localize "SWADE.Mod.Preset.Add"}}'
-      >
-        <i class='fa fa-plus'></i>&nbsp;{{localize 'SWADE.Add'}}
+    <div class='presets'>
+      <button type='button' class='toggle-list'>
+        <i class='fas fa-caret-right'></i>
+        {{localize 'SWADE.Mod.Preset.Choose'}}
       </button>
+      <div class='dropdown' role='listbox'>
+        <input
+          class='searchbox'
+          type='text'
+          placeholder='{{localize "FILES.Search"}}'
+          role='searchbox'
+          autocomplete='off'
+        />
+        <ol class='selections'>
+          {{#each modGroups as |group|}}
+            <li class='group-header'>{{group.name}}</li>
+            {{#each group.modifiers}}
+              <li class='modifier'>
+                <button
+                  type='button'
+                  data-group='{{group.name}}'
+                  data-index={{@index}}
+                >
+                  {{label}}
+                </button>
+              </li>
+            {{/each}}
+          {{/each}}
+        </ol>
+      </div>
     </div>
   </fieldset>
   <fieldset class='formula'>
