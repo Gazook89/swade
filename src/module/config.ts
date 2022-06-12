@@ -516,6 +516,9 @@ export const SWADE: SwadeConfig = {
     {
       name: 'SWADE.ModOther',
       modifiers: [
+        { label: 'SWADE.TargetVulnerable', value: '+2' },
+        { label: 'SWADE.WildAttack', value: '+2' },
+        { label: 'SWADE.Aiming', value: '+2' },
         { label: 'SWADE.Snapfire', value: -2 },
         { label: 'SWADE.UnstablePlatform', value: -2 },
         { label: 'SWADE.Encumbered', value: -2 },

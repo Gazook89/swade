@@ -37,16 +37,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
     - For Users: The `Shaken`, `Stunned` and `Bleeding Out` effects now trigger workflows and interactions to resolve them.
     - For Developers: which you can find at `game.swade.effectCallbacks` any time during or after the `init` hook. This collection uses status effect IDs as keys and functions as values. Each function is passed the expiring Active Effect object as its sole parameter. These functions can be asynchronous and are awaited. When an effect expires the system looks for the effect's ID in the collection. If it finds one it executes it, otherwise a fallback is used. You can also delete or overwrite existing callbacks so please be mindful.
 - Added Basic Powers as a system compendium (#499)
+- Added modifier presets for `Aiming`, `Wild Attack` and `Target is Vulnerable`
 - Added additional translation strings.
 
 ### Changed
 
 - You can now no longer roll your Wealth Die if you are broke. (#275)
-- Converted language files from flat to nested keys for better organization
 - You can now pass `title` and `flavour` overrides to skill and attribute rolls
+- Restructured the UI of the Roll Dialog to have a more logical flow, guiding the User over the process of checking and constructing their roll. (#505)
+- Replaced the Preset select list with a new list that can be filtered and which adds a modifier by clicking on it in the list. (#505)
+- Converted language files from flat to nested keys for better organization (#528)
 - Changed some translation strings, see the list below: (#528)
   - `SWADE.WealthDie` -> `SWADE.WealthDie.Label`
   - `SWADE.ActNow` -> `SWADE.ActBeforeCurrentCombatant`
+  - `SWADE.MAPenalty` -> `SWADE.MAPenalty.Label`
 
 ### Deprecated
 

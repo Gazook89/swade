@@ -14,13 +14,11 @@ const staticFiles = ['fonts', 'assets', 'templates', 'cards', 'system.json'];
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
 
-const banner = `
-/**
+const banner = `/**
 * Author: FloRad
 * Content License: All Rights Reserved Pinnacle Entertainment, Inc
 * Software License: Apache License, Version 2.0
-*/
-`;
+*/`;
 
 /**
  * this simple plugin displays which environment we're in when rollup starts
@@ -65,21 +63,21 @@ export default defineConfig({
           //Convert the template
           src: [`${srcDirectory}/template.yml`],
           dest: distDirectory,
-          transform: (content, src, _dst) => {
-            const data = yaml.load(content.toString(), { filename: src });
+          transform: (content, srcPath, _dstPath) => {
+            const data = yaml.load(content.toString(), { filename: srcPath });
             return JSON.stringify(data, null, 2);
           },
-          rename: (name, _ext) => `${name}.json`,
+          rename: (name, _ext, _srcPath) => `${name}.json`,
         },
         {
           //Convert the language files
           src: [`${srcDirectory}/lang/*.yml`],
           dest: `${distDirectory}/lang`,
-          transform: (content, src, _dst) => {
-            const data = yaml.load(content.toString(), { filename: src });
+          transform: (content, srcPath, _dstPath) => {
+            const data = yaml.load(content.toString(), { filename: srcPath });
             return JSON.stringify(data, null, 2);
           },
-          rename: (name, _ext) => `${name}.json`,
+          rename: (name, _ext, _srcPath) => `${name}.json`,
         },
       ],
     }),
