@@ -427,23 +427,28 @@ SWADE:
       Add: Voreinstellung hinzufügen
     Value: Wert
     Ignore: Ignorieren?
-  Illumination:
+  Light:
     _name: Beleuchtung
+    _template: '{name}, {bracket}'
+    Normal: Normal
     Dim: Düster
     Dark: Dunkel
     Pitch: Finsternis
   Cover:
     _name: Deckung
+    _template: '{name}, {bracket}'
     Shield: Deckung - Schild
-    Light: Leichte Deckung
-    Medium: Mittlere Deckung
-    Heavy: Schwere Deckung
-    Total: Vollständige Deckung
+    Light: Leicht
+    Medium: Mittel
+    Heavy: Schwer
+    Total: Vollständig
   Range:
     _name: Reichweite
-    Medium: Reichweite, Mittel
-    Long: Reichweite, Weit
-    Extreme: Reichweite, Extrem
+    _template: '{name}, {bracket}'
+    Short: Kurz
+    Medium: Mittel
+    Long: Weit
+    Extreme: Extrem
   ModOther: Andere Modifikatioren
   Snapfire: Schnellschuss
   UnstablePlatform: Unsicheren Grund

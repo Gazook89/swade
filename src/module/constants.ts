@@ -31,4 +31,11 @@ export const constants = {
     HEROIC: 3,
     LEGENDARY: 4,
   },
+  MODIFIER_TYPE: {
+    OTHER: 'other',
+    RANGE: 'range',
+    COVER: 'cover',
+    LIGHT: 'light',
+    MAP: 'map',
+  },
 };

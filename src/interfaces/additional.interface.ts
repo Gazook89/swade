@@ -27,6 +27,7 @@ export interface TraitRollModifier {
   value: string | number;
   /** An optional boolean that flags whether the modifier should be ignored and removed before the roll is evaluated */
   ignore?: boolean;
+  type?: string;
 }
 
 /** A trait roll modifier group, used in the RollDialog */

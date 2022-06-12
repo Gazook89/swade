@@ -1,8 +1,9 @@
 import { TraitRollModifier } from '../../interfaces/additional.interface';
+import { constants } from '../constants';
 import WildDie from '../dice/WildDie';
 import SwadeActor from '../documents/actor/SwadeActor';
 import SwadeItem from '../documents/item/SwadeItem';
-import * as util from '../util';
+import { modifierFilter, modifierReducer } from '../util';
 
 export default class RollDialog extends FormApplication<
   FormApplicationOptions,
@@ -12,6 +13,8 @@ export default class RollDialog extends FormApplication<
   resolve: (roll: Roll | null) => void;
   isResolved = false;
   extraButtonUsed = false;
+  _newModifierLabel: string | undefined;
+  _newModifierValue: string | undefined;
 
   static asPromise(ctx: RollDialogContext): Promise<Roll | null> {
     return new Promise((resolve) => new RollDialog(ctx, resolve));
@@ -29,9 +32,9 @@ export default class RollDialog extends FormApplication<
         },
       ],
       height: 'auto' as const,
-      closeOnSubmit: true,
+      closeOnSubmit: false,
       submitOnClose: false,
-      submitOnChange: false,
+      submitOnChange: true,
     });
   }
 
@@ -61,10 +64,63 @@ export default class RollDialog extends FormApplication<
     );
   }
 
-  activateListeners(html: JQuery<HTMLElement>): void {
+  get rangeModifier() {
+    return this.ctx.mods.find((m) => m.type === constants.MODIFIER_TYPE.RANGE);
+  }
+
+  get maPenalty() {
+    return this.ctx.mods.find((m) => m.type === constants.MODIFIER_TYPE.MAP);
+  }
+
+  get lightModifier() {
+    return this.ctx.mods.find((m) => m.type === constants.MODIFIER_TYPE.LIGHT);
+  }
+
+  get coverModifier() {
+    return this.ctx.mods.find((m) => m.type === constants.MODIFIER_TYPE.COVER);
+  }
+
+  get choiceLabels() {
+    return {
+      range: {
+        '+0': 'SWADE.Range.Short',
+        '-2': 'SWADE.Range.Medium',
+        '-4': 'SWADE.Range.Long',
+        '-8': 'SWADE.Range.Extreme',
+      },
+      map: {
+        '+0': 'SWADE.MAPenalty.None',
+        '-2': '-2',
+        '-4': '-4',
+      },
+      light: {
+        '+0': 'SWADE.Light.Normal',
+        '-2': 'SWADE.Light.Dim',
+        '-4': 'SWADE.Light.Dark',
+        '-6': 'SWADE.Light.Pitch',
+      },
+      cover: {
+        '+0': 'SWADE.MAPenalty.None',
+        '-2': 'SWADE.Cover.Light',
+        '-4': 'SWADE.Cover.Medium',
+        '-6': 'SWADE.Cover.Heavy',
+        '-8': 'SWADE.Cover.Total',
+      },
+    };
+  }
+
+  override activateListeners(html: JQuery<HTMLElement>): void {
     super.activateListeners(html);
     $(document).on('keydown.chooseDefault', this._onKeyDown.bind(this));
     html.find('button#close').on('click', this.close.bind(this));
+    html.find('button#submit').on('click', async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      //add any unsubmitted modifiers
+      this._addModifier();
+      const roll = await this._evaluateRoll();
+      this._resolve(roll);
+    });
     html.find('button.add-modifier').on('click', () => {
       this._addModifier();
       this.render();
@@ -92,17 +148,49 @@ export default class RollDialog extends FormApplication<
     });
   }
 
-  async getData() {
+  override async getData() {
     const data = {
+      newModifierLabel: this._newModifierLabel,
+      newModifierValue: this._newModifierValue,
       baseDice: this.ctx.roll.formula,
       displayExtraButton: true,
       rollModes: CONFIG.Dice.rollModes,
       modGroups: CONFIG.SWADE.prototypeRollGroups,
       extraButtonLabel: '',
       rollMode: game.settings.get('core', 'rollMode'),
-      modifiers: this.ctx.mods.map(this._normalizeModValue),
+      modifiers: this.ctx.mods
+        .map(this._normalizeModValue)
+        .filter(
+          (m) =>
+            ![
+              constants.MODIFIER_TYPE.RANGE,
+              constants.MODIFIER_TYPE.COVER,
+              constants.MODIFIER_TYPE.LIGHT,
+              constants.MODIFIER_TYPE.MAP,
+            ].includes(m.type ?? constants.MODIFIER_TYPE.OTHER),
+        ),
       formula: this._buildRollForEvaluation().formula,
       isTraitRoll: this._isTraitRoll(),
+      range: {
+        name: 'range',
+        chosen: this.rangeModifier?.value.toString() ?? '+0',
+        choices: this.choiceLabels.range,
+      },
+      map: {
+        name: 'map',
+        chosen: this.maPenalty?.value.toString() ?? '+0',
+        choices: this.choiceLabels.map,
+      },
+      light: {
+        name: 'light',
+        chosen: this.lightModifier?.value.toString() ?? '+0',
+        choices: this.choiceLabels.light,
+      },
+      cover: {
+        name: 'cover',
+        chosen: this.coverModifier?.value.toString() ?? '+0',
+        choices: this.choiceLabels.cover,
+      },
     };
 
     if (this.ctx.item) {
@@ -120,25 +208,43 @@ export default class RollDialog extends FormApplication<
     return data;
   }
 
+  override close(options?: Application.CloseOptions): Promise<void> {
+    //fallback if the roll has not yet been resolved
+    if (!this.isResolved) this.resolve(null);
+    $(document).off('keydown.chooseDefault');
+    return super.close(options);
+  }
+
   protected override async _updateObject(ev: Event, formData: FormData) {
     const expanded = foundry.utils.expandObject(formData) as RollDialogFormData;
+    this._newModifierLabel = expanded.newModifierLabel;
+    this._newModifierValue = expanded.newModifierValue;
     Object.values(expanded.modifiers ?? []).forEach(
       (v, i) => (this.ctx.mods[i].ignore = v.ignore),
     );
-    if (expanded.map && expanded.map !== 0) {
-      this.ctx.mods.push({
-        label: game.i18n.localize('SWADE.MAPenalty'),
-        value: expanded.map,
-      });
-    }
-
-    //add any unsubmitted modifiers
-    this._addModifier();
-    const roll = await this._evaluateRoll();
-    this._resolve(roll);
+    this._handleRangeModifier(expanded.range);
+    this._handleMultiActionPenalty(expanded.map);
+    this._handleLightModifier(expanded.light);
+    this._handleCoverModifier(expanded.cover);
+    this.render(true);
   }
 
-  private _onKeyDown(event) {
+  protected override _onSearchFilter(
+    event: KeyboardEvent,
+    query: string,
+    rgx: RegExp,
+    html: HTMLElement,
+  ) {
+    for (const li of Array.from(html.children) as HTMLLIElement[]) {
+      if (li.classList.contains('group-header')) continue;
+      const btn = li.querySelector('button');
+      const name = btn?.textContent;
+      const match = rgx.test(SearchFilter.cleanQuery(name!));
+      li.style.display = match ? 'block' : 'none';
+    }
+  }
+
+  private async _onKeyDown(event) {
     // Close dialog
     if (event.key === 'Escape') {
       event.preventDefault();
@@ -150,14 +256,11 @@ export default class RollDialog extends FormApplication<
     if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
-      const modValue = this.form!.querySelector<HTMLInputElement>(
-        '.new-modifier-value',
-      )?.value;
-      if (modValue) {
-        this._addModifier();
-        return this.render();
-      }
-      return this.submit();
+      //add any un-submitted modifiers
+      this._addModifier();
+      const roll = await this._evaluateRoll();
+      this._resolve(roll);
+      this.close();
     }
   }
 
@@ -215,29 +318,14 @@ export default class RollDialog extends FormApplication<
     return finalizedRoll;
   }
 
-  protected override _onSearchFilter(
-    event: KeyboardEvent,
-    query: string,
-    rgx: RegExp,
-    html: HTMLElement,
-  ) {
-    for (const li of Array.from(html.children) as HTMLLIElement[]) {
-      if (li.classList.contains('group-header')) continue;
-      const btn = li.querySelector('button');
-      const name = btn?.textContent;
-      const match = rgx.test(SearchFilter.cleanQuery(name!));
-      li.style.display = match ? 'block' : 'none';
-    }
-  }
-
   private _buildRollForEvaluation() {
     return Roll.fromTerms([
       ...this.ctx.roll.terms,
       ...Roll.parse(
         this.ctx.mods
-          .filter((v) => !v.ignore) //remove the disabled modifiers
+          .filter(modifierFilter)
           .map(this._normalizeModValue)
-          .reduce(util.modifierReducer, ''),
+          .reduce(modifierReducer, ''),
         this._getRollData(),
       ),
     ]);
@@ -252,7 +340,7 @@ export default class RollDialog extends FormApplication<
 
   private _buildModifierFlavor() {
     return this.ctx.mods
-      .filter((v) => !v.ignore) //remove the disabled modifiers
+      .filter(modifierFilter)
       .reduce((acc: string, cur: TraitRollModifier) => {
         return (acc += `<br>${cur.label}: ${cur.value}`);
       }, '');
@@ -273,32 +361,95 @@ export default class RollDialog extends FormApplication<
     } else {
       throw new Error('Invalid modifier value ' + mod.value);
     }
-    return {
-      value: normalizedValue,
-      label: mod.label,
-      ignore: mod.ignore,
-    };
+    mod.value = normalizedValue;
+    return mod;
   }
 
   private _isTraitRoll(): boolean {
     return !!this.ctx.actor;
   }
 
+  private _handleRangeModifier(range: string) {
+    if (!Number.isNumeric(range)) return;
+    const label = game.i18n.format('SWADE.Range._template', {
+      name: game.i18n.localize('SWADE.Range._name'),
+      bracket: game.i18n.localize(this.choiceLabels.range[range]),
+    });
+    if (!this.rangeModifier) {
+      this.ctx.mods.push({
+        label: label,
+        value: range,
+        type: constants.MODIFIER_TYPE.RANGE,
+      });
+    } else {
+      this.rangeModifier.value = range;
+      this.rangeModifier.label = label;
+    }
+  }
+
+  private _handleMultiActionPenalty(map: string) {
+    if (!Number.isNumeric(map)) return;
+    const label = game.i18n.localize('SWADE.MAPenalty.Label');
+    if (!this.maPenalty) {
+      this.ctx.mods.push({
+        label: label,
+        value: map,
+        type: constants.MODIFIER_TYPE.MAP,
+      });
+    } else {
+      this.maPenalty.value = map;
+      this.maPenalty.label = label;
+    }
+  }
+
+  private _handleLightModifier(light: string) {
+    if (!Number.isNumeric(light)) return;
+    const label = game.i18n.format('SWADE.Light._template', {
+      name: game.i18n.localize('SWADE.Light._name'),
+      bracket: game.i18n.localize(this.choiceLabels.light[light]),
+    });
+    if (!this.lightModifier) {
+      this.ctx.mods.push({
+        label: label,
+        value: light,
+        type: constants.MODIFIER_TYPE.LIGHT,
+      });
+    } else {
+      this.lightModifier.value = light;
+      this.lightModifier.label = label;
+    }
+  }
+
+  private _handleCoverModifier(cover: string) {
+    if (!Number.isNumeric(cover)) return;
+    const label = game.i18n.format('SWADE.Light._template', {
+      name: game.i18n.localize('SWADE.Cover._name'),
+      bracket: game.i18n.localize(this.choiceLabels.cover[cover]),
+    });
+    if (!this.coverModifier) {
+      this.ctx.mods.push({
+        label: label,
+        value: cover,
+        type: constants.MODIFIER_TYPE.COVER,
+      });
+    } else {
+      this.coverModifier.value = cover;
+      this.coverModifier.label = label;
+    }
+  }
+
   /** Reads the modifier inputs, sanitizes them and adds the values to the mod array */
   private _addModifier() {
-    const form = this.form!;
-    const label = form.querySelector<HTMLInputElement>(
-      '.new-modifier-label',
-    )?.value;
-    const value = form.querySelector<HTMLInputElement>(
-      '.new-modifier-value',
-    )?.value;
+    const label = this._newModifierLabel;
+    const value = this._newModifierValue;
     if (value) {
       this.ctx.mods.push({
         label: label || game.i18n.localize('SWADE.Addi'),
         value: this._sanitizeModifierInput(value),
       });
     }
+    this._newModifierLabel = '';
+    this._newModifierValue = '';
   }
 
   private _addPreset(ev: JQuery.ClickEvent) {
@@ -313,13 +464,6 @@ export default class RollDialog extends FormApplication<
         value: modifier.value,
       });
     }
-  }
-
-  override close(options?: Application.CloseOptions): Promise<void> {
-    //fallback if the roll has not yet been resolved
-    if (!this.isResolved) this.resolve(null);
-    $(document).off('keydown.chooseDefault');
-    return super.close(options);
   }
 }
 
@@ -337,6 +481,11 @@ interface RollDialogContext {
 
 interface RollDialogFormData {
   modifiers?: TraitRollModifier[];
-  map?: number;
+  newModifierLabel?: string;
+  newModifierValue?: string;
+  map: string;
+  range: string;
+  light: string;
+  cover: string;
   rollMode: foundry.CONST.DICE_ROLL_MODES;
 }

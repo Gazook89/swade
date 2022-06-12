@@ -436,23 +436,28 @@ SWADE:
       Add: Add Preset
     Value: Value
     Ignore: Ignore?
-  Illumination:
+  Light:
     _name: Illumination
-    Dim: Dim Light
-    Dark: Darkness
+    _template: '{bracket} {name}'
+    Normal: Normal
+    Dim: Dim
+    Dark: Dark
     Pitch: Pitch Black
   Cover:
     _name: Cover
+    _template: '{name} {bracket}'
     Shield: Cover - Shield
-    Light: Light Cover
-    Medium: Medium Cover
-    Heavy: Heavy Cover
-    Total: Total Cover
+    Light: Light
+    Medium: Medium
+    Heavy: Heavy
+    Total: Total
   Range:
     _name: Range
-    Medium: Medium Range
-    Long: Long Range
-    Extreme: Extreme Range
+    _template: '{bracket} {name}'
+    Short: Short
+    Medium: Medium
+    Long: Long
+    Extreme: Extreme
   ModOther: Other Modifiers
   Snapfire: Snapfire
   UnstablePlatform: Unstable Platform

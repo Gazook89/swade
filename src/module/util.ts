@@ -69,7 +69,6 @@ export function getCanvas(): Canvas {
 }
 
 /**
- *
  * @param traitName The name of the trait to be found
  * @param actor The actor to find it from
  * @returns Returns a string of the trait name in the data model if it's an attribute or an Item if it is a skill. If it can find neither an attribute nor a skill then it returns null
@@ -105,6 +104,15 @@ export async function resetActionDeck() {
  */
 export function modifierReducer(acc: string, cur: TraitRollModifier): string {
   return (acc += `${cur.value}[${cur.label}]`);
+}
+
+export function modifierFilter(mod: TraitRollModifier): boolean {
+  const modType = constants.MODIFIER_TYPE;
+  const type = mod.type ?? modType.OTHER;
+  const isReservedType =
+    [modType.RANGE, modType.COVER, modType.LIGHT, modType.MAP].includes(type) &&
+    Number(mod.value) === 0;
+  return !mod.ignore && !isReservedType;
 }
 
 export function firstOwner(doc) {

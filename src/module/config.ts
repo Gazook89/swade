@@ -489,31 +489,6 @@ export const SWADE: SwadeConfig = {
 
   prototypeRollGroups: [
     {
-      name: 'SWADE.Range._name',
-      modifiers: [
-        { label: 'SWADE.Range.Medium', value: -2 },
-        { label: 'SWADE.Range.Long', value: -4 },
-        { label: 'SWADE.Range.Extreme', value: -8 },
-      ],
-    },
-    {
-      name: 'SWADE.Cover._name',
-      modifiers: [
-        { label: 'SWADE.Cover.Light', value: -2 },
-        { label: 'SWADE.Cover.Medium', value: -4 },
-        { label: 'SWADE.Cover.Heavy', value: -6 },
-        { label: 'SWADE.Cover.Total', value: -8 },
-      ],
-    },
-    {
-      name: 'SWADE.Illumination._name',
-      modifiers: [
-        { label: 'SWADE.Illumination.Dim', value: -2 },
-        { label: 'SWADE.Illumination.Dark', value: -4 },
-        { label: 'SWADE.Illumination.Pitch', value: -6 },
-      ],
-    },
-    {
       name: 'SWADE.ModOther',
       modifiers: [
         { label: 'SWADE.TargetVulnerable', value: '+2' },

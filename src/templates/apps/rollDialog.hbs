@@ -6,34 +6,23 @@
   {{#if isTraitRoll}}
     <fieldset class='flexrow'>
       <legend>{{localize 'SWADE.MAPenalty.Label'}}</legend>
-      <input
-        type='radio'
-        id='map-none'
-        name='map'
-        value='0'
-        data-dtype='Number'
-      />
-      <label for='map-none'>{{localize 'SWADE.MAPenalty.None'}}</label>
-      <input
-        type='radio'
-        id='map-2'
-        name='map'
-        value='-2'
-        data-dtype='Number'
-      />
-      <label for='map-2'>-2</label>
-      <input
-        type='radio'
-        id='map-4'
-        name='map'
-        value='-4'
-        data-dtype='Number'
-      />
-      <label for='map-4'>-4</label>
+      {{radioBoxes map.name map.choices checked=map.chosen localize=true}}
+    </fieldset>
+    <fieldset class='flexrow'>
+      <legend>{{localize 'SWADE.Range._name'}}</legend>
+      {{radioBoxes range.name range.choices checked=range.chosen localize=true}}
+    </fieldset>
+    <fieldset class='flexrow'>
+      <legend>{{localize 'SWADE.Light._name'}}</legend>
+      {{radioBoxes light.name light.choices checked=light.chosen localize=true}}
+    </fieldset>
+    <fieldset class='flexrow'>
+      <legend>{{localize 'SWADE.Cover._name'}}</legend>
+      {{radioBoxes cover.name cover.choices checked=cover.chosen localize=true}}
     </fieldset>
   {{/if}}
   <fieldset>
-    <legend>{{localize 'SWADE.Modifiers'}}</legend>
+    <legend>{{localize 'SWADE.ModOther'}}</legend>
     <header class='modifier-entry header'>
       <div>{{localize 'SWADE.Name'}}</div>
       <div>{{localize 'SWADE.Mod.Value'}}</div>
@@ -57,12 +46,16 @@
       <input
         type='text'
         class='new-modifier-label'
+        name='newModifierLabel'
+        value='{{newModifierLabel}}'
         placeholder='{{localize "SWADE.Name"}}'
         list='modifier-names'
       />
       <input
         type='text'
         class='new-modifier-value'
+        name='newModifierValue'
+        value='{{newModifierValue}}'
         placeholder='{{localize "SWADE.RollExample"}}'
         list='modifier-values'
       />
@@ -122,7 +115,7 @@
     </select>
   </div>
   <footer class='flexrow'>
-    <button type='submit'>
+    <button type='button' id='submit'>
       <i class='fas fa-dice'></i>
       {{localize 'SWADE.Roll'}}
     </button>
