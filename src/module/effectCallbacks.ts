@@ -45,7 +45,9 @@ async function removeShaken(effect: SwadeActiveEffect) {
           });
           if ((roll?.total as number) >= 4) {
             await effect.delete();
-            ui.notifications.info('SWADE.NoLongerShaken', { localize: true });
+            ui.notifications.info('SWADE.EffectCallbacks.Shaken.Success', {
+              localize: true,
+            });
           }
           resolve(roll);
         },

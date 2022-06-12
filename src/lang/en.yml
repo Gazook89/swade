@@ -548,6 +548,7 @@ SWADE:
       Flavor: Spirit Test to remove Shaken
       UnshakeModifier: Unshake Modifier
       Question: What do you want to do?
+      Success: You are no longer Shaken
     Stunned:
       Title: Vigor Test to remove Stunned
       Fail: You remain Stunned
@@ -559,7 +560,9 @@ SWADE:
       Success: You hang on, for now.
       Raise: You successfully stabilize
   BenniesSpendGM: Spend a GM Benny
-  NoLongerShaken: You are no longer shaken
+
+  TargetVulnerable: Target is Vulnerable
+  WildAttack: Wild Attack
 ACTOR:
   TypeCharacter: Player Character
   TypeNpc: NPC
