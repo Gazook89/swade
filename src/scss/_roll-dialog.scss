@@ -40,13 +40,12 @@
       }
     }
     .dropdown {
-      display: none;
       position: absolute;
       padding: 0;
       border: 1px solid var(--color-border-light-tertiary);
       background-color: var(--color-text-light-2);
     }
-    .searchbox {
+    .searchBox {
       margin: 0.5em;
     }
     .selections {
