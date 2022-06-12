@@ -69,7 +69,7 @@ export default class RollDialog extends FormApplication<
       this._addModifier();
       this.render();
     });
-    html.find('.modifier button').on('click', (ev) => {
+    html.find('.modifier .add-preset').on('click', (ev) => {
       this._addPreset(ev);
       this.render();
     });
@@ -303,17 +303,16 @@ export default class RollDialog extends FormApplication<
 
   private _addPreset(ev: JQuery.ClickEvent) {
     const target = ev.currentTarget as HTMLButtonElement;
-    const index = Number(target.dataset.index);
     const group = CONFIG.SWADE.prototypeRollGroups.find(
       (v) => v.name === target.dataset.group,
     );
-    if (!group) return;
-    const modifier = group.modifiers[index];
-    if (!modifier) return;
-    this.ctx.mods.push({
-      label: modifier.label,
-      value: modifier.value,
-    });
+    const modifier = group?.modifiers[Number(target.dataset.index)];
+    if (modifier) {
+      this.ctx.mods.push({
+        label: modifier.label,
+        value: modifier.value,
+      });
+    }
   }
 
   override close(options?: Application.CloseOptions): Promise<void> {
