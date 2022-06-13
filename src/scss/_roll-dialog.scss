@@ -21,6 +21,21 @@
       margin: auto;
     }
   }
+
+  .choices {
+    display: grid;
+    justify-items: stretch;
+  }
+  .three-cols {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .four-cols {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .five-cols {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
   .presets {
     padding: 0.5em 0.5em 0.25em 0.5em;
     .toggle-list {

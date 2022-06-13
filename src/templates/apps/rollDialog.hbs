@@ -4,19 +4,19 @@
     <span class='input' role='textbox'>{{baseDice}}</span>
   </fieldset>
   {{#if isTraitRoll}}
-    <fieldset class='flexrow'>
+    <fieldset class='choices three-cols'>
       <legend>{{localize 'SWADE.MAPenalty.Label'}}</legend>
       {{radioBoxes map.name map.choices checked=map.chosen localize=true}}
     </fieldset>
-    <fieldset class='flexrow'>
+    <fieldset class='choices four-cols'>
       <legend>{{localize 'SWADE.Range._name'}}</legend>
       {{radioBoxes range.name range.choices checked=range.chosen localize=true}}
     </fieldset>
-    <fieldset class='flexrow'>
+    <fieldset class='choices four-cols'>
       <legend>{{localize 'SWADE.Light._name'}}</legend>
       {{radioBoxes light.name light.choices checked=light.chosen localize=true}}
     </fieldset>
-    <fieldset class='flexrow'>
+    <fieldset class='choices five-cols'>
       <legend>{{localize 'SWADE.Cover._name'}}</legend>
       {{radioBoxes cover.name cover.choices checked=cover.chosen localize=true}}
     </fieldset>
