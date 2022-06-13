@@ -24,7 +24,7 @@ export default class RollDialog extends FormApplication<
       width: 400,
       filters: [
         {
-          inputSelector: 'input.searchbox',
+          inputSelector: '.searchBox',
           contentSelector: '.selections',
         },
       ],
@@ -77,7 +77,7 @@ export default class RollDialog extends FormApplication<
       const target = ev.currentTarget as HTMLButtonElement;
       const width = getComputedStyle(target).width;
       html.find('.fas.fa-caret-right').toggleClass('rotate');
-      html.find('.searchbox').outerWidth(width, true);
+      html.find('.searchBox').outerWidth(width, true);
       html.find('.dropdown').outerWidth(width).slideToggle({ duration: 200 });
     });
     html.find('button[type="submit"]').on('click', (ev) => {
@@ -223,7 +223,7 @@ export default class RollDialog extends FormApplication<
   ) {
     for (const li of Array.from(html.children) as HTMLLIElement[]) {
       if (li.classList.contains('group-header')) continue;
-      const btn = li.querySelector('button');
+      const btn = li.querySelector('.add-preset');
       const name = btn?.textContent;
       const match = rgx.test(SearchFilter.cleanQuery(name!));
       li.style.display = match ? 'block' : 'none';
